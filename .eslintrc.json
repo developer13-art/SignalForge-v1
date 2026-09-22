@@ -1,0 +1,64 @@
+{
+  "root": true,
+  "env": {
+    "node": true,
+    "es2022": true,
+    "jest": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module",
+    "ecmaFeatures": { "jsx": true }
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/recommended",
+    "plugin:promise/recommended",
+    "plugin:security/recommended"
+  ],
+  "plugins": ["import", "promise", "security", "no-secrets"],
+  "rules": {
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-var": "error",
+    "prefer-const": "error",
+    "prefer-arrow-callback": "error",
+    "eqeqeq": ["error", "always", { "null": "ignore" }],
+    "curly": ["error", "all"],
+    "no-implicit-coercion": "error",
+    "no-return-await": "error",
+    "require-await": "error",
+    "no-throw-literal": "error",
+    "no-shadow": "warn",
+    "no-param-reassign": ["warn", { "props": false }],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-nested-ternary": "error",
+    "prefer-template": "error",
+    "object-shorthand": ["error", "always"],
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc", "caseInsensitive": true }
+      }
+    ],
+    "import/no-unresolved": "off",
+    "import/no-cycle": "warn",
+    "import/no-default-export": "off",
+    "promise/always-return": "warn",
+    "promise/no-return-wrap": "error",
+    "security/detect-object-injection": "off",
+    "security/detect-non-literal-fs-filename": "off",
+    "no-secrets/no-secrets": ["error", { "tolerance": 4.5 }]
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    "coverage/",
+    "*.min.js",
+    "*.bundle.js",
+    "solana-program/target/"
+  ]
+}

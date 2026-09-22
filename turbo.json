@@ -1,0 +1,79 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [".env", ".env.example"],
+  "globalEnv": [
+    "NODE_ENV",
+    "APP_PORT",
+    "DATABASE_URL",
+    "JWT_SECRET",
+    "JWT_ACCESS_EXPIRES_IN",
+    "JWT_REFRESH_EXPIRES_IN",
+    "ENCRYPTION_KEY",
+    "SESSION_SECRET",
+    "COOKIE_SECRET",
+    "SOLANA_NETWORK",
+    "SOLANA_RPC_URL",
+    "SOLANA_ATTESTATION_PROGRAM_ID",
+    "SOLANA_PROVENANCE_PROGRAM_ID",
+    "SOLANA_PAYMENT_PROGRAM_ID",
+    "SOLANA_TREASURY_WALLET",
+    "METAAPI_TOKEN",
+    "METAAPI_BASE_URL",
+    "OPENAI_API_KEY",
+    "OPENAI_MODEL",
+    "STRIPE_SECRET_KEY",
+    "PAYSTACK_SECRET_KEY",
+    "SMILEID_API_KEY"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "build/**", ".next/**", "out/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"],
+      "cache": true
+    },
+    "test:unit": {
+      "outputs": ["coverage/**"],
+      "cache": true
+    },
+    "test:integration": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "lint": {
+      "outputs": [],
+      "cache": true
+    },
+    "lint:fix": {
+      "outputs": [],
+      "cache": false
+    },
+    "migrate": {
+      "cache": false
+    },
+    "migrate:rollback": {
+      "cache": false
+    },
+    "migrate:status": {
+      "cache": false
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

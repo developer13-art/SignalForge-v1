@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+coverage/
+.next/
+out/
+logs/
+uploads/
+temp/
+tmp/
+storage/
+docs/
+infrastructure/
+solana-program/target/
+solana-program/.anchor/
+*.min.js
+*.bundle.js

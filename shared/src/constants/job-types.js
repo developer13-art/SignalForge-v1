@@ -1,0 +1,98 @@
+/**
+ * Job Types
+ *
+ * Defines the background job types processed by the SignalForge job
+ * queue. Jobs are persisted in the `jobs` table and processed by the
+ * in-process job runner using PostgreSQL-backed queuing.
+ *
+ * @module @signalforge/shared/constants/job-types
+ */
+
+export const JOB_TYPES = Object.freeze({
+  // Signal pipeline
+  PROCESS_TELEGRAM_MESSAGE: 'PROCESS_TELEGRAM_MESSAGE',
+  PROCESS_DISCORD_MESSAGE: 'PROCESS_DISCORD_MESSAGE',
+  PROCESS_WHATSAPP_MESSAGE: 'PROCESS_WHATSAPP_MESSAGE',
+  PROCESS_EMAIL_MESSAGE: 'PROCESS_EMAIL_MESSAGE',
+  PROCESS_TRADINGVIEW_WEBHOOK: 'PROCESS_TRADINGVIEW_WEBHOOK',
+  CLASSIFY_MESSAGE: 'CLASSIFY_MESSAGE',
+  PARSE_SIGNAL: 'PARSE_SIGNAL',
+  UPDATE_PROVIDER_DNA: 'UPDATE_PROVIDER_DNA',
+  VALIDATE_SIGNAL: 'VALIDATE_SIGNAL',
+  COMPUTE_CONSENSUS: 'COMPUTE_CONSENSUS',
+  FAN_OUT_SIGNAL: 'FAN_OUT_SIGNAL',
+
+  // Execution
+  EXECUTE_TRADE: 'EXECUTE_TRADE',
+  RETRY_FAILED_EXECUTION: 'RETRY_FAILED_EXECUTION',
+
+  // Broker sync
+  SYNC_BROKER_ACCOUNT: 'SYNC_BROKER_ACCOUNT',
+  SNAPSHOT_ACCOUNT: 'SNAPSHOT_ACCOUNT',
+
+  // Performance
+  CALCULATE_PERFORMANCE: 'CALCULATE_PERFORMANCE',
+  GENERATE_ANALYTICS: 'GENERATE_ANALYTICS',
+  GENERATE_REPORT: 'GENERATE_REPORT',
+
+  // Referrals
+  MONTHLY_REFERRAL_SETTLEMENT: 'MONTHLY_REFERRAL_SETTLEMENT',
+
+  // Subscriptions
+  SUBSCRIPTION_EXPIRY_CHECK: 'SUBSCRIPTION_EXPIRY_CHECK',
+
+  // KYC
+  KYC_EXPIRY_CHECK: 'KYC_EXPIRY_CHECK',
+
+  // Notifications
+  SEND_NOTIFICATION: 'SEND_NOTIFICATION',
+
+  // Solana
+  ANCHOR_PROVENANCE: 'ANCHOR_PROVENANCE',
+  ANCHOR_ATTESTATION: 'ANCHOR_ATTESTATION',
+  VERIFY_SOLANA_PAYMENT: 'VERIFY_SOLANA_PAYMENT',
+  INDEX_SOLANA_EVENTS: 'INDEX_SOLANA_EVENTS',
+
+  // Housekeeping
+  SESSION_CLEANUP: 'SESSION_CLEANUP',
+  AUDIT_CLEANUP: 'AUDIT_CLEANUP',
+  DB_VACUUM: 'DB_VACUUM',
+});
+
+export const JOB_TYPE_VALUES = Object.freeze(Object.values(JOB_TYPES));
+
+export const JOB_TYPE_LABELS = Object.freeze({
+  [JOB_TYPES.PROCESS_TELEGRAM_MESSAGE]: 'Process Telegram Message',
+  [JOB_TYPES.PROCESS_DISCORD_MESSAGE]: 'Process Discord Message',
+  [JOB_TYPES.PROCESS_WHATSAPP_MESSAGE]: 'Process WhatsApp Message',
+  [JOB_TYPES.PROCESS_EMAIL_MESSAGE]: 'Process Email Message',
+  [JOB_TYPES.PROCESS_TRADINGVIEW_WEBHOOK]: 'Process TradingView Webhook',
+  [JOB_TYPES.CLASSIFY_MESSAGE]: 'Classify Message',
+  [JOB_TYPES.PARSE_SIGNAL]: 'Parse Signal',
+  [JOB_TYPES.UPDATE_PROVIDER_DNA]: 'Update Provider DNA',
+  [JOB_TYPES.VALIDATE_SIGNAL]: 'Validate Signal',
+  [JOB_TYPES.COMPUTE_CONSENSUS]: 'Compute Consensus',
+  [JOB_TYPES.FAN_OUT_SIGNAL]: 'Fan Out Signal',
+  [JOB_TYPES.EXECUTE_TRADE]: 'Execute Trade',
+  [JOB_TYPES.RETRY_FAILED_EXECUTION]: 'Retry Failed Execution',
+  [JOB_TYPES.SYNC_BROKER_ACCOUNT]: 'Sync Broker Account',
+  [JOB_TYPES.SNAPSHOT_ACCOUNT]: 'Snapshot Account',
+  [JOB_TYPES.CALCULATE_PERFORMANCE]: 'Calculate Performance',
+  [JOB_TYPES.GENERATE_ANALYTICS]: 'Generate Analytics',
+  [JOB_TYPES.GENERATE_REPORT]: 'Generate Report',
+  [JOB_TYPES.MONTHLY_REFERRAL_SETTLEMENT]: 'Monthly Referral Settlement',
+  [JOB_TYPES.SUBSCRIPTION_EXPIRY_CHECK]: 'Subscription Expiry Check',
+  [JOB_TYPES.KYC_EXPIRY_CHECK]: 'KYC Expiry Check',
+  [JOB_TYPES.SEND_NOTIFICATION]: 'Send Notification',
+  [JOB_TYPES.ANCHOR_PROVENANCE]: 'Anchor Provenance',
+  [JOB_TYPES.ANCHOR_ATTESTATION]: 'Anchor Attestation',
+  [JOB_TYPES.VERIFY_SOLANA_PAYMENT]: 'Verify Solana Payment',
+  [JOB_TYPES.INDEX_SOLANA_EVENTS]: 'Index Solana Events',
+  [JOB_TYPES.SESSION_CLEANUP]: 'Session Cleanup',
+  [JOB_TYPES.AUDIT_CLEANUP]: 'Audit Cleanup',
+  [JOB_TYPES.DB_VACUUM]: 'Database Vacuum',
+});
+
+export function isValidJobType(type) {
+  return JOB_TYPE_VALUES.includes(type);
+}

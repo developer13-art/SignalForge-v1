@@ -1,0 +1,195 @@
+name: Deploy Production
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to deploy (e.g., v1.0.0)"
+        required: true
+        type: string
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  deployments: write
+
+env:
+  NODE_VERSION: 20.11.1
+  PNPM_VERSION: 9.1.0
+  DEPLOY_ENV: production
+
+jobs:
+  verify:
+    name: Verify Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Verify version format
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format: $VERSION"
+            exit 1
+          fi
+
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: verify
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: signalforge_test
+          POSTGRES_USER: signalforge
+          POSTGRES_PASSWORD: signalforge_test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U signalforge -d signalforge_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      NODE_ENV: test
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: signalforge_test
+      DB_USER: signalforge
+      DB_PASSWORD: signalforge_test_password
+      JWT_SECRET: test_jwt_secret_for_ci_only
+      ENCRYPTION_KEY: test_encryption_key_for_ci_only
+      SESSION_SECRET: test_session_secret_for_ci_only
+      COOKIE_SECRET: test_cookie_secret_for_ci_only
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run migrations
+        run: pnpm migrate
+
+      - name: Run full test suite
+        run: pnpm test
+
+      - name: Run production build
+        run: pnpm build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: |
+            server/dist
+            client/dist
+          retention-days: 14
+
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs:
+      - verify
+      - build-and-test
+    environment:
+      name: production
+      url: https://signalforge.ai
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PRODUCTION_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.PRODUCTION_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Backup current release
+        run: |
+          ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} << 'EOF'
+            set -e
+            cd /var/www/signalforge/production
+            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+            mkdir -p /var/backups/signalforge
+            pg_dump -h localhost -U ${{ secrets.PRODUCTION_DB_USER }} -d ${{ secrets.PRODUCTION_DB_NAME }} -F c -f /var/backups/signalforge/db_${TIMESTAMP}.dump
+            tar -czf /var/backups/signalforge/app_${TIMESTAMP}.tar.gz -C /var/www/signalforge/production .
+            echo "Backup completed: db_${TIMESTAMP}.dump and app_${TIMESTAMP}.tar.gz"
+          EOF
+
+      - name: Deploy to production
+        run: |
+          ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} << 'EOF'
+            set -e
+            cd /var/www/signalforge/production
+            git fetch --all --tags
+            git checkout ${{ needs.verify.outputs.version }}
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --build
+            docker compose -f docker-compose.prod.yml exec -T server pnpm migrate
+            docker system prune -f
+          EOF
+
+      - name: Health check
+        run: |
+          sleep 30
+          curl -f https://signalforge.ai/api/health || exit 1
+          curl -f https://signalforge.ai/api/health/db || exit 1
+
+      - name: Notify deployment
+        if: always()
+        run: |
+          echo "Production deployment of ${{ needs.verify.outputs.version }} completed with status: ${{ job.status }}"
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          ssh ${{ secrets.PRODUCTION_USER }}@${{ secrets.PRODUCTION_HOST }} << 'EOF'
+            set -e
+            cd /var/www/signalforge/production
+            LATEST_APP_BACKUP=$(ls -t /var/backups/signalforge/app_*.tar.gz | head -1)
+            LATEST_DB_BACKUP=$(ls -t /var/backups/signalforge/db_*.dump | head -1)
+            tar -xzf "$LATEST_APP_BACKUP" -C /var/www/signalforge/production
+            pg_restore -h localhost -U ${{ secrets.PRODUCTION_DB_USER }} -d ${{ secrets.PRODUCTION_DB_NAME }} --clean --if-exists "$LATEST_DB_BACKUP"
+            docker compose -f docker-compose.prod.yml up -d
+            echo "Rollback completed"
+          EOF

@@ -1,0 +1,17 @@
+{
+  "watch": ["src", "../shared/src"],
+  "ext": "js,json,mjs,cjs",
+  "ignore": [
+    "src/**/*.test.js",
+    "tests/**",
+    "coverage/**",
+    "logs/**",
+    "node_modules/**"
+  ],
+  "delay": 500,
+  "verbose": true,
+  "signal": "SIGTERM",
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

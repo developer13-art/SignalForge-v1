@@ -1,0 +1,72 @@
+{
+  "name": "signalforge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SignalForge AI - Enterprise Trading Intelligence Platform",
+  "license": "UNLICENSED",
+  "author": "SignalForge Engineering",
+  "homepage": "https://signalforge.ai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/signalforge/signalforge.git"
+  },
+  "engines": {
+    "node": ">=20.11.1",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.1.0",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:server": "pnpm --filter @signalforge/server dev",
+    "dev:client": "pnpm --filter @signalforge/client dev",
+    "build": "turbo run build",
+    "build:server": "pnpm --filter @signalforge/server build",
+    "build:client": "pnpm --filter @signalforge/client build",
+    "start": "pnpm --filter @signalforge/server start",
+    "test": "turbo run test",
+    "test:server": "pnpm --filter @signalforge/server test",
+    "test:client": "pnpm --filter @signalforge/client test",
+    "test:e2e": "pnpm --filter @signalforge/server test:e2e",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --write \"**/*.{js,jsx,json,md,yml,yaml,css,ts,tsx}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,json,md,yml,yaml,css,ts,tsx}\"",
+    "migrate": "pnpm --filter @signalforge/server migrate",
+    "migrate:rollback": "pnpm --filter @signalforge/server migrate:rollback",
+    "migrate:status": "pnpm --filter @signalforge/server migrate:status",
+    "create:admin": "pnpm --filter @signalforge/server create:admin",
+    "create:provider": "pnpm --filter @signalforge/server create:provider",
+    "seed:permissions": "pnpm --filter @signalforge/server seed:permissions",
+    "seed:plans": "pnpm --filter @signalforge/server seed:plans",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:rebuild": "docker compose build --no-cache && docker compose up -d",
+    "solana:build": "cd solana-program && anchor build",
+    "solana:test": "cd solana-program && anchor test",
+    "solana:deploy:devnet": "cd solana-program && anchor deploy --provider.cluster devnet",
+    "solana:deploy:mainnet": "cd solana-program && anchor deploy --provider.cluster mainnet",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-no-secrets": "^1.0.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-security": "^3.0.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5",
+    "turbo": "^2.0.4"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yml,yaml,css}": ["prettier --write"]
+  },
+  "commitlint": {
+    "extends": ["@commitlint/config-conventional"]
+  }
+}

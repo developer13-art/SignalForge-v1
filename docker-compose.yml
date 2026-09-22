@@ -1,0 +1,115 @@
+version: "3.9"
+
+name: signalforge
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: signalforge_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-signalforge}
+      POSTGRES_USER: ${DB_USER:-signalforge}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-signalforge_dev_password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-signalforge} -d ${DB_NAME:-signalforge}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - signalforge_net
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: signalforge_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@signalforge.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - signalforge_net
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: signalforge_mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - signalforge_net
+
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+      target: development
+    container_name: signalforge_server
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      DB_HOST: postgres
+      DB_PORT: 5432
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MAIL_SECURE: "false"
+    ports:
+      - "${APP_PORT:-4000}:4000"
+    volumes:
+      - ./server:/app/server
+      - ./shared:/app/shared
+      - /app/server/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+    command: pnpm dev
+    networks:
+      - signalforge_net
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+      target: development
+    container_name: signalforge_client
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:4000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/app/client
+      - ./shared:/app/shared
+      - /app/client/node_modules
+    depends_on:
+      - server
+    command: pnpm dev
+    networks:
+      - signalforge_net
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  signalforge_net:
+    driver: bridge

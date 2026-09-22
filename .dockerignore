@@ -1,0 +1,63 @@
+# Node
+node_modules/
+**/node_modules/
+.pnpm-store/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI
+.github/
+
+# Docs
+docs/
+
+# Tests
+coverage/
+**/coverage/
+**/*.test.js
+**/__tests__/
+
+# Build
+dist/
+build/
+out/
+.next/
+.turbo/
+
+# Logs
+logs/
+*.log
+
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Solana
+solana-program/target/
+solana-program/.anchor/
+solana-program/test-ledger/
+
+# Infra
+infrastructure/
+
+# Misc
+*.md
+!README.md
+LICENSE
+CHANGELOG.md
+CONTRIBUTING.md
+SECURITY.md

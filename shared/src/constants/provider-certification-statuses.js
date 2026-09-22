@@ -1,0 +1,53 @@
+/**
+ * Provider Certification Statuses
+ *
+ * Defines the lifecycle states of provider certification through the
+ * Provider Sandbox and Certification Engine.
+ *
+ * @module @signalforge/shared/constants/provider-certification-statuses
+ */
+
+export const PROVIDER_CERTIFICATION_STATUSES = Object.freeze({
+  NOT_STARTED: 'NOT_STARTED',
+  PENDING: 'PENDING',
+  IMPORTING_HISTORY: 'IMPORTING_HISTORY',
+  TRAINING: 'TRAINING',
+  BACKTESTING: 'BACKTESTING',
+  EVALUATING: 'EVALUATING',
+  CERTIFIED: 'CERTIFIED',
+  CONDITIONALLY_CERTIFIED: 'CONDITIONALLY_CERTIFIED',
+  FAILED: 'FAILED',
+  SUSPENDED: 'SUSPENDED',
+  EXPIRED: 'EXPIRED',
+});
+
+export const PROVIDER_CERTIFICATION_STATUS_VALUES = Object.freeze(
+  Object.values(PROVIDER_CERTIFICATION_STATUSES),
+);
+
+export const PROVIDER_CERTIFICATION_STATUS_LABELS = Object.freeze({
+  [PROVIDER_CERTIFICATION_STATUSES.NOT_STARTED]: 'Not Started',
+  [PROVIDER_CERTIFICATION_STATUSES.PENDING]: 'Pending',
+  [PROVIDER_CERTIFICATION_STATUSES.IMPORTING_HISTORY]: 'Importing Historical Messages',
+  [PROVIDER_CERTIFICATION_STATUSES.TRAINING]: 'Training Provider DNA',
+  [PROVIDER_CERTIFICATION_STATUSES.BACKTESTING]: 'Backtesting',
+  [PROVIDER_CERTIFICATION_STATUSES.EVALUATING]: 'Evaluating Results',
+  [PROVIDER_CERTIFICATION_STATUSES.CERTIFIED]: 'Certified',
+  [PROVIDER_CERTIFICATION_STATUSES.CONDITIONALLY_CERTIFIED]: 'Conditionally Certified',
+  [PROVIDER_CERTIFICATION_STATUSES.FAILED]: 'Failed',
+  [PROVIDER_CERTIFICATION_STATUSES.SUSPENDED]: 'Suspended',
+  [PROVIDER_CERTIFICATION_STATUSES.EXPIRED]: 'Expired',
+});
+
+export const CERTIFIED_STATUSES = Object.freeze([
+  PROVIDER_CERTIFICATION_STATUSES.CERTIFIED,
+  PROVIDER_CERTIFICATION_STATUSES.CONDITIONALLY_CERTIFIED,
+]);
+
+export function isCertified(status) {
+  return CERTIFIED_STATUSES.includes(status);
+}
+
+export function isValidProviderCertificationStatus(status) {
+  return PROVIDER_CERTIFICATION_STATUS_VALUES.includes(status);
+}
