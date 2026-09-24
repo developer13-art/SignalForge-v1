@@ -1,46 +1,54 @@
 /**
  * KycBanner
  *
- * Persistent banner rendered on gated pages when the authenticated
- * user has not completed KYC verification. Matches the "KYC
- * Verification Required" banner shown in the mockups.
+ * Persistent banner prompting the user to complete KYC. It renders
+ * only when the user's KYC status is not VERIFIED. The CTA jumps
+ * straight to the next KYC step.
  *
  * @module client/src/layouts/components/KycBanner
  */
 
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import { AlertTriangle, ArrowRight, X } from 'lucide-react';
+import { useState } from 'react';
 
-import { selectCurrentUser } from '../../store/selectors/auth.selectors.js';
-import { selectDismissedBanners, dismissBanner } from '../../store/slices/ui.slice.js';
-import { cn } from '../../lib/utils/cn.util.js';
+import { routes } from '@config/routes.config.js';
+import { appConfig } from '@config/app.config.js';
 
-const BANNER_KEY = 'kyc-verification-required';
+export default function KycBanner() {
+  const [dismissed, setDismissed] = useState(() => {
+    try {
+      return localStorage.getItem(appConfig.storage.dismissedBannersKey) === 'kyc';
+    } catch (err) {
+      return false;
+    }
+  });
 
-export default function KycBanner({ className }) {
-  const dispatch = useDispatch();
-  const currentUser = useSelector(selectCurrentUser);
-  const dismissed = useSelector(selectDismissedBanners);
+  const kycStatus = useSelector((state) => state.kyc.status) || 'NOT_STARTED';
 
-  const kycStatus = currentUser?.kycStatus || 'NOT_STARTED';
-
-  if (kycStatus === 'VERIFIED' || dismissed[BANNER_KEY]) {
+  if (kycStatus === 'VERIFIED' || dismissed) {
     return null;
   }
 
+  function dismiss() {
+    setDismissed(true);
+    try {
+      localStorage.setItem(appConfig.storage.dismissedBannersKey, 'kyc');
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  const ctaLabel = kycStatus === 'NOT_STARTED' ? 'Complete KYC' : 'Continue KYC';
+  const ctaTo = kycStatus === 'NOT_STARTED' ? routes.kyc.intro : routes.kyc.statusDashboard;
+
   return (
-    <div
-      className={cn(
-        'flex flex-col items-start gap-3 rounded-xl border border-warning-border bg-warning-subtle px-4 py-3 sm:flex-row sm:items-center sm:justify-between',
-        className,
-      )}
-      role="status"
-    >
+    <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-warning/30 bg-warning-subtle px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-3">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-warning/15 text-warning">
+        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning/15 text-warning">
           <AlertTriangle className="h-4 w-4" />
-        </div>
+        </span>
         <div>
           <p className="text-small font-semibold text-text-primary">KYC Verification Required</p>
           <p className="text-caption text-text-secondary">
@@ -48,18 +56,19 @@ export default function KycBanner({ className }) {
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-2">
+
+      <div className="flex items-center gap-2 sm:gap-3">
         <Link
-          to="/kyc"
-          className="inline-flex items-center gap-2 rounded-lg bg-gradient-primary px-3 py-1.5 text-caption font-semibold text-white shadow-glow-primary transition-opacity hover:opacity-90"
+          to={ctaTo}
+          className="inline-flex items-center gap-2 rounded-lg bg-warning px-4 py-2 text-caption font-semibold text-background transition hover:opacity-90"
         >
-          Complete KYC
+          {ctaLabel}
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
         <button
           type="button"
-          onClick={() => dispatch(dismissBanner(BANNER_KEY))}
-          className="flex h-8 w-8 items-center justify-center rounded-md text-text-tertiary transition-colors hover:bg-surface-subtle hover:text-text-primary"
+          onClick={dismiss}
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-text-tertiary transition hover:text-text-primary"
           aria-label="Dismiss"
         >
           <X className="h-4 w-4" />
