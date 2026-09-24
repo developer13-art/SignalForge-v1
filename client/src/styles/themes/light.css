@@ -1,0 +1,56 @@
+/**
+ * Light Theme
+ *
+ * Optional light theme. Activated by adding the `.light` class to the
+ * html element. Overrides every variable used in the dark theme.
+ *
+ * @module client/src/styles/themes/light
+ */
+
+html.light {
+  color-scheme: light;
+
+  --background: #f9fafc;
+  --background-subtle: #f1f5f9;
+  --background-elevated: #ffffff;
+  --background-overlay: rgba(249, 250, 252, 0.85);
+
+  --surface: #ffffff;
+  --surface-subtle: #f8fafc;
+  --surface-elevated: #ffffff;
+  --surface-hover: #f1f5f9;
+
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-default: rgba(15, 23, 42, 0.12);
+  --border-strong: rgba(15, 23, 42, 0.2);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+  --text-disabled: #94a3b8;
+  --text-inverse: #f1f5f9;
+
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
+  --shadow-elevated: 0 4px 12px 0 rgba(15, 23, 42, 0.08);
+  --shadow-modal: 0 20px 40px -8px rgba(15, 23, 42, 0.15);
+}
+
+html.light body {
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+html.light ::selection {
+  background-color: rgba(99, 102, 241, 0.25);
+  color: var(--text-primary);
+}
+
+html.light .surface-card {
+  background-color: var(--surface);
+  border-color: var(--border-subtle);
+}
+
+html.light .glass {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}

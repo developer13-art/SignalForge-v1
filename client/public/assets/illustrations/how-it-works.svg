@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" fill="none">
+  <defs>
+    <linearGradient id="hiwGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1028F6" />
+      <stop offset="50%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#8B5CF6" />
+    </linearGradient>
+  </defs>
+  <line x1="100" y1="200" x2="700" y2="200" stroke="#1E2740" stroke-width="2" stroke-dasharray="6 6" />
+  <circle cx="100" cy="200" r="28" fill="url(#hiwGradient)" />
+  <circle cx="250" cy="200" r="28" fill="url(#hiwGradient)" />
+  <circle cx="400" cy="200" r="28" fill="url(#hiwGradient)" />
+  <circle cx="550" cy="200" r="28" fill="url(#hiwGradient)" />
+  <circle cx="700" cy="200" r="28" fill="url(#hiwGradient)" />
+  <path d="M88 200 L100 192 L100 208 Z" fill="#FFFFFF" />
+  <path d="M238 200 L250 192 L250 208 Z" fill="#FFFFFF" />
+  <path d="M388 200 L400 192 L400 208 Z" fill="#FFFFFF" />
+  <path d="M538 200 L550 192 L550 208 Z" fill="#FFFFFF" />
+  <path d="M688 200 L700 192 L700 208 Z" fill="#FFFFFF" />
+</svg>

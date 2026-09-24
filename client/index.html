@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0A0E1A" />
+    <meta name="color-scheme" content="dark light" />
+
+    <title>SignalForge AI — Enterprise Trading Intelligence Platform</title>
+    <meta
+      name="description"
+      content="SignalForge AI transforms fragmented trading signals from any source into intelligent, risk-controlled execution across your connected MT4/MT5 accounts."
+    />
+    <meta name="author" content="SignalForge" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="SignalForge AI — Enterprise Trading Intelligence Platform" />
+    <meta
+      property="og:description"
+      content="AI-powered trading signal intelligence, risk management, execution, and analytics."
+    />
+    <meta property="og:image" content="/assets/images/og-image.png" />
+    <meta property="og:url" content="https://signalforge.ai" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SignalForge AI" />
+    <meta name="twitter:description" content="AI-powered trading intelligence platform." />
+    <meta name="twitter:image" content="/assets/images/og-image.png" />
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+    <link rel="apple-touch-icon" href="/assets/logo.svg" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      (function () {
+        try {
+          const stored = localStorage.getItem('signalforge.theme');
+          const theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+          document.documentElement.classList.toggle('light', theme === 'light');
+        } catch (err) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-background text-text-primary antialiased">
+    <div id="root"></div>
+    <noscript>
+      <div style="padding: 24px; font-family: Inter, sans-serif; color: #F1F5F9; background: #0A0E1A;">
+        SignalForge AI requires JavaScript to run. Please enable JavaScript in your browser.
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

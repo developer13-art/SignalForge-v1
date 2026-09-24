@@ -1,0 +1,16 @@
+/**
+ * Global Stylesheet Entry
+ *
+ * This file is the single CSS entry point referenced by `main.jsx` and
+ * simply forwards to the layered stylesheets in `styles/`. Keep this
+ * file intentionally thin so the actual styling lives in dedicated
+ * files that can be tree-shaken and reasoned about individually.
+ *
+ * @module client/src/index
+ */
+
+@import './styles/globals.css';
+@import './styles/variables.css';
+@import './styles/animations.css';
+@import './styles/themes/dark.css';
+@import './styles/themes/light.css';

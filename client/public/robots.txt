@@ -1,0 +1,33 @@
+# =============================================================
+# SignalForge AI - robots.txt
+# =============================================================
+
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /trading/
+Disallow: /signals/
+Disallow: /signal-sources/
+Disallow: /ai-intelligence/
+Disallow: /provider-dna/
+Disallow: /risk-automation/
+Disallow: /brokers/
+Disallow: /analytics/
+Disallow: /referrals/
+Disallow: /subscriptions/
+Disallow: /wallet/
+Disallow: /provider-business/
+Disallow: /provider-certification/
+Disallow: /affiliate/
+Disallow: /ib/
+Disallow: /white-label/
+Disallow: /notifications/
+Disallow: /settings/
+Disallow: /admin/
+Disallow: /compliance/
+Disallow: /executive/
+Disallow: /support/
+Disallow: /replay/
+Disallow: /api/
+
+Sitemap: https://signalforge.ai/sitemap.xml
