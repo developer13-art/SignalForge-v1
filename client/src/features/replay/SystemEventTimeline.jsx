@@ -1,0 +1,135 @@
+import React, { useCallback, useEffect, useState } from 'react';
+import { Activity, RefreshCw, Loader2, Search } from 'lucide-react';
+import Container from '../../components/ui/primitives/Container';
+import Card from '../../components/common/Card';
+import Heading from '../../components/ui/primitives/Heading';
+import Text from '../../components/ui/primitives/Text';
+import Button from '../../components/common/Button';
+import Timeline from '../../components/data-display/Timeline';
+import EmptyState from '../../components/common/EmptyState';
+import Badge from '../../components/common/Badge';
+
+const SystemEventTimeline = function SystemEventTimeline() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+
+  const fetchEvents = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (filter !== 'all') {
+        params.append('type', filter);
+      }
+      const response = await fetch(`/api/replay/system-timeline?${params.toString()}`, {
+        credentials: 'include',
+      });
+      const payload = await response.json();
+      if (response.ok) {
+        setEvents(payload.data || []);
+      }
+    } catch (_err) {
+      // silent
+    } finally {
+      setLoading(false);
+    }
+  }, [filter]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
+
+  const timelineItems = events.map((event) => ({
+    key: event.id,
+    title: event.title,
+    description: event.description,
+    time: event.time,
+    icon: Activity,
+    variant:
+      event.severity === 'critical'
+        ? 'danger'
+        : event.severity === 'warning'
+        ? 'warning'
+        : 'primary',
+  }));
+
+  const filters = [
+    { value: 'all', label: 'All' },
+    { value: 'trade', label: 'Trades' },
+    { value: 'signal', label: 'Signals' },
+    { value: 'execution', label: 'Execution' },
+    { value: 'risk', label: 'Risk' },
+    { value: 'system', label: 'System' },
+    { value: 'security', label: 'Security' },
+  ];
+
+  return (
+    <Container size="lg" className="py-6">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+            <Activity size={20} aria-hidden="true" />
+          </span>
+          <div>
+            <Heading level={1} size="text-2xl">
+              System Event Timeline
+            </Heading>
+            <Text color="muted" className="text-xs">
+              Chronological reconstruction of platform events
+            </Text>
+          </div>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={fetchEvents}
+          disabled={loading}
+          leadingIcon={loading ? Loader2 : RefreshCw}
+        >
+          Refresh
+        </Button>
+      </div>
+
+      <Card padding="lg" className="mt-6">
+        <div className="flex flex-wrap items-center gap-2">
+          <Search size={14} className="text-slate-400" aria-hidden="true" />
+          {filters.map((f) => (
+            <button
+              key={f.value}
+              type="button"
+              onClick={() => setFilter(f.value)}
+              className={[
+                'rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+                filter === f.value
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6">
+          {loading ? (
+            <div className="flex items-center justify-center py-12 text-slate-400">
+              <Loader2 size={28} className="animate-spin" aria-hidden="true" />
+            </div>
+          ) : events.length === 0 ? (
+            <EmptyState
+              icon={Activity}
+              title="No system events"
+              description="System events will appear here as they occur."
+            />
+          ) : (
+            <Timeline items={timelineItems} />
+          )}
+        </div>
+      </Card>
+    </Container>
+  );
+};
+
+export default SystemEventTimeline;

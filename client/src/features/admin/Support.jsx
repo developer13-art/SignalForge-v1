@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Shield, RefreshCw, Loader2 } from 'lucide-react';
+import { MessageSquare, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
 import Heading from '../../components/ui/primitives/Heading';
@@ -9,18 +9,20 @@ import StatCard from '../../components/data-display/StatCard';
 import DataTable from '../../components/data-display/DataTable';
 import EmptyState from '../../components/common/EmptyState';
 
-const SecurityCenter = function SecurityCenter() {
+const Support = function Support() {
   const [data, setData] = useState(null);
-  const [events, setEvents] = useState([]);
+  const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/security', { credentials: 'include' });
+      const response = await fetch('/api/admin/support/tickets', {
+        credentials: 'include',
+      });
       const payload = await response.json();
       if (response.ok) {
-        setEvents(payload.data?.items || []);
+        setTickets(payload.data?.items || []);
         setData(payload.data?.summary);
       }
     } catch (_err) {
@@ -36,50 +38,63 @@ const SecurityCenter = function SecurityCenter() {
 
   const columns = [
     {
-      key: 'time',
-      header: 'Time',
-      accessor: 'time',
-      render: (value) => <span className="text-xs text-slate-500">{value}</span>,
-    },
-    {
-      key: 'event',
-      header: 'Event',
-      accessor: 'event',
+      key: 'subject',
+      header: 'Subject',
+      accessor: 'subject',
       render: (value) => (
         <span className="text-sm font-medium text-slate-800">{value}</span>
       ),
     },
     {
-      key: 'actor',
-      header: 'Actor',
-      accessor: 'actorEmail',
+      key: 'user',
+      header: 'User',
+      accessor: 'userEmail',
       render: (value) => (
-        <span className="truncate text-xs text-slate-600">{value || 'System'}</span>
+        <span className="truncate text-xs text-slate-600">{value}</span>
       ),
     },
     {
-      key: 'ip',
-      header: 'IP',
-      accessor: 'ip',
+      key: 'priority',
+      header: 'Priority',
+      accessor: 'priority',
+      render: (value) => (
+        <span
+          className={[
+            'rounded px-2 py-0.5 text-[10px] font-semibold uppercase',
+            value === 'high'
+              ? 'bg-rose-50 text-rose-700'
+              : value === 'medium'
+              ? 'bg-amber-50 text-amber-700'
+              : 'bg-sky-50 text-sky-700',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+        >
+          {value}
+        </span>
+      ),
+    },
+    {
+      key: 'createdAt',
+      header: 'Created',
+      accessor: 'createdAt',
       align: 'right',
-      render: (value) => (
-        <span className="font-mono text-xs text-slate-500">{value || '—'}</span>
-      ),
+      render: (value) => <span className="text-xs text-slate-500">{value}</span>,
     },
     {
-      key: 'severity',
-      header: 'Severity',
-      accessor: 'severity',
+      key: 'status',
+      header: 'Status',
+      accessor: 'status',
       align: 'right',
       render: (value) => (
         <span
           className={[
             'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize',
-            value === 'critical'
-              ? 'bg-rose-50 text-rose-700'
-              : value === 'warning'
-              ? 'bg-amber-50 text-amber-700'
-              : 'bg-sky-50 text-sky-700',
+            value === 'open'
+              ? 'bg-sky-50 text-sky-700'
+              : value === 'resolved'
+              ? 'bg-emerald-50 text-emerald-700'
+              : 'bg-slate-100 text-slate-600',
           ]
             .filter(Boolean)
             .join(' ')}
@@ -94,15 +109,15 @@ const SecurityCenter = function SecurityCenter() {
     <Container size="xl" className="py-6">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-rose-50 text-rose-600">
-            <Shield size={20} aria-hidden="true" />
+          <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+            <MessageSquare size={20} aria-hidden="true" />
           </span>
           <div>
             <Heading level={1} size="text-2xl">
-              Security Center
+              Support Tickets
             </Heading>
             <Text color="muted" className="text-xs">
-              Monitor threats, sessions, and security events
+              Manage user support tickets
             </Text>
           </div>
         </div>
@@ -119,59 +134,54 @@ const SecurityCenter = function SecurityCenter() {
 
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
-          label="Active Sessions"
-          value={data?.activeSessions || 0}
-          icon={Shield}
+          label="Open"
+          value={data?.open || 0}
+          icon={MessageSquare}
           variant="primary"
           loading={loading}
         />
         <StatCard
-          label="Failed Logins (24h)"
-          value={data?.failedLogins24h || 0}
-          icon={Shield}
+          label="In Progress"
+          value={data?.inProgress || 0}
+          icon={MessageSquare}
           variant="warning"
           loading={loading}
         />
         <StatCard
-          label="Suspicious Events"
-          value={data?.suspiciousEvents || 0}
-          icon={Shield}
-          variant="danger"
+          label="Resolved Today"
+          value={data?.resolvedToday || 0}
+          icon={MessageSquare}
+          variant="success"
           loading={loading}
         />
         <StatCard
-          label="2FA Enabled Users"
-          value={data?.twoFactorUsers || 0}
-          icon={Shield}
-          variant="success"
+          label="Avg Response"
+          value={data?.avgResponse || '—'}
+          icon={MessageSquare}
+          variant="info"
           loading={loading}
         />
       </div>
 
       <Card padding="lg" className="mt-6">
-        <Heading level={3} size="text-base">
-          Recent Security Events
-        </Heading>
-
-        <div className="mt-4">
-          <DataTable
-            columns={columns}
-            rows={events}
-            rowKey="id"
-            loading={loading}
-            searchable
-            emptyState={
-              <EmptyState
-                icon={Shield}
-                title="No security events"
-                description="Security events will appear here."
-              />
-            }
-          />
-        </div>
+        <DataTable
+          columns={columns}
+          rows={tickets}
+          rowKey="id"
+          loading={loading}
+          searchable
+          sortable
+          emptyState={
+            <EmptyState
+              icon={MessageSquare}
+              title="No support tickets"
+              description="Support tickets will appear here when users open them."
+            />
+          }
+        />
       </Card>
     </Container>
   );
 };
 
-export default SecurityCenter;
+export default Support;
