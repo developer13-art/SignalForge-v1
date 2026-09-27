@@ -1,0 +1,70 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: signalforge-performance-calc
+  namespace: signalforge
+  labels:
+    app.kubernetes.io/name: signalforge
+    app.kubernetes.io/component: cronjob
+    app.kubernetes.io/function: performance-calc
+spec:
+  schedule: "0 1 * * *"
+  timeZone: "UTC"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 1800
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  suspend: false
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: signalforge
+        app.kubernetes.io/component: cronjob
+        app.kubernetes.io/function: performance-calc
+    spec:
+      backoffLimit: 3
+      activeDeadlineSeconds: 3600
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: signalforge
+            app.kubernetes.io/component: cronjob
+            app.kubernetes.io/function: performance-calc
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: signalforge-server
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            fsGroup: 10001
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: performance-calc
+              image: signalforge/server:1.0.0
+              imagePullPolicy: IfNotPresent
+              command: ["node", "src/scripts/calculate-performance.js"]
+              envFrom:
+                - configMapRef:
+                    name: signalforge-config
+                - secretRef:
+                    name: signalforge-secrets
+              resources:
+                requests:
+                  cpu: "500m"
+                  memory: "512Mi"
+                limits:
+                  cpu: "2000m"
+                  memory: "2048Mi"
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: tmp
+              emptyDir: {}

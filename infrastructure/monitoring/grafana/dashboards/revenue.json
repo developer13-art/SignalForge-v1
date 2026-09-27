@@ -1,0 +1,81 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "unit": "currencyUSD", "color": { "mode": "palette-classic" } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "expr": "signalforge_revenue_total{category=\"subscription\"}",
+          "legendFormat": "Subscriptions",
+          "refId": "A"
+        },
+        {
+          "expr": "signalforge_revenue_total{category=\"marketplace\"}",
+          "legendFormat": "Marketplace",
+          "refId": "B"
+        },
+        {
+          "expr": "signalforge_revenue_total{category=\"provider\"}",
+          "legendFormat": "Provider",
+          "refId": "C"
+        },
+        {
+          "expr": "signalforge_revenue_total{category=\"affiliate\"}",
+          "legendFormat": "Affiliate",
+          "refId": "D"
+        }
+      ],
+      "title": "Revenue by Category",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "unit": "currencyUSD", "color": { "mode": "palette-classic" } }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": {
+        "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "expr": "signalforge_referral_cost_total",
+          "legendFormat": "Referral Cost",
+          "refId": "A"
+        },
+        {
+          "expr": "signalforge_net_revenue_total",
+          "legendFormat": "Net Revenue",
+          "refId": "B"
+        }
+      ],
+      "title": "Net Revenue vs Referral Cost",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 39,
+  "tags": ["signalforge", "revenue"],
+  "templating": { "list": [] },
+  "time": { "from": "now-30d", "to": "now" },
+  "timezone": "utc",
+  "title": "SignalForge — Revenue",
+  "uid": "signalforge-revenue",
+  "version": 1
+}

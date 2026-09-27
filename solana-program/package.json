@@ -1,0 +1,44 @@
+{
+  "name": "@signalforge/solana-program",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SignalForge Solana Anchor programs for attestations, provenance, and payments",
+  "license": "UNLICENSED",
+  "scripts": {
+    "lint": "prettier --check . && eslint . --ext .ts",
+    "lint:fix": "prettier --write . && eslint . --ext .ts --fix",
+    "build": "anchor build",
+    "test": "anchor test",
+    "test:attestation": "anchor test --skip-local-validator -- --grep \"Attestation\"",
+    "test:provenance": "anchor test --skip-local-validator -- --grep \"Provenance\"",
+    "test:payment": "anchor test --skip-local-validator -- --grep \"Payment\"",
+    "deploy:localnet": "anchor deploy --provider.cluster localnet",
+    "deploy:devnet": "anchor deploy --provider.cluster devnet",
+    "deploy:mainnet": "anchor deploy --provider.cluster mainnet",
+    "verify:devnet": "bash scripts/verify-program.sh devnet",
+    "verify:mainnet": "bash scripts/verify-program.sh mainnet",
+    "clean": "anchor clean && rm -rf target .anchor node_modules",
+    "format": "prettier --write \"**/*.{ts,js,json,md}\""
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.30.1",
+    "@solana/spl-token": "^0.4.8",
+    "@solana/web3.js": "^1.95.3",
+    "bn.js": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.5",
+    "@types/chai": "^4.3.17",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "^20.14.15",
+    "chai": "^4.4.1",
+    "mocha": "^10.7.0",
+    "prettier": "^3.3.3",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "engines": {
+    "node": ">=20.11.1"
+  }
+}

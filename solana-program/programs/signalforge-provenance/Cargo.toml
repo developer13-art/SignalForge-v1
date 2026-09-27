@@ -1,0 +1,27 @@
+[package]
+name = "signalforge-provenance"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "SignalForge Provenance Program — Anchors cryptographic proofs of AI signal processing on Solana."
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "signalforge_provenance"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+anchor-lang.workspace = true
+
+[dev-dependencies]
+solana-program.workspace = true

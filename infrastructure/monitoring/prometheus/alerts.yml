@@ -1,0 +1,190 @@
+# =============================================================
+# SignalForge — Prometheus Alert Rules
+# =============================================================
+
+groups:
+  - name: signalforge_application
+    interval: 30s
+    rules:
+      - alert: HighAPIErrorRate
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m]))
+            /
+          sum(rate(http_requests_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          team: engineering
+        annotations:
+          summary: "API 5xx error rate exceeds 5%"
+          description: "API is returning 5xx responses at a rate above 5% for 5 minutes."
+
+      - alert: HighAPILatency
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (le)
+          ) > 2
+        for: 10m
+        labels:
+          severity: warning
+          team: engineering
+        annotations:
+          summary: "API p95 latency above 2 seconds"
+          description: "API p95 latency is above 2 seconds for 10 minutes."
+
+      - alert: ServerPodCrashLooping
+        expr: |
+          rate(kube_pod_container_status_restarts_total{namespace="signalforge"}[15m]) > 0
+        for: 10m
+        labels:
+          severity: critical
+          team: infrastructure
+        annotations:
+          summary: "Server pod is crash looping"
+          description: "A SignalForge server pod has restarted more than once in 15 minutes."
+
+      - alert: HighSignalQueueDepth
+        expr: signalforge_signal_queue_depth > 1000
+        for: 5m
+        labels:
+          severity: warning
+          team: engineering
+        annotations:
+          summary: "Signal processing queue is backed up"
+          description: "Signal processing queue depth exceeds 1000 messages."
+
+      - alert: HighAIProcessingLatency
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(signalforge_ai_processing_duration_seconds_bucket[5m])) by (le)
+          ) > 10
+        for: 10m
+        labels:
+          severity: warning
+          team: engineering
+        annotations:
+          summary: "AI processing latency p95 above 10 seconds"
+          description: "AI signal processing p95 latency is above 10 seconds."
+
+      - alert: HighTradeExecutionFailureRate
+        expr: |
+          sum(rate(signalforge_trade_executions_total{status="failed"}[10m]))
+            /
+          sum(rate(signalforge_trade_executions_total[10m])) > 0.03
+        for: 5m
+        labels:
+          severity: critical
+          team: trading
+        annotations:
+          summary: "Trade execution failure rate above 3%"
+          description: "Trade execution failure rate is above 3% for 5 minutes."
+
+  - name: signalforge_database
+    interval: 30s
+    rules:
+      - alert: DatabaseConnectionPoolExhausted
+        expr: |
+          pg_stat_activity_count{datname="signalforge"}
+            /
+          pg_settings_max_connections > 0.9
+        for: 5m
+        labels:
+          severity: critical
+          team: infrastructure
+        annotations:
+          summary: "Database connection pool near exhaustion"
+          description: "PostgreSQL connections exceed 90% of max_connections."
+
+      - alert: DatabaseSlowQueries
+        expr: rate(pg_stat_statements_mean_time_seconds[5m]) > 1
+        for: 10m
+        labels:
+          severity: warning
+          team: engineering
+        annotations:
+          summary: "Database slow queries detected"
+          description: "Database mean query time above 1 second."
+
+      - alert: DatabaseReplicationLag
+        expr: pg_replication_lag_seconds > 30
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "Database replication lag above 30 seconds"
+          description: "Replica is more than 30 seconds behind primary."
+
+  - name: signalforge_solana
+    interval: 30s
+    rules:
+      - alert: SolanaRPCUnreachable
+        expr: up{job="solana-rpc"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          team: blockchain
+        annotations:
+          summary: "Solana RPC is unreachable"
+          description: "Cannot connect to the Solana RPC endpoint."
+
+      - alert: HighOnChainAnchorFailureRate
+        expr: |
+          sum(rate(signalforge_solana_anchor_total{status="failed"}[10m]))
+            /
+          sum(rate(signalforge_solana_anchor_total[10m])) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+          team: blockchain
+        annotations:
+          summary: "On-chain anchoring failure rate above 5%"
+          description: "Solana anchoring is failing at a rate above 5%."
+
+  - name: signalforge_infrastructure
+    interval: 30s
+    rules:
+      - alert: HighCPUUsage
+        expr: |
+          100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 10m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "Node CPU usage above 85%"
+          description: "Node {{ $labels.instance }} CPU usage is above 85% for 10 minutes."
+
+      - alert: HighMemoryUsage
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 10m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "Node memory usage above 90%"
+          description: "Node {{ $labels.instance }} memory usage is above 90%."
+
+      - alert: DiskSpaceLow
+        expr: |
+          (node_filesystem_avail_bytes{fstype!~"tmpfs|fuse.lxcfs"}
+            /
+          node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs"}) * 100 < 15
+        for: 15m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "Node disk space below 15%"
+          description: "Node {{ $labels.instance }} has less than 15% free disk space."
+
+      - alert: CertificateExpiringSoon
+        expr: (probe_ssl_earliest_cert_expiry - time()) / 86400 < 14
+        for: 1h
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "SSL certificate expiring within 14 days"
+          description: "Certificate for {{ $labels.instance }} expires in less than 14 days."

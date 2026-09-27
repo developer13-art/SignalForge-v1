@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "declaration": false,
+    "sourceMap": true,
+    "outDir": "dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@signalforge/attestation": ["app/attestation-client.ts"],
+      "@signalforge/provenance": ["app/provenance-client.ts"],
+      "@signalforge/payment": ["app/payment-client.ts"]
+    }
+  },
+  "include": ["tests/**/*.ts", "app/**/*.ts", "migrations/**/*.ts"],
+  "exclude": ["node_modules", "target", ".anchor", "dist"]
+}

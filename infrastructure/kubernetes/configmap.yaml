@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: signalforge-config
+  namespace: signalforge
+  labels:
+    app.kubernetes.io/name: signalforge
+    app.kubernetes.io/component: config
+data:
+  NODE_ENV: "production"
+  APP_NAME: "SignalForge"
+  APP_PORT: "4000"
+  APP_URL: "https://signalforge.ai"
+  API_URL: "https://api.signalforge.ai"
+  APP_TIMEZONE: "UTC"
+  APP_LOCALE: "en"
+
+  LOG_LEVEL: "info"
+  LOG_FORMAT: "json"
+  LOG_FILE_PATH: "/var/log/signalforge"
+
+  DB_HOST: "signalforge-postgres.signalforge.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "signalforge"
+  DB_SSL: "true"
+  DB_POOL_MIN: "2"
+  DB_POOL_MAX: "30"
+  DB_IDLE_TIMEOUT_MS: "30000"
+  DB_CONNECTION_TIMEOUT_MS: "10000"
+
+  JWT_ACCESS_EXPIRES_IN: "15m"
+  JWT_REFRESH_EXPIRES_IN: "30d"
+  JWT_ISSUER: "signalforge"
+  JWT_AUDIENCE: "signalforge-api"
+
+  ENCRYPTION_IV_LENGTH: "16"
+  HASH_SALT_ROUNDS: "12"
+
+  CORS_ORIGINS: "https://signalforge.ai,https://app.signalforge.ai"
+  RATE_LIMIT_WINDOW_MS: "60000"
+  RATE_LIMIT_MAX: "120"
+
+  LLM_PROVIDER: "openai"
+  LLM_MAX_TOKENS: "2000"
+  LLM_TEMPERATURE: "0.1"
+  LLM_TIMEOUT_MS: "30000"
+  LLM_RETRY_ATTEMPTS: "3"
+
+  METAAPI_BASE_URL: "https://mt-client-api-v1.new-york.agiliumtrade.ai"
+  METAAPI_PROVISIONING_URL: "https://mt-provisioning-api-v1.agiliumtrade.ai"
+  METAAPI_WS_URL: "wss://mt-client-api-v1.new-york.agiliumtrade.ai"
+  METAAPI_RETRY_ATTEMPTS: "3"
+  METAAPI_RETRY_DELAY_MS: "2000"
+
+  SMILEID_BASE_URL: "https://api.smileidentity.com/v1"
+  VERIFYME_BASE_URL: "https://vapi.verifyme.ng/v1"
+
+  SOLANA_NETWORK: "mainnet-beta"
+  SOLANA_RPC_URL: "https://api.mainnet-beta.solana.com"
+  SOLANA_WS_URL: "wss://api.mainnet-beta.solana.com"
+  SOLANA_COMMITMENT: "confirmed"
+  SOLANA_CONFIRMATION_TIMEOUT_MS: "60000"
+  SOLANA_RETRY_ATTEMPTS: "3"
+
+  FEATURE_SOLANA: "true"
+  FEATURE_COPY_TRADING: "true"
+  FEATURE_CONSENSUS: "true"
+  FEATURE_PROVIDER_CERTIFICATION: "true"
+  FEATURE_WHITE_LABEL: "true"
+  FEATURE_MARKETPLACE: "true"
+  FEATURE_REFERRALS: "true"
+
+  REFERRAL_REWARD_RATE: "0.001"
+  REFERRAL_SETTLEMENT_CYCLE: "monthly"
+  REFERRAL_MIN_PAYOUT: "10"
+  SUBSCRIPTION_TRIAL_DAYS: "7"
+  SUBSCRIPTION_GRACE_PERIOD_DAYS: "3"
+  SIGNAL_CONFIDENCE_THRESHOLD: "0.8"
+  MAX_DAILY_LOSS_DEFAULT: "500"
+  MAX_DRAWDOWN_DEFAULT: "0.2"
+  MAX_OPEN_TRADES_DEFAULT: "10"
+
+  METRICS_ENABLED: "true"
+  METRICS_PORT: "9090"
+  TRACING_ENABLED: "true"
+  TRACING_ENDPOINT: "http://otel-collector.observability.svc.cluster.local:4317"
