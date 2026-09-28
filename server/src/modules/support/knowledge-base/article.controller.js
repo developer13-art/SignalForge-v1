@@ -5,14 +5,12 @@
  *
  * @module server/modules/support/knowledge-base/article.controller
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { successResponse } from '../../../lib/response/success.response';
-import { paginatedResponse } from '../../../lib/response/paginated.response';
-import { articleService } from './article.service';
-
-export async function listArticles(req, res) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { successResponse } = require('../../../lib/response/success.response');
+const { paginatedResponse } = require('../../../lib/response/paginated.response');
+const { articleService } = require('./article.service');
+async function listArticles(req, res) {
   const { page, limit, category, locale } = req.query;
 
   const result = await articleService.listArticles({
@@ -26,8 +24,7 @@ export async function listArticles(req, res) {
     meta: result.meta,
   });
 }
-
-export async function getArticle(req, res) {
+async function getArticle(req, res) {
   const { slug } = req.params;
   const { locale } = req.query;
 
@@ -35,8 +32,7 @@ export async function getArticle(req, res) {
 
   return successResponse(res, { article });
 }
-
-export async function searchArticles(req, res) {
+async function searchArticles(req, res) {
   const { q, locale } = req.query;
 
   if (!q) {
@@ -47,16 +43,14 @@ export async function searchArticles(req, res) {
 
   return successResponse(res, { articles });
 }
-
-export async function listCategories(req, res) {
+async function listCategories(req, res) {
   const { locale } = req.query;
 
   const categories = await articleService.listCategories({ locale: locale || 'en' });
 
   return successResponse(res, { categories });
 }
-
-export async function createArticle(req, res) {
+async function createArticle(req, res) {
   const userId = req.user && req.user.id;
   const { title, body, category, published, locale, tags } = req.body || {};
 
@@ -76,8 +70,7 @@ export async function createArticle(req, res) {
 
   return successResponse(res, { article }, 201);
 }
-
-export async function updateArticle(req, res) {
+async function updateArticle(req, res) {
   const { articleId } = req.params;
   const { title, body, category, published, tags } = req.body || {};
 
@@ -92,16 +85,14 @@ export async function updateArticle(req, res) {
 
   return successResponse(res, { article });
 }
-
-export async function deleteArticle(req, res) {
+async function deleteArticle(req, res) {
   const { articleId } = req.params;
 
   const result = await articleService.deleteArticle({ articleId });
 
   return successResponse(res, result);
 }
-
-export const articleController = {
+const articleController = {
   listArticles,
   getArticle,
   searchArticles,
@@ -110,3 +101,18 @@ export const articleController = {
   updateArticle,
   deleteArticle,
 };
+module.exports.articleController = articleController;
+
+module.exports.listArticles = listArticles;
+
+module.exports.getArticle = getArticle;
+
+module.exports.searchArticles = searchArticles;
+
+module.exports.listCategories = listCategories;
+
+module.exports.createArticle = createArticle;
+
+module.exports.updateArticle = updateArticle;
+
+module.exports.deleteArticle = deleteArticle;

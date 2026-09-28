@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/performance/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class PerformanceRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class PerformanceRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -329,5 +327,5 @@ export class PerformanceRepository {
     await this.db.query('DELETE FROM equity_snapshots WHERE period_id = $1', [periodId]);
   }
 }
-
-export default PerformanceRepository;
+module.exports = PerformanceRepository;
+module.exports.PerformanceRepository = PerformanceRepository;

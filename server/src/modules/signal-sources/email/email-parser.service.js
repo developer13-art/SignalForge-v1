@@ -7,17 +7,16 @@
  *
  * @module server/modules/signal-sources/email/email-parser.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { buildSourceMessageKey } from '@signalforge/shared/utils/idempotency.util';
-import { buildMessageFingerprint } from '@signalforge/shared/utils/fingerprint.util';
-import { publishEvent } from '../../../events/event-publisher';
-import { messageRawStoreService } from '../messages/message-raw-store.service';
-import { handleEmailAttachments } from './email-attachment.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
+const { buildMessageFingerprint } = require('@signalforge/shared/utils/fingerprint.util');
+const { publishEvent } = require('../../../events/event-publisher');
+const { messageRawStoreService } = require('../messages/message-raw-store.service');
+const { handleEmailAttachments } = require('./email-attachment.service');
 
 function stripHtml(html) {
   if (!html || typeof html !== 'string') {
@@ -49,8 +48,7 @@ async function parseRawEmail(raw) {
     throw new AppError('Failed to parse email message', ERROR_CODES.EMAIL_PARSE_FAILED, 400);
   }
 }
-
-export async function handleEmailMessage({ userId, mailbox, raw, envelope, uid }) {
+async function handleEmailMessage({ userId, mailbox, raw, envelope, uid }) {
   if (!userId || !raw) {
     throw new AppError('userId and raw email are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -162,8 +160,10 @@ export async function handleEmailMessage({ userId, mailbox, raw, envelope, uid }
     messageId: envelopeData.externalMessageId,
   };
 }
-
-export const emailParserService = {
+const emailParserService = {
   handleEmailMessage,
   stripHtml,
 };
+module.exports.emailParserService = emailParserService;
+
+module.exports.handleEmailMessage = handleEmailMessage;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class TelegramRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class TelegramRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -198,5 +196,5 @@ export class TelegramRepository {
     return result.rows;
   }
 }
-
-export default TelegramRepository;
+module.exports = TelegramRepository;
+module.exports.TelegramRepository = TelegramRepository;

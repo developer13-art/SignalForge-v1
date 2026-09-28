@@ -5,11 +5,9 @@
  *
  * @module server/modules/support/categories/category.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertCategory({ name, slug, description, active }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertCategory({ name, slug, description, active }) {
   const { rows } = await db.query(
     `INSERT INTO support_categories
        (name, slug, description, active, created_at, updated_at)
@@ -19,32 +17,28 @@ export async function insertCategory({ name, slug, description, active }) {
   );
   return rows[0];
 }
-
-export async function findById({ categoryId }) {
+async function findById({ categoryId }) {
   const { rows } = await db.query(
     `SELECT * FROM support_categories WHERE id = $1 LIMIT 1`,
     [categoryId],
   );
   return rows[0] || null;
 }
-
-export async function findBySlug({ slug }) {
+async function findBySlug({ slug }) {
   const { rows } = await db.query(
     `SELECT * FROM support_categories WHERE slug = $1 LIMIT 1`,
     [slug],
   );
   return rows[0] || null;
 }
-
-export async function listAll({ activeOnly = false }) {
+async function listAll({ activeOnly = false }) {
   const where = activeOnly ? 'WHERE active = TRUE' : '';
   const { rows } = await db.query(
     `SELECT * FROM support_categories ${where} ORDER BY name ASC`,
   );
   return rows;
 }
-
-export async function updateCategory({ categoryId, name, description, active }) {
+async function updateCategory({ categoryId, name, description, active }) {
   const { rows } = await db.query(
     `UPDATE support_categories
         SET name = COALESCE($1, name),
@@ -57,16 +51,14 @@ export async function updateCategory({ categoryId, name, description, active }) 
   );
   return rows[0] || null;
 }
-
-export async function deleteCategory({ categoryId }) {
+async function deleteCategory({ categoryId }) {
   const { rowCount } = await db.query(
     `DELETE FROM support_categories WHERE id = $1`,
     [categoryId],
   );
   return rowCount > 0;
 }
-
-export const categoryRepository = {
+const categoryRepository = {
   insertCategory,
   findById,
   findBySlug,
@@ -74,3 +66,16 @@ export const categoryRepository = {
   updateCategory,
   deleteCategory,
 };
+module.exports.categoryRepository = categoryRepository;
+
+module.exports.insertCategory = insertCategory;
+
+module.exports.findById = findById;
+
+module.exports.findBySlug = findBySlug;
+
+module.exports.listAll = listAll;
+
+module.exports.updateCategory = updateCategory;
+
+module.exports.deleteCategory = deleteCategory;

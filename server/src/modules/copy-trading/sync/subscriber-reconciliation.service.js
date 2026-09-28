@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/copy-trading/sync/subscriber-reconciliation
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { CopyTradingRepository } from '../copy-trading.repository.js';
-import { TradeStateRepository } from '../../trade-state/trade-state.repository.js';
-import { emitSubscriberReconciled, emitCopyFailed } from '../copy-trading.events.js';
-import { SUBSCRIBER_RECONCILE_INTERVAL_MS } from '../copy-trading.constants.js';
-
-export class SubscriberReconciliationService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { CopyTradingRepository } = require('../copy-trading.repository.js');
+const { TradeStateRepository } = require('../../trade-state/trade-state.repository.js');
+const { emitSubscriberReconciled, emitCopyFailed } = require('../copy-trading.events.js');
+const { SUBSCRIBER_RECONCILE_INTERVAL_MS } = require('../copy-trading.constants.js');
+class SubscriberReconciliationService {
   constructor(dependencies = {}) {
     this.copyRepository = dependencies.copyRepository || new CopyTradingRepository();
     this.tradeRepository = dependencies.tradeRepository || new TradeStateRepository();
@@ -105,5 +103,5 @@ export class SubscriberReconciliationService {
     }
   }
 }
-
-export default SubscriberReconciliationService;
+module.exports = SubscriberReconciliationService;
+module.exports.SubscriberReconciliationService = SubscriberReconciliationService;

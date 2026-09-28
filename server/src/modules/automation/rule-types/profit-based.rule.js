@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/automation/rule-types/profit-based
  */
-
-import { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } from '../automation.constants.js';
-
-export class ProfitBasedRule {
+const { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } = require('../automation.constants.js');
+class ProfitBasedRule {
   static supports(condition) {
     return [
       AUTOMATION_CONDITION_TYPES.PROFIT_GREATER_THAN,
@@ -19,5 +17,5 @@ export class ProfitBasedRule {
     return [AUTOMATION_ACTION_TYPES.MOVE_STOP_LOSS_TO_BREAK_EVEN];
   }
 }
-
-export default ProfitBasedRule;
+module.exports = ProfitBasedRule;
+module.exports.ProfitBasedRule = ProfitBasedRule;

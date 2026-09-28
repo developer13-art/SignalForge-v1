@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/execution/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class ExecutionRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class ExecutionRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -341,5 +339,5 @@ export class ExecutionRepository {
     return result.rows;
   }
 }
-
-export default ExecutionRepository;
+module.exports = ExecutionRepository;
+module.exports.ExecutionRepository = ExecutionRepository;

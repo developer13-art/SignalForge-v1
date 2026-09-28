@@ -6,20 +6,18 @@
  *
  * @module server/modules/white-label/domains/domain.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { DNS_VERIFICATION_PREFIX } from '../white-label.constants';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { DNS_VERIFICATION_PREFIX } = require('../white-label.constants');
 
 function generateVerificationToken() {
   return crypto.randomBytes(24).toString('hex');
 }
-
-export async function listDomains({ projectId }) {
+async function listDomains({ projectId }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -45,8 +43,7 @@ export async function listDomains({ projectId }) {
     createdAt: row.created_at,
   }));
 }
-
-export async function addDomain({ projectId, domain }) {
+async function addDomain({ projectId, domain }) {
   if (!projectId || !domain) {
     throw new AppError('projectId and domain are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -88,8 +85,7 @@ export async function addDomain({ projectId, domain }) {
     createdAt: row.created_at,
   };
 }
-
-export async function verifyDomain({ projectId, domainId }) {
+async function verifyDomain({ projectId, domainId }) {
   if (!projectId || !domainId) {
     throw new AppError('projectId and domainId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -157,8 +153,7 @@ export async function verifyDomain({ projectId, domainId }) {
 
   return { verified: false, reason: 'RECORD_NOT_FOUND' };
 }
-
-export async function removeDomain({ projectId, domainId }) {
+async function removeDomain({ projectId, domainId }) {
   if (!projectId || !domainId) {
     throw new AppError('projectId and domainId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -176,15 +171,13 @@ export async function removeDomain({ projectId, domainId }) {
 
   return { removed: true };
 }
-
-export async function deleteAllDomains({ projectId }) {
+async function deleteAllDomains({ projectId }) {
   if (!projectId) {
     return;
   }
   await db.query(`DELETE FROM white_label_domains WHERE project_id = $1`, [projectId]);
 }
-
-export async function findVerifiedDomain({ domain }) {
+async function findVerifiedDomain({ domain }) {
   if (!domain) {
     return null;
   }
@@ -199,8 +192,7 @@ export async function findVerifiedDomain({ domain }) {
 
   return rows[0] || null;
 }
-
-export const domainService = {
+const domainService = {
   listDomains,
   addDomain,
   verifyDomain,
@@ -208,3 +200,16 @@ export const domainService = {
   deleteAllDomains,
   findVerifiedDomain,
 };
+module.exports.domainService = domainService;
+
+module.exports.listDomains = listDomains;
+
+module.exports.addDomain = addDomain;
+
+module.exports.verifyDomain = verifyDomain;
+
+module.exports.removeDomain = removeDomain;
+
+module.exports.deleteAllDomains = deleteAllDomains;
+
+module.exports.findVerifiedDomain = findVerifiedDomain;

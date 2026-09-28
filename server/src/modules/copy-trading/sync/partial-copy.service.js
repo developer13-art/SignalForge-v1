@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/copy-trading/sync/partial-copy
  */
-
-import { normalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class PartialCopyService {
+const { normalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class PartialCopyService {
   constructor() {
     this.logger = getLogger('copy-trading-partial-copy');
   }
@@ -53,5 +51,5 @@ export class PartialCopyService {
     return { applied, skipped };
   }
 }
-
-export default PartialCopyService;
+module.exports = PartialCopyService;
+module.exports.PartialCopyService = PartialCopyService;

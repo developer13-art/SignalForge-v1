@@ -3,21 +3,11 @@
  *
  * @module signalforge/server/modules/auth/services/two-factor
  */
-
-import bcrypt from 'bcrypt';
-
-import { TotpService } from './totp.service.js';
-import {
-  TwoFactorAlreadyEnabledError,
-  TwoFactorNotEnabledError,
-  InvalidTwoFactorCodeError,
-} from '../auth.errors.js';
-import {
-  emitTwoFactorEnabled,
-  emitTwoFactorDisabled,
-} from '../auth.events.js';
-
-export class TwoFactorService {
+const bcrypt = require('bcrypt');
+const { TotpService } = require('./totp.service.js');
+const { TwoFactorAlreadyEnabledError, TwoFactorNotEnabledError, InvalidTwoFactorCodeError } = require('../auth.errors.js');
+const { emitTwoFactorEnabled, emitTwoFactorDisabled } = require('../auth.events.js');
+class TwoFactorService {
   constructor(repository) {
     this.repository = repository;
     this.totp = new TotpService();
@@ -187,5 +177,5 @@ export class TwoFactorService {
     return { backupCodes: newBackupCodes };
   }
 }
-
-export default TwoFactorService;
+module.exports = TwoFactorService;
+module.exports.TwoFactorService = TwoFactorService;

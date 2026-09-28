@@ -7,35 +7,26 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/parser/service
  */
-
-import { ParserRepository } from './parser.repository.js';
-import { PromptManagerService } from '../llm/prompt-manager.service.js';
-import { LlmGatewayService } from '../llm/llm-gateway.service.js';
-import { NormalizerService } from '../normalization/normalizer.service.js';
-import { PromptInjectionGuardService } from '../safety/prompt-injection-guard.service.js';
-import { SafetyFilterService } from '../safety/safety-filter.service.js';
-import { SymbolExtractorService } from './symbol-extractor.service.js';
-import { DirectionNormalizerService } from '../normalization/direction-normalizer.service.js';
-import { EntryExtractorService } from './entry-extractor.service.js';
-import { SlExtractorService } from './sl-extractor.service.js';
-import { TpExtractorService } from './tp-extractor.service.js';
-import { RiskExtractorService } from './risk-extractor.service.js';
-import { TimeframeExtractorService } from './timeframe-extractor.service.js';
-import { ContextExtractorService } from './context-extractor.service.js';
-import { IntentExtractorService } from './intent-extractor.service.js';
-import { OrderTypeExtractorService } from './order-type-extractor.service.js';
-import { LanguageService } from './language.service.js';
-import { PARSER_TYPES, DEFAULT_PARSER_TIMEOUT_MS } from '../ai.constants.js';
-import {
-  AiParsingTimeoutError,
-  AiParsingError,
-  AiParsingInvalidResponseError,
-} from '../ai.errors.js';
-import {
-  emitParsingStarted,
-  emitParsingCompleted,
-  emitParsingFailed,
-} from '../ai.events.js';
+const { ParserRepository } = require('./parser.repository.js');
+const { PromptManagerService } = require('../llm/prompt-manager.service.js');
+const { LlmGatewayService } = require('../llm/llm-gateway.service.js');
+const { NormalizerService } = require('../normalization/normalizer.service.js');
+const { PromptInjectionGuardService } = require('../safety/prompt-injection-guard.service.js');
+const { SafetyFilterService } = require('../safety/safety-filter.service.js');
+const { SymbolExtractorService } = require('./symbol-extractor.service.js');
+const { DirectionNormalizerService } = require('../normalization/direction-normalizer.service.js');
+const { EntryExtractorService } = require('./entry-extractor.service.js');
+const { SlExtractorService } = require('./sl-extractor.service.js');
+const { TpExtractorService } = require('./tp-extractor.service.js');
+const { RiskExtractorService } = require('./risk-extractor.service.js');
+const { TimeframeExtractorService } = require('./timeframe-extractor.service.js');
+const { ContextExtractorService } = require('./context-extractor.service.js');
+const { IntentExtractorService } = require('./intent-extractor.service.js');
+const { OrderTypeExtractorService } = require('./order-type-extractor.service.js');
+const { LanguageService } = require('./language.service.js');
+const { PARSER_TYPES, DEFAULT_PARSER_TIMEOUT_MS } = require('../ai.constants.js');
+const { AiParsingTimeoutError, AiParsingError, AiParsingInvalidResponseError } = require('../ai.errors.js');
+const { emitParsingStarted, emitParsingCompleted, emitParsingFailed } = require('../ai.events.js');
 
 function withTimeout(promise, timeoutMs, label) {
   let timer;
@@ -46,8 +37,7 @@ function withTimeout(promise, timeoutMs, label) {
   });
   return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timer));
 }
-
-export class ParserService {
+class ParserService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ParserRepository();
     this.promptManager = dependencies.promptManager || new PromptManagerService();
@@ -346,5 +336,5 @@ export class ParserService {
     };
   }
 }
-
-export default ParserService;
+module.exports = ParserService;
+module.exports.ParserService = ParserService;

@@ -5,16 +5,14 @@
  *
  * @module server/modules/support/ticket.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { successResponse } from '../../lib/response/success.response';
-import { paginatedResponse } from '../../lib/response/paginated.response';
-import { ticketService } from './ticket.service';
-import { validateCreateTicketPayload, validateAddMessagePayload } from './ticket.validator';
-
-export async function createTicket(req, res) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { successResponse } = require('../../lib/response/success.response');
+const { paginatedResponse } = require('../../lib/response/paginated.response');
+const { ticketService } = require('./ticket.service');
+const { validateCreateTicketPayload, validateAddMessagePayload } = require('./ticket.validator');
+async function createTicket(req, res) {
   const userId = req.user && req.user.id;
   const payload = req.body || {};
 
@@ -33,8 +31,7 @@ export async function createTicket(req, res) {
 
   return successResponse(res, { ticket }, 201);
 }
-
-export async function getTicket(req, res) {
+async function getTicket(req, res) {
   const userId = req.user && req.user.id;
   const { ticketId } = req.params;
 
@@ -46,8 +43,7 @@ export async function getTicket(req, res) {
 
   return successResponse(res, { ticket });
 }
-
-export async function addMessage(req, res) {
+async function addMessage(req, res) {
   const userId = req.user && req.user.id;
   const { ticketId } = req.params;
   const payload = req.body || {};
@@ -68,8 +64,7 @@ export async function addMessage(req, res) {
 
   return successResponse(res, { message: result }, 201);
 }
-
-export async function listMyTickets(req, res) {
+async function listMyTickets(req, res) {
   const userId = req.user && req.user.id;
   const { page, limit, status, category, priority } = req.query;
 
@@ -88,8 +83,7 @@ export async function listMyTickets(req, res) {
     meta: result.meta,
   });
 }
-
-export async function getMyStats(req, res) {
+async function getMyStats(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -100,8 +94,7 @@ export async function getMyStats(req, res) {
 
   return successResponse(res, { stats });
 }
-
-export async function closeTicket(req, res) {
+async function closeTicket(req, res) {
   const userId = req.user && req.user.id;
   const { ticketId } = req.params;
 
@@ -124,8 +117,7 @@ export async function closeTicket(req, res) {
 
   return successResponse(res, { closed: true });
 }
-
-export const ticketController = {
+const ticketController = {
   createTicket,
   getTicket,
   addMessage,
@@ -133,3 +125,16 @@ export const ticketController = {
   getMyStats,
   closeTicket,
 };
+module.exports.ticketController = ticketController;
+
+module.exports.createTicket = createTicket;
+
+module.exports.getTicket = getTicket;
+
+module.exports.addMessage = addMessage;
+
+module.exports.listMyTickets = listMyTickets;
+
+module.exports.getMyStats = getMyStats;
+
+module.exports.closeTicket = closeTicket;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-shadow/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class ShadowRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class ShadowRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -252,5 +250,5 @@ export class ShadowRepository {
     return result.rows;
   }
 }
-
-export default ShadowRepository;
+module.exports = ShadowRepository;
+module.exports.ShadowRepository = ShadowRepository;

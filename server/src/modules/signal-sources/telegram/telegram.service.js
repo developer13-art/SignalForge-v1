@@ -11,20 +11,19 @@
  *
  * @module server/modules/signal-sources/telegram/telegram.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { buildSourceMessageKey } from '@signalforge/shared/utils/idempotency.util';
-import { buildMessageFingerprint } from '@signalforge/shared/utils/fingerprint.util';
-import { publishEvent } from '../../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { telegramSessionService } from './session/telegram-session.service';
-import { telegramChannelService } from './channels/telegram-channel.service';
-import { telegramListenerService } from './listener/telegram-listener.service';
-import { telegramReconnectService } from './reconnect/telegram-reconnect.service';
-import { getTelegramClient } from './client/telegram-client.factory';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
+const { buildMessageFingerprint } = require('@signalforge/shared/utils/fingerprint.util');
+const { publishEvent } = require('../../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { telegramSessionService } = require('./session/telegram-session.service');
+const { telegramChannelService } = require('./channels/telegram-channel.service');
+const { telegramListenerService } = require('./listener/telegram-listener.service');
+const { telegramReconnectService } = require('./reconnect/telegram-reconnect.service');
+const { getTelegramClient } = require('./client/telegram-client.factory');
 
 const ACTIVE_LISTENERS = new Map();
 
@@ -37,7 +36,7 @@ const ACTIVE_LISTENERS = new Map();
  * @param {string} params.countryCode
  * @returns {Promise<{sessionId: string, phoneCodeHash: string}>}
  */
-export async function initiateLogin({ userId, phoneNumber, countryCode }) {
+async function initiateLogin({ userId, phoneNumber, countryCode }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -75,7 +74,7 @@ export async function initiateLogin({ userId, phoneNumber, countryCode }) {
  * @param {string} [params.password]
  * @returns {Promise<{sessionPersisted: boolean}>}
  */
-export async function completeLogin({ userId, sessionId, code, password }) {
+async function completeLogin({ userId, sessionId, code, password }) {
   if (!userId || !sessionId || !code) {
     throw new AppError(
       'userId, sessionId, and code are required',
@@ -143,7 +142,7 @@ export async function completeLogin({ userId, sessionId, code, password }) {
  * @param {string} params.userId
  * @returns {Promise<{listening: boolean, channels: string[]}>}
  */
-export async function startListening({ userId }) {
+async function startListening({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -198,7 +197,7 @@ export async function startListening({ userId }) {
  * @param {string} params.userId
  * @returns {Promise<{listening: boolean}>}
  */
-export async function stopListening({ userId }) {
+async function stopListening({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -222,7 +221,7 @@ export async function stopListening({ userId }) {
  * @param {string} params.userId
  * @returns {Promise<{disconnected: boolean}>}
  */
-export async function disconnect({ userId }) {
+async function disconnect({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -320,11 +319,21 @@ async function handleDeletedMessage(message) {
     },
   });
 }
-
-export const telegramService = {
+const telegramService = {
   initiateLogin,
   completeLogin,
   startListening,
   stopListening,
   disconnect,
 };
+module.exports.telegramService = telegramService;
+
+module.exports.initiateLogin = initiateLogin;
+
+module.exports.completeLogin = completeLogin;
+
+module.exports.startListening = startListening;
+
+module.exports.stopListening = stopListening;
+
+module.exports.disconnect = disconnect;

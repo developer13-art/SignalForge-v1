@@ -3,28 +3,24 @@
  *
  * @module server/utils/password.util
  */
-
-import bcrypt from 'bcryptjs';
-import crypto from 'node:crypto';
-import { config } from '../config';
+const bcrypt = require('bcryptjs');
+const crypto = require('node:crypto');
+const { config } = require('../config');
 
 const DEFAULT_ROUNDS = (config.security && config.security.hashSaltRounds) || 12;
-
-export async function hashPassword(plain) {
+async function hashPassword(plain) {
   if (typeof plain !== 'string' || plain.length === 0) {
     throw new Error('Password must be a non-empty string');
   }
   return bcrypt.hash(plain, DEFAULT_ROUNDS);
 }
-
-export async function verifyPassword(plain, hash) {
+async function verifyPassword(plain, hash) {
   if (typeof plain !== 'string' || typeof hash !== 'string') {
     return false;
   }
   return bcrypt.compare(plain, hash);
 }
-
-export function needsRehash(hash, rounds = DEFAULT_ROUNDS) {
+function needsRehash(hash, rounds = DEFAULT_ROUNDS) {
   if (!hash || typeof hash !== 'string') {
     return true;
   }
@@ -34,8 +30,7 @@ export function needsRehash(hash, rounds = DEFAULT_ROUNDS) {
   }
   return parsed < rounds;
 }
-
-export function generatePassword(length = 16) {
+function generatePassword(length = 16) {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
   const bytes = crypto.randomBytes(length * 2);
   let result = '';
@@ -49,11 +44,17 @@ export function generatePassword(length = 16) {
 
   return result;
 }
-
-export const passwordUtil = {
+const passwordUtil = {
   hashPassword,
   verifyPassword,
   needsRehash,
   generatePassword,
   DEFAULT_ROUNDS,
 };
+module.exports.passwordUtil = passwordUtil;
+module.exports.needsRehash = needsRehash;
+module.exports.generatePassword = generatePassword;
+
+module.exports.hashPassword = hashPassword;
+
+module.exports.verifyPassword = verifyPassword;

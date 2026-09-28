@@ -5,8 +5,7 @@
  */
 
 const SPREAD_CACHE_TTL_MS = 30000;
-
-export class SpreadService {
+class SpreadService {
   constructor() {
     this.cache = new Map();
   }
@@ -36,5 +35,5 @@ export class SpreadService {
     return entry.spreadPips;
   }
 }
-
-export default SpreadService;
+module.exports = SpreadService;
+module.exports.SpreadService = SpreadService;

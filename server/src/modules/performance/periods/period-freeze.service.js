@@ -3,23 +3,14 @@
  *
  * @module signalforge/server/modules/performance/periods/freeze
  */
-
-import { PeriodRepository } from './repository.js';
-import { PeriodCalculatorService } from './calculator.js';
-import { PeriodStatuses } from '../performance.constants.js';
-import {
-  PeriodAlreadyClosedError,
-  PeriodNotEditableError,
-  PerformancePeriodNotFoundError,
-} from '../performance.errors.js';
-import {
-  emitPeriodFrozen,
-  emitMetricCalculated,
-} from '../performance.events.js';
-import { PERFORMANCE_METRIC_TYPES } from '../performance.constants.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class PeriodFreezeService {
+const { PeriodRepository } = require('./repository.js');
+const { PeriodCalculatorService } = require('./calculator.js');
+const { PeriodStatuses } = require('../performance.constants.js');
+const { PeriodAlreadyClosedError, PeriodNotEditableError, PerformancePeriodNotFoundError } = require('../performance.errors.js');
+const { emitPeriodFrozen, emitMetricCalculated } = require('../performance.events.js');
+const { PERFORMANCE_METRIC_TYPES } = require('../performance.constants.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class PeriodFreezeService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new PeriodRepository();
     this.calculator = dependencies.calculator || new PeriodCalculatorService();
@@ -123,5 +114,5 @@ export class PeriodFreezeService {
     return results;
   }
 }
-
-export default PeriodFreezeService;
+module.exports = PeriodFreezeService;
+module.exports.PeriodFreezeService = PeriodFreezeService;

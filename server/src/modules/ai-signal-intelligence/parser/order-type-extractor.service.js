@@ -10,8 +10,7 @@ const PATTERNS = Object.freeze([
   { pattern: /\b(buy\s+stop|sell\s+stop|stop\s+order|stop\s+at)\b/i, type: 'STOP' },
   { pattern: /\b(stop\s+limit|stop[\-\s]*limit\s+order)\b/i, type: 'STOP_LIMIT' },
 ]);
-
-export class OrderTypeExtractorService {
+class OrderTypeExtractorService {
   extract(text) {
     if (typeof text !== 'string' || text.length === 0) {
       return 'MARKET';
@@ -24,5 +23,5 @@ export class OrderTypeExtractorService {
     return 'MARKET';
   }
 }
-
-export default OrderTypeExtractorService;
+module.exports = OrderTypeExtractorService;
+module.exports.OrderTypeExtractorService = OrderTypeExtractorService;

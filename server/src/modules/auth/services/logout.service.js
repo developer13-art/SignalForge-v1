@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/auth/services/logout
  */
-
-import { SessionService } from './session.service.js';
-import { emitUserLoggedOut, emitSessionRevoked } from '../auth.events.js';
-
-export class LogoutService {
+const { SessionService } = require('./session.service.js');
+const { emitUserLoggedOut, emitSessionRevoked } = require('../auth.events.js');
+class LogoutService {
   constructor(repository) {
     this.repository = repository;
     this.sessionService = new SessionService(repository);
@@ -31,5 +29,5 @@ export class LogoutService {
     return { loggedOut: true, devicesRevoked: true };
   }
 }
-
-export default LogoutService;
+module.exports = LogoutService;
+module.exports.LogoutService = LogoutService;

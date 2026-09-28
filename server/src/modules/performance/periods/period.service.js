@@ -3,21 +3,13 @@
  *
  * @module signalforge/server/modules/performance/periods/service
  */
-
-import { PeriodRepository } from './repository.js';
-import { PeriodCalculatorService } from './calculator.js';
-import { PeriodFreezeService } from './freeze.js';
-import { PeriodCloserService } from './closer.js';
-import { PERFORMANCE_METRIC_TYPES } from '../performance.constants.js';
-import {
-  PerformancePeriodNotFoundError,
-  InvalidSettlementPeriodError,
-  PeriodNotEditableError,
-} from '../performance.errors.js';
-import {
-  emitPeriodOpened,
-  emitPeriodUpdated,
-} from '../performance.events.js';
+const { PeriodRepository } = require('./repository.js');
+const { PeriodCalculatorService } = require('./calculator.js');
+const { PeriodFreezeService } = require('./freeze.js');
+const { PeriodCloserService } = require('./closer.js');
+const { PERFORMANCE_METRIC_TYPES } = require('../performance.constants.js');
+const { PerformancePeriodNotFoundError, InvalidSettlementPeriodError, PeriodNotEditableError } = require('../performance.errors.js');
+const { emitPeriodOpened, emitPeriodUpdated } = require('../performance.events.js');
 
 const PERIOD_PATTERN = /^\d{4}-\d{2}$/;
 
@@ -28,8 +20,7 @@ function lastDayOfMonth(year, month) {
 function firstDayOfMonth(year, month) {
   return new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0));
 }
-
-export class PeriodService {
+class PeriodService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new PeriodRepository();
     this.calculator = dependencies.calculator || new PeriodCalculatorService();
@@ -243,6 +234,5 @@ export class PeriodService {
   }
 }
 
-export { PERFORMANCE_METRIC_TYPES };
-
-export default PeriodService;
+module.exports = PeriodService;
+module.exports.PeriodService = PeriodService;

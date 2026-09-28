@@ -3,15 +3,13 @@
  *
  * @module signalforge/server/modules/provider-dna/controller
  */
-
-import { DnaService } from './dna.service.js';
-import { RuleController } from './rules/rule.controller.js';
-import { ProfileController } from './profile/profile.controller.js';
-import { validateCreateDnaPayload, validateRuleCreatePayload, validateLearningPayload } from './dna.validator.js';
-import { validateDnaTestPayload } from './rules/rule-validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class DnaController {
+const { DnaService } = require('./dna.service.js');
+const { RuleController } = require('./rules/rule.controller.js');
+const { ProfileController } = require('./profile/profile.controller.js');
+const { validateCreateDnaPayload, validateRuleCreatePayload, validateLearningPayload } = require('./dna.validator.js');
+const { validateDnaTestPayload } = require('./rules/rule-validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class DnaController {
   constructor(service = null) {
     this.service = service || new DnaService();
     this.ruleController = new RuleController();
@@ -181,5 +179,5 @@ export class DnaController {
     }
   };
 }
-
-export default DnaController;
+module.exports = DnaController;
+module.exports.DnaController = DnaController;

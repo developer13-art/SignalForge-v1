@@ -3,15 +3,13 @@
  *
  * @module server/lib/errors/broker-error
  */
-
-import { AppError } from './app-error';
-import { ERROR_CODES } from './error-codes';
-
-export class BrokerError extends AppError {
+const { AppError } = require('./app-error');
+const { ERROR_CODES } = require('./error-codes');
+class BrokerError extends AppError {
   constructor(message, code = ERROR_CODES.BROKER_CONNECTION_FAILED, details = null) {
     super(message, code, 502, details);
     this.name = 'BrokerError';
   }
 }
-
-export default BrokerError;
+module.exports = BrokerError;
+module.exports.BrokerError = BrokerError;

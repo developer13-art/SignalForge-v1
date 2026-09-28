@@ -8,18 +8,14 @@
  *
  * @module server/modules/signal-sources/discord/discord-webhook.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { config } from '../../../config';
-import { db } from '../../../database';
-import { handleDiscordMessage } from './discord-message-handler.service';
-import {
-  emitDiscordWebhookReceived,
-  emitDiscordWebhookRejected,
-} from './discord.events';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { config } = require('../../../config');
+const { db } = require('../../../database');
+const { handleDiscordMessage } = require('./discord-message-handler.service');
+const { emitDiscordWebhookReceived, emitDiscordWebhookRejected } = require('./discord.events');
 
 const SIGNATURE_HEADER = 'x-signature-ed25519';
 const TIMESTAMP_HEADER = 'x-signature-timestamp';
@@ -79,8 +75,7 @@ async function findUserForGuild({ guildId, channelId }) {
 
   return null;
 }
-
-export async function verifyAndParseWebhook({ headers, rawBody }) {
+async function verifyAndParseWebhook({ headers, rawBody }) {
   const signature = headers[SIGNATURE_HEADER] || headers[SIGNATURE_HEADER.toLowerCase()];
   const timestamp = headers[TIMESTAMP_HEADER] || headers[TIMESTAMP_HEADER.toLowerCase()];
 
@@ -117,8 +112,7 @@ export async function verifyAndParseWebhook({ headers, rawBody }) {
 
   return payload;
 }
-
-export async function handleWebhookEvent({ payload }) {
+async function handleWebhookEvent({ payload }) {
   if (!payload || typeof payload !== 'object') {
     throw new AppError('Webhook payload is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -187,8 +181,7 @@ export async function handleWebhookEvent({ payload }) {
 
   return { handled: true, eventType, userId, messageId };
 }
-
-export async function sendTestWebhook({ webhookUrl, content }) {
+async function sendTestWebhook({ webhookUrl, content }) {
   if (!webhookUrl || !content) {
     throw new AppError('webhookUrl and content are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -210,11 +203,17 @@ export async function sendTestWebhook({ webhookUrl, content }) {
 
   return { sent: true };
 }
-
-export const discordWebhookService = {
+const discordWebhookService = {
   verifyAndParseWebhook,
   handleWebhookEvent,
   sendTestWebhook,
   SIGNATURE_HEADER,
   TIMESTAMP_HEADER,
 };
+module.exports.discordWebhookService = discordWebhookService;
+
+module.exports.verifyAndParseWebhook = verifyAndParseWebhook;
+
+module.exports.handleWebhookEvent = handleWebhookEvent;
+
+module.exports.sendTestWebhook = sendTestWebhook;

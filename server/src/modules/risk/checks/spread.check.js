@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/risk/checks/spread
  */
-
-import { BaseCheck } from './base.check.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskSpreadTooWide } from '../risk.events.js';
-
-export class SpreadCheck extends BaseCheck {
+const { BaseCheck } = require('./base.check.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskSpreadTooWide } = require('../risk.events.js');
+class SpreadCheck extends BaseCheck {
   constructor() {
     super(RISK_CHECKS.SPREAD);
   }
@@ -40,5 +38,5 @@ export class SpreadCheck extends BaseCheck {
     return this.pass({ currentSpread, maxSpreadPips: profile.max_spread_pips });
   }
 }
-
-export default SpreadCheck;
+module.exports = SpreadCheck;
+module.exports.SpreadCheck = SpreadCheck;

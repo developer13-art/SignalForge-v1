@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/018_create_solana_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS solana_wallets (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -189,8 +188,7 @@ export async function up(client) {
       ON solana_indexer_events (program_id, slot);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS solana_indexer_events CASCADE`);
   await client.query(`DROP TABLE IF EXISTS solana_indexer_checkpoints CASCADE`);
   await client.query(`DROP TABLE IF EXISTS solana_transactions CASCADE`);
@@ -199,3 +197,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS solana_attestations CASCADE`);
   await client.query(`DROP TABLE IF EXISTS solana_wallets CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

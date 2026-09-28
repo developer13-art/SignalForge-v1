@@ -3,10 +3,9 @@
  *
  * @module signalforge/server/modules/withdrawals/methods/crypto
  */
-
-import { WithdrawalMethodInterface } from './withdrawal-method.interface.js';
-import { WITHDRAWAL_METHOD_TYPES } from '../withdrawal.constants.js';
-import { WithdrawalProcessingError } from '../withdrawal.errors.js';
+const { WithdrawalMethodInterface } = require('./withdrawal-method.interface.js');
+const { WITHDRAWAL_METHOD_TYPES } = require('../withdrawal.constants.js');
+const { WithdrawalProcessingError } = require('../withdrawal.errors.js');
 
 const NETWORKS = Object.freeze({
   SOLANA: { fee: 0.01, min: 1 },
@@ -14,8 +13,7 @@ const NETWORKS = Object.freeze({
   BITCOIN: { fee: 3, min: 30 },
   POLYGON: { fee: 0.1, min: 5 },
 });
-
-export class CryptoMethod extends WithdrawalMethodInterface {
+class CryptoMethod extends WithdrawalMethodInterface {
   constructor() {
     super('CRYPTO');
   }
@@ -89,5 +87,5 @@ export class CryptoMethod extends WithdrawalMethodInterface {
     };
   }
 }
-
-export default CryptoMethod;
+module.exports = CryptoMethod;
+module.exports.CryptoMethod = CryptoMethod;

@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/subscriptions/lifecycle/expiry
  */
-
-import { SubscriptionRepository } from '../subscription.repository.js';
-import { SUBSCRIPTION_STATUSES } from '../subscription.constants.js';
-import { emitSubscriptionExpired } from '../subscription.events.js';
-
-export class ExpiryService {
+const { SubscriptionRepository } = require('../subscription.repository.js');
+const { SUBSCRIPTION_STATUSES } = require('../subscription.constants.js');
+const { emitSubscriptionExpired } = require('../subscription.events.js');
+class ExpiryService {
   constructor(repository = null) {
     this.repository = repository || new SubscriptionRepository();
   }
@@ -48,5 +46,5 @@ export class ExpiryService {
     return true;
   }
 }
-
-export default ExpiryService;
+module.exports = ExpiryService;
+module.exports.ExpiryService = ExpiryService;

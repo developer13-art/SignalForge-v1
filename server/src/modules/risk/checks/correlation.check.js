@@ -3,12 +3,11 @@
  *
  * @module signalforge/server/modules/risk/checks/correlation
  */
-
-import { BaseCheck } from './base.check.js';
-import { RiskRepository } from '../risk.repository.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskCorrelationBlocked } from '../risk.events.js';
-import { normalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
+const { BaseCheck } = require('./base.check.js');
+const { RiskRepository } = require('../risk.repository.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskCorrelationBlocked } = require('../risk.events.js');
+const { normalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
 
 const CORRELATION_GROUPS = Object.freeze({
   USD_MAJORS: ['EURUSD', 'GBPUSD', 'AUDUSD', 'NZDUSD', 'USDCAD', 'USDCHF', 'USDJPY'],
@@ -19,8 +18,7 @@ const CORRELATION_GROUPS = Object.freeze({
   CRYPTO: ['BTCUSD', 'ETHUSD', 'SOLUSD'],
   INDICES: ['US30', 'NAS100', 'SPX500'],
 });
-
-export class CorrelationCheck extends BaseCheck {
+class CorrelationCheck extends BaseCheck {
   constructor(repository = null) {
     super(RISK_CHECKS.CORRELATION);
     this.repository = repository || new RiskRepository();
@@ -80,5 +78,5 @@ export class CorrelationCheck extends BaseCheck {
     return this.pass({ correlatedCount, maxCorrelated });
   }
 }
-
-export default CorrelationCheck;
+module.exports = CorrelationCheck;
+module.exports.CorrelationCheck = CorrelationCheck;

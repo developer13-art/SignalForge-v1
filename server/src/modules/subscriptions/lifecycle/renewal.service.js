@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/subscriptions/lifecycle/renewal
  */
-
-import { SubscriptionRepository } from '../subscription.repository.js';
-import { ActivationService } from './activation.service.js';
-import { SUBSCRIPTION_STATUSES } from '../subscription.constants.js';
-import { emitSubscriptionRenewed, emitSubscriptionExpired } from '../subscription.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class RenewalService {
+const { SubscriptionRepository } = require('../subscription.repository.js');
+const { ActivationService } = require('./activation.service.js');
+const { SUBSCRIPTION_STATUSES } = require('../subscription.constants.js');
+const { emitSubscriptionRenewed, emitSubscriptionExpired } = require('../subscription.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class RenewalService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new SubscriptionRepository();
     this.activation = dependencies.activation || new ActivationService();
@@ -68,5 +66,5 @@ export class RenewalService {
     return results;
   }
 }
-
-export default RenewalService;
+module.exports = RenewalService;
+module.exports.RenewalService = RenewalService;

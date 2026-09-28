@@ -7,20 +7,15 @@
  *
  * @module server/modules/solana/transactions/transaction-confirmer.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { sleep } from '@signalforge/shared/utils/retry.util';
-import { connectionService } from '../config/connection.service';
-import { transactionRepository } from './transaction.repository';
-import {
-  SOLANA_CONFIRMATION_TIMEOUT_MS,
-  SOLANA_INDEXER_POLL_INTERVAL_MS,
-} from '../solana.constants';
-import { emitTransactionConfirmed, emitTransactionFailed } from '../solana.events';
-
-export async function confirmTransaction({
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { sleep } = require('@signalforge/shared/utils/retry.util');
+const { connectionService } = require('../config/connection.service');
+const { transactionRepository } = require('./transaction.repository');
+const { SOLANA_CONFIRMATION_TIMEOUT_MS, SOLANA_INDEXER_POLL_INTERVAL_MS } = require('../solana.constants');
+const { emitTransactionConfirmed, emitTransactionFailed } = require('../solana.events');
+async function confirmTransaction({
   txSignature,
   lastValidBlockHeight,
   timeoutMs = SOLANA_CONFIRMATION_TIMEOUT_MS,
@@ -124,8 +119,7 @@ export async function confirmTransaction({
 
   return { confirmed: false, reason: 'TIMEOUT' };
 }
-
-export async function confirmPendingTransactions({ limit = 100 }) {
+async function confirmPendingTransactions({ limit = 100 }) {
   const pending = await transactionRepository.listPendingForConfirmation({ limit });
 
   const results = [];
@@ -142,8 +136,12 @@ export async function confirmPendingTransactions({ limit = 100 }) {
 
   return { processed: results.length, results };
 }
-
-export const transactionConfirmerService = {
+const transactionConfirmerService = {
   confirmTransaction,
   confirmPendingTransactions,
 };
+module.exports.transactionConfirmerService = transactionConfirmerService;
+
+module.exports.confirmTransaction = confirmTransaction;
+
+module.exports.confirmPendingTransactions = confirmPendingTransactions;

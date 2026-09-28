@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/014_create_white_label_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS white_label_projects (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -92,8 +91,7 @@ export async function up(client) {
     );
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS white_label_pricing CASCADE`);
   await client.query(`DROP TABLE IF EXISTS white_label_themes CASCADE`);
   await client.query(`DROP TABLE IF EXISTS white_label_domain_verification_attempts CASCADE`);
@@ -101,3 +99,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS white_label_branding CASCADE`);
   await client.query(`DROP TABLE IF EXISTS white_label_projects CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

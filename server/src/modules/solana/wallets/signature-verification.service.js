@@ -7,10 +7,9 @@
  *
  * @module server/modules/solana/wallets/signature-verification.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
 
 let bs58Module = null;
 let naclModule = null;
@@ -42,8 +41,7 @@ async function loadNacl() {
     throw new AppError('tweetnacl library is not available', ERROR_CODES.CONFIGURATION_MISSING, 500);
   }
 }
-
-export async function verifySignature({
+async function verifySignature({
   message,
   signatureBase58,
   publicKeyBase58,
@@ -99,8 +97,7 @@ export async function verifySignature({
     return { valid: false, reason: 'VERIFICATION_ERROR' };
   }
 }
-
-export async function verifyWalletOwnership({
+async function verifyWalletOwnership({
   walletAddress,
   message,
   signatureBase58,
@@ -111,8 +108,12 @@ export async function verifyWalletOwnership({
     publicKeyBase58: walletAddress,
   });
 }
-
-export const signatureVerificationService = {
+const signatureVerificationService = {
   verifySignature,
   verifyWalletOwnership,
 };
+module.exports.signatureVerificationService = signatureVerificationService;
+
+module.exports.verifySignature = verifySignature;
+
+module.exports.verifyWalletOwnership = verifyWalletOwnership;

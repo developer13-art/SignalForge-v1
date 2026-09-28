@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/automation/rule-types/partial-close
  */
-
-import { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } from '../automation.constants.js';
-
-export class PartialCloseRule {
+const { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } = require('../automation.constants.js');
+class PartialCloseRule {
   static supports(condition) {
     return [
       AUTOMATION_CONDITION_TYPES.PROFIT_GREATER_THAN,
@@ -18,5 +16,5 @@ export class PartialCloseRule {
     return [AUTOMATION_ACTION_TYPES.PARTIAL_CLOSE];
   }
 }
-
-export default PartialCloseRule;
+module.exports = PartialCloseRule;
+module.exports.PartialCloseRule = PartialCloseRule;

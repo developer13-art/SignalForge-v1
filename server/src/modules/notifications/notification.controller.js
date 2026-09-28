@@ -6,16 +6,14 @@
  *
  * @module server/modules/notifications/notification.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { successResponse } from '../../lib/response/success.response';
-import { paginatedResponse } from '../../lib/response/paginated.response';
-import { notificationService } from './notification.service';
-import { preferenceService } from './preferences/preference.service';
-
-export async function listNotifications(req, res) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { successResponse } = require('../../lib/response/success.response');
+const { paginatedResponse } = require('../../lib/response/paginated.response');
+const { notificationService } = require('./notification.service');
+const { preferenceService } = require('./preferences/preference.service');
+async function listNotifications(req, res) {
   const userId = req.user && req.user.id;
   const { page, limit, status, category, unreadOnly, from, to } = req.query;
 
@@ -44,8 +42,7 @@ export async function listNotifications(req, res) {
     },
   });
 }
-
-export async function getUnreadCount(req, res) {
+async function getUnreadCount(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -56,8 +53,7 @@ export async function getUnreadCount(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function markAsRead(req, res) {
+async function markAsRead(req, res) {
   const userId = req.user && req.user.id;
   const { notificationId } = req.params;
 
@@ -69,8 +65,7 @@ export async function markAsRead(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function markAllAsRead(req, res) {
+async function markAllAsRead(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -81,8 +76,7 @@ export async function markAllAsRead(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function deleteNotification(req, res) {
+async function deleteNotification(req, res) {
   const userId = req.user && req.user.id;
   const { notificationId } = req.params;
 
@@ -94,8 +88,7 @@ export async function deleteNotification(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function getPreferences(req, res) {
+async function getPreferences(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -106,8 +99,7 @@ export async function getPreferences(req, res) {
 
   return successResponse(res, { preferences });
 }
-
-export async function updatePreferences(req, res) {
+async function updatePreferences(req, res) {
   const userId = req.user && req.user.id;
   const payload = req.body || {};
 
@@ -121,8 +113,7 @@ export async function updatePreferences(req, res) {
 
   return successResponse(res, { preferences });
 }
-
-export const notificationController = {
+const notificationController = {
   listNotifications,
   getUnreadCount,
   markAsRead,
@@ -131,3 +122,18 @@ export const notificationController = {
   getPreferences,
   updatePreferences,
 };
+module.exports.notificationController = notificationController;
+
+module.exports.listNotifications = listNotifications;
+
+module.exports.getUnreadCount = getUnreadCount;
+
+module.exports.markAsRead = markAsRead;
+
+module.exports.markAllAsRead = markAllAsRead;
+
+module.exports.deleteNotification = deleteNotification;
+
+module.exports.getPreferences = getPreferences;
+
+module.exports.updatePreferences = updatePreferences;

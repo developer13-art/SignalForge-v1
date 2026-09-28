@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/kyc/documents/controller
  */
-
-import { DocumentService } from './document.service.js';
-import { validateUploadDocument, validateUploadSelfie } from './document.validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class DocumentController {
+const { DocumentService } = require('./document.service.js');
+const { validateUploadDocument, validateUploadSelfie } = require('./document.validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class DocumentController {
   constructor(service = null) {
     this.service = service || new DocumentService();
   }
@@ -95,5 +93,5 @@ export class DocumentController {
     }
   };
 }
-
-export default DocumentController;
+module.exports = DocumentController;
+module.exports.DocumentController = DocumentController;

@@ -3,24 +3,12 @@
  *
  * @module signalforge/server/modules/referrals/relationships/service
  */
-
-import { ReferralRelationshipRepository } from './repository.js';
-import { ReferralCodeService } from '../codes/service.js';
-import {
-  REFERRAL_RELATIONSHIP_STATUSES,
-} from '../referral.constants.js';
-import {
-  ReferralRelationshipAlreadyExistsError,
-  SelfReferralError,
-  ReferralCodeNotFoundError,
-} from '../referral.errors.js';
-import {
-  emitRelationshipCreated,
-  emitRelationshipSuspended,
-  emitRelationshipTerminated,
-} from '../referral.events.js';
-
-export class ReferralRelationshipService {
+const { ReferralRelationshipRepository } = require('./repository.js');
+const { ReferralCodeService } = require('../codes/service.js');
+const { REFERRAL_RELATIONSHIP_STATUSES } = require('../referral.constants.js');
+const { ReferralRelationshipAlreadyExistsError, SelfReferralError, ReferralCodeNotFoundError } = require('../referral.errors.js');
+const { emitRelationshipCreated, emitRelationshipSuspended, emitRelationshipTerminated } = require('../referral.events.js');
+class ReferralRelationshipService {
   constructor(repository = null, codeService = null) {
     this.repository = repository || new ReferralRelationshipRepository();
     this.codes = codeService || new ReferralCodeService();
@@ -140,5 +128,5 @@ export class ReferralRelationshipService {
     return input;
   }
 }
-
-export default ReferralRelationshipService;
+module.exports = ReferralRelationshipService;
+module.exports.ReferralRelationshipService = ReferralRelationshipService;

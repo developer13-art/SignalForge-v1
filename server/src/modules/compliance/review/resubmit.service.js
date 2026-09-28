@@ -7,14 +7,12 @@
  *
  * @module server/modules/compliance/review/resubmit.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-
-export async function requestResubmission({ applicationId, reviewerId, reason, specificIssues }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+async function requestResubmission({ applicationId, reviewerId, reason, specificIssues }) {
   if (!applicationId || !reviewerId || !reason) {
     throw new AppError(
       'applicationId, reviewerId, and reason are required',
@@ -80,7 +78,9 @@ export async function requestResubmission({ applicationId, reviewerId, reason, s
     throw new AppError('Failed to request KYC resubmission', ERROR_CODES.INTERNAL_ERROR, 500);
   }
 }
-
-export const resubmitService = {
+const resubmitService = {
   requestResubmission,
 };
+module.exports.resubmitService = resubmitService;
+
+module.exports.requestResubmission = requestResubmission;

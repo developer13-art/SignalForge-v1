@@ -3,15 +3,12 @@
  *
  * @module signalforge/server/modules/signal-sources/rest-api/auth
  */
-
-import crypto from 'node:crypto';
-
-import { RestApiRepository } from './rest-api.repository.js';
-import { SourceConnectionError } from '../source.errors.js';
+const crypto = require('node:crypto');
+const { RestApiRepository } = require('./rest-api.repository.js');
+const { SourceConnectionError } = require('../source.errors.js');
 
 const API_KEY_PREFIX = 'sf_src_';
-
-export class RestApiAuthService {
+class RestApiAuthService {
   constructor(repository = null) {
     this.repository = repository || new RestApiRepository();
   }
@@ -59,5 +56,5 @@ export class RestApiAuthService {
     return record;
   }
 }
-
-export default RestApiAuthService;
+module.exports = RestApiAuthService;
+module.exports.RestApiAuthService = RestApiAuthService;

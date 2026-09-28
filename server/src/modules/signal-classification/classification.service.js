@@ -3,26 +3,13 @@
  *
  * @module signalforge/server/modules/signal-classification/service
  */
-
-import { ClassificationRepository } from './classification.repository.js';
-import { ClassifierRegistry } from './classifiers/classifier.registry.js';
-import { ClassificationScorerService } from './scoring/classification-scorer.service.js';
-import { ClassificationThresholdService } from './scoring/classification-threshold.service.js';
-import {
-  CLASSIFIER_KINDS,
-  DEFAULT_CLASSIFIER_KIND,
-  CLASSIFICATION_TIMEOUT_MS,
-} from './classification.constants.js';
-import {
-  ClassificationInputError,
-  ClassificationTimeoutError,
-} from './classification.errors.js';
-import {
-  emitClassificationStarted,
-  emitClassificationCompleted,
-  emitClassificationFailed,
-  emitClassificationUncertain,
-} from './classification.events.js';
+const { ClassificationRepository } = require('./classification.repository.js');
+const { ClassifierRegistry } = require('./classifiers/classifier.registry.js');
+const { ClassificationScorerService } = require('./scoring/classification-scorer.service.js');
+const { ClassificationThresholdService } = require('./scoring/classification-threshold.service.js');
+const { CLASSIFIER_KINDS, DEFAULT_CLASSIFIER_KIND, CLASSIFICATION_TIMEOUT_MS } = require('./classification.constants.js');
+const { ClassificationInputError, ClassificationTimeoutError } = require('./classification.errors.js');
+const { emitClassificationStarted, emitClassificationCompleted, emitClassificationFailed, emitClassificationUncertain } = require('./classification.events.js');
 
 function withTimeout(promise, timeoutMs, label) {
   let timer;
@@ -33,8 +20,7 @@ function withTimeout(promise, timeoutMs, label) {
   });
   return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timer));
 }
-
-export class ClassificationService {
+class ClassificationService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ClassificationRepository();
     this.scorer = dependencies.scorer || new ClassificationScorerService();
@@ -171,6 +157,5 @@ export class ClassificationService {
   }
 }
 
-export { CLASSIFIER_KINDS };
-
-export default ClassificationService;
+module.exports = ClassificationService;
+module.exports.ClassificationService = ClassificationService;

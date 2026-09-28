@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/provider-dna/profile/management-profile
  */
-
-import { DnaRepository } from '../dna.repository.js';
-
-export class ManagementProfileService {
+const { DnaRepository } = require('../dna.repository.js');
+class ManagementProfileService {
   constructor(repository = null) {
     this.repository = repository || new DnaRepository();
   }
@@ -37,5 +35,5 @@ export class ManagementProfileService {
     return dominant;
   }
 }
-
-export default ManagementProfileService;
+module.exports = ManagementProfileService;
+module.exports.ManagementProfileService = ManagementProfileService;

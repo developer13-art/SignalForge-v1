@@ -3,50 +3,20 @@
  *
  * @module signalforge/server/modules/execution/request/service
  */
-
-import { ExecutionRequestRepository } from './execution-request.repository.js';
-import { ExecutionRequestValidatorService } from './execution-request-validator.service.js';
-import { OpenPositionOperation } from '../operations/open-position.operation.js';
-import { ClosePositionOperation } from '../operations/close-position.operation.js';
-import { ModifyPositionOperation } from '../operations/modify-position.operation.js';
-import { PartialCloseOperation } from '../operations/partial-close.operation.js';
-import { PendingOrderOperation } from '../operations/pending-order.operation.js';
-import { SyncPositionsOperation } from '../operations/sync-positions.operation.js';
-import { GatewayFactory } from '../gateway/gateway.factory.js';
-import {
-  GATEWAY_TYPES,
-  OPERATION_TYPES,
-  EXECUTION_STATUSES,
-  DEFAULT_EXECUTION_TIMEOUT_MS,
-  DEFAULT_LATENCY_ALERT_MS,
-  isRetryableGatewayError,
-} from '../execution.constants.js';
-import {
-  ExecutionRequestNotFoundError,
-  ExecutionFailedError,
-  GatewayError,
-  UnsupportedOperationError,
-} from '../execution.errors.js';
-import {
-  emitRequestCreated,
-  emitRequestAccepted,
-  emitRequestRejected,
-  emitRequestFailed,
-  emitRequestDeadLettered,
-  emitOrderPlaced,
-  emitOrderAccepted,
-  emitOrderRejected,
-  emitPositionOpened,
-  emitPositionModified,
-  emitPositionClosed,
-  emitPartialCloseExecuted,
-  emitPendingOrderPlaced,
-  emitPendingOrderCancelled,
-  emitLatencyAlert,
-} from '../execution.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class ExecutionRequestService {
+const { ExecutionRequestRepository } = require('./execution-request.repository.js');
+const { ExecutionRequestValidatorService } = require('./execution-request-validator.service.js');
+const { OpenPositionOperation } = require('../operations/open-position.operation.js');
+const { ClosePositionOperation } = require('../operations/close-position.operation.js');
+const { ModifyPositionOperation } = require('../operations/modify-position.operation.js');
+const { PartialCloseOperation } = require('../operations/partial-close.operation.js');
+const { PendingOrderOperation } = require('../operations/pending-order.operation.js');
+const { SyncPositionsOperation } = require('../operations/sync-positions.operation.js');
+const { GatewayFactory } = require('../gateway/gateway.factory.js');
+const { GATEWAY_TYPES, OPERATION_TYPES, EXECUTION_STATUSES, DEFAULT_EXECUTION_TIMEOUT_MS, DEFAULT_LATENCY_ALERT_MS, isRetryableGatewayError } = require('../execution.constants.js');
+const { ExecutionRequestNotFoundError, ExecutionFailedError, GatewayError, UnsupportedOperationError } = require('../execution.errors.js');
+const { emitRequestCreated, emitRequestAccepted, emitRequestRejected, emitRequestFailed, emitRequestDeadLettered, emitOrderPlaced, emitOrderAccepted, emitOrderRejected, emitPositionOpened, emitPositionModified, emitPositionClosed, emitPartialCloseExecuted, emitPendingOrderPlaced, emitPendingOrderCancelled, emitLatencyAlert } = require('../execution.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class ExecutionRequestService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ExecutionRequestRepository();
     this.validator = dependencies.validator || new ExecutionRequestValidatorService();
@@ -406,6 +376,5 @@ export class ExecutionRequestService {
   }
 }
 
-export { OPERATION_TYPES };
-
-export default ExecutionRequestService;
+module.exports = ExecutionRequestService;
+module.exports.ExecutionRequestService = ExecutionRequestService;

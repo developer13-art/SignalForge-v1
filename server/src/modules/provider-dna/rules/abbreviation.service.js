@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/provider-dna/rules/abbreviation
  */
-
-import { RuleRepository } from './rule.repository.js';
-import { DNA_RULE_TYPES } from '../dna.constants.js';
-
-export class AbbreviationService {
+const { RuleRepository } = require('./rule.repository.js');
+const { DNA_RULE_TYPES } = require('../dna.constants.js');
+class AbbreviationService {
   constructor(repository = null) {
     this.repository = repository || new RuleRepository();
   }
@@ -53,5 +51,5 @@ export class AbbreviationService {
     };
   }
 }
-
-export default AbbreviationService;
+module.exports = AbbreviationService;
+module.exports.AbbreviationService = AbbreviationService;

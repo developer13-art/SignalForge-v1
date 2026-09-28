@@ -5,13 +5,11 @@
  *
  * @module signalforge/server/modules/kyc/documents/quality-check
  */
-
-import { ImageQualityService } from './image-quality.service.js';
-import { FileValidationService } from './file-validation.service.js';
-import { QUALITY_CHECK_RESULTS } from '../kyc.constants.js';
-import { KycDocumentQualityError } from '../kyc.errors.js';
-
-export class QualityCheckService {
+const { ImageQualityService } = require('./image-quality.service.js');
+const { FileValidationService } = require('./file-validation.service.js');
+const { QUALITY_CHECK_RESULTS } = require('../kyc.constants.js');
+const { KycDocumentQualityError } = require('../kyc.errors.js');
+class QualityCheckService {
   constructor() {
     this.imageQuality = new ImageQualityService();
     this.fileValidation = new FileValidationService();
@@ -74,5 +72,5 @@ export class QualityCheckService {
     };
   }
 }
-
-export default QualityCheckService;
+module.exports = QualityCheckService;
+module.exports.QualityCheckService = QualityCheckService;

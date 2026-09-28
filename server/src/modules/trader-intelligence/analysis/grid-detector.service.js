@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trader-intelligence/analysis/grid-detector
  */
-
-import { GRID_THRESHOLDS } from '../intelligence.constants.js';
-
-export class GridDetectorService {
+const { GRID_THRESHOLDS } = require('../intelligence.constants.js');
+class GridDetectorService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length < GRID_THRESHOLDS.minTrades) {
       return { score: 0, detected: false, samples: trades?.length || 0 };
@@ -57,5 +55,5 @@ export class GridDetectorService {
     };
   }
 }
-
-export default GridDetectorService;
+module.exports = GridDetectorService;
+module.exports.GridDetectorService = GridDetectorService;

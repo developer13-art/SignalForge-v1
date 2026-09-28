@@ -7,18 +7,16 @@
  *
  * @module server/modules/signal-sources/telegram/listener/telegram-edit-handler.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { buildSourceMessageKey } from '@signalforge/shared/utils/idempotency.util';
-import { buildMessageFingerprint } from '@signalforge/shared/utils/fingerprint.util';
-import { publishEvent } from '../../../../events/event-publisher';
-import { messageRawStoreService } from '../messages/message-raw-store.service';
-
-export async function handleMessageEdited({ userId, message, onEdit }) {
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
+const { buildMessageFingerprint } = require('@signalforge/shared/utils/fingerprint.util');
+const { publishEvent } = require('../../../../events/event-publisher');
+const { messageRawStoreService } = require('../messages/message-raw-store.service');
+async function handleMessageEdited({ userId, message, onEdit }) {
   if (!userId || !message) {
     throw new AppError('userId and message are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -101,7 +99,9 @@ export async function handleMessageEdited({ userId, message, onEdit }) {
 
   return { handled: true, storedMessageId: stored ? stored.id : null, messageId: envelope.externalMessageId };
 }
-
-export const telegramEditHandlerService = {
+const telegramEditHandlerService = {
   handleMessageEdited,
 };
+module.exports.telegramEditHandlerService = telegramEditHandlerService;
+
+module.exports.handleMessageEdited = handleMessageEdited;

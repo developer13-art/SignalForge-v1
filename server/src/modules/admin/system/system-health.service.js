@@ -7,10 +7,9 @@
  *
  * @module server/modules/admin/system/system-health.service
  */
-
-import { logger } from '../../../lib/logger';
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
+const { logger } = require('../../../lib/logger');
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
 
 async function checkDatabase() {
   try {
@@ -132,8 +131,7 @@ async function checkSolanaIndexer() {
     return { healthy: false, error: err.message };
   }
 }
-
-export async function checkSystemHealth() {
+async function checkSystemHealth() {
   const checkedAt = nowIso();
 
   const [database, jobs, telegram, brokers, withdrawals, solana] = await Promise.all([
@@ -162,8 +160,7 @@ export async function checkSystemHealth() {
     components,
   };
 }
-
-export async function getQuickHealthStatus() {
+async function getQuickHealthStatus() {
   const db = await checkDatabase();
   return {
     status: db.healthy ? 'OK' : 'DEGRADED',
@@ -171,8 +168,12 @@ export async function getQuickHealthStatus() {
     database: db,
   };
 }
-
-export const systemHealthService = {
+const systemHealthService = {
   checkSystemHealth,
   getQuickHealthStatus,
 };
+module.exports.systemHealthService = systemHealthService;
+
+module.exports.checkSystemHealth = checkSystemHealth;
+
+module.exports.getQuickHealthStatus = getQuickHealthStatus;

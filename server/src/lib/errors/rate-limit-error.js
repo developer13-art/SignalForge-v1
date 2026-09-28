@@ -3,15 +3,13 @@
  *
  * @module server/lib/errors/rate-limit-error
  */
-
-import { AppError } from './app-error';
-import { ERROR_CODES } from './error-codes';
-
-export class RateLimitError extends AppError {
+const { AppError } = require('./app-error');
+const { ERROR_CODES } = require('./error-codes');
+class RateLimitError extends AppError {
   constructor(message = 'Rate limit exceeded', details = null) {
     super(message, ERROR_CODES.RATE_LIMITED, 429, details);
     this.name = 'RateLimitError';
   }
 }
-
-export default RateLimitError;
+module.exports = RateLimitError;
+module.exports.RateLimitError = RateLimitError;

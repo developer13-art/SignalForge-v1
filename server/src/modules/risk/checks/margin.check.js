@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/risk/checks/margin
  */
-
-import { BaseCheck } from './base.check.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskMarginInsufficient } from '../risk.events.js';
-
-export class MarginCheck extends BaseCheck {
+const { BaseCheck } = require('./base.check.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskMarginInsufficient } = require('../risk.events.js');
+class MarginCheck extends BaseCheck {
   constructor() {
     super(RISK_CHECKS.MARGIN);
   }
@@ -41,5 +39,5 @@ export class MarginCheck extends BaseCheck {
     });
   }
 }
-
-export default MarginCheck;
+module.exports = MarginCheck;
+module.exports.MarginCheck = MarginCheck;

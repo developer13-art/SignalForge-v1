@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/execution/gateway/ctrader
  */
-
-import { ExecutionGatewayInterface } from './execution-gateway.interface.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-import { GatewayNotConfiguredError } from '../execution.errors.js';
-
-export class CTraderGateway extends ExecutionGatewayInterface {
+const { ExecutionGatewayInterface } = require('./execution-gateway.interface.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+const { GatewayNotConfiguredError } = require('../execution.errors.js');
+class CTraderGateway extends ExecutionGatewayInterface {
   constructor() {
     super(GATEWAY_TYPES.CTRADER);
   }
@@ -53,5 +51,5 @@ export class CTraderGateway extends ExecutionGatewayInterface {
     this.assertAvailable();
   }
 }
-
-export default CTraderGateway;
+module.exports = CTraderGateway;
+module.exports.CTraderGateway = CTraderGateway;

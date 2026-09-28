@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/analytics/metrics/win-rate
  */
-
-export class WinRateService {
+class WinRateService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return { winRate: 0, wins: 0, losses: 0, total: 0 };
@@ -37,5 +36,5 @@ export class WinRateService {
     };
   }
 }
-
-export default WinRateService;
+module.exports = WinRateService;
+module.exports.WinRateService = WinRateService;

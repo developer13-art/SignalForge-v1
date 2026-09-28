@@ -7,16 +7,14 @@
  *
  * @module server/modules/signal-sources/telegram/auth/telegram-login.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { getTelegramClient } from '../client/telegram-client.factory';
-import { telegramSessionService } from '../session/telegram-session.service';
-import { telegramOtpService } from './telegram-otp.service';
-import { emitTelegramSessionInitiated } from '../telegram.events';
-
-export async function sendCode({ userId, phoneNumber, countryCode }) {
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { getTelegramClient } = require('../client/telegram-client.factory');
+const { telegramSessionService } = require('../session/telegram-session.service');
+const { telegramOtpService } = require('./telegram-otp.service');
+const { emitTelegramSessionInitiated } = require('../telegram.events');
+async function sendCode({ userId, phoneNumber, countryCode }) {
   if (!userId || !phoneNumber) {
     throw new AppError(
       'userId and phoneNumber are required',
@@ -64,8 +62,7 @@ export async function sendCode({ userId, phoneNumber, countryCode }) {
 
   return { sessionId, phoneCodeHash: result.phoneCodeHash };
 }
-
-export async function signIn({ userId, sessionId, code, password }) {
+async function signIn({ userId, sessionId, code, password }) {
   if (!userId || !sessionId || !code) {
     throw new AppError(
       'userId, sessionId, and code are required',
@@ -150,8 +147,12 @@ export async function signIn({ userId, sessionId, code, password }) {
 
   return { sessionPersisted: true, sessionId: persistedId };
 }
-
-export const telegramLoginService = {
+const telegramLoginService = {
   sendCode,
   signIn,
 };
+module.exports.telegramLoginService = telegramLoginService;
+
+module.exports.sendCode = sendCode;
+
+module.exports.signIn = signIn;

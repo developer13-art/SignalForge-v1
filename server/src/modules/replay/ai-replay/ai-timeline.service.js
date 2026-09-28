@@ -6,10 +6,8 @@
  *
  * @module server/modules/replay/ai-replay/ai-timeline.service
  */
-
-import { replayRepository } from '../replay.repository';
-
-export async function buildAiTimeline({ signalId }) {
+const { replayRepository } = require('../replay.repository');
+async function buildAiTimeline({ signalId }) {
   if (!signalId) {
     return [];
   }
@@ -33,8 +31,7 @@ export async function buildAiTimeline({ signalId }) {
     },
   }));
 }
-
-export async function summarizeAiTimeline({ signalId }) {
+async function summarizeAiTimeline({ signalId }) {
   const events = await buildAiTimeline({ signalId });
 
   if (events.length === 0) {
@@ -64,8 +61,12 @@ export async function summarizeAiTimeline({ signalId }) {
     bestConfidence,
   };
 }
-
-export const aiTimelineService = {
+const aiTimelineService = {
   buildAiTimeline,
   summarizeAiTimeline,
 };
+module.exports.aiTimelineService = aiTimelineService;
+
+module.exports.buildAiTimeline = buildAiTimeline;
+
+module.exports.summarizeAiTimeline = summarizeAiTimeline;

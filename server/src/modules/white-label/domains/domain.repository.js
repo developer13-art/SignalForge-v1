@@ -5,11 +5,9 @@
  *
  * @module server/modules/white-label/domains/domain.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertDomain({ projectId, domain, verificationToken }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertDomain({ projectId, domain, verificationToken }) {
   const { rows } = await db.query(
     `INSERT INTO white_label_domains
        (project_id, domain, status, verification_token, created_at, updated_at)
@@ -19,24 +17,21 @@ export async function insertDomain({ projectId, domain, verificationToken }) {
   );
   return rows[0];
 }
-
-export async function findById({ domainId }) {
+async function findById({ domainId }) {
   const { rows } = await db.query(
     `SELECT * FROM white_label_domains WHERE id = $1 LIMIT 1`,
     [domainId],
   );
   return rows[0] || null;
 }
-
-export async function findByDomain({ domain }) {
+async function findByDomain({ domain }) {
   const { rows } = await db.query(
     `SELECT * FROM white_label_domains WHERE domain = $1 LIMIT 1`,
     [domain],
   );
   return rows[0] || null;
 }
-
-export async function listByProject({ projectId }) {
+async function listByProject({ projectId }) {
   const { rows } = await db.query(
     `SELECT * FROM white_label_domains
       WHERE project_id = $1
@@ -45,8 +40,7 @@ export async function listByProject({ projectId }) {
   );
   return rows;
 }
-
-export async function updateStatus({ domainId, status }) {
+async function updateStatus({ domainId, status }) {
   const { rowCount } = await db.query(
     `UPDATE white_label_domains
         SET status = $1,
@@ -57,20 +51,17 @@ export async function updateStatus({ domainId, status }) {
   );
   return rowCount > 0;
 }
-
-export async function deleteDomain({ domainId, projectId }) {
+async function deleteDomain({ domainId, projectId }) {
   const { rowCount } = await db.query(
     `DELETE FROM white_label_domains WHERE id = $1 AND project_id = $2`,
     [domainId, projectId],
   );
   return rowCount > 0;
 }
-
-export async function deleteByProject({ projectId }) {
+async function deleteByProject({ projectId }) {
   await db.query(`DELETE FROM white_label_domains WHERE project_id = $1`, [projectId]);
 }
-
-export const domainRepository = {
+const domainRepository = {
   insertDomain,
   findById,
   findByDomain,
@@ -79,3 +70,18 @@ export const domainRepository = {
   deleteDomain,
   deleteByProject,
 };
+module.exports.domainRepository = domainRepository;
+
+module.exports.insertDomain = insertDomain;
+
+module.exports.findById = findById;
+
+module.exports.findByDomain = findByDomain;
+
+module.exports.listByProject = listByProject;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.deleteDomain = deleteDomain;
+
+module.exports.deleteByProject = deleteByProject;

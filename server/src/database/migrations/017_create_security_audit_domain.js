@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/017_create_security_audit_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS audit_logs (
       id BIGSERIAL PRIMARY KEY,
@@ -98,10 +97,11 @@ export async function up(client) {
       ON admin_actions (admin_id, created_at DESC);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS admin_actions CASCADE`);
   await client.query(`DROP TABLE IF EXISTS security_threats CASCADE`);
   await client.query(`DROP TABLE IF EXISTS api_keys CASCADE`);
   await client.query(`DROP TABLE IF EXISTS audit_logs CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

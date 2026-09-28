@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/trader-intelligence/analysis/holding-time
  */
-
-export class HoldingTimeService {
+class HoldingTimeService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return { averageMinutes: 0, medianMinutes: 0, samples: 0 };
@@ -59,5 +58,5 @@ export class HoldingTimeService {
     return 'POSITION';
   }
 }
-
-export default HoldingTimeService;
+module.exports = HoldingTimeService;
+module.exports.HoldingTimeService = HoldingTimeService;

@@ -3,13 +3,12 @@
  *
  * @module signalforge/server/modules/trade-matching/matchers/hybrid
  */
-
-import { SymbolMatcher } from './symbol.matcher.js';
-import { TimeMatcher } from './time.matcher.js';
-import { TicketMatcher } from './ticket.matcher.js';
-import { ReplyReferenceMatcher } from './reply-reference.matcher.js';
-import { ProviderMatcher } from './provider.matcher.js';
-import { MATCH_STRATEGIES, MIN_MATCH_CONFIDENCE } from '../matching.constants.js';
+const { SymbolMatcher } = require('./symbol.matcher.js');
+const { TimeMatcher } = require('./time.matcher.js');
+const { TicketMatcher } = require('./ticket.matcher.js');
+const { ReplyReferenceMatcher } = require('./reply-reference.matcher.js');
+const { ProviderMatcher } = require('./provider.matcher.js');
+const { MATCH_STRATEGIES, MIN_MATCH_CONFIDENCE } = require('../matching.constants.js');
 
 const WEIGHTS = Object.freeze({
   ticket: 1.0,
@@ -18,8 +17,7 @@ const WEIGHTS = Object.freeze({
   time: 0.2,
   provider: 0.15,
 });
-
-export class HybridMatcher {
+class HybridMatcher {
   constructor(dependencies = {}) {
     this.symbolMatcher = dependencies.symbolMatcher || new SymbolMatcher();
     this.timeMatcher = dependencies.timeMatcher || new TimeMatcher();
@@ -94,5 +92,5 @@ export class HybridMatcher {
     return scored.filter((s) => s.score >= MIN_MATCH_CONFIDENCE).sort((a, b) => b.score - a.score);
   }
 }
-
-export default HybridMatcher;
+module.exports = HybridMatcher;
+module.exports.HybridMatcher = HybridMatcher;

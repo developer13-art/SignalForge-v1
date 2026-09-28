@@ -7,8 +7,7 @@
  *
  * @module server/modules/executive/growth/user-growth.service
  */
-
-import { db } from '../../../database';
+const { db } = require('../../../database');
 
 const VALID_GRANULARITIES = Object.freeze(['day', 'week', 'month']);
 
@@ -22,8 +21,7 @@ function normalizeRange({ from, to }) {
   const fromDate = from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   return { from: fromDate, to: toDate };
 }
-
-export async function getGrowth({ from, to, granularity }) {
+async function getGrowth({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
   const dateTrunc = g === 'month' ? 'month' : g === 'week' ? 'week' : 'day';
@@ -84,8 +82,7 @@ export async function getGrowth({ from, to, granularity }) {
     series,
   };
 }
-
-export async function getNewUsersCount({ from, to }) {
+async function getNewUsersCount({ from, to }) {
   const range = normalizeRange({ from, to });
 
   const { rows } = await db.query(
@@ -97,15 +94,13 @@ export async function getNewUsersCount({ from, to }) {
 
   return rows[0]?.count || 0;
 }
-
-export async function getActiveUsersCount() {
+async function getActiveUsersCount() {
   const { rows } = await db.query(
     `SELECT COUNT(*)::int AS count FROM users WHERE status = 'ACTIVE'`,
   );
   return rows[0]?.count || 0;
 }
-
-export async function getUserVerificationBreakdown() {
+async function getUserVerificationBreakdown() {
   const { rows } = await db.query(
     `SELECT
        COUNT(*) FILTER (WHERE email_verified_at IS NOT NULL)::int AS email_verified,
@@ -124,10 +119,18 @@ export async function getUserVerificationBreakdown() {
     total: row.total,
   };
 }
-
-export const userGrowthService = {
+const userGrowthService = {
   getGrowth,
   getNewUsersCount,
   getActiveUsersCount,
   getUserVerificationBreakdown,
 };
+module.exports.userGrowthService = userGrowthService;
+
+module.exports.getGrowth = getGrowth;
+
+module.exports.getNewUsersCount = getNewUsersCount;
+
+module.exports.getActiveUsersCount = getActiveUsersCount;
+
+module.exports.getUserVerificationBreakdown = getUserVerificationBreakdown;

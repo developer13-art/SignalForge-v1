@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/subscriptions/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class SubscriptionRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class SubscriptionRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -494,5 +492,5 @@ export class SubscriptionRepository {
     ]);
   }
 }
-
-export default SubscriptionRepository;
+module.exports = SubscriptionRepository;
+module.exports.SubscriptionRepository = SubscriptionRepository;

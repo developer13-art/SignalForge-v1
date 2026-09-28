@@ -7,17 +7,10 @@
  *
  * @module signalforge/server/modules/brokers/metaapi/client
  */
-
-import metaApiConfig from '../../../config/metaapi.config.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import {
-  BrokerConnectionError,
-  BrokerDeploymentError,
-  BrokerRateLimitError,
-  BrokerSyncError,
-} from '../broker.errors.js';
-
-export class MetaApiClient {
+const metaApiConfig = require('../../../config/metaapi.config.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { BrokerConnectionError, BrokerDeploymentError, BrokerRateLimitError, BrokerSyncError } = require('../broker.errors.js');
+class MetaApiClient {
   constructor(config = null) {
     this.config = config || metaApiConfig;
     this.logger = getLogger('metaapi-client');
@@ -201,5 +194,5 @@ export class MetaApiClient {
     return Boolean(this.config.enabled && this.config.token);
   }
 }
-
-export default MetaApiClient;
+module.exports = MetaApiClient;
+module.exports.MetaApiClient = MetaApiClient;

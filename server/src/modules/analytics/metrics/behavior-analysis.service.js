@@ -5,8 +5,7 @@
  */
 
 const HOURS_OF_DAY = 24;
-
-export class BehaviorAnalysisService {
+class BehaviorAnalysisService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return {
@@ -80,5 +79,5 @@ export class BehaviorAnalysisService {
     };
   }
 }
-
-export default BehaviorAnalysisService;
+module.exports = BehaviorAnalysisService;
+module.exports.BehaviorAnalysisService = BehaviorAnalysisService;

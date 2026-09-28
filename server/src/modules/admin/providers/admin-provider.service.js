@@ -5,15 +5,13 @@
  *
  * @module server/modules/admin/providers/admin-provider.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-provider.repository';
-import { adminService } from '../admin.service';
-
-export async function listProviders({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-provider.repository');
+const { adminService } = require('../admin.service');
+async function listProviders({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listProviders({
@@ -36,8 +34,7 @@ export async function listProviders({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getProviderDetails({ providerId }) {
+async function getProviderDetails({ providerId }) {
   if (!providerId) {
     throw new AppError('providerId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -50,8 +47,7 @@ export async function getProviderDetails({ providerId }) {
 
   return provider;
 }
-
-export async function approveProvider({ providerId, adminId }) {
+async function approveProvider({ providerId, adminId }) {
   if (!providerId || !adminId) {
     throw new AppError('providerId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -76,8 +72,7 @@ export async function approveProvider({ providerId, adminId }) {
 
   return { approved: true };
 }
-
-export async function suspendProvider({ providerId, adminId, reason }) {
+async function suspendProvider({ providerId, adminId, reason }) {
   if (!providerId || !adminId) {
     throw new AppError('providerId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -96,8 +91,7 @@ export async function suspendProvider({ providerId, adminId, reason }) {
 
   return { suspended: true };
 }
-
-export async function certifyProvider({ providerId, adminId, status }) {
+async function certifyProvider({ providerId, adminId, status }) {
   if (!providerId || !adminId) {
     throw new AppError('providerId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -121,8 +115,7 @@ export async function certifyProvider({ providerId, adminId, status }) {
 
   return { certified: true, status };
 }
-
-export async function getStatusBreakdown() {
+async function getStatusBreakdown() {
   const rows = await repository.countProvidersByStatus();
 
   const breakdown = {};
@@ -132,8 +125,7 @@ export async function getStatusBreakdown() {
 
   return breakdown;
 }
-
-export const adminProviderService = {
+const adminProviderService = {
   listProviders,
   getProviderDetails,
   approveProvider,
@@ -141,3 +133,16 @@ export const adminProviderService = {
   certifyProvider,
   getStatusBreakdown,
 };
+module.exports.adminProviderService = adminProviderService;
+
+module.exports.listProviders = listProviders;
+
+module.exports.getProviderDetails = getProviderDetails;
+
+module.exports.approveProvider = approveProvider;
+
+module.exports.suspendProvider = suspendProvider;
+
+module.exports.certifyProvider = certifyProvider;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

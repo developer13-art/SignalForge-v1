@@ -3,15 +3,13 @@
  *
  * @module signalforge/server/modules/trades/operations/manual-modify
  */
-
-import { TradeRepository } from '../trade.repository.js';
-import { TradeTimelineService } from '../timeline/trade-timeline.service.js';
-import { emitManualModify } from '../trade.events.js';
-import { TradeNotFoundError, TradeNotActiveError } from '../trade.errors.js';
-import { isActiveStatus } from '../trade.constants.js';
-import { TRADE_ACTORS } from '../trade.constants.js';
-
-export class ManualModifyService {
+const { TradeRepository } = require('../trade.repository.js');
+const { TradeTimelineService } = require('../timeline/trade-timeline.service.js');
+const { emitManualModify } = require('../trade.events.js');
+const { TradeNotFoundError, TradeNotActiveError } = require('../trade.errors.js');
+const { isActiveStatus } = require('../trade.constants.js');
+const { TRADE_ACTORS } = require('../trade.constants.js');
+class ManualModifyService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TradeRepository();
     this.timeline = dependencies.timeline || new TradeTimelineService();
@@ -65,5 +63,5 @@ export class ManualModifyService {
     return { trade: updated };
   }
 }
-
-export default ManualModifyService;
+module.exports = ManualModifyService;
+module.exports.ManualModifyService = ManualModifyService;

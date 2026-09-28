@@ -7,11 +7,9 @@
  *
  * @module signalforge/server/bootstrap/initDatabase
  */
-
-import pg from 'pg';
-
-import databaseConfig from '../config/database.config.js';
-import { getLogger } from './initLogger.js';
+const pg = require('pg');
+const databaseConfig = require('../config/database.config.js');
+const { getLogger } = require('./initLogger.js');
 
 const { Pool } = pg;
 
@@ -22,7 +20,7 @@ function buildPoolConfig() {
   return {
     host: databaseConfig.host,
     port: databaseConfig.port,
-    database: databaseConfig.database,
+    database: databaseConfig.name,
     user: databaseConfig.user,
     password: databaseConfig.password,
     ssl: databaseConfig.ssl,
@@ -34,10 +32,12 @@ function buildPoolConfig() {
     query_timeout: databaseConfig.pool.queryTimeoutMillis,
     application_name: databaseConfig.pool.applicationName,
     maxUses: databaseConfig.pool.maxUses,
+    keepAlive: true,
+    keepAliveInitialDelayMillis: 10000,
+    allowExitOnIdle: false,
   };
 }
-
-export async function initDatabase() {
+async function initDatabase() {
   const logger = getLogger('database');
 
   if (pool) {
@@ -47,8 +47,27 @@ export async function initDatabase() {
 
   pool = new Pool(buildPoolConfig());
 
-  pool.on('error', (error) => {
-    logger.error({ err: error }, 'Database pool idle client error');
+ pool.on('error', (error) => {
+    const message = (error && error.message) || '';
+    const code = (error && error.code) || '';
+
+    const transientCodes = ['ECONNRESET', 'ETIMEDOUT', 'EPIPE', 'ECONNREFUSED', 'ENOTFOUND'];
+    const transientMessages = [
+      'Connection terminated unexpectedly',
+      'Connection terminated due to connection timeout',
+      'Client has encountered a connection error',
+      'Client was closed and is not queryable',
+    ];
+
+    const isTransient =
+      transientCodes.includes(code) ||
+      transientMessages.some((m) => message.includes(m));
+
+    if (isTransient) {
+      logger.warn({ err: error }, 'Transient pool connection error; pool will recover');
+    } else {
+      logger.error({ err: error }, 'PostgreSQL pool error');
+    }
   });
 
   pool.on('connect', () => {
@@ -234,12 +253,13 @@ function wrapDatabase(activePool) {
     },
   };
 }
-
-export function getDatabase() {
+function getDatabase() {
   if (!pool) {
     throw new Error('Database has not been initialized');
   }
   return wrapDatabase(pool);
 }
+module.exports = initDatabase;
+module.exports.getDatabase = getDatabase;
 
-export default initDatabase;
+module.exports.initDatabase = initDatabase;

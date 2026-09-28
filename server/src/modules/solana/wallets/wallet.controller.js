@@ -3,17 +3,11 @@
  *
  * @module server/modules/solana/wallets/wallet.controller
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { successResponse } from '../../../lib/response/success.response';
-import { walletService } from './wallet.service';
-import {
-  validateBeginConnectPayload,
-  validateCompleteConnectPayload,
-  validateSetPrimaryPayload,
-  validateLabel,
-} from './wallet.validator';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { successResponse } = require('../../../lib/response/success.response');
+const { walletService } = require('./wallet.service');
+const { validateBeginConnectPayload, validateCompleteConnectPayload, validateSetPrimaryPayload, validateLabel } = require('./wallet.validator');
 
 function requireUser(req) {
   const userId = req.user && req.user.id;
@@ -22,32 +16,28 @@ function requireUser(req) {
   }
   return userId;
 }
-
-export async function listWallets(req, res) {
+async function listWallets(req, res) {
   const userId = requireUser(req);
 
   const wallets = await walletService.listWallets({ userId });
 
   return successResponse(res, { wallets });
 }
-
-export async function getWallet(req, res) {
+async function getWallet(req, res) {
   const userId = requireUser(req);
 
   const wallet = await walletService.getWallet({ userId, walletId: req.params.walletId });
 
   return successResponse(res, { wallet });
 }
-
-export async function getPrimaryWallet(req, res) {
+async function getPrimaryWallet(req, res) {
   const userId = requireUser(req);
 
   const wallet = await walletService.getPrimaryWallet({ userId });
 
   return successResponse(res, { wallet });
 }
-
-export async function beginConnect(req, res) {
+async function beginConnect(req, res) {
   const userId = requireUser(req);
 
   const payload = validateBeginConnectPayload(req.body || {});
@@ -56,8 +46,7 @@ export async function beginConnect(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function completeConnect(req, res) {
+async function completeConnect(req, res) {
   const userId = requireUser(req);
 
   const payload = validateCompleteConnectPayload(req.body || {});
@@ -73,8 +62,7 @@ export async function completeConnect(req, res) {
 
   return successResponse(res, { wallet }, 201);
 }
-
-export async function disconnectWallet(req, res) {
+async function disconnectWallet(req, res) {
   const userId = requireUser(req);
 
   const result = await walletService.disconnectWallet({
@@ -85,8 +73,7 @@ export async function disconnectWallet(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function setPrimary(req, res) {
+async function setPrimary(req, res) {
   const userId = requireUser(req);
 
   const payload = validateSetPrimaryPayload(req.body || {});
@@ -98,8 +85,7 @@ export async function setPrimary(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function updateLabel(req, res) {
+async function updateLabel(req, res) {
   const userId = requireUser(req);
 
   const label = validateLabel(req.body ? req.body.label : null);
@@ -112,16 +98,14 @@ export async function updateLabel(req, res) {
 
   return successResponse(res, { wallet });
 }
-
-export async function countWallets(req, res) {
+async function countWallets(req, res) {
   const userId = requireUser(req);
 
   const count = await walletService.countWallets({ userId });
 
   return successResponse(res, count);
 }
-
-export const walletController = {
+const walletController = {
   listWallets,
   getWallet,
   getPrimaryWallet,
@@ -132,3 +116,22 @@ export const walletController = {
   updateLabel,
   countWallets,
 };
+module.exports.walletController = walletController;
+
+module.exports.listWallets = listWallets;
+
+module.exports.getWallet = getWallet;
+
+module.exports.getPrimaryWallet = getPrimaryWallet;
+
+module.exports.beginConnect = beginConnect;
+
+module.exports.completeConnect = completeConnect;
+
+module.exports.disconnectWallet = disconnectWallet;
+
+module.exports.setPrimary = setPrimary;
+
+module.exports.updateLabel = updateLabel;
+
+module.exports.countWallets = countWallets;

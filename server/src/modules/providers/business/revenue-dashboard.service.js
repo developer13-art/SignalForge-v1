@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/providers/business/revenue-dashboard
  */
-
-import { ProviderRevenueService } from '../revenue/service.js';
-import { ProviderSubscriberService } from '../subscribers/service.js';
-
-export class RevenueDashboardService {
+const { ProviderRevenueService } = require('../revenue/service.js');
+const { ProviderSubscriberService } = require('../subscribers/service.js');
+class RevenueDashboardService {
   constructor(dependencies = {}) {
     this.revenue = dependencies.revenue || new ProviderRevenueService();
     this.subscribers = dependencies.subscribers || new ProviderSubscriberService();
@@ -31,5 +29,5 @@ export class RevenueDashboardService {
     };
   }
 }
-
-export default RevenueDashboardService;
+module.exports = RevenueDashboardService;
+module.exports.RevenueDashboardService = RevenueDashboardService;

@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/risk/calculator/pip-value
  */
-
-export class PipValueService {
+class PipValueService {
   getPipSize(symbol) {
     if (!symbol) {
       return 0.0001;
@@ -50,5 +49,5 @@ export class PipValueService {
     return Math.abs(Number(price1) - Number(price2)) / pipSize;
   }
 }
-
-export default PipValueService;
+module.exports = PipValueService;
+module.exports.PipValueService = PipValueService;

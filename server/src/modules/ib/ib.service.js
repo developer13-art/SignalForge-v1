@@ -7,25 +7,23 @@
  *
  * @module server/modules/ib/ib.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../database';
-import { publishEvent } from '../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import { ibLinkService } from './links/ib-link.service';
-import { ibReferralService } from './referrals/ib-referral.service';
-import { ibRevenueService } from './revenue/ib-revenue.service';
+const crypto = require('node:crypto');
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../database');
+const { publishEvent } = require('../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const { ibLinkService } = require('./links/ib-link.service');
+const { ibReferralService } = require('./referrals/ib-referral.service');
+const { ibRevenueService } = require('./revenue/ib-revenue.service');
 
 function generateCode() {
   return crypto.randomBytes(8).toString('hex');
 }
-
-export async function getDashboard({ userId }) {
+async function getDashboard({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -76,12 +74,10 @@ export async function getDashboard({ userId }) {
     },
   };
 }
-
-export async function listLinks({ userId }) {
+async function listLinks({ userId }) {
   return ibLinkService.listLinks({ userId });
 }
-
-export async function createLink({ userId, brokerId, label, destination }) {
+async function createLink({ userId, brokerId, label, destination }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -108,8 +104,7 @@ export async function createLink({ userId, brokerId, label, destination }) {
     createdAt: row.created_at,
   };
 }
-
-export async function deactivateLink({ userId, linkId }) {
+async function deactivateLink({ userId, linkId }) {
   if (!userId || !linkId) {
     throw new AppError('userId and linkId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -127,8 +122,7 @@ export async function deactivateLink({ userId, linkId }) {
 
   return { deactivated: true };
 }
-
-export async function listReferrals({ userId, filters = {}, pagination = {} }) {
+async function listReferrals({ userId, filters = {}, pagination = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -174,16 +168,13 @@ export async function listReferrals({ userId, filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total }),
   };
 }
-
-export async function getRevenue({ userId, from, to }) {
+async function getRevenue({ userId, from, to }) {
   return ibRevenueService.getRevenueSummary({ userId, from, to });
 }
-
-export async function listRevenueEntries({ userId, filters = {}, pagination = {} }) {
+async function listRevenueEntries({ userId, filters = {}, pagination = {} }) {
   return ibRevenueService.listRevenueEntries({ userId, filters, pagination });
 }
-
-export async function registerPartner({ userId }) {
+async function registerPartner({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -209,8 +200,7 @@ export async function registerPartner({ userId }) {
 
   return rows[0];
 }
-
-export async function recordReferral({ partnerUserId, referredUserId, brokerAccountId, source }) {
+async function recordReferral({ partnerUserId, referredUserId, brokerAccountId, source }) {
   return ibReferralService.recordReferral({
     partnerUserId,
     referredUserId,
@@ -218,8 +208,7 @@ export async function recordReferral({ partnerUserId, referredUserId, brokerAcco
     source,
   });
 }
-
-export const ibService = {
+const ibService = {
   getDashboard,
   listLinks,
   createLink,
@@ -230,3 +219,22 @@ export const ibService = {
   registerPartner,
   recordReferral,
 };
+module.exports.ibService = ibService;
+
+module.exports.getDashboard = getDashboard;
+
+module.exports.listLinks = listLinks;
+
+module.exports.createLink = createLink;
+
+module.exports.deactivateLink = deactivateLink;
+
+module.exports.listReferrals = listReferrals;
+
+module.exports.getRevenue = getRevenue;
+
+module.exports.listRevenueEntries = listRevenueEntries;
+
+module.exports.registerPartner = registerPartner;
+
+module.exports.recordReferral = recordReferral;

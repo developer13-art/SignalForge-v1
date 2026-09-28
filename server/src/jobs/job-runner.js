@@ -7,15 +7,14 @@
  *
  * @module server/jobs/job-runner
  */
-
-import os from 'node:os';
-import crypto from 'node:crypto';
-import { logger } from '../lib/logger';
-import { sleep } from '@signalforge/shared/utils/sleep.util';
-import { jobRepository } from './job.repository';
-import { jobRegistry } from './job-registry';
-import { jobMetrics } from './job-metrics';
-import { jobLogger } from './job-logger';
+const os = require('node:os');
+const crypto = require('node:crypto');
+const { logger } = require('../lib/logger');
+const { sleep } = require('@signalforge/shared/utils/sleep.util');
+const { jobRepository } = require('./job.repository');
+const { jobRegistry } = require('./job-registry');
+const { jobMetrics } = require('./job-metrics');
+const { jobLogger } = require('./job-logger');
 
 const DEFAULT_POLL_INTERVAL_MS = 500;
 const DEFAULT_CONCURRENCY = 5;
@@ -140,8 +139,7 @@ async function pullAndExecute() {
     loopInProgress = false;
   }
 }
-
-export async function startJobRunner({ pollIntervalMs = DEFAULT_POLL_INTERVAL_MS } = {}) {
+async function startJobRunner({ pollIntervalMs = DEFAULT_POLL_INTERVAL_MS } = {}) {
   if (running) {
     return { running: true, alreadyRunning: true };
   }
@@ -166,8 +164,7 @@ export async function startJobRunner({ pollIntervalMs = DEFAULT_POLL_INTERVAL_MS
 
   return { running: true, workerId: WORKER_ID };
 }
-
-export async function stopJobRunner({ drainMs = 15000 } = {}) {
+async function stopJobRunner({ drainMs = 15000 } = {}) {
   if (!running) {
     return { running: false };
   }
@@ -189,12 +186,10 @@ export async function stopJobRunner({ drainMs = 15000 } = {}) {
 
   return { running: false, activeWorkersRemaining: activeWorkers };
 }
-
-export function isJobRunnerRunning() {
+function isJobRunnerRunning() {
   return running;
 }
-
-export function getJobRunnerStatus() {
+function getJobRunnerStatus() {
   return {
     running,
     workerId: WORKER_ID,
@@ -202,10 +197,16 @@ export function getJobRunnerStatus() {
     concurrency: DEFAULT_CONCURRENCY,
   };
 }
-
-export const jobRunner = {
+const jobRunner = {
   startJobRunner,
   stopJobRunner,
   isJobRunnerRunning,
   getJobRunnerStatus,
 };
+module.exports.jobRunner = jobRunner;
+module.exports.isJobRunnerRunning = isJobRunnerRunning;
+module.exports.getJobRunnerStatus = getJobRunnerStatus;
+
+module.exports.startJobRunner = startJobRunner;
+
+module.exports.stopJobRunner = stopJobRunner;

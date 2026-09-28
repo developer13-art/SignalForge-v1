@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/execution/operations/modify-position
  */
-
-import { GatewayFactory } from '../gateway/gateway.factory.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-
-export class ModifyPositionOperation {
+const { GatewayFactory } = require('../gateway/gateway.factory.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+class ModifyPositionOperation {
   constructor(gatewayFactory = null) {
     this.gatewayFactory = gatewayFactory || GatewayFactory;
   }
@@ -23,5 +21,5 @@ export class ModifyPositionOperation {
     };
   }
 }
-
-export default ModifyPositionOperation;
+module.exports = ModifyPositionOperation;
+module.exports.ModifyPositionOperation = ModifyPositionOperation;

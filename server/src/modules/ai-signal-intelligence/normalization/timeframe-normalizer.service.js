@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/normalization/timeframe
  */
-
-import { normalizeTimeframe } from '@signalforge/shared/validators/timeframe.validator';
-
-export class TimeframeNormalizerService {
+const { normalizeTimeframe } = require('@signalforge/shared/validators/timeframe.validator');
+class TimeframeNormalizerService {
   normalize(input) {
     if (!input || typeof input !== 'string') {
       return null;
@@ -37,5 +35,5 @@ export class TimeframeNormalizerService {
     return null;
   }
 }
-
-export default TimeframeNormalizerService;
+module.exports = TimeframeNormalizerService;
+module.exports.TimeframeNormalizerService = TimeframeNormalizerService;

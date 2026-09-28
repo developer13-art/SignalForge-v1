@@ -6,10 +6,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/parser/context
  */
-
-import { MAX_CONTEXT_MESSAGES } from '../ai.constants.js';
-
-export class ContextExtractorService {
+const { MAX_CONTEXT_MESSAGES } = require('../ai.constants.js');
+class ContextExtractorService {
   extractContext(message, history = []) {
     if (!message || typeof message !== 'object') {
       return null;
@@ -32,5 +30,5 @@ export class ContextExtractorService {
     };
   }
 }
-
-export default ContextExtractorService;
+module.exports = ContextExtractorService;
+module.exports.ContextExtractorService = ContextExtractorService;

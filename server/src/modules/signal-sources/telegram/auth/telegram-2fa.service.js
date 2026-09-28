@@ -8,14 +8,12 @@
  *
  * @module server/modules/signal-sources/telegram/auth/telegram-2fa.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { getTelegramClient } from '../client/telegram-client.factory';
-import { telegramSessionService } from '../session/telegram-session.service';
-
-export async function submitPassword({ userId, sessionId, password }) {
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { getTelegramClient } = require('../client/telegram-client.factory');
+const { telegramSessionService } = require('../session/telegram-session.service');
+async function submitPassword({ userId, sessionId, password }) {
   if (!userId || !sessionId || !password) {
     throw new AppError(
       'userId, sessionId, and password are required',
@@ -68,8 +66,7 @@ export async function submitPassword({ userId, sessionId, password }) {
 
   return { sessionPersisted: true, sessionId: persistedId };
 }
-
-export async function isPasswordRequired({ userId, sessionId }) {
+async function isPasswordRequired({ userId, sessionId }) {
   if (!userId || !sessionId) {
     throw new AppError('userId and sessionId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -92,8 +89,12 @@ export async function isPasswordRequired({ userId, sessionId }) {
 
   return { requiresPassword: Boolean(requiresPassword) };
 }
-
-export const telegram2faService = {
+const telegram2faService = {
   submitPassword,
   isPasswordRequired,
 };
+module.exports.telegram2faService = telegram2faService;
+
+module.exports.submitPassword = submitPassword;
+
+module.exports.isPasswordRequired = isPasswordRequired;

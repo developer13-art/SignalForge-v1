@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/kyc/verification/repository
  */
-
-import { KycRepository } from '../kyc.repository.js';
-
-export class VerificationRepository {
+const { KycRepository } = require('../kyc.repository.js');
+class VerificationRepository {
   constructor(db = null) {
     this.kycRepository = new KycRepository(db);
   }
@@ -31,5 +29,5 @@ export class VerificationRepository {
     return this.kycRepository.listAuditLogs(applicationId);
   }
 }
-
-export default VerificationRepository;
+module.exports = VerificationRepository;
+module.exports.VerificationRepository = VerificationRepository;

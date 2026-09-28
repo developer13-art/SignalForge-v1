@@ -3,16 +3,10 @@
  *
  * @module signalforge/server/modules/withdrawals/controller
  */
-
-import { WithdrawalService } from './withdrawal.service.js';
-import {
-  validateCreateAccountPayload,
-  validateWithdrawalRequestPayload,
-  validateDecisionPayload,
-} from './withdrawal.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class WithdrawalController {
+const { WithdrawalService } = require('./withdrawal.service.js');
+const { validateCreateAccountPayload, validateWithdrawalRequestPayload, validateDecisionPayload } = require('./withdrawal.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class WithdrawalController {
   constructor(service = null) {
     this.service = service || new WithdrawalService();
   }
@@ -250,5 +244,5 @@ export class WithdrawalController {
     }
   };
 }
-
-export default WithdrawalController;
+module.exports = WithdrawalController;
+module.exports.WithdrawalController = WithdrawalController;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trader-intelligence/analysis/recovery-trading
  */
-
-import { RECOVERY_THRESHOLDS } from '../intelligence.constants.js';
-
-export class RecoveryTradingService {
+const { RECOVERY_THRESHOLDS } = require('../intelligence.constants.js');
+class RecoveryTradingService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length < RECOVERY_THRESHOLDS.minTrades) {
       return { score: 0, detected: false, samples: trades?.length || 0 };
@@ -56,5 +54,5 @@ export class RecoveryTradingService {
     };
   }
 }
-
-export default RecoveryTradingService;
+module.exports = RecoveryTradingService;
+module.exports.RecoveryTradingService = RecoveryTradingService;

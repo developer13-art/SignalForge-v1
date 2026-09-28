@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/marketplace/listings/repository
  */
-
-import { MarketplaceRepository } from '../marketplace.repository.js';
-
-export class ListingRepository {
+const { MarketplaceRepository } = require('../marketplace.repository.js');
+class ListingRepository {
   constructor(db = null) {
     this.marketplaceRepository = new MarketplaceRepository(db);
   }
@@ -51,5 +49,5 @@ export class ListingRepository {
     return this.marketplaceRepository.listFeaturedListings(limit);
   }
 }
-
-export default ListingRepository;
+module.exports = ListingRepository;
+module.exports.ListingRepository = ListingRepository;

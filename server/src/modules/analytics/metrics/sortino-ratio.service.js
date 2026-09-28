@@ -3,13 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/metrics/sortino-ratio
  */
-
-import {
-  RISK_FREE_RATE_ANNUAL,
-  TRADING_DAYS_PER_YEAR,
-} from '../analytics.constants.js';
-
-export class SortinoRatioService {
+const { RISK_FREE_RATE_ANNUAL, TRADING_DAYS_PER_YEAR } = require('../analytics.constants.js');
+class SortinoRatioService {
   calculate(trades, options = {}) {
     if (!Array.isArray(trades) || trades.length < 2) {
       return { sortinoRatio: null, samples: trades?.length || 0 };
@@ -64,5 +59,5 @@ export class SortinoRatioService {
     return Array.from(buckets.values());
   }
 }
-
-export default SortinoRatioService;
+module.exports = SortinoRatioService;
+module.exports.SortinoRatioService = SortinoRatioService;

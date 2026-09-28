@@ -3,16 +3,9 @@
  *
  * @module signalforge/server/modules/consensus/voting
  */
-
-import {
-  CONSENSUS_DIRECTIONS,
-  VOTING_STRATEGIES,
-  DEFAULT_SUPER_MAJORITY_THRESHOLD,
-  DEFAULT_MINIMUM_AGREEMENT,
-} from './consensus.constants.js';
-import { VotingStrategyError } from './consensus.errors.js';
-
-export class VotingService {
+const { CONSENSUS_DIRECTIONS, VOTING_STRATEGIES, DEFAULT_SUPER_MAJORITY_THRESHOLD, DEFAULT_MINIMUM_AGREEMENT } = require('./consensus.constants.js');
+const { VotingStrategyError } = require('./consensus.errors.js');
+class VotingService {
   tally(members, strategy = VOTING_STRATEGIES.WEIGHTED_BY_CONFIDENCE) {
     if (!Array.isArray(members) || members.length === 0) {
       return {
@@ -184,5 +177,5 @@ export class VotingService {
     };
   }
 }
-
-export default VotingService;
+module.exports = VotingService;
+module.exports.VotingService = VotingService;

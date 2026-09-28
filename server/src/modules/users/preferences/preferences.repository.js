@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/users/preferences/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class PreferencesRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class PreferencesRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -86,5 +84,5 @@ export class PreferencesRepository {
     return this.findByUserId(userId);
   }
 }
-
-export default PreferencesRepository;
+module.exports = PreferencesRepository;
+module.exports.PreferencesRepository = PreferencesRepository;

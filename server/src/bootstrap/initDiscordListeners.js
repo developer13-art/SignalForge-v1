@@ -5,13 +5,11 @@
  *
  * @module signalforge/server/bootstrap/initDiscordListeners
  */
-
-import { getLogger } from './initLogger.js';
-import discordConfig from '../config/discord.config.js';
+const { getLogger } = require('./initLogger.js');
+const discordConfig = require('../config/discord.config.js');
 
 let listenersState = null;
-
-export async function initDiscordListeners(dependencies = {}) {
+async function initDiscordListeners(dependencies = {}) {
   const logger = getLogger('discord-listeners');
 
   if (!discordConfig.enabled || !discordConfig.listener.enabled) {
@@ -37,10 +35,19 @@ export async function initDiscordListeners(dependencies = {}) {
     try {
       const result = await db.query(
         `
-          SELECT id, user_id, guild_id, channel_ids, bot_enabled
-          FROM discord_connections
-          WHERE status = 'CONNECTED'
-            AND listener_enabled = true
+          SELECT
+            c.id,
+            c.user_id,
+            g.guild_id,
+            ARRAY(
+              SELECT ch.channel_id
+              FROM discord_channels ch
+              WHERE ch.user_id = c.user_id
+                AND ch.guild_id = g.guild_id
+                AND ch.monitored = TRUE
+            ) AS channel_ids
+          FROM discord_connections c
+          JOIN discord_guilds g ON g.user_id = c.user_id
         `,
       );
       return result.rows;
@@ -106,9 +113,10 @@ export async function initDiscordListeners(dependencies = {}) {
 
   return listenersState;
 }
-
-export function getDiscordListeners() {
+function getDiscordListeners() {
   return listenersState;
 }
+module.exports = initDiscordListeners;
+module.exports.getDiscordListeners = getDiscordListeners;
 
-export default initDiscordListeners;
+module.exports.initDiscordListeners = initDiscordListeners;

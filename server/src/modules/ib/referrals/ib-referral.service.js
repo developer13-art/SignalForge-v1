@@ -7,15 +7,13 @@
  *
  * @module server/modules/ib/referrals/ib-referral.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { publishEvent } from '../../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import * as repository from './ib-referral.repository';
-
-export async function recordReferral({ partnerUserId, referredUserId, brokerAccountId, source, ibLinkId }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { publishEvent } = require('../../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const repository = require('./ib-referral.repository');
+async function recordReferral({ partnerUserId, referredUserId, brokerAccountId, source, ibLinkId }) {
   if (!partnerUserId || !referredUserId) {
     throw new AppError('partnerUserId and referredUserId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -65,8 +63,7 @@ export async function recordReferral({ partnerUserId, referredUserId, brokerAcco
     createdAt: record.created_at,
   };
 }
-
-export async function getReferralById({ referralId }) {
+async function getReferralById({ referralId }) {
   if (!referralId) {
     throw new AppError('referralId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -88,8 +85,7 @@ export async function getReferralById({ referralId }) {
     updatedAt: record.updated_at,
   };
 }
-
-export async function listActiveReferralsForPartner({ partnerUserId }) {
+async function listActiveReferralsForPartner({ partnerUserId }) {
   if (!partnerUserId) {
     throw new AppError('partnerUserId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -104,8 +100,7 @@ export async function listActiveReferralsForPartner({ partnerUserId }) {
     createdAt: row.created_at,
   }));
 }
-
-export async function listReferralsForPartner({ partnerUserId, pagination = {} }) {
+async function listReferralsForPartner({ partnerUserId, pagination = {} }) {
   if (!partnerUserId) {
     throw new AppError('partnerUserId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -125,8 +120,7 @@ export async function listReferralsForPartner({ partnerUserId, pagination = {} }
     total: result.total,
   };
 }
-
-export async function updateReferralStatus({ referralId, status }) {
+async function updateReferralStatus({ referralId, status }) {
   if (!referralId || !status) {
     throw new AppError('referralId and status are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -141,16 +135,14 @@ export async function updateReferralStatus({ referralId, status }) {
 
   return { updated };
 }
-
-export async function countReferrals({ partnerUserId }) {
+async function countReferrals({ partnerUserId }) {
   if (!partnerUserId) {
     throw new AppError('partnerUserId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
   return repository.countByPartner({ partnerUserId });
 }
-
-export const ibReferralService = {
+const ibReferralService = {
   recordReferral,
   getReferralById,
   listActiveReferralsForPartner,
@@ -158,3 +150,16 @@ export const ibReferralService = {
   updateReferralStatus,
   countReferrals,
 };
+module.exports.ibReferralService = ibReferralService;
+
+module.exports.recordReferral = recordReferral;
+
+module.exports.getReferralById = getReferralById;
+
+module.exports.listActiveReferralsForPartner = listActiveReferralsForPartner;
+
+module.exports.listReferralsForPartner = listReferralsForPartner;
+
+module.exports.updateReferralStatus = updateReferralStatus;
+
+module.exports.countReferrals = countReferrals;

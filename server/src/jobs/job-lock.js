@@ -6,11 +6,9 @@
  *
  * @module server/jobs/job-lock
  */
-
-import { getPool } from '../database/connection';
-import { logger } from '../lib/logger';
-
-export async function acquireLock({ lockKey }) {
+const { getPool } = require('../database/connection');
+const { logger } = require('../lib/logger');
+async function acquireLock({ lockKey }) {
   if (!lockKey) {
     throw new Error('lockKey is required');
   }
@@ -32,8 +30,7 @@ export async function acquireLock({ lockKey }) {
 
   return { acquired: true, client };
 }
-
-export async function releaseLock({ lockKey, client }) {
+async function releaseLock({ lockKey, client }) {
   if (!lockKey || !client) {
     return { released: false };
   }
@@ -46,8 +43,7 @@ export async function releaseLock({ lockKey, client }) {
     client.release();
   }
 }
-
-export async function withJobLock({ lockKey, fn }) {
+async function withJobLock({ lockKey, fn }) {
   if (!lockKey || typeof fn !== 'function') {
     throw new Error('lockKey and fn are required');
   }
@@ -65,9 +61,15 @@ export async function withJobLock({ lockKey, fn }) {
     await releaseLock({ lockKey, client });
   }
 }
-
-export const jobLock = {
+const jobLock = {
   acquireLock,
   releaseLock,
   withJobLock,
 };
+module.exports.jobLock = jobLock;
+
+module.exports.acquireLock = acquireLock;
+
+module.exports.releaseLock = releaseLock;
+
+module.exports.withJobLock = withJobLock;

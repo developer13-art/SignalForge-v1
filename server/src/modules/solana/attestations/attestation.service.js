@@ -6,17 +6,16 @@
  *
  * @module server/modules/solana/attestations/attestation.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import { attestationRepository } from './attestation.repository';
-import { attestationBuilderService } from './attestation-builder.service';
-import { programConfigService } from '../config/program-config.service';
-import { certificationAttestationService } from './certification-attestation.service';
-import { dnaAttestationService } from './dna-attestation.service';
-import { reputationAttestationService } from './reputation-attestation.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const { attestationRepository } = require('./attestation.repository');
+const { attestationBuilderService } = require('./attestation-builder.service');
+const { programConfigService } = require('../config/program-config.service');
+const { certificationAttestationService } = require('./certification-attestation.service');
+const { dnaAttestationService } = require('./dna-attestation.service');
+const { reputationAttestationService } = require('./reputation-attestation.service');
 
 function mapAttestation(row) {
   return {
@@ -39,8 +38,7 @@ function mapAttestation(row) {
     confirmedAt: row.confirmed_at,
   };
 }
-
-export async function createAttestation({ subjectType, subjectId, attestationType, publicData, onChainData }) {
+async function createAttestation({ subjectType, subjectId, attestationType, publicData, onChainData }) {
   if (!subjectType || !subjectId || !attestationType) {
     throw new AppError(
       'subjectType, subjectId, and attestationType are required',
@@ -74,8 +72,7 @@ export async function createAttestation({ subjectType, subjectId, attestationTyp
 
   return mapAttestation(record);
 }
-
-export async function getAttestation({ attestationId }) {
+async function getAttestation({ attestationId }) {
   if (!attestationId) {
     throw new AppError('attestationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -88,8 +85,7 @@ export async function getAttestation({ attestationId }) {
 
   return mapAttestation(record);
 }
-
-export async function listBySubject({ subjectType, subjectId, pagination = {} }) {
+async function listBySubject({ subjectType, subjectId, pagination = {} }) {
   if (!subjectType || !subjectId) {
     throw new AppError('subjectType and subjectId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -107,8 +103,7 @@ export async function listBySubject({ subjectType, subjectId, pagination = {} })
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function revokeAttestation({ attestationId, reason }) {
+async function revokeAttestation({ attestationId, reason }) {
   if (!attestationId) {
     throw new AppError('attestationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -129,13 +124,11 @@ export async function revokeAttestation({ attestationId, reason }) {
 
   return { revoked: true };
 }
-
-export async function listPendingAttestations({ limit = 50 }) {
+async function listPendingAttestations({ limit = 50 }) {
   const rows = await attestationRepository.listPending({ limit });
   return rows.map(mapAttestation);
 }
-
-export async function markAttestationAnchored({ attestationId, txSignature, slot, blockTime }) {
+async function markAttestationAnchored({ attestationId, txSignature, slot, blockTime }) {
   if (!attestationId || !txSignature) {
     throw new AppError('attestationId and txSignature are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -154,8 +147,7 @@ export async function markAttestationAnchored({ attestationId, txSignature, slot
 
   return { anchored: true, txSignature };
 }
-
-export async function markAttestationFailed({ attestationId, reason }) {
+async function markAttestationFailed({ attestationId, reason }) {
   if (!attestationId) {
     throw new AppError('attestationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -168,8 +160,7 @@ export async function markAttestationFailed({ attestationId, reason }) {
 
   return { failed: updated };
 }
-
-export async function getStatusBreakdown() {
+async function getStatusBreakdown() {
   const rows = await attestationRepository.countByStatus();
 
   const breakdown = {};
@@ -179,8 +170,7 @@ export async function getStatusBreakdown() {
 
   return breakdown;
 }
-
-export const attestationService = {
+const attestationService = {
   createAttestation,
   getAttestation,
   listBySubject,
@@ -194,3 +184,20 @@ export const attestationService = {
   dna: dnaAttestationService,
   reputation: reputationAttestationService,
 };
+module.exports.attestationService = attestationService;
+
+module.exports.createAttestation = createAttestation;
+
+module.exports.getAttestation = getAttestation;
+
+module.exports.listBySubject = listBySubject;
+
+module.exports.revokeAttestation = revokeAttestation;
+
+module.exports.listPendingAttestations = listPendingAttestations;
+
+module.exports.markAttestationAnchored = markAttestationAnchored;
+
+module.exports.markAttestationFailed = markAttestationFailed;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/execution/operations/pending-order
  */
-
-import { GatewayFactory } from '../gateway/gateway.factory.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-
-export class PendingOrderOperation {
+const { GatewayFactory } = require('../gateway/gateway.factory.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+class PendingOrderOperation {
   constructor(gatewayFactory = null) {
     this.gatewayFactory = gatewayFactory || GatewayFactory;
   }
@@ -32,5 +30,5 @@ export class PendingOrderOperation {
     };
   }
 }
-
-export default PendingOrderOperation;
+module.exports = PendingOrderOperation;
+module.exports.PendingOrderOperation = PendingOrderOperation;

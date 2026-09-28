@@ -7,11 +7,9 @@
  *
  * @module server/modules/solana/transactions/transaction.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertTransaction({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertTransaction({
   txSignature,
   purpose,
   referenceType,
@@ -44,16 +42,14 @@ export async function insertTransaction({
   );
   return rows[0] || null;
 }
-
-export async function findBySignature({ txSignature }) {
+async function findBySignature({ txSignature }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_transactions WHERE tx_signature = $1 LIMIT 1`,
     [txSignature],
   );
   return rows[0] || null;
 }
-
-export async function updateStatus({
+async function updateStatus({
   txSignature,
   status,
   slot,
@@ -73,8 +69,7 @@ export async function updateStatus({
   );
   return rowCount > 0;
 }
-
-export async function listByUser({ userId, filters = {}, pagination = {} }) {
+async function listByUser({ userId, filters = {}, pagination = {} }) {
   const conditions = ['user_id = $1'];
   const params = [userId];
 
@@ -121,8 +116,7 @@ export async function listByUser({ userId, filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function listPendingForConfirmation({ limit = 100 }) {
+async function listPendingForConfirmation({ limit = 100 }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_transactions
       WHERE status = 'SUBMITTED'
@@ -132,15 +126,13 @@ export async function listPendingForConfirmation({ limit = 100 }) {
   );
   return rows;
 }
-
-export async function countByStatus() {
+async function countByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count FROM solana_transactions GROUP BY status`,
   );
   return rows;
 }
-
-export const transactionRepository = {
+const transactionRepository = {
   insertTransaction,
   findBySignature,
   updateStatus,
@@ -148,3 +140,16 @@ export const transactionRepository = {
   listPendingForConfirmation,
   countByStatus,
 };
+module.exports.transactionRepository = transactionRepository;
+
+module.exports.insertTransaction = insertTransaction;
+
+module.exports.findBySignature = findBySignature;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.listByUser = listByUser;
+
+module.exports.listPendingForConfirmation = listPendingForConfirmation;
+
+module.exports.countByStatus = countByStatus;

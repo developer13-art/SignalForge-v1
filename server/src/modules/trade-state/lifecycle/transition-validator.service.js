@@ -3,13 +3,9 @@
  *
  * @module signalforge/server/modules/trade-state/lifecycle/transition-validator
  */
-
-import { StateTransitions } from './state-transitions.js';
-import {
-  TRADE_STATES,
-  isTerminalState,
-} from '../trade-state.constants.js';
-import { TradeTerminalStateError } from '../trade-state.errors.js';
+const { StateTransitions } = require('./state-transitions.js');
+const { TRADE_STATES, isTerminalState } = require('../trade-state.constants.js');
+const { TradeTerminalStateError } = require('../trade-state.errors.js');
 
 const EVENT_TO_STATE = Object.freeze({
   SIGNAL_RECEIVED: TRADE_STATES.SIGNAL_RECEIVED,
@@ -36,8 +32,7 @@ const EVENT_TO_STATE = Object.freeze({
   TAKE_PROFIT: TRADE_STATES.CLOSED,
   ARCHIVED: TRADE_STATES.ARCHIVED,
 });
-
-export class TransitionValidatorService {
+class TransitionValidatorService {
   constructor(stateTransitions = null) {
     this.transitions = stateTransitions || new StateTransitions();
   }
@@ -72,5 +67,5 @@ export class TransitionValidatorService {
     }
   }
 }
-
-export default TransitionValidatorService;
+module.exports = TransitionValidatorService;
+module.exports.TransitionValidatorService = TransitionValidatorService;

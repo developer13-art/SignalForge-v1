@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-classification/controller
  */
-
-import { ClassificationService } from './classification.service.js';
-
-export class ClassificationController {
+const { ClassificationService } = require('./classification.service.js');
+class ClassificationController {
   constructor(service = null) {
     this.service = service || new ClassificationService();
   }
@@ -78,5 +76,5 @@ export class ClassificationController {
     }
   };
 }
-
-export default ClassificationController;
+module.exports = ClassificationController;
+module.exports.ClassificationController = ClassificationController;

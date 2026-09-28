@@ -6,14 +6,12 @@
  *
  * @module server/modules/signal-sources/email/email.events
  */
-
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { publishEvent } from '../../../events/event-publisher';
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { publishEvent } = require('../../../events/event-publisher');
 
 const SOURCE = 'email.events';
-
-export async function emitEmailSessionInitiated({ userId, mailbox }) {
+async function emitEmailSessionInitiated({ userId, mailbox }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_INITIATED,
     source: SOURCE,
@@ -26,8 +24,7 @@ export async function emitEmailSessionInitiated({ userId, mailbox }) {
     },
   });
 }
-
-export async function emitEmailSessionConnected({ userId, mailbox }) {
+async function emitEmailSessionConnected({ userId, mailbox }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_CONNECTED,
     source: SOURCE,
@@ -40,8 +37,7 @@ export async function emitEmailSessionConnected({ userId, mailbox }) {
     },
   });
 }
-
-export async function emitEmailSessionRevoked({ userId, reason }) {
+async function emitEmailSessionRevoked({ userId, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_REVOKED,
     source: SOURCE,
@@ -54,8 +50,7 @@ export async function emitEmailSessionRevoked({ userId, reason }) {
     },
   });
 }
-
-export async function emitEmailMessageReceived({ userId, messageId, from, subject }) {
+async function emitEmailMessageReceived({ userId, messageId, from, subject }) {
   return publishEvent({
     eventType: EVENT_TYPES.MESSAGE_RECEIVED,
     source: SOURCE,
@@ -70,8 +65,7 @@ export async function emitEmailMessageReceived({ userId, messageId, from, subjec
     },
   });
 }
-
-export async function emitEmailMessageRejected({ userId, messageId, reason }) {
+async function emitEmailMessageRejected({ userId, messageId, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_WEBHOOK_REJECTED,
     source: SOURCE,
@@ -85,8 +79,7 @@ export async function emitEmailMessageRejected({ userId, messageId, reason }) {
     },
   });
 }
-
-export async function emitEmailHealthCheck({ userId, healthy, details }) {
+async function emitEmailHealthCheck({ userId, healthy, details }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_HEALTH_CHECK,
     source: SOURCE,
@@ -100,8 +93,7 @@ export async function emitEmailHealthCheck({ userId, healthy, details }) {
     },
   });
 }
-
-export const EMAIL_EVENT_NAMES = Object.freeze({
+const EMAIL_EVENT_NAMES = Object.freeze({
   SESSION_INITIATED: EVENT_TYPES.SOURCE_SESSION_INITIATED,
   SESSION_CONNECTED: EVENT_TYPES.SOURCE_SESSION_CONNECTED,
   SESSION_REVOKED: EVENT_TYPES.SOURCE_SESSION_REVOKED,
@@ -109,3 +101,16 @@ export const EMAIL_EVENT_NAMES = Object.freeze({
   MESSAGE_REJECTED: EVENT_TYPES.SOURCE_WEBHOOK_REJECTED,
   HEALTH_CHECK: EVENT_TYPES.SOURCE_HEALTH_CHECK,
 });
+module.exports.EMAIL_EVENT_NAMES = EMAIL_EVENT_NAMES;
+
+module.exports.emitEmailSessionInitiated = emitEmailSessionInitiated;
+
+module.exports.emitEmailSessionConnected = emitEmailSessionConnected;
+
+module.exports.emitEmailSessionRevoked = emitEmailSessionRevoked;
+
+module.exports.emitEmailMessageReceived = emitEmailMessageReceived;
+
+module.exports.emitEmailMessageRejected = emitEmailMessageRejected;
+
+module.exports.emitEmailHealthCheck = emitEmailHealthCheck;

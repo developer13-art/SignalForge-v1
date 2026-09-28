@@ -7,16 +7,14 @@
  *
  * @module server/modules/executive/analytics/retention.service
  */
-
-import { db } from '../../../database';
+const { db } = require('../../../database');
 
 function normalizeRange({ from, to }) {
   const toDate = to || new Date().toISOString();
   const fromDate = from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   return { from: fromDate, to: toDate };
 }
-
-export async function getRetention({ from, to }) {
+async function getRetention({ from, to }) {
   const range = normalizeRange({ from, to });
 
   const { rows: dauRows } = await db.query(
@@ -75,8 +73,7 @@ export async function getRetention({ from, to }) {
     d7RetentionRate,
   };
 }
-
-export async function getLoginFrequencyDistribution() {
+async function getLoginFrequencyDistribution() {
   const { rows } = await db.query(
     `SELECT
        COUNT(*) FILTER (WHERE last_login_at >= NOW() - INTERVAL '1 day')::int AS daily,
@@ -98,8 +95,7 @@ export async function getLoginFrequencyDistribution() {
     inactive: row.inactive,
   };
 }
-
-export async function getCohortRetention({ cohortStart, weeks = 4 }) {
+async function getCohortRetention({ cohortStart, weeks = 4 }) {
   const { rows } = await db.query(
     `SELECT
        DATE_TRUNC('week', created_at) AS cohort_week,
@@ -124,9 +120,15 @@ export async function getCohortRetention({ cohortStart, weeks = 4 }) {
     week4: row.week_4,
   }));
 }
-
-export const retentionService = {
+const retentionService = {
   getRetention,
   getLoginFrequencyDistribution,
   getCohortRetention,
 };
+module.exports.retentionService = retentionService;
+
+module.exports.getRetention = getRetention;
+
+module.exports.getLoginFrequencyDistribution = getLoginFrequencyDistribution;
+
+module.exports.getCohortRetention = getCohortRetention;

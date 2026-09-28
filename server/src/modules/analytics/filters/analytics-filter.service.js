@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/filters/analytics-filter
  */
-
-import { DateRangeService } from './date-range.service.js';
-
-export class AnalyticsFilterService {
+const { DateRangeService } = require('./date-range.service.js');
+class AnalyticsFilterService {
   constructor(dateRange = null) {
     this.dateRange = dateRange || new DateRangeService();
   }
@@ -52,5 +50,5 @@ export class AnalyticsFilterService {
     };
   }
 }
-
-export default AnalyticsFilterService;
+module.exports = AnalyticsFilterService;
+module.exports.AnalyticsFilterService = AnalyticsFilterService;

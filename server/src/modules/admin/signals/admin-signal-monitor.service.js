@@ -6,13 +6,11 @@
  *
  * @module server/modules/admin/signals/admin-signal-monitor.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-signal.repository';
-
-export async function listSignals({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-signal.repository');
+async function listSignals({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listSignals({
@@ -35,8 +33,7 @@ export async function listSignals({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getSignalDetails({ signalId }) {
+async function getSignalDetails({ signalId }) {
   if (!signalId) {
     throw new AppError('signalId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -49,8 +46,7 @@ export async function getSignalDetails({ signalId }) {
 
   return signal;
 }
-
-export async function listRejectedSignals({ limit = 50 }) {
+async function listRejectedSignals({ limit = 50 }) {
   const rows = await repository.listRejectedSignals({ limit });
 
   return rows.map((row) => ({
@@ -63,8 +59,7 @@ export async function listRejectedSignals({ limit = 50 }) {
     createdAt: row.created_at,
   }));
 }
-
-export async function listDuplicateSignals({ limit = 50 }) {
+async function listDuplicateSignals({ limit = 50 }) {
   const rows = await repository.listDuplicateSignals({ limit });
 
   return rows.map((row) => ({
@@ -77,8 +72,7 @@ export async function listDuplicateSignals({ limit = 50 }) {
     createdAt: row.created_at,
   }));
 }
-
-export async function getStatusBreakdown({ since }) {
+async function getStatusBreakdown({ since }) {
   const rows = await repository.countByStatus({ since });
 
   const breakdown = {};
@@ -88,11 +82,21 @@ export async function getStatusBreakdown({ since }) {
 
   return breakdown;
 }
-
-export const adminSignalMonitorService = {
+const adminSignalMonitorService = {
   listSignals,
   getSignalDetails,
   listRejectedSignals,
   listDuplicateSignals,
   getStatusBreakdown,
 };
+module.exports.adminSignalMonitorService = adminSignalMonitorService;
+
+module.exports.listSignals = listSignals;
+
+module.exports.getSignalDetails = getSignalDetails;
+
+module.exports.listRejectedSignals = listRejectedSignals;
+
+module.exports.listDuplicateSignals = listDuplicateSignals;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

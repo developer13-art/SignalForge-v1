@@ -5,19 +5,16 @@
  *
  * @module server/modules/white-label/pricing/custom-pricing.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function findByProjectId({ projectId }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function findByProjectId({ projectId }) {
   const { rows } = await db.query(
     `SELECT * FROM white_label_pricing WHERE project_id = $1 LIMIT 1`,
     [projectId],
   );
   return rows[0] || null;
 }
-
-export async function upsertPricing({
+async function upsertPricing({
   projectId,
   monthlyPrice,
   yearlyPrice,
@@ -41,17 +38,22 @@ export async function upsertPricing({
   );
   return rows[0];
 }
-
-export async function deletePricing({ projectId }) {
+async function deletePricing({ projectId }) {
   const { rowCount } = await db.query(
     `DELETE FROM white_label_pricing WHERE project_id = $1`,
     [projectId],
   );
   return rowCount > 0;
 }
-
-export const customPricingRepository = {
+const customPricingRepository = {
   findByProjectId,
   upsertPricing,
   deletePricing,
 };
+module.exports.customPricingRepository = customPricingRepository;
+
+module.exports.findByProjectId = findByProjectId;
+
+module.exports.upsertPricing = upsertPricing;
+
+module.exports.deletePricing = deletePricing;

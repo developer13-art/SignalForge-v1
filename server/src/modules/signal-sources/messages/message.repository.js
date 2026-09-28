@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/messages/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class MessageRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class MessageRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -165,5 +163,5 @@ export class MessageRepository {
     return result.rows[0]?.count || 0;
   }
 }
-
-export default MessageRepository;
+module.exports = MessageRepository;
+module.exports.MessageRepository = MessageRepository;

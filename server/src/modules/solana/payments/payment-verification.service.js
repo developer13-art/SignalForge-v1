@@ -7,15 +7,13 @@
  *
  * @module server/modules/solana/payments/payment-verification.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { connectionService } from '../config/connection.service';
-import { solanaPaymentRepository } from './solana-payment.repository';
-import { SOLANA_TOKENS } from '../solana.constants';
-
-export async function verifyTransaction({
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { connectionService } = require('../config/connection.service');
+const { solanaPaymentRepository } = require('./solana-payment.repository');
+const { SOLANA_TOKENS } = require('../solana.constants');
+async function verifyTransaction({
   paymentId,
   txSignature,
   expectedAmount,
@@ -89,8 +87,7 @@ export async function verifyTransaction({
 
   return { verified: true, observedAmount };
 }
-
-export async function verifyPayment({ paymentId }) {
+async function verifyPayment({ paymentId }) {
   if (!paymentId) {
     throw new AppError('paymentId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -113,8 +110,12 @@ export async function verifyPayment({ paymentId }) {
     expectedRecipient: record.recipient_wallet,
   });
 }
-
-export const paymentVerificationService = {
+const paymentVerificationService = {
   verifyTransaction,
   verifyPayment,
 };
+module.exports.paymentVerificationService = paymentVerificationService;
+
+module.exports.verifyTransaction = verifyTransaction;
+
+module.exports.verifyPayment = verifyPayment;

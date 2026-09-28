@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/withdrawals/methods/interface
  */
-
-export class WithdrawalMethodInterface {
+class WithdrawalMethodInterface {
   constructor(name) {
     this.name = name;
   }
@@ -25,5 +24,5 @@ export class WithdrawalMethodInterface {
     return 0;
   }
 }
-
-export default WithdrawalMethodInterface;
+module.exports = WithdrawalMethodInterface;
+module.exports.WithdrawalMethodInterface = WithdrawalMethodInterface;

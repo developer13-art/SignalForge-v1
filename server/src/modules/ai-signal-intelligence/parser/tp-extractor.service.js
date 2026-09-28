@@ -3,16 +3,14 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/parser/tp
  */
-
-import { PriceNormalizerService } from '../normalization/price-normalizer.service.js';
+const { PriceNormalizerService } = require('../normalization/price-normalizer.service.js');
 
 const TP_PATTERNS = Object.freeze([
   /(?:tp\d?|take\s*profit\d?|target\d?)\s*[:\-]?\s*(-?\d{1,7}(?:\.\d{1,6})?)/gi,
   /(?:tp\d?|take\s*profit\d?|target\d?)\s+(?:at|@)\s*(-?\d{1,7}(?:\.\d{1,6})?)/gi,
   /(?<=\btp\d?\s*)\d{1,7}(?:\.\d{1,6})?/gi,
 ]);
-
-export class TpExtractorService {
+class TpExtractorService {
   constructor(normalizer = null) {
     this.normalizer = normalizer || new PriceNormalizerService();
   }
@@ -36,5 +34,5 @@ export class TpExtractorService {
     return results;
   }
 }
-
-export default TpExtractorService;
+module.exports = TpExtractorService;
+module.exports.TpExtractorService = TpExtractorService;

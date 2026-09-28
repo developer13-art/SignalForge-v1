@@ -3,16 +3,11 @@
  *
  * @module signalforge/server/modules/auth/services/email-verification
  */
-
-import { emailTokenService } from '../tokens/email-token.service.js';
-import { TOKEN_TYPES } from '../auth.constants.js';
-import { InvalidTokenError } from '../auth.errors.js';
-import {
-  emitEmailVerificationSent,
-  emitEmailVerified,
-} from '../auth.events.js';
-
-export class EmailVerificationService {
+const { emailTokenService } = require('../tokens/email-token.service.js');
+const { TOKEN_TYPES } = require('../auth.constants.js');
+const { InvalidTokenError } = require('../auth.errors.js');
+const { emitEmailVerificationSent, emitEmailVerified } = require('../auth.events.js');
+class EmailVerificationService {
   constructor(repository, notificationService = null) {
     this.repository = repository;
     this.notifications = notificationService;
@@ -69,5 +64,5 @@ export class EmailVerificationService {
     return { verified: true, userId: record.user_id };
   }
 }
-
-export default EmailVerificationService;
+module.exports = EmailVerificationService;
+module.exports.EmailVerificationService = EmailVerificationService;

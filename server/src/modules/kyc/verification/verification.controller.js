@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/kyc/verification/controller
  */
-
-import { VerificationService } from './verification.service.js';
-import { ApplicationService } from '../application/application.service.js';
-
-export class VerificationController {
+const { VerificationService } = require('./verification.service.js');
+const { ApplicationService } = require('../application/application.service.js');
+class VerificationController {
   constructor(service = null, applicationService = null) {
     this.service = service || new VerificationService();
     this.applicationService = applicationService || new ApplicationService();
@@ -58,5 +56,5 @@ export class VerificationController {
     }
   };
 }
-
-export default VerificationController;
+module.exports = VerificationController;
+module.exports.VerificationController = VerificationController;

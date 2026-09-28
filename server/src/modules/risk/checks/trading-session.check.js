@@ -3,10 +3,9 @@
  *
  * @module signalforge/server/modules/risk/checks/trading-session
  */
-
-import { BaseCheck } from './base.check.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskSessionBlocked } from '../risk.events.js';
+const { BaseCheck } = require('./base.check.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskSessionBlocked } = require('../risk.events.js');
 
 const SESSIONS = Object.freeze({
   SYDNEY: { open: '22:00', close: '07:00' },
@@ -19,8 +18,7 @@ function minutesOfDay(time) {
   const [h, m] = time.split(':').map(Number);
   return h * 60 + m;
 }
-
-export class TradingSessionCheck extends BaseCheck {
+class TradingSessionCheck extends BaseCheck {
   constructor() {
     super(RISK_CHECKS.TRADING_SESSION);
   }
@@ -58,5 +56,5 @@ export class TradingSessionCheck extends BaseCheck {
     );
   }
 }
-
-export default TradingSessionCheck;
+module.exports = TradingSessionCheck;
+module.exports.TradingSessionCheck = TradingSessionCheck;

@@ -1,90 +1,59 @@
+'use strict';
+
 /**
- * Migration Rollback
+ * Rollback Script
  *
- * Rolls back the most recently applied migration (or a specific
- * migration by filename). Each migration file must export a
- * `down(client)` function.
+ * Rolls back the most recently applied migration. Reads the
+ * `schema_migrations` table to find the last entry, calls its
+ * `down()` function, and removes the entry from the table.
  *
- * @module server/database/migrations/rollback
+ * @module signalforge/server/database/migrations/rollback
  */
 
-import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { getPool } from '../connection';
-import { logger } from '../../lib/logger';
+const path = require('node:path');
+const databaseConfig = require('../../config/database.config.js');
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-async function importMigrationFile(filename) {
-  const filePath = path.join(__dirname, filename);
-  const fileUrl = pathToFileURL(filePath).href;
-  const module = await import(fileUrl);
-  return module.default || module;
-}
-
-export async function rollbackMigration({ filename } = {}) {
-  const pool = getPool();
-  const client = await pool.connect();
-
+async function rollback(db) {
+  const client = await db.pool.connect();
   try {
-    let targetFilename = filename;
+    const last = await client.query(
+      'SELECT id, filename FROM schema_migrations ORDER BY id DESC LIMIT 1',
+    );
 
-    if (!targetFilename) {
-      const { rows } = await client.query(
-        `SELECT filename FROM schema_migrations ORDER BY filename DESC LIMIT 1`,
-      );
-      if (rows.length === 0) {
-        logger.info('No migrations to roll back');
-        return { rolledBack: null };
-      }
-      targetFilename = rows[0].filename;
+    if (last.rowCount === 0) {
+      return { rolledBack: 0, reason: 'no migrations applied' };
     }
 
-    const migration = await importMigrationFile(targetFilename);
+    const { id, filename } = last.rows[0];
+    const migrationPath = path.resolve(
+      process.cwd(),
+      databaseConfig.migrations.directory,
+      filename,
+    );
+
+    // eslint-disable-next-line global-require, import/no-dynamic-require
+    const loaded = require(migrationPath);
+    const migration = loaded && loaded.default ? loaded.default : loaded;
 
     if (!migration || typeof migration.down !== 'function') {
-      logger.warn({ filename: targetFilename }, 'Migration has no down() function');
-      return { rolledBack: null, reason: 'NO_DOWN_FUNCTION' };
+      throw new Error(`Migration ${filename} does not export a "down" function`);
     }
-
-    logger.info({ filename: targetFilename }, 'Rolling back migration');
 
     await client.query('BEGIN');
-
     try {
       await migration.down(client);
-      await client.query(
-        `DELETE FROM schema_migrations WHERE filename = $1`,
-        [targetFilename],
-      );
+      await client.query('DELETE FROM schema_migrations WHERE id = $1', [id]);
       await client.query('COMMIT');
-      logger.info({ filename: targetFilename }, 'Migration rolled back');
-      return { rolledBack: targetFilename };
-    } catch (err) {
+    } catch (error) {
       await client.query('ROLLBACK');
-      logger.error({ err, filename: targetFilename }, 'Rollback failed');
-      throw err;
+      throw error;
     }
+
+    return { rolledBack: 1, filename };
   } finally {
     client.release();
   }
 }
 
-export async function rollbackAll() {
-  const results = [];
-
-  for (;;) {
-    const result = await rollbackMigration();
-    if (!result.rolledBack) {
-      break;
-    }
-    results.push(result.rolledBack);
-  }
-
-  return { rolledBack: results };
-}
-
-export const migrationRollback = {
-  rollbackMigration,
-  rollbackAll,
-};
+module.exports = rollback;
+module.exports.rollback = rollback;

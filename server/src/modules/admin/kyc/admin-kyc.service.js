@@ -3,13 +3,11 @@
  *
  * @module server/modules/admin/kyc/admin-kyc.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-kyc.repository';
-
-export async function listKycApplications({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-kyc.repository');
+async function listKycApplications({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listKycApplications({
@@ -32,8 +30,7 @@ export async function listKycApplications({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getKycApplicationDetails({ applicationId }) {
+async function getKycApplicationDetails({ applicationId }) {
   if (!applicationId) {
     throw new AppError('applicationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -46,8 +43,7 @@ export async function getKycApplicationDetails({ applicationId }) {
 
   return application;
 }
-
-export async function getStatusBreakdown() {
+async function getStatusBreakdown() {
   const rows = await repository.countByStatus();
 
   const breakdown = {};
@@ -57,9 +53,15 @@ export async function getStatusBreakdown() {
 
   return breakdown;
 }
-
-export const adminKycService = {
+const adminKycService = {
   listKycApplications,
   getKycApplicationDetails,
   getStatusBreakdown,
 };
+module.exports.adminKycService = adminKycService;
+
+module.exports.listKycApplications = listKycApplications;
+
+module.exports.getKycApplicationDetails = getKycApplicationDetails;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

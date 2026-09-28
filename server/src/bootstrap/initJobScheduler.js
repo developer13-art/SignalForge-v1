@@ -12,15 +12,13 @@
  *
  * @module signalforge/server/bootstrap/initJobScheduler
  */
-
-import { getLogger } from './initLogger.js';
+const { getLogger } = require('./initLogger.js');
 
 const DEFAULT_TICK_INTERVAL_MS = 30000;
 const SCHEDULER_LOCK_ID = 9002;
 
 let schedulerState = null;
-
-export async function initJobScheduler(dependencies = {}) {
+async function initJobScheduler(dependencies = {}) {
   const logger = getLogger('job-scheduler');
 
   if (schedulerState) {
@@ -86,7 +84,7 @@ export async function initJobScheduler(dependencies = {}) {
           await db.advisoryLock(SCHEDULER_LOCK_ID, async (client) => {
             const insertResult = await client.query(
               `
-                INSERT INTO jobs (job_type, payload, status, max_attempts, scheduled_for)
+                INSERT INTO jobs (job_type, payload, status, max_attempts, scheduled_at)
                 SELECT $1, $2, 'PENDING', 3, NOW()
                 WHERE NOT EXISTS (
                   SELECT 1 FROM jobs
@@ -148,12 +146,13 @@ export async function initJobScheduler(dependencies = {}) {
 
   return schedulerState;
 }
-
-export function getJobScheduler() {
+function getJobScheduler() {
   if (!schedulerState) {
     throw new Error('Job scheduler has not been initialized');
   }
   return schedulerState;
 }
+module.exports = initJobScheduler;
+module.exports.getJobScheduler = getJobScheduler;
 
-export default initJobScheduler;
+module.exports.initJobScheduler = initJobScheduler;

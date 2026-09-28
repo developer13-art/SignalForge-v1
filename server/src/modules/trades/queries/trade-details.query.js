@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/trades/queries/trade-details
  */
-
-import { TradeRepository } from '../trade.repository.js';
-import { TradeNotFoundError } from '../trade.errors.js';
-import { TradeTimelineService } from '../timeline/trade-timeline.service.js';
-
-export class TradeDetailsQuery {
+const { TradeRepository } = require('../trade.repository.js');
+const { TradeNotFoundError } = require('../trade.errors.js');
+const { TradeTimelineService } = require('../timeline/trade-timeline.service.js');
+class TradeDetailsQuery {
   constructor(repository = null, timelineService = null) {
     this.repository = repository || new TradeRepository();
     this.timeline = timelineService || new TradeTimelineService();
@@ -90,5 +88,5 @@ export class TradeDetailsQuery {
     return input;
   }
 }
-
-export default TradeDetailsQuery;
+module.exports = TradeDetailsQuery;
+module.exports.TradeDetailsQuery = TradeDetailsQuery;

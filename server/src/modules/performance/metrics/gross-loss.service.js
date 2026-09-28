@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/performance/metrics/gross-loss
  */
-
-export class GrossLossService {
+class GrossLossService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return { total: 0, count: 0, trades: [] };
@@ -35,5 +34,5 @@ export class GrossLossService {
     };
   }
 }
-
-export default GrossLossService;
+module.exports = GrossLossService;
+module.exports.GrossLossService = GrossLossService;

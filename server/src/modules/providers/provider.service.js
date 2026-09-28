@@ -3,34 +3,19 @@
  *
  * @module signalforge/server/modules/providers/service
  */
-
-import { ProviderRepository } from './provider.repository.js';
-import { ProviderProfileService } from './profile/service.js';
-import { CertificationService } from './certification/service.js';
-import { ProviderRevenueService } from './revenue/service.js';
-import { ProviderSubscriberService } from './subscribers/service.js';
-import { ProviderPromotionsService } from './business/promotions.js';
-import { RevenueDashboardService } from './business/revenue-dashboard.service.js';
-import { MarketingToolsService } from './business/marketing-tools.service.js';
-import { ProviderSettingsService } from './business/provider-settings.service.js';
-import {
-  PROVIDER_STATUSES,
-  CERTIFICATION_STATUSES,
-} from './provider.constants.js';
-import {
-  ProviderNotFoundError,
-  ProviderAlreadyRegisteredError,
-  ProviderNotActiveError,
-} from './provider.errors.js';
-import {
-  emitProviderRegistered,
-  emitProviderUpdated,
-  emitProviderApproved,
-  emitProviderSuspended,
-  emitProviderReinstated,
-} from './provider.events.js';
-
-export class ProviderService {
+const { ProviderRepository } = require('./provider.repository.js');
+const { ProviderProfileService } = require('./profile/service.js');
+const { CertificationService } = require('./certification/service.js');
+const { ProviderRevenueService } = require('./revenue/service.js');
+const { ProviderSubscriberService } = require('./subscribers/service.js');
+const { ProviderPromotionsService } = require('./business/promotions.js');
+const { RevenueDashboardService } = require('./business/revenue-dashboard.service.js');
+const { MarketingToolsService } = require('./business/marketing-tools.service.js');
+const { ProviderSettingsService } = require('./business/provider-settings.service.js');
+const { PROVIDER_STATUSES, CERTIFICATION_STATUSES } = require('./provider.constants.js');
+const { ProviderNotFoundError, ProviderAlreadyRegisteredError, ProviderNotActiveError } = require('./provider.errors.js');
+const { emitProviderRegistered, emitProviderUpdated, emitProviderApproved, emitProviderSuspended, emitProviderReinstated } = require('./provider.events.js');
+class ProviderService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ProviderRepository();
 
@@ -269,5 +254,5 @@ export class ProviderService {
     return input;
   }
 }
-
-export default ProviderService;
+module.exports = ProviderService;
+module.exports.ProviderService = ProviderService;

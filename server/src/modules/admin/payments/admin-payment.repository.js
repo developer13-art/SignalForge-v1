@@ -5,11 +5,9 @@
  *
  * @module server/modules/admin/payments/admin-payment.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function listPayments({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function listPayments({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -65,16 +63,14 @@ export async function listPayments({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findPaymentById({ paymentId }) {
+async function findPaymentById({ paymentId }) {
   const { rows } = await db.query(
     `SELECT * FROM payments WHERE id = $1 LIMIT 1`,
     [paymentId],
   );
   return rows[0] || null;
 }
-
-export async function markRefunded({ paymentId, adminId, reason, refundAmount }) {
+async function markRefunded({ paymentId, adminId, reason, refundAmount }) {
   const { rowCount } = await db.query(
     `UPDATE payments
         SET status = 'REFUNDED',
@@ -88,8 +84,7 @@ export async function markRefunded({ paymentId, adminId, reason, refundAmount })
   );
   return rowCount > 0;
 }
-
-export async function countByStatus({ since }) {
+async function countByStatus({ since }) {
   const params = [];
   let where = '';
 
@@ -107,8 +102,7 @@ export async function countByStatus({ since }) {
   );
   return rows;
 }
-
-export async function sumRevenueByProvider({ since }) {
+async function sumRevenueByProvider({ since }) {
   const params = [];
   let where = `WHERE status = 'SUCCEEDED'`;
 
@@ -126,11 +120,21 @@ export async function sumRevenueByProvider({ since }) {
   );
   return rows;
 }
-
-export const adminPaymentRepository = {
+const adminPaymentRepository = {
   listPayments,
   findPaymentById,
   markRefunded,
   countByStatus,
   sumRevenueByProvider,
 };
+module.exports.adminPaymentRepository = adminPaymentRepository;
+
+module.exports.listPayments = listPayments;
+
+module.exports.findPaymentById = findPaymentById;
+
+module.exports.markRefunded = markRefunded;
+
+module.exports.countByStatus = countByStatus;
+
+module.exports.sumRevenueByProvider = sumRevenueByProvider;

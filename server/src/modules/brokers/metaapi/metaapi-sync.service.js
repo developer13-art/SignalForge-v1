@@ -3,16 +3,11 @@
  *
  * @module signalforge/server/modules/brokers/metaapi/sync
  */
-
-import { MetaApiClient } from './metaapi.client.js';
-import { AccountRepository } from '../accounts/account.repository.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import {
-  emitAccountSynced,
-  emitAccountError,
-} from '../broker.events.js';
-
-export class MetaApiSyncService {
+const { MetaApiClient } = require('./metaapi.client.js');
+const { AccountRepository } = require('../accounts/account.repository.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { emitAccountSynced, emitAccountError } = require('../broker.events.js');
+class MetaApiSyncService {
   constructor(dependencies = {}) {
     this.client = dependencies.client || new MetaApiClient();
     this.repository = dependencies.repository || new AccountRepository();
@@ -117,5 +112,5 @@ export class MetaApiSyncService {
     return this.client.getSymbolSpecification(account.metaapi_account_id, symbol);
   }
 }
-
-export default MetaApiSyncService;
+module.exports = MetaApiSyncService;
+module.exports.MetaApiSyncService = MetaApiSyncService;

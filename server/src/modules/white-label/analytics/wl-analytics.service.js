@@ -6,12 +6,10 @@
  *
  * @module server/modules/white-label/analytics/wl-analytics.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { db } from '../../../database';
-
-export async function getAnalytics({ projectId, from, to }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { db } = require('../../../database');
+async function getAnalytics({ projectId, from, to }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -73,8 +71,7 @@ export async function getAnalytics({ projectId, from, to }) {
     },
   };
 }
-
-export async function getDailyActiveUsers({ projectId, days = 30 }) {
+async function getDailyActiveUsers({ projectId, days = 30 }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -95,8 +92,12 @@ export async function getDailyActiveUsers({ projectId, days = 30 }) {
     activeUsers: row.active_users,
   }));
 }
-
-export const wlAnalyticsService = {
+const wlAnalyticsService = {
   getAnalytics,
   getDailyActiveUsers,
 };
+module.exports.wlAnalyticsService = wlAnalyticsService;
+
+module.exports.getAnalytics = getAnalytics;
+
+module.exports.getDailyActiveUsers = getDailyActiveUsers;

@@ -5,15 +5,14 @@
  *
  * @module signalforge/server/modules/signal-sources/adapters/registry
  */
-
-import { TelegramAdapter } from './telegram.adapter.js';
-import { DiscordAdapter } from './discord.adapter.js';
-import { WhatsAppAdapter } from './whatsapp.adapter.js';
-import { TradingViewAdapter } from './tradingview.adapter.js';
-import { EmailAdapter } from './email.adapter.js';
-import { RestApiAdapter } from './rest-api.adapter.js';
-import { SOURCE_TYPES } from '../source.constants.js';
-import { UnsupportedSourceTypeError } from '../source.errors.js';
+const { TelegramAdapter } = require('./telegram.adapter.js');
+const { DiscordAdapter } = require('./discord.adapter.js');
+const { WhatsAppAdapter } = require('./whatsapp.adapter.js');
+const { TradingViewAdapter } = require('./tradingview.adapter.js');
+const { EmailAdapter } = require('./email.adapter.js');
+const { RestApiAdapter } = require('./rest-api.adapter.js');
+const { SOURCE_TYPES } = require('../source.constants.js');
+const { UnsupportedSourceTypeError } = require('../source.errors.js');
 
 const registry = {
   [SOURCE_TYPES.TELEGRAM]: TelegramAdapter,
@@ -23,8 +22,7 @@ const registry = {
   [SOURCE_TYPES.EMAIL]: EmailAdapter,
   [SOURCE_TYPES.REST_API]: RestApiAdapter,
 };
-
-export class AdapterRegistry {
+class AdapterRegistry {
   static register(sourceType, AdapterClass) {
     registry[sourceType] = AdapterClass;
   }
@@ -45,5 +43,5 @@ export class AdapterRegistry {
     return Object.keys(registry);
   }
 }
-
-export default AdapterRegistry;
+module.exports = AdapterRegistry;
+module.exports.AdapterRegistry = AdapterRegistry;

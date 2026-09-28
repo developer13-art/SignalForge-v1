@@ -7,8 +7,7 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/token-counter
  */
-
-export class TokenCounterService {
+class TokenCounterService {
   estimateTokens(text) {
     if (!text || typeof text !== 'string') {
       return 0;
@@ -41,5 +40,5 @@ export class TokenCounterService {
     return (tokens / 1000) * pricePer1kTokens;
   }
 }
-
-export default TokenCounterService;
+module.exports = TokenCounterService;
+module.exports.TokenCounterService = TokenCounterService;

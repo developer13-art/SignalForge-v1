@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/performance/metrics/gross-profit
  */
-
-export class GrossProfitService {
+class GrossProfitService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return { total: 0, count: 0, trades: [] };
@@ -34,5 +33,5 @@ export class GrossProfitService {
     };
   }
 }
-
-export default GrossProfitService;
+module.exports = GrossProfitService;
+module.exports.GrossProfitService = GrossProfitService;

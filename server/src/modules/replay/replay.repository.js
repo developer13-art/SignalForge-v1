@@ -6,10 +6,8 @@
  *
  * @module server/modules/replay/replay.repository
  */
-
-import { db } from '../../database';
-
-export async function listSignalEvents({ signalId, limit = 500 }) {
+const { db } = require('../../database');
+async function listSignalEvents({ signalId, limit = 500 }) {
   const { rows } = await db.query(
     `SELECT id, signal_id, event_type, actor_type, actor_id, details, created_at
        FROM signal_events
@@ -20,8 +18,7 @@ export async function listSignalEvents({ signalId, limit = 500 }) {
   );
   return rows;
 }
-
-export async function listTradeEvents({ tradeId, limit = 500 }) {
+async function listTradeEvents({ tradeId, limit = 500 }) {
   const { rows } = await db.query(
     `SELECT id, trade_id, event_type, actor_type, actor_id, details, created_at
        FROM trade_events
@@ -32,8 +29,7 @@ export async function listTradeEvents({ tradeId, limit = 500 }) {
   );
   return rows;
 }
-
-export async function listAiProcessingLogs({ signalId, limit = 200 }) {
+async function listAiProcessingLogs({ signalId, limit = 200 }) {
   const { rows } = await db.query(
     `SELECT id, signal_id, parser_type, model, confidence, duration_ms, input_text, output, created_at
        FROM signal_parses
@@ -44,8 +40,7 @@ export async function listAiProcessingLogs({ signalId, limit = 200 }) {
   );
   return rows;
 }
-
-export async function listRiskDecisions({ signalId, userId, limit = 200 }) {
+async function listRiskDecisions({ signalId, userId, limit = 200 }) {
   const conditions = [];
   const params = [];
 
@@ -71,8 +66,7 @@ export async function listRiskDecisions({ signalId, userId, limit = 200 }) {
   );
   return rows;
 }
-
-export async function listExecutionLogs({ tradeId, limit = 200 }) {
+async function listExecutionLogs({ tradeId, limit = 200 }) {
   const { rows } = await db.query(
     `SELECT id, trade_id, execution_request_id, attempt, status, broker_response, error, created_at
        FROM execution_logs
@@ -83,8 +77,7 @@ export async function listExecutionLogs({ tradeId, limit = 200 }) {
   );
   return rows;
 }
-
-export async function listSourceMessages({ providerId, signalId, limit = 200 }) {
+async function listSourceMessages({ providerId, signalId, limit = 200 }) {
   const conditions = [];
   const params = [];
 
@@ -110,8 +103,7 @@ export async function listSourceMessages({ providerId, signalId, limit = 200 }) 
   );
   return rows;
 }
-
-export async function listSystemEvents({ correlationId, limit = 500 }) {
+async function listSystemEvents({ correlationId, limit = 500 }) {
   if (!correlationId) {
     return [];
   }
@@ -126,32 +118,28 @@ export async function listSystemEvents({ correlationId, limit = 500 }) {
   );
   return rows;
 }
-
-export async function findSignalById({ signalId }) {
+async function findSignalById({ signalId }) {
   const { rows } = await db.query(
     `SELECT * FROM signals WHERE id = $1 LIMIT 1`,
     [signalId],
   );
   return rows[0] || null;
 }
-
-export async function findTradeById({ tradeId }) {
+async function findTradeById({ tradeId }) {
   const { rows } = await db.query(
     `SELECT * FROM trades WHERE id = $1 LIMIT 1`,
     [tradeId],
   );
   return rows[0] || null;
 }
-
-export async function findTradeIdsBySignal({ signalId }) {
+async function findTradeIdsBySignal({ signalId }) {
   const { rows } = await db.query(
     `SELECT id FROM trades WHERE signal_id = $1`,
     [signalId],
   );
   return rows.map((row) => row.id);
 }
-
-export const replayRepository = {
+const replayRepository = {
   listSignalEvents,
   listTradeEvents,
   listAiProcessingLogs,
@@ -163,3 +151,24 @@ export const replayRepository = {
   findTradeById,
   findTradeIdsBySignal,
 };
+module.exports.replayRepository = replayRepository;
+
+module.exports.listSignalEvents = listSignalEvents;
+
+module.exports.listTradeEvents = listTradeEvents;
+
+module.exports.listAiProcessingLogs = listAiProcessingLogs;
+
+module.exports.listRiskDecisions = listRiskDecisions;
+
+module.exports.listExecutionLogs = listExecutionLogs;
+
+module.exports.listSourceMessages = listSourceMessages;
+
+module.exports.listSystemEvents = listSystemEvents;
+
+module.exports.findSignalById = findSignalById;
+
+module.exports.findTradeById = findTradeById;
+
+module.exports.findTradeIdsBySignal = findTradeIdsBySignal;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/risk/news/news-filter
  */
-
-import { NewsCalendarService } from './news-calendar.service.js';
-
-export class NewsFilterService {
+const { NewsCalendarService } = require('./news-calendar.service.js');
+class NewsFilterService {
   constructor(calendar = null) {
     this.calendar = calendar || new NewsCalendarService();
   }
@@ -36,5 +34,5 @@ export class NewsFilterService {
     return { blocked: false };
   }
 }
-
-export default NewsFilterService;
+module.exports = NewsFilterService;
+module.exports.NewsFilterService = NewsFilterService;

@@ -7,13 +7,12 @@
  *
  * @module server/modules/security/api-key.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { sha256 } from '@signalforge/shared/utils/hash.util';
-import * as repository from './api-key.repository';
+const crypto = require('node:crypto');
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { sha256 } = require('@signalforge/shared/utils/hash.util');
+const repository = require('./api-key.repository');
 
 const KEY_PREFIX_LENGTH = 12;
 const KEY_BODY_LENGTH = 32;
@@ -27,8 +26,7 @@ function generateRawKey() {
 function hashKey({ rawKey }) {
   return sha256(rawKey);
 }
-
-export async function createApiKey({ userId, name, permissions, expiresAt }) {
+async function createApiKey({ userId, name, permissions, expiresAt }) {
   if (!userId || !name) {
     throw new AppError('userId and name are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -58,8 +56,7 @@ export async function createApiKey({ userId, name, permissions, expiresAt }) {
     notice: 'Store this key securely. It will not be shown again.',
   };
 }
-
-export async function listApiKeys({ userId }) {
+async function listApiKeys({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -77,8 +74,7 @@ export async function listApiKeys({ userId }) {
     createdAt: row.created_at,
   }));
 }
-
-export async function verifyApiKey({ rawKey }) {
+async function verifyApiKey({ rawKey }) {
   if (!rawKey || typeof rawKey !== 'string') {
     return { valid: false, reason: 'MISSING_KEY' };
   }
@@ -125,8 +121,7 @@ export async function verifyApiKey({ rawKey }) {
     permissions: record.permissions ? JSON.parse(record.permissions) : [],
   };
 }
-
-export async function revokeApiKey({ apiKeyId, userId }) {
+async function revokeApiKey({ apiKeyId, userId }) {
   if (!apiKeyId) {
     throw new AppError('apiKeyId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -147,8 +142,7 @@ export async function revokeApiKey({ apiKeyId, userId }) {
 
   return { revoked: true };
 }
-
-export async function deleteApiKey({ apiKeyId, userId }) {
+async function deleteApiKey({ apiKeyId, userId }) {
   if (!apiKeyId || !userId) {
     throw new AppError('apiKeyId and userId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -161,8 +155,7 @@ export async function deleteApiKey({ apiKeyId, userId }) {
 
   return { deleted: true };
 }
-
-export async function hasPermission({ apiKeyPermissions, required }) {
+async function hasPermission({ apiKeyPermissions, required }) {
   if (!Array.isArray(apiKeyPermissions)) {
     return false;
   }
@@ -171,8 +164,7 @@ export async function hasPermission({ apiKeyPermissions, required }) {
   }
   return apiKeyPermissions.includes(required);
 }
-
-export const apiKeyService = {
+const apiKeyService = {
   createApiKey,
   listApiKeys,
   verifyApiKey,
@@ -180,3 +172,16 @@ export const apiKeyService = {
   deleteApiKey,
   hasPermission,
 };
+module.exports.apiKeyService = apiKeyService;
+
+module.exports.createApiKey = createApiKey;
+
+module.exports.listApiKeys = listApiKeys;
+
+module.exports.verifyApiKey = verifyApiKey;
+
+module.exports.revokeApiKey = revokeApiKey;
+
+module.exports.deleteApiKey = deleteApiKey;
+
+module.exports.hasPermission = hasPermission;

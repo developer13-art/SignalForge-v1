@@ -7,12 +7,10 @@
  *
  * @module server/events/event-store
  */
-
-import { db } from '../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { logger } from '../lib/logger';
-
-export async function storeEvent({
+const { db } = require('../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { logger } = require('../lib/logger');
+async function storeEvent({
   eventId,
   eventType,
   source,
@@ -56,8 +54,7 @@ export async function storeEvent({
     return null;
   }
 }
-
-export async function findStoredEventById({ eventId }) {
+async function findStoredEventById({ eventId }) {
   if (!eventId) {
     throw new Error('eventId is required');
   }
@@ -69,8 +66,7 @@ export async function findStoredEventById({ eventId }) {
 
   return rows[0] || null;
 }
-
-export async function listStoredEvents({ filters = {}, pagination = {} }) {
+async function listStoredEvents({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -127,8 +123,7 @@ export async function listStoredEvents({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function deleteStoredEventsOlderThan({ cutoff }) {
+async function deleteStoredEventsOlderThan({ cutoff }) {
   if (!cutoff) {
     throw new Error('cutoff is required');
   }
@@ -140,10 +135,18 @@ export async function deleteStoredEventsOlderThan({ cutoff }) {
 
   return rowCount;
 }
-
-export const eventStore = {
+const eventStore = {
   storeEvent,
   findStoredEventById,
   listStoredEvents,
   deleteStoredEventsOlderThan,
 };
+module.exports.eventStore = eventStore;
+
+module.exports.storeEvent = storeEvent;
+
+module.exports.findStoredEventById = findStoredEventById;
+
+module.exports.listStoredEvents = listStoredEvents;
+
+module.exports.deleteStoredEventsOlderThan = deleteStoredEventsOlderThan;

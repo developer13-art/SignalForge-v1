@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/marketplace/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class MarketplaceRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class MarketplaceRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -574,5 +572,5 @@ export class MarketplaceRepository {
     return result.rows;
   }
 }
-
-export default MarketplaceRepository;
+module.exports = MarketplaceRepository;
+module.exports.MarketplaceRepository = MarketplaceRepository;

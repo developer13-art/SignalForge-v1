@@ -7,22 +7,13 @@
  *
  * @module signalforge/server/modules/signal-standardization/fingerprint
  */
-
-import crypto from 'node:crypto';
-
-import { canonicalize } from '@signalforge/shared/utils/hash.util';
-import { normalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
-import { normalizeDirection } from '@signalforge/shared/constants/order-directions';
-
-import {
-  FINGERPRINT_ALGORITHM,
-  FINGERPRINT_LENGTH,
-  FINGERPRINT_PREFIX_LENGTH,
-  DUPLICATE_WINDOW_SECONDS,
-} from './standardization.constants.js';
-import { FingerprintComputationError } from './standardization.errors.js';
-
-export class FingerprintService {
+const crypto = require('node:crypto');
+const { canonicalize } = require('@signalforge/shared/utils/hash.util');
+const { normalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
+const { normalizeDirection } = require('@signalforge/shared/constants/order-directions');
+const { FINGERPRINT_ALGORITHM, FINGERPRINT_LENGTH, FINGERPRINT_PREFIX_LENGTH, DUPLICATE_WINDOW_SECONDS } = require('./standardization.constants.js');
+const { FingerprintComputationError } = require('./standardization.errors.js');
+class FingerprintService {
   compute(signal) {
     if (!signal || typeof signal !== 'object') {
       throw new FingerprintComputationError('Signal must be an object');
@@ -98,5 +89,5 @@ function normalizePrice(value) {
   }
   return null;
 }
-
-export default FingerprintService;
+module.exports = FingerprintService;
+module.exports.FingerprintService = FingerprintService;

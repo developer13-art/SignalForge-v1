@@ -5,10 +5,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/parser/repository
  */
-
-import { AiRepository } from '../ai.repository.js';
-
-export class ParserRepository {
+const { AiRepository } = require('../ai.repository.js');
+class ParserRepository {
   constructor(db = null) {
     this.aiRepository = new AiRepository(db);
   }
@@ -33,5 +31,5 @@ export class ParserRepository {
     return this.aiRepository.listSignalParses(filters, pagination);
   }
 }
-
-export default ParserRepository;
+module.exports = ParserRepository;
+module.exports.ParserRepository = ParserRepository;

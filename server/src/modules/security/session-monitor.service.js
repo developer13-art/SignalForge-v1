@@ -8,12 +8,11 @@
  *
  * @module server/modules/security/session-monitor.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../database';
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../database');
 
 const MAX_SESSIONS_PER_USER = 20;
 const MAX_REASONABLE_IP_CHANGES_PER_HOUR = 10;
@@ -37,8 +36,7 @@ async function getIpGeolocation(ipAddress) {
     city: null,
   };
 }
-
-export async function registerSession({
+async function registerSession({
   userId,
   sessionToken,
   ipAddress,
@@ -103,8 +101,7 @@ async function pruneOldSessions({ userId }) {
 
   logger.info({ userId, prunedCount: ids.length }, 'Old sessions pruned');
 }
-
-export async function touchSession({ sessionToken }) {
+async function touchSession({ sessionToken }) {
   if (!sessionToken) {
     return { touched: false };
   }
@@ -118,8 +115,7 @@ export async function touchSession({ sessionToken }) {
 
   return { touched: rowCount > 0 };
 }
-
-export async function getActiveSessions({ userId }) {
+async function getActiveSessions({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -144,8 +140,7 @@ export async function getActiveSessions({ userId }) {
     expiresAt: row.expires_at,
   }));
 }
-
-export async function countActiveSessions() {
+async function countActiveSessions() {
   const { rows } = await db.query(
     `SELECT COUNT(*)::int AS count
        FROM user_sessions
@@ -154,8 +149,7 @@ export async function countActiveSessions() {
   );
   return rows[0]?.count || 0;
 }
-
-export async function revokeSession({ sessionId, userId, actorId }) {
+async function revokeSession({ sessionId, userId, actorId }) {
   if (!sessionId) {
     throw new AppError('sessionId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -178,8 +172,7 @@ export async function revokeSession({ sessionId, userId, actorId }) {
 
   return { revoked: true };
 }
-
-export async function revokeAllSessions({ userId, reason, actorId }) {
+async function revokeAllSessions({ userId, reason, actorId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -195,8 +188,7 @@ export async function revokeAllSessions({ userId, reason, actorId }) {
 
   return { revokedCount: rowCount };
 }
-
-export async function detectAnomalies({ userId }) {
+async function detectAnomalies({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -224,8 +216,7 @@ export async function detectAnomalies({ userId }) {
 
   return { anomalies, uniqueIps };
 }
-
-export async function listAllActiveSessions({ limit = 500 }) {
+async function listAllActiveSessions({ limit = 500 }) {
   const { rows } = await db.query(
     `SELECT id, user_id, ip_address, user_agent, created_at, last_seen_at, expires_at
        FROM user_sessions
@@ -245,8 +236,7 @@ export async function listAllActiveSessions({ limit = 500 }) {
     expiresAt: row.expires_at,
   }));
 }
-
-export const sessionMonitorService = {
+const sessionMonitorService = {
   registerSession,
   touchSession,
   getActiveSessions,
@@ -256,3 +246,20 @@ export const sessionMonitorService = {
   detectAnomalies,
   listAllActiveSessions,
 };
+module.exports.sessionMonitorService = sessionMonitorService;
+
+module.exports.registerSession = registerSession;
+
+module.exports.touchSession = touchSession;
+
+module.exports.getActiveSessions = getActiveSessions;
+
+module.exports.countActiveSessions = countActiveSessions;
+
+module.exports.revokeSession = revokeSession;
+
+module.exports.revokeAllSessions = revokeAllSessions;
+
+module.exports.detectAnomalies = detectAnomalies;
+
+module.exports.listAllActiveSessions = listAllActiveSessions;

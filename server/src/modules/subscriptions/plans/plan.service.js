@@ -3,22 +3,12 @@
  *
  * @module signalforge/server/modules/subscriptions/plans/service
  */
-
-import { PlanRepository } from './repository.js';
-import { PlanFeatureService } from './feature.js';
-import { SubscriptionRepository } from '../subscription.repository.js';
-import {
-  PlanNotFoundError,
-  PlanAlreadyExistsError,
-  PlanNotEditableError,
-} from '../subscription.errors.js';
-import {
-  emitPlanCreated,
-  emitPlanUpdated,
-  emitPlanDeleted,
-} from '../subscription.events.js';
-
-export class PlanService {
+const { PlanRepository } = require('./repository.js');
+const { PlanFeatureService } = require('./feature.js');
+const { SubscriptionRepository } = require('../subscription.repository.js');
+const { PlanNotFoundError, PlanAlreadyExistsError, PlanNotEditableError } = require('../subscription.errors.js');
+const { emitPlanCreated, emitPlanUpdated, emitPlanDeleted } = require('../subscription.events.js');
+class PlanService {
   constructor(repository = null, featureService = null, subscriptionRepository = null) {
     this.repository = repository || new PlanRepository();
     this.features = featureService || new PlanFeatureService();
@@ -178,5 +168,5 @@ export class PlanService {
     return input;
   }
 }
-
-export default PlanService;
+module.exports = PlanService;
+module.exports.PlanService = PlanService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/users/profile/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class ProfileRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class ProfileRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -71,5 +69,5 @@ export class ProfileRepository {
     await this.db.query('DELETE FROM user_profiles WHERE user_id = $1', [userId]);
   }
 }
-
-export default ProfileRepository;
+module.exports = ProfileRepository;
+module.exports.ProfileRepository = ProfileRepository;

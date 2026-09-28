@@ -3,9 +3,8 @@
  *
  * @module signalforge/server/modules/referrals/settlement/freeze
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
 
 const DEFAULT_FREEZE_HOURS = 24;
 
@@ -16,8 +15,7 @@ function lastDayOfMonth(year, month) {
 function firstDayOfMonth(year, month) {
   return new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0));
 }
-
-export class SettlementFreezeService {
+class SettlementFreezeService {
   constructor(db = null) {
     this.db = db || getDatabase();
     this.logger = getLogger('referral-freeze');
@@ -63,5 +61,5 @@ export class SettlementFreezeService {
     };
   }
 }
-
-export default SettlementFreezeService;
+module.exports = SettlementFreezeService;
+module.exports.SettlementFreezeService = SettlementFreezeService;

@@ -3,14 +3,8 @@
  *
  * @module signalforge/server/modules/validation/validators/market-tradable
  */
-
-import {
-  VALIDATION_RESULTS,
-  VALIDATION_CHECK_NAMES,
-  MARKET_CLOSED_DAYS,
-} from '../validation.constants.js';
-
-export class MarketTradableCheck {
+const { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES, MARKET_CLOSED_DAYS } = require('../validation.constants.js');
+class MarketTradableCheck {
   constructor() {
     this.name = VALIDATION_CHECK_NAMES.MARKET_TRADABLE;
   }
@@ -48,5 +42,5 @@ export class MarketTradableCheck {
     return { name: this.name, result: VALIDATION_RESULTS.PASSED };
   }
 }
-
-export default MarketTradableCheck;
+module.exports = MarketTradableCheck;
+module.exports.MarketTradableCheck = MarketTradableCheck;

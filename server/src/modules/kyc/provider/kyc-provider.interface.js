@@ -7,8 +7,7 @@
  *
  * @module signalforge/server/modules/kyc/provider/interface
  */
-
-export class KycProviderInterface {
+class KycProviderInterface {
   constructor(name) {
     this.name = name;
   }
@@ -33,5 +32,5 @@ export class KycProviderInterface {
     return response?.reference || response?.jobId || null;
   }
 }
-
-export default KycProviderInterface;
+module.exports = KycProviderInterface;
+module.exports.KycProviderInterface = KycProviderInterface;

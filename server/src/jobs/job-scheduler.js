@@ -6,14 +6,13 @@
  *
  * @module server/jobs/job-scheduler
  */
-
-import { logger } from '../lib/logger';
-import { jobQueue } from './job-queue';
-import { jobLogger } from './job-logger';
-import * as dailySchedule from './schedules/daily-jobs.schedule';
-import * as hourlySchedule from './schedules/hourly-jobs.schedule';
-import * as monthlySchedule from './schedules/monthly-jobs.schedule';
-import * as realtimeSchedule from './schedules/real-time-jobs.schedule';
+const { logger } = require('../lib/logger');
+const { jobQueue } = require('./job-queue');
+const { jobLogger } = require('./job-logger');
+const dailySchedule = require('./schedules/daily-jobs.schedule');
+const hourlySchedule = require('./schedules/hourly-jobs.schedule');
+const monthlySchedule = require('./schedules/monthly-jobs.schedule');
+const realtimeSchedule = require('./schedules/real-time-jobs.schedule');
 
 const DEFAULT_TICK_INTERVAL_MS = 60 * 1000;
 
@@ -69,8 +68,7 @@ async function tick() {
     logger.error({ err }, 'Scheduler tick failed');
   }
 }
-
-export async function startScheduler({ tickIntervalMs = DEFAULT_TICK_INTERVAL_MS } = {}) {
+async function startScheduler({ tickIntervalMs = DEFAULT_TICK_INTERVAL_MS } = {}) {
   if (running) {
     return { running: true, alreadyRunning: true };
   }
@@ -95,8 +93,7 @@ export async function startScheduler({ tickIntervalMs = DEFAULT_TICK_INTERVAL_MS
 
   return { running: true };
 }
-
-export async function stopScheduler() {
+async function stopScheduler() {
   if (!running) {
     return { running: false };
   }
@@ -112,13 +109,17 @@ export async function stopScheduler() {
 
   return { running: false };
 }
-
-export function isSchedulerRunning() {
+function isSchedulerRunning() {
   return running;
 }
-
-export const jobScheduler = {
+const jobScheduler = {
   startScheduler,
   stopScheduler,
   isSchedulerRunning,
 };
+module.exports.jobScheduler = jobScheduler;
+module.exports.isSchedulerRunning = isSchedulerRunning;
+
+module.exports.startScheduler = startScheduler;
+
+module.exports.stopScheduler = stopScheduler;

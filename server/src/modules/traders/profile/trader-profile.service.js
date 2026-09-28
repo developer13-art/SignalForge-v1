@@ -3,16 +3,10 @@
  *
  * @module signalforge/server/modules/traders/profile/service
  */
-
-import { TraderProfileRepository } from './repository.js';
-import { TraderNotFoundError, TraderNotOwnedError } from '../trader.errors.js';
-import {
-  emitTraderProfileUpdated,
-  emitTraderAvatarUpdated,
-  emitTraderAvatarRemoved,
-} from '../trader.events.js';
-
-export class TraderProfileService {
+const { TraderProfileRepository } = require('./repository.js');
+const { TraderNotFoundError, TraderNotOwnedError } = require('../trader.errors.js');
+const { emitTraderProfileUpdated, emitTraderAvatarUpdated, emitTraderAvatarRemoved } = require('../trader.events.js');
+class TraderProfileService {
   constructor(repository = null) {
     this.repository = repository || new TraderProfileRepository();
   }
@@ -155,5 +149,5 @@ export class TraderProfileService {
     return input;
   }
 }
-
-export default TraderProfileService;
+module.exports = TraderProfileService;
+module.exports.TraderProfileService = TraderProfileService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/management-instructions/secure-profit
  */
-
-import { MANAGEMENT_INSTRUCTION_TYPES } from '../matching.constants.js';
-
-export class SecureProfitHandler {
+const { MANAGEMENT_INSTRUCTION_TYPES } = require('../matching.constants.js');
+class SecureProfitHandler {
   constructor() {
     this.instructionType = MANAGEMENT_INSTRUCTION_TYPES.SECURE_PROFIT;
   }
@@ -36,5 +34,5 @@ export class SecureProfitHandler {
     };
   }
 }
-
-export default SecureProfitHandler;
+module.exports = SecureProfitHandler;
+module.exports.SecureProfitHandler = SecureProfitHandler;

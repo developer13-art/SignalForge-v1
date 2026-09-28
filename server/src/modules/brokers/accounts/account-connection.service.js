@@ -3,28 +3,17 @@
  *
  * @module signalforge/server/modules/brokers/accounts/connection
  */
-
-import { AccountRepository } from './account.repository.js';
-import { AccountCredentialService } from './account-credential.service.js';
-import { MetaApiAccountService } from '../metaapi/metaapi-account.service.js';
-import { MetaApiDeploymentService } from '../metaapi/metaapi-deployment.service.js';
-import { BrokerRegistryService } from '../registry/broker-registry.service.js';
-import { BrokerSpecService } from '../registry/broker-spec.service.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { isMetaApiSupported } from '../broker.constants.js';
-import {
-  BrokerAccountAlreadyExistsError,
-  UnsupportedBrokerPlatformError,
-  BrokerDeploymentError,
-} from '../broker.errors.js';
-import {
-  emitAccountCreated,
-  emitAccountConnecting,
-  emitAccountConnected,
-  emitAccountError,
-} from '../broker.events.js';
-
-export class AccountConnectionService {
+const { AccountRepository } = require('./account.repository.js');
+const { AccountCredentialService } = require('./account-credential.service.js');
+const { MetaApiAccountService } = require('../metaapi/metaapi-account.service.js');
+const { MetaApiDeploymentService } = require('../metaapi/metaapi-deployment.service.js');
+const { BrokerRegistryService } = require('../registry/broker-registry.service.js');
+const { BrokerSpecService } = require('../registry/broker-spec.service.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { isMetaApiSupported } = require('../broker.constants.js');
+const { BrokerAccountAlreadyExistsError, UnsupportedBrokerPlatformError, BrokerDeploymentError } = require('../broker.errors.js');
+const { emitAccountCreated, emitAccountConnecting, emitAccountConnected, emitAccountError } = require('../broker.events.js');
+class AccountConnectionService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new AccountRepository();
     this.credentials = dependencies.credentials || new AccountCredentialService();
@@ -204,5 +193,5 @@ export class AccountConnectionService {
     };
   }
 }
-
-export default AccountConnectionService;
+module.exports = AccountConnectionService;
+module.exports.AccountConnectionService = AccountConnectionService;

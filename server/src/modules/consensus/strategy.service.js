@@ -3,13 +3,8 @@
  *
  * @module signalforge/server/modules/consensus/strategy
  */
-
-import {
-  VOTING_STRATEGIES,
-  CONSENSUS_DIRECTIONS,
-} from './consensus.constants.js';
-
-export class StrategyService {
+const { VOTING_STRATEGIES, CONSENSUS_DIRECTIONS } = require('./consensus.constants.js');
+class StrategyService {
   shouldTrade(result, strategyConfig = {}) {
     if (!result || result.direction === CONSENSUS_DIRECTIONS.NO_CONSENSUS) {
       return { shouldTrade: false, reason: 'NO_CONSENSUS_DIRECTION' };
@@ -37,5 +32,5 @@ export class StrategyService {
     };
   }
 }
-
-export default StrategyService;
+module.exports = StrategyService;
+module.exports.StrategyService = StrategyService;

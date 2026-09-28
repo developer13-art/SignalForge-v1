@@ -6,8 +6,7 @@
  *
  * @module server/database/migrations/001_create_identity_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE EXTENSION IF NOT EXISTS "pgcrypto";
   `);
@@ -135,8 +134,7 @@ export async function up(client) {
       ON login_attempts (email, created_at DESC);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS login_attempts CASCADE`);
   await client.query(`DROP TABLE IF EXISTS user_devices CASCADE`);
   await client.query(`DROP TABLE IF EXISTS two_factor_auth CASCADE`);
@@ -144,3 +142,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS user_profiles CASCADE`);
   await client.query(`DROP TABLE IF EXISTS users CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

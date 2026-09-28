@@ -7,11 +7,9 @@
  *
  * @module server/modules/solana/provenance/provenance.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertProvenance({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertProvenance({
   signalId,
   providerId,
   processingHash,
@@ -48,16 +46,14 @@ export async function insertProvenance({
   );
   return rows[0];
 }
-
-export async function findById({ provenanceId }) {
+async function findById({ provenanceId }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_provenance WHERE id = $1 LIMIT 1`,
     [provenanceId],
   );
   return rows[0] || null;
 }
-
-export async function findBySignalId({ signalId }) {
+async function findBySignalId({ signalId }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_provenance
       WHERE signal_id = $1
@@ -67,16 +63,14 @@ export async function findBySignalId({ signalId }) {
   );
   return rows[0] || null;
 }
-
-export async function findByProcessingHash({ processingHash }) {
+async function findByProcessingHash({ processingHash }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_provenance WHERE processing_hash = $1 LIMIT 1`,
     [processingHash],
   );
   return rows[0] || null;
 }
-
-export async function updateStatus({
+async function updateStatus({
   provenanceId,
   status,
   txSignature,
@@ -98,8 +92,7 @@ export async function updateStatus({
   );
   return rowCount > 0;
 }
-
-export async function listByProviderPaged({ providerId, pagination = {} }) {
+async function listByProviderPaged({ providerId, pagination = {} }) {
   const limit = pagination.limit || 20;
   const offset = pagination.offset || 0;
 
@@ -118,8 +111,7 @@ export async function listByProviderPaged({ providerId, pagination = {} }) {
 
   return { items: rows, total: countResult.rows[0]?.total || 0 };
 }
-
-export async function listPending({ limit = 50 }) {
+async function listPending({ limit = 50 }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_provenance
       WHERE status IN ('PENDING', 'SUBMITTED', 'FAILED')
@@ -129,15 +121,13 @@ export async function listPending({ limit = 50 }) {
   );
   return rows;
 }
-
-export async function countByStatus() {
+async function countByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count FROM solana_provenance GROUP BY status`,
   );
   return rows;
 }
-
-export const provenanceRepository = {
+const provenanceRepository = {
   insertProvenance,
   findById,
   findBySignalId,
@@ -147,3 +137,20 @@ export const provenanceRepository = {
   listPending,
   countByStatus,
 };
+module.exports.provenanceRepository = provenanceRepository;
+
+module.exports.insertProvenance = insertProvenance;
+
+module.exports.findById = findById;
+
+module.exports.findBySignalId = findBySignalId;
+
+module.exports.findByProcessingHash = findByProcessingHash;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.listByProviderPaged = listByProviderPaged;
+
+module.exports.listPending = listPending;
+
+module.exports.countByStatus = countByStatus;

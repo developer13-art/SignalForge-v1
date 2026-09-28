@@ -3,17 +3,15 @@
  *
  * @module signalforge/server/modules/signal-sources/rest-api/service
  */
-
-import { RestApiRepository } from './rest-api.repository.js';
-import { RestApiAuthService } from './rest-api-auth.service.js';
-import { RestApiRateLimitService } from './rest-api-rate-limit.service.js';
-import { MessageService } from '../messages/message.service.js';
-import { MessageNormalizerService } from '../messages/message-normalizer.service.js';
-import { RestApiAdapter } from '../adapters/rest-api.adapter.js';
-import { emitMessageReceived } from '../source.events.js';
-import { SourceConnectionError } from '../source.errors.js';
-
-export class RestApiService {
+const { RestApiRepository } = require('./rest-api.repository.js');
+const { RestApiAuthService } = require('./rest-api-auth.service.js');
+const { RestApiRateLimitService } = require('./rest-api-rate-limit.service.js');
+const { MessageService } = require('../messages/message.service.js');
+const { MessageNormalizerService } = require('../messages/message-normalizer.service.js');
+const { RestApiAdapter } = require('../adapters/rest-api.adapter.js');
+const { emitMessageReceived } = require('../source.events.js');
+const { SourceConnectionError } = require('../source.errors.js');
+class RestApiService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new RestApiRepository();
     this.auth = dependencies.auth || new RestApiAuthService(this.repository);
@@ -84,5 +82,5 @@ export class RestApiService {
     };
   }
 }
-
-export default RestApiService;
+module.exports = RestApiService;
+module.exports.RestApiService = RestApiService;

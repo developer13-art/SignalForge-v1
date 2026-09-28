@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/withdrawals/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class WithdrawalRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class WithdrawalRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -406,5 +404,5 @@ export class WithdrawalRepository {
     return result.rows;
   }
 }
-
-export default WithdrawalRepository;
+module.exports = WithdrawalRepository;
+module.exports.WithdrawalRepository = WithdrawalRepository;

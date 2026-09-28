@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/referrals/settlement/scheduler
  */
-
-import { MonthlySettlementService } from './monthly-settlement.service.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
+const { MonthlySettlementService } = require('./monthly-settlement.service.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-
-export class SettlementSchedulerService {
+class SettlementSchedulerService {
   constructor(dependencies = {}) {
     this.monthly =
       dependencies.monthly || new MonthlySettlementService(dependencies);
@@ -59,5 +57,5 @@ export class SettlementSchedulerService {
     }
   }
 }
-
-export default SettlementSchedulerService;
+module.exports = SettlementSchedulerService;
+module.exports.SettlementSchedulerService = SettlementSchedulerService;

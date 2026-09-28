@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/risk/checks/slippage
  */
-
-import { BaseCheck } from './base.check.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskSlippageExceeded } from '../risk.events.js';
-
-export class SlippageCheck extends BaseCheck {
+const { BaseCheck } = require('./base.check.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskSlippageExceeded } = require('../risk.events.js');
+class SlippageCheck extends BaseCheck {
   constructor() {
     super(RISK_CHECKS.SLIPPAGE);
   }
@@ -43,5 +41,5 @@ export class SlippageCheck extends BaseCheck {
     });
   }
 }
-
-export default SlippageCheck;
+module.exports = SlippageCheck;
+module.exports.SlippageCheck = SlippageCheck;

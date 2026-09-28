@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/whatsapp/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class WhatsAppRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class WhatsAppRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -85,5 +83,5 @@ export class WhatsAppRepository {
     await this.db.query(`DELETE FROM whatsapp_connections WHERE id = $1`, [connectionId]);
   }
 }
-
-export default WhatsAppRepository;
+module.exports = WhatsAppRepository;
+module.exports.WhatsAppRepository = WhatsAppRepository;

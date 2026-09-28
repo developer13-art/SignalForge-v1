@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/provider-dna/versioning/repository
  */
-
-import { DnaRepository } from '../dna.repository.js';
-
-export class VersionRepository {
+const { DnaRepository } = require('../dna.repository.js');
+class VersionRepository {
   constructor(db = null) {
     this.dnaRepository = new DnaRepository(db);
   }
@@ -27,5 +25,5 @@ export class VersionRepository {
     return this.dnaRepository.pruneVersions(providerId, keepCount);
   }
 }
-
-export default VersionRepository;
+module.exports = VersionRepository;
+module.exports.VersionRepository = VersionRepository;

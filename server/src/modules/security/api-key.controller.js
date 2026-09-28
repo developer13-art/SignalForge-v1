@@ -3,13 +3,11 @@
  *
  * @module server/modules/security/api-key.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { successResponse } from '../../lib/response/success.response';
-import { apiKeyService } from './api-key.service';
-
-export async function listApiKeys(req, res) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { successResponse } = require('../../lib/response/success.response');
+const { apiKeyService } = require('./api-key.service');
+async function listApiKeys(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -20,8 +18,7 @@ export async function listApiKeys(req, res) {
 
   return successResponse(res, { apiKeys: keys });
 }
-
-export async function createApiKey(req, res) {
+async function createApiKey(req, res) {
   const userId = req.user && req.user.id;
   const { name, permissions, expiresAt } = req.body || {};
 
@@ -38,8 +35,7 @@ export async function createApiKey(req, res) {
 
   return successResponse(res, { apiKey }, 201);
 }
-
-export async function revokeApiKey(req, res) {
+async function revokeApiKey(req, res) {
   const userId = req.user && req.user.id;
   const { apiKeyId } = req.params;
 
@@ -51,8 +47,7 @@ export async function revokeApiKey(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function deleteApiKey(req, res) {
+async function deleteApiKey(req, res) {
   const userId = req.user && req.user.id;
   const { apiKeyId } = req.params;
 
@@ -64,10 +59,18 @@ export async function deleteApiKey(req, res) {
 
   return successResponse(res, result);
 }
-
-export const apiKeyController = {
+const apiKeyController = {
   listApiKeys,
   createApiKey,
   revokeApiKey,
   deleteApiKey,
 };
+module.exports.apiKeyController = apiKeyController;
+
+module.exports.listApiKeys = listApiKeys;
+
+module.exports.createApiKey = createApiKey;
+
+module.exports.revokeApiKey = revokeApiKey;
+
+module.exports.deleteApiKey = deleteApiKey;

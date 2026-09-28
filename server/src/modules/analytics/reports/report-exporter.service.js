@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/analytics/reports/report-exporter
  */
-
-import { REPORT_FORMATS } from '../analytics.constants.js';
-import { ReportExportError } from '../analytics.errors.js';
-
-export class ReportExporterService {
+const { REPORT_FORMATS } = require('../analytics.constants.js');
+const { ReportExportError } = require('../analytics.errors.js');
+class ReportExporterService {
   export(report, format) {
     switch (format) {
       case REPORT_FORMATS.JSON:
@@ -95,5 +93,5 @@ export class ReportExporterService {
     return str;
   }
 }
-
-export default ReportExporterService;
+module.exports = ReportExporterService;
+module.exports.ReportExporterService = ReportExporterService;

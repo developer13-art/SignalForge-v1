@@ -7,10 +7,8 @@
  *
  * @module signalforge/server/modules/kyc/verification/liveness
  */
-
-import { DEFAULT_LIVENESS_THRESHOLD, VERIFICATION_RESULTS } from '../kyc.constants.js';
-
-export class LivenessService {
+const { DEFAULT_LIVENESS_THRESHOLD, VERIFICATION_RESULTS } = require('../kyc.constants.js');
+class LivenessService {
   constructor(provider = null) {
     this.provider = provider;
   }
@@ -50,5 +48,5 @@ export class LivenessService {
     };
   }
 }
-
-export default LivenessService;
+module.exports = LivenessService;
+module.exports.LivenessService = LivenessService;

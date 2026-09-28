@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/provider-dna/rules/repository
  */
-
-import { DnaRepository } from '../dna.repository.js';
-
-export class RuleRepository {
+const { DnaRepository } = require('../dna.repository.js');
+class RuleRepository {
   constructor(db = null) {
     this.dnaRepository = new DnaRepository(db);
   }
@@ -43,5 +41,5 @@ export class RuleRepository {
     return this.dnaRepository.countRulesByProvider(providerId);
   }
 }
-
-export default RuleRepository;
+module.exports = RuleRepository;
+module.exports.RuleRepository = RuleRepository;

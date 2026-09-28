@@ -5,13 +5,11 @@
  *
  * @module server/modules/solana/solana.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { successResponse } from '../../lib/response/success.response';
-import { solanaService } from './solana.service';
-
-export async function getOverview(req, res) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { successResponse } = require('../../lib/response/success.response');
+const { solanaService } = require('./solana.service');
+async function getOverview(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -22,28 +20,33 @@ export async function getOverview(req, res) {
 
   return successResponse(res, { overview });
 }
-
-export async function getNetworkInfo(req, res) {
+async function getNetworkInfo(req, res) {
   const info = solanaService.network.getNetworkInfo();
 
   return successResponse(res, { network: info });
 }
-
-export async function getProgramsInfo(req, res) {
+async function getProgramsInfo(req, res) {
   const programs = solanaService.programs.getPrograms();
 
   return successResponse(res, { programs });
 }
-
-export async function getConnectionHealth(req, res) {
+async function getConnectionHealth(req, res) {
   const health = await solanaService.connection.checkConnectionHealth();
 
   return successResponse(res, { health });
 }
-
-export const solanaController = {
+const solanaController = {
   getOverview,
   getNetworkInfo,
   getProgramsInfo,
   getConnectionHealth,
 };
+module.exports.solanaController = solanaController;
+
+module.exports.getOverview = getOverview;
+
+module.exports.getNetworkInfo = getNetworkInfo;
+
+module.exports.getProgramsInfo = getProgramsInfo;
+
+module.exports.getConnectionHealth = getConnectionHealth;

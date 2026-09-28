@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/brokers/accounts/snapshot
  */
-
-import { AccountRepository } from './account.repository.js';
-import { emitAccountSnapshot } from '../broker.events.js';
-
-export class AccountSnapshotService {
+const { AccountRepository } = require('./account.repository.js');
+const { emitAccountSnapshot } = require('../broker.events.js');
+class AccountSnapshotService {
   constructor(repository = null) {
     this.repository = repository || new AccountRepository();
   }
@@ -40,5 +38,5 @@ export class AccountSnapshotService {
     return this.repository.listSnapshots(accountId, filters, pagination);
   }
 }
-
-export default AccountSnapshotService;
+module.exports = AccountSnapshotService;
+module.exports.AccountSnapshotService = AccountSnapshotService;

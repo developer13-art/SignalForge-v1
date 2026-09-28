@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/users/preferences/controller
  */
-
-import { PreferencesService } from './preferences.service.js';
-import { validatePreferencesUpdatePayload } from './preferences.validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class PreferencesController {
+const { PreferencesService } = require('./preferences.service.js');
+const { validatePreferencesUpdatePayload } = require('./preferences.validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class PreferencesController {
   constructor(service = null) {
     this.service = service || new PreferencesService();
   }
@@ -38,5 +36,5 @@ export class PreferencesController {
     }
   };
 }
-
-export default PreferencesController;
+module.exports = PreferencesController;
+module.exports.PreferencesController = PreferencesController;

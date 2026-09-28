@@ -12,15 +12,10 @@
  *
  * @module signalforge/server/bootstrap/loadEnv
  */
+const fs = require('node:fs');
+const path = require('node:path');
+const dotenv = require('dotenv');
 
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-import dotenv from 'dotenv';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 let loaded = false;
 
@@ -34,8 +29,7 @@ function findEnvFiles(startDir) {
   ];
   return candidates;
 }
-
-export function loadEnv(options = {}) {
+function loadEnv(options = {}) {
   if (loaded && !options.force) {
     return { loaded: true, path: null, skipped: true };
   }
@@ -79,13 +73,13 @@ export function loadEnv(options = {}) {
     env,
   };
 }
-
-export function isEnvLoaded() {
+function isEnvLoaded() {
   return loaded;
 }
-
-export function resetEnv() {
+function resetEnv() {
   loaded = false;
 }
-
-export default loadEnv;
+module.exports = loadEnv;
+module.exports.loadEnv = loadEnv;
+module.exports.isEnvLoaded = isEnvLoaded;
+module.exports.resetEnv = resetEnv;

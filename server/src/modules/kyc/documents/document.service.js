@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/kyc/documents/service
  */
-
-import { DocumentUploadService } from './document-upload.service.js';
-import { DocumentTypeService } from './document-type.service.js';
-
-export class DocumentService {
+const { DocumentUploadService } = require('./document-upload.service.js');
+const { DocumentTypeService } = require('./document-type.service.js');
+class DocumentService {
   constructor(dependencies = {}) {
     this.uploadService = dependencies.uploadService || new DocumentUploadService(dependencies);
     this.typeService = dependencies.typeService || new DocumentTypeService();
@@ -45,5 +43,5 @@ export class DocumentService {
     return this.typeService.listForCountry(countryCode);
   }
 }
-
-export default DocumentService;
+module.exports = DocumentService;
+module.exports.DocumentService = DocumentService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trader-intelligence/classification/behavior-classifier
  */
-
-import { BEHAVIOR_CATEGORIES } from '../intelligence.constants.js';
-
-export class BehaviorClassifierService {
+const { BEHAVIOR_CATEGORIES } = require('../intelligence.constants.js');
+class BehaviorClassifierService {
   classify({
     consistencyScore,
     disciplineScore,
@@ -78,5 +76,5 @@ export class BehaviorClassifierService {
     };
   }
 }
-
-export default BehaviorClassifierService;
+module.exports = BehaviorClassifierService;
+module.exports.BehaviorClassifierService = BehaviorClassifierService;

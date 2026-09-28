@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/provider-dna/profile/controller
  */
-
-import { ProfileService } from './profile.service.js';
-
-export class ProfileController {
+const { ProfileService } = require('./profile.service.js');
+class ProfileController {
   constructor(service = null) {
     this.service = service || new ProfileService();
   }
@@ -65,5 +63,5 @@ export class ProfileController {
     }
   };
 }
-
-export default ProfileController;
+module.exports = ProfileController;
+module.exports.ProfileController = ProfileController;

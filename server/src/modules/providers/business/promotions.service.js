@@ -3,19 +3,11 @@
  *
  * @module signalforge/server/modules/providers/business/promotions
  */
-
-import { ProviderPromotionsRepository } from './promotions-repository.js';
-import { PromotionNotFoundError, PromotionNotEditableError } from '../provider.errors.js';
-import {
-  PROMOTION_STATUSES,
-} from '../provider.constants.js';
-import {
-  emitPromotionCreated,
-  emitPromotionUpdated,
-  emitPromotionDeleted,
-} from '../provider.events.js';
-
-export class ProviderPromotionsService {
+const { ProviderPromotionsRepository } = require('./promotions-repository.js');
+const { PromotionNotFoundError, PromotionNotEditableError } = require('../provider.errors.js');
+const { PROMOTION_STATUSES } = require('../provider.constants.js');
+const { emitPromotionCreated, emitPromotionUpdated, emitPromotionDeleted } = require('../provider.events.js');
+class ProviderPromotionsService {
   constructor(repository = null) {
     this.repository = repository || new ProviderPromotionsRepository();
   }
@@ -122,5 +114,5 @@ export class ProviderPromotionsService {
     return input;
   }
 }
-
-export default ProviderPromotionsService;
+module.exports = ProviderPromotionsService;
+module.exports.ProviderPromotionsService = ProviderPromotionsService;

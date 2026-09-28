@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/risk/checks/base
  */
-
-import { RISK_CHECKS } from '../risk.constants.js';
-
-export class BaseCheck {
+const { RISK_CHECKS } = require('../risk.constants.js');
+class BaseCheck {
   constructor(name) {
     this.name = name || RISK_CHECKS.MAX_DAILY_LOSS;
   }
@@ -41,5 +39,5 @@ export class BaseCheck {
     };
   }
 }
-
-export default BaseCheck;
+module.exports = BaseCheck;
+module.exports.BaseCheck = BaseCheck;

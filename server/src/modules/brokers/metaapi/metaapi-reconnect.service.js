@@ -3,15 +3,10 @@
  *
  * @module signalforge/server/modules/brokers/metaapi/reconnect
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import {
-  DEFAULT_RECONNECT_BASE_DELAY_MS,
-  DEFAULT_MAX_RECONNECT_ATTEMPTS,
-} from '../broker.constants.js';
-import { emitStreamReconnecting } from '../broker.events.js';
-
-export class MetaApiReconnectService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { DEFAULT_RECONNECT_BASE_DELAY_MS, DEFAULT_MAX_RECONNECT_ATTEMPTS } = require('../broker.constants.js');
+const { emitStreamReconnecting } = require('../broker.events.js');
+class MetaApiReconnectService {
   constructor(dependencies = {}) {
     this.baseDelayMs = dependencies.baseDelayMs || DEFAULT_RECONNECT_BASE_DELAY_MS;
     this.maxAttempts = dependencies.maxAttempts || DEFAULT_MAX_RECONNECT_ATTEMPTS;
@@ -47,5 +42,5 @@ export class MetaApiReconnectService {
     return { reconnected: false, attempts: attempt };
   }
 }
-
-export default MetaApiReconnectService;
+module.exports = MetaApiReconnectService;
+module.exports.MetaApiReconnectService = MetaApiReconnectService;

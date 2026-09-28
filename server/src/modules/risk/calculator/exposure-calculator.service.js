@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/risk/calculator/exposure
  */
-
-import { normalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
+const { normalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
 
 const CURRENCY_PAIRS = Object.freeze([
   'USD', 'EUR', 'GBP', 'JPY', 'AUD', 'NZD', 'CAD', 'CHF',
 ]);
-
-export class ExposureCalculatorService {
+class ExposureCalculatorService {
   extractCurrencies(symbol) {
     const normalized = normalizeSymbol(symbol);
     if (!normalized) {
@@ -52,5 +50,5 @@ export class ExposureCalculatorService {
     };
   }
 }
-
-export default ExposureCalculatorService;
+module.exports = ExposureCalculatorService;
+module.exports.ExposureCalculatorService = ExposureCalculatorService;

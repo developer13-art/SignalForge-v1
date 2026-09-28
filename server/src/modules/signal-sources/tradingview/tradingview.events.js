@@ -6,14 +6,12 @@
  *
  * @module server/modules/signal-sources/tradingview/tradingview.events
  */
-
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { publishEvent } from '../../../events/event-publisher';
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { publishEvent } = require('../../../events/event-publisher');
 
 const SOURCE = 'tradingview.events';
-
-export async function emitTradingViewWebhookReceived({ userId, alertId, symbol, direction }) {
+async function emitTradingViewWebhookReceived({ userId, alertId, symbol, direction }) {
   return publishEvent({
     eventType: EVENT_TYPES.MESSAGE_RECEIVED,
     source: SOURCE,
@@ -28,8 +26,7 @@ export async function emitTradingViewWebhookReceived({ userId, alertId, symbol, 
     },
   });
 }
-
-export async function emitTradingViewWebhookRejected({ userId, reason, alertId }) {
+async function emitTradingViewWebhookRejected({ userId, reason, alertId }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_WEBHOOK_REJECTED,
     source: SOURCE,
@@ -43,8 +40,7 @@ export async function emitTradingViewWebhookRejected({ userId, reason, alertId }
     },
   });
 }
-
-export async function emitTradingViewAlertRegistered({ userId, alertId, symbol }) {
+async function emitTradingViewAlertRegistered({ userId, alertId, symbol }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNEL_OPT_IN,
     source: SOURCE,
@@ -58,8 +54,7 @@ export async function emitTradingViewAlertRegistered({ userId, alertId, symbol }
     },
   });
 }
-
-export async function emitTradingViewAlertRemoved({ userId, alertId }) {
+async function emitTradingViewAlertRemoved({ userId, alertId }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNEL_OPT_OUT,
     source: SOURCE,
@@ -72,8 +67,7 @@ export async function emitTradingViewAlertRemoved({ userId, alertId }) {
     },
   });
 }
-
-export async function emitTradingViewHealthCheck({ userId, healthy, details }) {
+async function emitTradingViewHealthCheck({ userId, healthy, details }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_HEALTH_CHECK,
     source: SOURCE,
@@ -87,11 +81,21 @@ export async function emitTradingViewHealthCheck({ userId, healthy, details }) {
     },
   });
 }
-
-export const TRADINGVIEW_EVENT_NAMES = Object.freeze({
+const TRADINGVIEW_EVENT_NAMES = Object.freeze({
   WEBHOOK_RECEIVED: EVENT_TYPES.MESSAGE_RECEIVED,
   WEBHOOK_REJECTED: EVENT_TYPES.SOURCE_WEBHOOK_REJECTED,
   ALERT_REGISTERED: EVENT_TYPES.SOURCE_CHANNEL_OPT_IN,
   ALERT_REMOVED: EVENT_TYPES.SOURCE_CHANNEL_OPT_OUT,
   HEALTH_CHECK: EVENT_TYPES.SOURCE_HEALTH_CHECK,
 });
+module.exports.TRADINGVIEW_EVENT_NAMES = TRADINGVIEW_EVENT_NAMES;
+
+module.exports.emitTradingViewWebhookReceived = emitTradingViewWebhookReceived;
+
+module.exports.emitTradingViewWebhookRejected = emitTradingViewWebhookRejected;
+
+module.exports.emitTradingViewAlertRegistered = emitTradingViewAlertRegistered;
+
+module.exports.emitTradingViewAlertRemoved = emitTradingViewAlertRemoved;
+
+module.exports.emitTradingViewHealthCheck = emitTradingViewHealthCheck;

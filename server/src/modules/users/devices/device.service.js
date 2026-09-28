@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/users/devices/service
  */
-
-import { DeviceRepository } from './device.repository.js';
-import { emitDeviceRemoved } from '../user.events.js';
-
-export class DeviceService {
+const { DeviceRepository } = require('./device.repository.js');
+const { emitDeviceRemoved } = require('../user.events.js');
+class DeviceService {
   constructor(repository = null) {
     this.repository = repository || new DeviceRepository();
   }
@@ -38,5 +36,5 @@ export class DeviceService {
     };
   }
 }
-
-export default DeviceService;
+module.exports = DeviceService;
+module.exports.DeviceService = DeviceService;

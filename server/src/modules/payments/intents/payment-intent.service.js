@@ -3,24 +3,15 @@
  *
  * @module signalforge/server/modules/payments/intents/service
  */
-
-import crypto from 'node:crypto';
-
-import { PaymentIntentRepository } from './repository.js';
-import { PaymentRepository } from '../payment.repository.js';
-import { PaymentProviderFactory } from '../providers/provider.factory.js';
-import { InvoiceService } from '../invoices/invoice.service.js';
-import {
-  PAYMENT_STATUSES,
-  PAYMENT_PROVIDERS,
-  PAYMENT_PURPOSES,
-} from '../payment.constants.js';
-import { PaymentIntentNotFoundError, InvalidPaymentPayloadError } from '../payment.errors.js';
-import {
-  emitPaymentInitiated,
-  emitPaymentPending,
-} from '../payment.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
+const crypto = require('node:crypto');
+const { PaymentIntentRepository } = require('./repository.js');
+const { PaymentRepository } = require('../payment.repository.js');
+const { PaymentProviderFactory } = require('../providers/provider.factory.js');
+const { InvoiceService } = require('../invoices/invoice.service.js');
+const { PAYMENT_STATUSES, PAYMENT_PROVIDERS, PAYMENT_PURPOSES } = require('../payment.constants.js');
+const { PaymentIntentNotFoundError, InvalidPaymentPayloadError } = require('../payment.errors.js');
+const { emitPaymentInitiated, emitPaymentPending } = require('../payment.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
 
 const EXCHANGE_RATES_USD = Object.freeze({
   USD: 1,
@@ -31,8 +22,7 @@ const EXCHANGE_RATES_USD = Object.freeze({
   EUR: 1.08,
   GBP: 1.27,
 });
-
-export class PaymentIntentService {
+class PaymentIntentService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new PaymentIntentRepository();
     this.paymentRepository = dependencies.paymentRepository || new PaymentRepository();
@@ -193,5 +183,5 @@ export class PaymentIntentService {
     };
   }
 }
-
-export default PaymentIntentService;
+module.exports = PaymentIntentService;
+module.exports.PaymentIntentService = PaymentIntentService;

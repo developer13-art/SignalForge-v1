@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/007_create_providers_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS providers (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -110,11 +109,12 @@ export async function up(client) {
     );
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS provider_followers CASCADE`);
   await client.query(`DROP TABLE IF EXISTS provider_revenue CASCADE`);
   await client.query(`DROP TABLE IF EXISTS provider_subscriptions CASCADE`);
   await client.query(`DROP TABLE IF EXISTS provider_certifications CASCADE`);
   await client.query(`DROP TABLE IF EXISTS providers CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

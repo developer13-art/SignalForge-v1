@@ -3,34 +3,29 @@
  *
  * @module server/modules/settings/settings.repository
  */
-
-import { db } from '../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function findByKey({ key }) {
+const { db } = require('../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function findByKey({ key }) {
   const { rows } = await db.query(
     `SELECT * FROM system_settings WHERE key = $1 LIMIT 1`,
     [key],
   );
   return rows[0] || null;
 }
-
-export async function listByCategory({ category }) {
+async function listByCategory({ category }) {
   const { rows } = await db.query(
     `SELECT * FROM system_settings WHERE category = $1 ORDER BY key ASC`,
     [category],
   );
   return rows;
 }
-
-export async function listAll() {
+async function listAll() {
   const { rows } = await db.query(
     `SELECT * FROM system_settings ORDER BY key ASC`,
   );
   return rows;
 }
-
-export async function listPublic() {
+async function listPublic() {
   const { rows } = await db.query(
     `SELECT key, value, value_type FROM system_settings
       WHERE is_public = TRUE
@@ -38,8 +33,7 @@ export async function listPublic() {
   );
   return rows;
 }
-
-export async function upsert({
+async function upsert({
   key,
   value,
   valueType,
@@ -74,16 +68,14 @@ export async function upsert({
   );
   return rows[0];
 }
-
-export async function deleteByKey({ key }) {
+async function deleteByKey({ key }) {
   const { rowCount } = await db.query(
     `DELETE FROM system_settings WHERE key = $1`,
     [key],
   );
   return rowCount > 0;
 }
-
-export const settingsRepository = {
+const settingsRepository = {
   findByKey,
   listByCategory,
   listAll,
@@ -91,3 +83,16 @@ export const settingsRepository = {
   upsert,
   deleteByKey,
 };
+module.exports.settingsRepository = settingsRepository;
+
+module.exports.findByKey = findByKey;
+
+module.exports.listByCategory = listByCategory;
+
+module.exports.listAll = listAll;
+
+module.exports.listPublic = listPublic;
+
+module.exports.upsert = upsert;
+
+module.exports.deleteByKey = deleteByKey;

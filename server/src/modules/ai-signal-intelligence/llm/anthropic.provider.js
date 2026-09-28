@@ -3,17 +3,10 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/anthropic
  */
-
-import { LlmProviderInterface } from './llm-provider.interface.js';
-import llmConfig from '../../../config/llm.config.js';
-import {
-  LlmProviderError,
-  LlmProviderNotConfiguredError,
-  LlmRateLimitError,
-  LlmTimeoutError,
-} from '../ai.errors.js';
-
-export class AnthropicProvider extends LlmProviderInterface {
+const { LlmProviderInterface } = require('./llm-provider.interface.js');
+const llmConfig = require('../../../config/llm.config.js');
+const { LlmProviderError, LlmProviderNotConfiguredError, LlmRateLimitError, LlmTimeoutError } = require('../ai.errors.js');
+class AnthropicProvider extends LlmProviderInterface {
   constructor(config = null) {
     super('anthropic');
     this.config = (config || llmConfig).providers.anthropic;
@@ -121,5 +114,5 @@ export class AnthropicProvider extends LlmProviderInterface {
     }
   }
 }
-
-export default AnthropicProvider;
+module.exports = AnthropicProvider;
+module.exports.AnthropicProvider = AnthropicProvider;

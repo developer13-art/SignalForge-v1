@@ -7,19 +7,13 @@
  *
  * @module server/modules/signal-sources/whatsapp/whatsapp-group.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import {
-  emitWhatsAppGroupsDiscovered,
-  emitWhatsAppGroupOptIn,
-  emitWhatsAppGroupOptOut,
-} from './whatsapp.events';
-
-export async function upsertDiscoveredGroups({ userId, groups }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { emitWhatsAppGroupsDiscovered, emitWhatsAppGroupOptIn, emitWhatsAppGroupOptOut } = require('./whatsapp.events');
+async function upsertDiscoveredGroups({ userId, groups }) {
   if (!userId || !Array.isArray(groups)) {
     throw new AppError('userId and groups array are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -61,8 +55,7 @@ export async function upsertDiscoveredGroups({ userId, groups }) {
 
   return { upserted: groups.length };
 }
-
-export async function listDiscoveredGroups({ userId }) {
+async function listDiscoveredGroups({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -84,8 +77,7 @@ export async function listDiscoveredGroups({ userId }) {
     optedInAt: row.opted_in_at,
   }));
 }
-
-export async function listMonitoredGroups({ userId }) {
+async function listMonitoredGroups({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -103,8 +95,7 @@ export async function listMonitoredGroups({ userId }) {
     name: row.name,
   }));
 }
-
-export async function optInGroups({ userId, groupIds }) {
+async function optInGroups({ userId, groupIds }) {
   if (!userId || !Array.isArray(groupIds) || groupIds.length === 0) {
     throw new AppError('userId and non-empty groupIds are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -138,8 +129,7 @@ export async function optInGroups({ userId, groupIds }) {
 
   return { optedIn: results };
 }
-
-export async function optOutGroups({ userId, groupIds }) {
+async function optOutGroups({ userId, groupIds }) {
   if (!userId || !Array.isArray(groupIds) || groupIds.length === 0) {
     throw new AppError('userId and non-empty groupIds are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -171,8 +161,7 @@ export async function optOutGroups({ userId, groupIds }) {
 
   return { optedOut: results };
 }
-
-export async function isGroupMonitored({ userId, groupId }) {
+async function isGroupMonitored({ userId, groupId }) {
   if (!userId || !groupId) {
     return false;
   }
@@ -187,15 +176,13 @@ export async function isGroupMonitored({ userId, groupId }) {
 
   return Boolean(rows[0] && rows[0].monitored);
 }
-
-export async function removeAllGroups({ userId }) {
+async function removeAllGroups({ userId }) {
   if (!userId) {
     return;
   }
   await db.query(`DELETE FROM whatsapp_groups WHERE user_id = $1`, [userId]);
 }
-
-export const whatsappGroupService = {
+const whatsappGroupService = {
   upsertDiscoveredGroups,
   listDiscoveredGroups,
   listMonitoredGroups,
@@ -204,3 +191,18 @@ export const whatsappGroupService = {
   isGroupMonitored,
   removeAllGroups,
 };
+module.exports.whatsappGroupService = whatsappGroupService;
+
+module.exports.upsertDiscoveredGroups = upsertDiscoveredGroups;
+
+module.exports.listDiscoveredGroups = listDiscoveredGroups;
+
+module.exports.listMonitoredGroups = listMonitoredGroups;
+
+module.exports.optInGroups = optInGroups;
+
+module.exports.optOutGroups = optOutGroups;
+
+module.exports.isGroupMonitored = isGroupMonitored;
+
+module.exports.removeAllGroups = removeAllGroups;

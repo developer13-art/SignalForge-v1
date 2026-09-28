@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/copy-trading/fan-out/metrics
  */
-
-export class FanOutMetricsService {
+class FanOutMetricsService {
   constructor() {
     this.metrics = {
       totalSignals: 0,
@@ -57,5 +56,5 @@ export class FanOutMetricsService {
     };
   }
 }
-
-export default FanOutMetricsService;
+module.exports = FanOutMetricsService;
+module.exports.FanOutMetricsService = FanOutMetricsService;

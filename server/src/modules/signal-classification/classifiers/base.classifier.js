@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/signal-classification/classifiers/base
  */
-
-export class BaseClassifier {
+class BaseClassifier {
   constructor(name, version = '1.0.0') {
     this.name = name;
     this.version = version;
@@ -26,5 +25,5 @@ export class BaseClassifier {
     };
   }
 }
-
-export default BaseClassifier;
+module.exports = BaseClassifier;
+module.exports.BaseClassifier = BaseClassifier;

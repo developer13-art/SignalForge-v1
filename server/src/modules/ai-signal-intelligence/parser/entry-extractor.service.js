@@ -3,15 +3,13 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/parser/entry
  */
-
-import { PriceNormalizerService } from '../normalization/price-normalizer.service.js';
+const { PriceNormalizerService } = require('../normalization/price-normalizer.service.js');
 
 const PATTERNS = Object.freeze([
   /(?:entry|enter|buy|sell|long|short|@|at)\s*[:\-]?\s*(-?\d{1,7}(?:\.\d{1,6})?)/i,
   /@\s*(-?\d{1,7}(?:\.\d{1,6})?)/i,
 ]);
-
-export class EntryExtractorService {
+class EntryExtractorService {
   constructor(normalizer = null) {
     this.normalizer = normalizer || new PriceNormalizerService();
   }
@@ -32,5 +30,5 @@ export class EntryExtractorService {
     return null;
   }
 }
-
-export default EntryExtractorService;
+module.exports = EntryExtractorService;
+module.exports.EntryExtractorService = EntryExtractorService;

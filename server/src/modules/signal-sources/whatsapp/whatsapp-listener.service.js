@@ -8,26 +8,21 @@
  *
  * @module server/modules/signal-sources/whatsapp/whatsapp-listener.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { config } from '../../../config';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { buildSourceMessageKey } from '@signalforge/shared/utils/idempotency.util';
-import { buildMessageFingerprint } from '@signalforge/shared/utils/fingerprint.util';
-import { publishEvent } from '../../../events/event-publisher';
-import { db } from '../../../database';
-import { messageRawStoreService } from '../messages/message-raw-store.service';
-import { whatsappCloudService } from './whatsapp-cloud.service';
-import {
-  emitWhatsAppWebhookReceived,
-  emitWhatsAppWebhookRejected,
-  emitWhatsAppHealthCheck,
-} from './whatsapp.events';
-import { handleWhatsAppMediaMessage } from './whatsapp-media.service';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { config } = require('../../../config');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
+const { buildMessageFingerprint } = require('@signalforge/shared/utils/fingerprint.util');
+const { publishEvent } = require('../../../events/event-publisher');
+const { db } = require('../../../database');
+const { messageRawStoreService } = require('../messages/message-raw-store.service');
+const { whatsappCloudService } = require('./whatsapp-cloud.service');
+const { emitWhatsAppWebhookReceived, emitWhatsAppWebhookRejected, emitWhatsAppHealthCheck } = require('./whatsapp.events');
+const { handleWhatsAppMediaMessage } = require('./whatsapp-media.service');
 
 const ACTIVE_LISTENERS = new Map();
 
@@ -87,12 +82,10 @@ async function findUserForPhoneNumber(phoneNumberId) {
   );
   return rows[0]?.user_id || null;
 }
-
-export function verifyChallenge({ mode, token, challenge }) {
+function verifyChallenge({ mode, token, challenge }) {
   return whatsappCloudService.verifyWebhookChallenge({ mode, token, challenge });
 }
-
-export async function handleWebhookDelivery({ rawBody, headers }) {
+async function handleWebhookDelivery({ rawBody, headers }) {
   const signatureHeader =
     headers['x-hub-signature-256'] ||
     headers['X-Hub-Signature-256'] ||
@@ -264,24 +257,21 @@ function extractText(message) {
 
   return '';
 }
-
-export function start({ userId }) {
+function start({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
   setListenerState(userId, LISTENER_STATES.RUNNING, { startedAt: Date.now() });
   return { listening: true };
 }
-
-export function stop({ userId }) {
+function stop({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
   setListenerState(userId, LISTENER_STATES.STOPPED, { stoppedAt: Date.now() });
   return { listening: false };
 }
-
-export async function runHealthCheck({ userId }) {
+async function runHealthCheck({ userId }) {
   const connection = await whatsappCloudService.getConnectionMetadata({ userId });
 
   const healthy = Boolean(connection);
@@ -294,16 +284,14 @@ export async function runHealthCheck({ userId }) {
 
   return { healthy, connection };
 }
-
-export function listActive() {
+function listActive() {
   return Array.from(ACTIVE_LISTENERS.entries()).map(([userId, state]) => ({
     userId,
     state: state.state,
     startedAt: state.startedAt,
   }));
 }
-
-export const whatsappListenerService = {
+const whatsappListenerService = {
   verifyChallenge,
   handleWebhookDelivery,
   start,
@@ -312,3 +300,12 @@ export const whatsappListenerService = {
   listActive,
   LISTENER_STATES,
 };
+module.exports.whatsappListenerService = whatsappListenerService;
+module.exports.verifyChallenge = verifyChallenge;
+module.exports.start = start;
+module.exports.stop = stop;
+module.exports.listActive = listActive;
+
+module.exports.handleWebhookDelivery = handleWebhookDelivery;
+
+module.exports.runHealthCheck = runHealthCheck;

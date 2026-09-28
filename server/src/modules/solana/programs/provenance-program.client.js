@@ -7,14 +7,13 @@
  *
  * @module server/modules/solana/programs/provenance-program.client
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { programClientService } from './program-client.service';
-import { pdaService } from './pda.service';
-import { transactionSubmitterService } from '../transactions/transaction-submitter.service';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { programClientService } = require('./program-client.service');
+const { pdaService } = require('./pda.service');
+const { transactionSubmitterService } = require('../transactions/transaction-submitter.service');
 
 function buildDiscriminator(name) {
   return crypto.createHash('sha256').update(`global:${name}`).digest().subarray(0, 8);
@@ -42,8 +41,7 @@ function encodeProvenanceArgs({ processingHash, aiVersion, signalId }) {
     signalIdBuffer,
   ]);
 }
-
-export async function buildAnchorProvenanceTransaction({
+async function buildAnchorProvenanceTransaction({
   authority,
   signalId,
   processingHash,
@@ -88,8 +86,7 @@ export async function buildAnchorProvenanceTransaction({
     lastValidBlockHeight: latest.lastValidBlockHeight,
   };
 }
-
-export async function createAndSubmitProvenance(args) {
+async function createAndSubmitProvenance(args) {
   const built = await buildAnchorProvenanceTransaction(args);
 
   const { web3 } = await programClientService.getProgramContext({ programKey: 'provenance' });
@@ -111,8 +108,12 @@ export async function createAndSubmitProvenance(args) {
 
   return { ...submission, pda: built.pda, bump: built.bump };
 }
-
-export const provenanceProgramClient = {
+const provenanceProgramClient = {
   buildAnchorProvenanceTransaction,
   createAndSubmitProvenance,
 };
+module.exports.provenanceProgramClient = provenanceProgramClient;
+
+module.exports.buildAnchorProvenanceTransaction = buildAnchorProvenanceTransaction;
+
+module.exports.createAndSubmitProvenance = createAndSubmitProvenance;

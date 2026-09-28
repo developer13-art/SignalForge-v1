@@ -3,10 +3,9 @@
  *
  * @module signalforge/server/modules/providers/business/provider-settings
  */
-
-import { ProviderRepository } from '../provider.repository.js';
-import { ProviderNotFoundError } from '../provider.errors.js';
-import { emitProviderUpdated } from '../provider.events.js';
+const { ProviderRepository } = require('../provider.repository.js');
+const { ProviderNotFoundError } = require('../provider.errors.js');
+const { emitProviderUpdated } = require('../provider.events.js');
 
 const DEFAULT_SETTINGS = Object.freeze({
   allowCopyTrading: true,
@@ -19,8 +18,7 @@ const DEFAULT_SETTINGS = Object.freeze({
   preferredLanguage: 'en',
   timezone: 'UTC',
 });
-
-export class ProviderSettingsService {
+class ProviderSettingsService {
   constructor(repository = null) {
     this.repository = repository || new ProviderRepository();
   }
@@ -64,6 +62,5 @@ export class ProviderSettingsService {
   }
 }
 
-export { DEFAULT_SETTINGS };
-
-export default ProviderSettingsService;
+module.exports = ProviderSettingsService;
+module.exports.ProviderSettingsService = ProviderSettingsService;

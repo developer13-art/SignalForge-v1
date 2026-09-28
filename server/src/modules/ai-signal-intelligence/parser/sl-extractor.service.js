@@ -3,16 +3,14 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/parser/sl
  */
-
-import { PriceNormalizerService } from '../normalization/price-normalizer.service.js';
+const { PriceNormalizerService } = require('../normalization/price-normalizer.service.js');
 
 const PATTERNS = Object.freeze([
   /(?:sl|stop\s*loss|stop|stoploss)\s*[:\-]?\s*(-?\d{1,7}(?:\.\d{1,6})?)/i,
   /(?:sl|stop)\s+(?:at|@)\s*(-?\d{1,7}(?:\.\d{1,6})?)/i,
   /(?<=\bsl\s*)\d{1,7}(?:\.\d{1,6})?/i,
 ]);
-
-export class SlExtractorService {
+class SlExtractorService {
   constructor(normalizer = null) {
     this.normalizer = normalizer || new PriceNormalizerService();
   }
@@ -33,5 +31,5 @@ export class SlExtractorService {
     return null;
   }
 }
-
-export default SlExtractorService;
+module.exports = SlExtractorService;
+module.exports.SlExtractorService = SlExtractorService;

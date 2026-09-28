@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/automation/rule-types/risk-specific
  */
-
-import { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } from '../automation.constants.js';
-
-export class RiskSpecificRule {
+const { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } = require('../automation.constants.js');
+class RiskSpecificRule {
   static supports(condition) {
     return [
       AUTOMATION_CONDITION_TYPES.DRAWDOWN_GREATER_THAN,
@@ -19,5 +17,5 @@ export class RiskSpecificRule {
     return [AUTOMATION_ACTION_TYPES.SKIP_SIGNAL];
   }
 }
-
-export default RiskSpecificRule;
+module.exports = RiskSpecificRule;
+module.exports.RiskSpecificRule = RiskSpecificRule;

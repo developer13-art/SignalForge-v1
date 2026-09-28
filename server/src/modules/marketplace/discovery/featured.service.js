@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/marketplace/discovery/featured
  */
-
-import { ListingRepository } from '../listings/repository.js';
-import { RankingService } from './ranking.js';
-
-export class FeaturedService {
+const { ListingRepository } = require('../listings/repository.js');
+const { RankingService } = require('./ranking.js');
+class FeaturedService {
   constructor(repository = null, ranking = null) {
     this.repository = repository || new ListingRepository();
     this.ranking = ranking || new RankingService();
@@ -31,5 +29,5 @@ export class FeaturedService {
     return ranked.slice(0, limit);
   }
 }
-
-export default FeaturedService;
+module.exports = FeaturedService;
+module.exports.FeaturedService = FeaturedService;

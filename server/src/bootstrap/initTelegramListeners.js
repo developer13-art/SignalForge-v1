@@ -7,13 +7,11 @@
  *
  * @module signalforge/server/bootstrap/initTelegramListeners
  */
-
-import { getLogger } from './initLogger.js';
-import telegramConfig from '../config/telegram.config.js';
+const { getLogger } = require('./initLogger.js');
+const telegramConfig = require('../config/telegram.config.js');
 
 let listenersState = null;
-
-export async function initTelegramListeners(dependencies = {}) {
+async function initTelegramListeners(dependencies = {}) {
   const logger = getLogger('telegram-listeners');
 
   if (!telegramConfig.enabled || !telegramConfig.listener.enabled) {
@@ -143,9 +141,10 @@ export async function initTelegramListeners(dependencies = {}) {
 
   return listenersState;
 }
-
-export function getTelegramListeners() {
+function getTelegramListeners() {
   return listenersState;
 }
+module.exports = initTelegramListeners;
+module.exports.getTelegramListeners = getTelegramListeners;
 
-export default initTelegramListeners;
+module.exports.initTelegramListeners = initTelegramListeners;

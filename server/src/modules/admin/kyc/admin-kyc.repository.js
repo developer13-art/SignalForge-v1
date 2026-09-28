@@ -3,10 +3,8 @@
  *
  * @module server/modules/admin/kyc/admin-kyc.repository
  */
-
-import { db } from '../../../database';
-
-export async function listKycApplications({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+async function listKycApplications({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -51,16 +49,14 @@ export async function listKycApplications({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findKycApplicationById({ applicationId }) {
+async function findKycApplicationById({ applicationId }) {
   const { rows } = await db.query(
     `SELECT * FROM kyc_applications WHERE id = $1 LIMIT 1`,
     [applicationId],
   );
   return rows[0] || null;
 }
-
-export async function countByStatus() {
+async function countByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count
        FROM kyc_applications
@@ -68,9 +64,15 @@ export async function countByStatus() {
   );
   return rows;
 }
-
-export const adminKycRepository = {
+const adminKycRepository = {
   listKycApplications,
   findKycApplicationById,
   countByStatus,
 };
+module.exports.adminKycRepository = adminKycRepository;
+
+module.exports.listKycApplications = listKycApplications;
+
+module.exports.findKycApplicationById = findKycApplicationById;
+
+module.exports.countByStatus = countByStatus;

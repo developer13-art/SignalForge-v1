@@ -195,7 +195,7 @@ module.exports = {
     await client.query(`
       CREATE TABLE IF NOT EXISTS solana_leaderboard_cache (
         id TEXT PRIMARY KEY,
-        window TEXT NOT NULL,
+        "window" TEXT NOT NULL,
         sort_by TEXT NOT NULL,
         rank INT NOT NULL,
         provider_id TEXT NOT NULL,
@@ -221,7 +221,7 @@ module.exports = {
 
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_solana_leaderboard_cache_window_sort
-        ON solana_leaderboard_cache (window, sort_by);
+        ON solana_leaderboard_cache ("window", sort_by);
     `);
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_solana_leaderboard_cache_provider
@@ -229,13 +229,13 @@ module.exports = {
     `);
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_solana_leaderboard_cache_rank
-        ON solana_leaderboard_cache (window, sort_by, rank ASC);
+        ON solana_leaderboard_cache ("window", sort_by, rank ASC);
     `);
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS solana_leaderboard_history (
         id TEXT PRIMARY KEY,
-        window TEXT NOT NULL,
+        "window" TEXT NOT NULL,
         sort_by TEXT NOT NULL,
         count INT NOT NULL DEFAULT 0,
         generated_by TEXT NULL,
@@ -246,7 +246,7 @@ module.exports = {
 
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_solana_leaderboard_history_window_sort
-        ON solana_leaderboard_history (window, sort_by);
+        ON solana_leaderboard_history ("window", sort_by);
     `);
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_solana_leaderboard_history_created_at

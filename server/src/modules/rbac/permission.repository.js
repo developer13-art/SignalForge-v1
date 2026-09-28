@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/rbac/permission-repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class PermissionRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class PermissionRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -127,5 +125,5 @@ export class PermissionRepository {
     return result.rows.map((row) => row.name);
   }
 }
-
-export default PermissionRepository;
+module.exports = PermissionRepository;
+module.exports.PermissionRepository = PermissionRepository;

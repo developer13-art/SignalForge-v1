@@ -3,30 +3,22 @@
  *
  * @module signalforge/server/modules/trades/service
  */
-
-import crypto from 'node:crypto';
-
-import { TradeRepository } from './trade.repository.js';
-import { TradeTimelineService } from './timeline/trade-timeline.service.js';
-import { OpenPositionsQuery } from './queries/open-positions.query.js';
-import { PendingOrdersQuery } from './queries/pending-orders.query.js';
-import { ClosedTradesQuery } from './queries/closed-trades.query.js';
-import { TradeHistoryQuery } from './queries/trade-history.query.js';
-import { TradeDetailsQuery } from './queries/trade-details.query.js';
-import { ManualOpenService } from './operations/manual-open.service.js';
-import { ManualCloseService } from './operations/manual-close.service.js';
-import { ManualModifyService } from './operations/manual-modify.service.js';
-import { ManualInterventionService } from './operations/manual-intervention.service.js';
-import { TradeNotFoundError } from './trade.errors.js';
-import { TRADE_STATUSES } from './trade.constants.js';
-import {
-  emitTradeCreated,
-  emitTradeUpdated,
-  emitTradeClosed,
-  emitTradeArchived,
-} from './trade.events.js';
-
-export class TradeService {
+const crypto = require('node:crypto');
+const { TradeRepository } = require('./trade.repository.js');
+const { TradeTimelineService } = require('./timeline/trade-timeline.service.js');
+const { OpenPositionsQuery } = require('./queries/open-positions.query.js');
+const { PendingOrdersQuery } = require('./queries/pending-orders.query.js');
+const { ClosedTradesQuery } = require('./queries/closed-trades.query.js');
+const { TradeHistoryQuery } = require('./queries/trade-history.query.js');
+const { TradeDetailsQuery } = require('./queries/trade-details.query.js');
+const { ManualOpenService } = require('./operations/manual-open.service.js');
+const { ManualCloseService } = require('./operations/manual-close.service.js');
+const { ManualModifyService } = require('./operations/manual-modify.service.js');
+const { ManualInterventionService } = require('./operations/manual-intervention.service.js');
+const { TradeNotFoundError } = require('./trade.errors.js');
+const { TRADE_STATUSES } = require('./trade.constants.js');
+const { emitTradeCreated, emitTradeUpdated, emitTradeClosed, emitTradeArchived } = require('./trade.events.js');
+class TradeService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TradeRepository();
     this.timeline = dependencies.timeline || new TradeTimelineService();
@@ -271,5 +263,5 @@ export class TradeService {
     return input;
   }
 }
-
-export default TradeService;
+module.exports = TradeService;
+module.exports.TradeService = TradeService;

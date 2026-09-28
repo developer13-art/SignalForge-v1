@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/withdrawals/requests/repository
  */
-
-import { WithdrawalRepository } from '../withdrawal.repository.js';
-
-export class WithdrawalRequestRepository {
+const { WithdrawalRepository } = require('../withdrawal.repository.js');
+class WithdrawalRequestRepository {
   constructor(db = null) {
     this.withdrawalRepository = new WithdrawalRepository(db);
   }
@@ -47,5 +45,5 @@ export class WithdrawalRequestRepository {
     return this.withdrawalRepository.sumByMethodType(filters);
   }
 }
-
-export default WithdrawalRequestRepository;
+module.exports = WithdrawalRequestRepository;
+module.exports.WithdrawalRequestRepository = WithdrawalRequestRepository;

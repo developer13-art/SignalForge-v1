@@ -5,11 +5,9 @@
  *
  * @module server/modules/admin/providers/admin-provider.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function listProviders({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function listProviders({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -55,24 +53,21 @@ export async function listProviders({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findProviderById({ providerId }) {
+async function findProviderById({ providerId }) {
   const { rows } = await db.query(
     `SELECT * FROM providers WHERE id = $1 LIMIT 1`,
     [providerId],
   );
   return rows[0] || null;
 }
-
-export async function updateProviderStatus({ providerId, status }) {
+async function updateProviderStatus({ providerId, status }) {
   const { rowCount } = await db.query(
     `UPDATE providers SET status = $1, updated_at = $2 WHERE id = $3`,
     [status, nowIso(), providerId],
   );
   return rowCount > 0;
 }
-
-export async function updateCertificationStatus({ providerId, status }) {
+async function updateCertificationStatus({ providerId, status }) {
   const { rowCount } = await db.query(
     `UPDATE providers
         SET certification_status = $1,
@@ -83,18 +78,27 @@ export async function updateCertificationStatus({ providerId, status }) {
   );
   return rowCount > 0;
 }
-
-export async function countProvidersByStatus() {
+async function countProvidersByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count FROM providers GROUP BY status`,
   );
   return rows;
 }
-
-export const adminProviderRepository = {
+const adminProviderRepository = {
   listProviders,
   findProviderById,
   updateProviderStatus,
   updateCertificationStatus,
   countProvidersByStatus,
 };
+module.exports.adminProviderRepository = adminProviderRepository;
+
+module.exports.listProviders = listProviders;
+
+module.exports.findProviderById = findProviderById;
+
+module.exports.updateProviderStatus = updateProviderStatus;
+
+module.exports.updateCertificationStatus = updateCertificationStatus;
+
+module.exports.countProvidersByStatus = countProvidersByStatus;

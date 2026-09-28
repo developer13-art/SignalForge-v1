@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/whatsapp/controller
  */
-
-import { WhatsAppService } from './whatsapp.service.js';
-
-export class WhatsAppController {
+const { WhatsAppService } = require('./whatsapp.service.js');
+class WhatsAppController {
   constructor(service = null) {
     this.service = service || new WhatsAppService();
   }
@@ -55,5 +53,5 @@ export class WhatsAppController {
     }
   };
 }
-
-export default WhatsAppController;
+module.exports = WhatsAppController;
+module.exports.WhatsAppController = WhatsAppController;

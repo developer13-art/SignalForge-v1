@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/referrals/fraud/fake-volume
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { FRAUD_FLAG_TYPES, FRAUD_FLAG_SEVERITIES } from '../referral.constants.js';
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { FRAUD_FLAG_TYPES, FRAUD_FLAG_SEVERITIES } = require('../referral.constants.js');
 
 const SAME_SIZE_THRESHOLD = 0.9;
 const MIN_TRADES_TO_CHECK = 20;
-
-export class FakeVolumeCheck {
+class FakeVolumeCheck {
   constructor(db = null) {
     this.db = db || getDatabase();
     this.name = FRAUD_FLAG_TYPES.FAKE_VOLUME;
@@ -69,5 +67,5 @@ export class FakeVolumeCheck {
     };
   }
 }
-
-export default FakeVolumeCheck;
+module.exports = FakeVolumeCheck;
+module.exports.FakeVolumeCheck = FakeVolumeCheck;

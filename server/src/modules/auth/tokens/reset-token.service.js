@@ -3,12 +3,9 @@
  *
  * @module signalforge/server/modules/auth/tokens/reset-token
  */
-
-import crypto from 'node:crypto';
-
-import jwtConfig from '../../../config/jwt.config.js';
-
-export class ResetTokenService {
+const crypto = require('node:crypto');
+const jwtConfig = require('../../../config/jwt.config.js');
+class ResetTokenService {
   generate() {
     return crypto.randomBytes(32).toString('base64url');
   }
@@ -26,7 +23,6 @@ export class ResetTokenService {
     return new Date(expiresAt).getTime() < Date.now();
   }
 }
-
-export const resetTokenService = new ResetTokenService();
-
-export default resetTokenService;
+const resetTokenService = new ResetTokenService();
+module.exports = resetTokenService;
+module.exports.resetTokenService = resetTokenService;

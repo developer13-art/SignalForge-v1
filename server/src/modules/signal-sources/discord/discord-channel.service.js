@@ -7,17 +7,13 @@
  *
  * @module server/modules/signal-sources/discord/discord-channel.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { discordGuildService } from './discord-guild.service';
-import {
-  emitDiscordChannelOptIn,
-  emitDiscordChannelOptOut,
-} from './discord.events';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { discordGuildService } = require('./discord-guild.service');
+const { emitDiscordChannelOptIn, emitDiscordChannelOptOut } = require('./discord.events');
 
 const DISCORD_API_BASE = 'https://discord.com/api/v10';
 
@@ -39,8 +35,7 @@ async function discordFetch(path, accessToken) {
 
   return response.json();
 }
-
-export async function discoverChannels({ userId, guildId }) {
+async function discoverChannels({ userId, guildId }) {
   if (!userId || !guildId) {
     throw new AppError('userId and guildId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -103,8 +98,7 @@ export async function discoverChannels({ userId, guildId }) {
     nsfw: Boolean(c.nsfw),
   }));
 }
-
-export async function listDiscoveredChannels({ userId, guildId }) {
+async function listDiscoveredChannels({ userId, guildId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -135,8 +129,7 @@ export async function listDiscoveredChannels({ userId, guildId }) {
     optedInAt: row.opted_in_at,
   }));
 }
-
-export async function listMonitoredChannels({ userId }) {
+async function listMonitoredChannels({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -156,8 +149,7 @@ export async function listMonitoredChannels({ userId }) {
     type: row.type,
   }));
 }
-
-export async function optInChannels({ userId, channelIds }) {
+async function optInChannels({ userId, channelIds }) {
   if (!userId || !Array.isArray(channelIds) || channelIds.length === 0) {
     throw new AppError('userId and non-empty channelIds are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -192,8 +184,7 @@ export async function optInChannels({ userId, channelIds }) {
 
   return { optedIn: results };
 }
-
-export async function optOutChannels({ userId, channelIds }) {
+async function optOutChannels({ userId, channelIds }) {
   if (!userId || !Array.isArray(channelIds) || channelIds.length === 0) {
     throw new AppError('userId and non-empty channelIds are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -226,15 +217,13 @@ export async function optOutChannels({ userId, channelIds }) {
 
   return { optedOut: results };
 }
-
-export async function removeAllChannels({ userId }) {
+async function removeAllChannels({ userId }) {
   if (!userId) {
     return;
   }
   await db.query(`DELETE FROM discord_channels WHERE user_id = $1`, [userId]);
 }
-
-export async function countMonitoredChannels({ userId }) {
+async function countMonitoredChannels({ userId }) {
   const { rows } = await db.query(
     `SELECT COUNT(*)::int AS count
        FROM discord_channels
@@ -243,8 +232,7 @@ export async function countMonitoredChannels({ userId }) {
   );
   return rows[0]?.count ?? 0;
 }
-
-export const discordChannelService = {
+const discordChannelService = {
   discoverChannels,
   listDiscoveredChannels,
   listMonitoredChannels,
@@ -253,3 +241,18 @@ export const discordChannelService = {
   removeAllChannels,
   countMonitoredChannels,
 };
+module.exports.discordChannelService = discordChannelService;
+
+module.exports.discoverChannels = discoverChannels;
+
+module.exports.listDiscoveredChannels = listDiscoveredChannels;
+
+module.exports.listMonitoredChannels = listMonitoredChannels;
+
+module.exports.optInChannels = optInChannels;
+
+module.exports.optOutChannels = optOutChannels;
+
+module.exports.removeAllChannels = removeAllChannels;
+
+module.exports.countMonitoredChannels = countMonitoredChannels;

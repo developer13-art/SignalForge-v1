@@ -8,18 +8,14 @@
  *
  * @module server/modules/signal-sources/telegram/session/telegram-session.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { encryptPacked, decryptPacked } from '@signalforge/shared/utils/crypto.util';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { config } from '../../../../config';
-import * as repository from './telegram-session.repository';
-import {
-  emitTelegramSessionConnected,
-  emitTelegramSessionRevoked,
-} from '../telegram.events';
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { encryptPacked, decryptPacked } = require('@signalforge/shared/utils/crypto.util');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { config } = require('../../../../config');
+const repository = require('./telegram-session.repository');
+const { emitTelegramSessionConnected, emitTelegramSessionRevoked } = require('../telegram.events');
 
 const PENDING_SESSION_TTL_MS = 10 * 60 * 1000;
 
@@ -34,8 +30,7 @@ function getEncryptionKey() {
   }
   return key;
 }
-
-export async function createPendingSession({ userId, phoneNumber, countryCode, phoneCodeHash }) {
+async function createPendingSession({ userId, phoneNumber, countryCode, phoneCodeHash }) {
   if (!userId || !phoneNumber || !phoneCodeHash) {
     throw new AppError(
       'userId, phoneNumber, and phoneCodeHash are required',
@@ -56,8 +51,7 @@ export async function createPendingSession({ userId, phoneNumber, countryCode, p
 
   return record.id;
 }
-
-export async function getPendingSession({ userId, sessionId }) {
+async function getPendingSession({ userId, sessionId }) {
   if (!userId || !sessionId) {
     throw new AppError('userId and sessionId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -75,8 +69,7 @@ export async function getPendingSession({ userId, sessionId }) {
 
   return record;
 }
-
-export async function persistSession({
+async function persistSession({
   userId,
   sessionId,
   sessionData,
@@ -115,8 +108,7 @@ export async function persistSession({
 
   return persisted.id;
 }
-
-export async function getActiveSession({ userId }) {
+async function getActiveSession({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -150,15 +142,13 @@ export async function getActiveSession({ userId }) {
     sessionData,
   };
 }
-
-export async function touchSession({ userId }) {
+async function touchSession({ userId }) {
   if (!userId) {
     return;
   }
   await repository.touchLastUsedAt({ userId });
 }
-
-export async function revokeSession({ userId, reason }) {
+async function revokeSession({ userId, reason }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -183,19 +173,16 @@ export async function revokeSession({ userId, reason }) {
 
   return { revoked: true };
 }
-
-export async function listActiveSessions() {
+async function listActiveSessions() {
   return repository.listAllActiveSessions();
 }
-
-export async function listSessionsForUser({ userId }) {
+async function listSessionsForUser({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
   return repository.listSessionsByUser({ userId });
 }
-
-export const telegramSessionService = {
+const telegramSessionService = {
   createPendingSession,
   getPendingSession,
   persistSession,
@@ -205,3 +192,20 @@ export const telegramSessionService = {
   listActiveSessions,
   listSessionsForUser,
 };
+module.exports.telegramSessionService = telegramSessionService;
+
+module.exports.createPendingSession = createPendingSession;
+
+module.exports.getPendingSession = getPendingSession;
+
+module.exports.persistSession = persistSession;
+
+module.exports.getActiveSession = getActiveSession;
+
+module.exports.touchSession = touchSession;
+
+module.exports.revokeSession = revokeSession;
+
+module.exports.listActiveSessions = listActiveSessions;
+
+module.exports.listSessionsForUser = listSessionsForUser;

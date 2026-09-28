@@ -3,24 +3,13 @@
  *
  * @module signalforge/server/modules/payments/invoices/service
  */
-
-import crypto from 'node:crypto';
-
-import { InvoiceRepository } from './repository.js';
-import { PaymentRepository } from '../payment.repository.js';
-import {
-  INVOICE_STATUSES,
-  DEFAULT_INVOICE_PREFIX,
-  DEFAULT_INVOICE_DUE_DAYS,
-} from '../payment.constants.js';
-import { InvoiceNotFoundError } from '../payment.errors.js';
-import {
-  emitInvoiceCreated,
-  emitInvoicePaid,
-  emitInvoiceVoided,
-} from '../payment.events.js';
-
-export class InvoiceService {
+const crypto = require('node:crypto');
+const { InvoiceRepository } = require('./repository.js');
+const { PaymentRepository } = require('../payment.repository.js');
+const { INVOICE_STATUSES, DEFAULT_INVOICE_PREFIX, DEFAULT_INVOICE_DUE_DAYS } = require('../payment.constants.js');
+const { InvoiceNotFoundError } = require('../payment.errors.js');
+const { emitInvoiceCreated, emitInvoicePaid, emitInvoiceVoided } = require('../payment.events.js');
+class InvoiceService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new InvoiceRepository();
     this.paymentRepository = dependencies.paymentRepository || new PaymentRepository();
@@ -158,5 +147,5 @@ export class InvoiceService {
     return input;
   }
 }
-
-export default InvoiceService;
+module.exports = InvoiceService;
+module.exports.InvoiceService = InvoiceService;

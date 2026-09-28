@@ -8,15 +8,13 @@
  *
  * @module server/modules/signal-sources/messages/message-raw-store.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-
-export async function persistIncoming({ userId, envelope }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+async function persistIncoming({ userId, envelope }) {
   if (!userId || !envelope) {
     throw new AppError('userId and envelope are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -76,8 +74,7 @@ export async function persistIncoming({ userId, envelope }) {
 
   return { id: inserted.id, duplicate: false };
 }
-
-export async function persistEdit({ userId, envelope }) {
+async function persistEdit({ userId, envelope }) {
   if (!userId || !envelope) {
     throw new AppError('userId and envelope are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -140,8 +137,7 @@ export async function persistEdit({ userId, envelope }) {
 
   return { id: inserted.id, duplicate: false };
 }
-
-export async function persistDelete({ userId, envelope }) {
+async function persistDelete({ userId, envelope }) {
   if (!userId || !envelope) {
     throw new AppError('userId and envelope are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -199,8 +195,7 @@ export async function persistDelete({ userId, envelope }) {
 
   return { id: inserted.id, duplicate: false };
 }
-
-export async function getMessageById({ userId, messageId }) {
+async function getMessageById({ userId, messageId }) {
   if (!userId || !messageId) {
     throw new AppError('userId and messageId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -214,8 +209,7 @@ export async function getMessageById({ userId, messageId }) {
 
   return rows[0] || null;
 }
-
-export async function getMessageProcessingStatus({ userId, messageId }) {
+async function getMessageProcessingStatus({ userId, messageId }) {
   if (!userId || !messageId) {
     throw new AppError('userId and messageId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -230,8 +224,7 @@ export async function getMessageProcessingStatus({ userId, messageId }) {
 
   return rows[0] || null;
 }
-
-export async function listMessages({ userId, filters = {}, pagination = {} }) {
+async function listMessages({ userId, filters = {}, pagination = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -289,8 +282,7 @@ export async function listMessages({ userId, filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total }),
   };
 }
-
-export async function enqueueForReprocessing({ userId, messageId }) {
+async function enqueueForReprocessing({ userId, messageId }) {
   if (!userId || !messageId) {
     throw new AppError('userId and messageId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -311,8 +303,7 @@ export async function enqueueForReprocessing({ userId, messageId }) {
 
   return { jobId: rows[0]?.id };
 }
-
-export async function softDeleteMessage({ userId, messageId }) {
+async function softDeleteMessage({ userId, messageId }) {
   if (!userId || !messageId) {
     throw new AppError('userId and messageId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -328,8 +319,7 @@ export async function softDeleteMessage({ userId, messageId }) {
 
   return { deleted: true };
 }
-
-export const messageRawStoreService = {
+const messageRawStoreService = {
   persistIncoming,
   persistEdit,
   persistDelete,
@@ -339,3 +329,20 @@ export const messageRawStoreService = {
   enqueueForReprocessing,
   softDeleteMessage,
 };
+module.exports.messageRawStoreService = messageRawStoreService;
+
+module.exports.persistIncoming = persistIncoming;
+
+module.exports.persistEdit = persistEdit;
+
+module.exports.persistDelete = persistDelete;
+
+module.exports.getMessageById = getMessageById;
+
+module.exports.getMessageProcessingStatus = getMessageProcessingStatus;
+
+module.exports.listMessages = listMessages;
+
+module.exports.enqueueForReprocessing = enqueueForReprocessing;
+
+module.exports.softDeleteMessage = softDeleteMessage;

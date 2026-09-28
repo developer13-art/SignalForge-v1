@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/providers/certification/consistency
  */
-
-export class ConsistencyScoreService {
+class ConsistencyScoreService {
   calculate(metrics) {
     if (!metrics || typeof metrics !== 'object') {
       return 0;
@@ -39,5 +38,5 @@ export class ConsistencyScoreService {
     return 'LOW';
   }
 }
-
-export default ConsistencyScoreService;
+module.exports = ConsistencyScoreService;
+module.exports.ConsistencyScoreService = ConsistencyScoreService;

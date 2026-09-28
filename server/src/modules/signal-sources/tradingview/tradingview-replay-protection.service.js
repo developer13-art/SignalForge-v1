@@ -6,12 +6,9 @@
  *
  * @module signalforge/server/modules/signal-sources/tradingview/replay-protection
  */
-
-import crypto from 'node:crypto';
-
-import tradingViewConfig from '../../../config/tradingview.config.js';
-
-export class TradingViewReplayProtectionService {
+const crypto = require('node:crypto');
+const tradingViewConfig = require('../../../config/tradingview.config.js');
+class TradingViewReplayProtectionService {
   constructor(config = null) {
     this.config = config || tradingViewConfig.replayProtection;
     this.cache = new Map();
@@ -53,5 +50,5 @@ export class TradingViewReplayProtectionService {
     return { unique: true, hash };
   }
 }
-
-export default TradingViewReplayProtectionService;
+module.exports = TradingViewReplayProtectionService;
+module.exports.TradingViewReplayProtectionService = TradingViewReplayProtectionService;

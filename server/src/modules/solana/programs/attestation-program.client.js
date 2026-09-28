@@ -7,14 +7,13 @@
  *
  * @module server/modules/solana/programs/attestation-program.client
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { programClientService } from './program-client.service';
-import { pdaService } from './pda.service';
-import { transactionSubmitterService } from '../transactions/transaction-submitter.service';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { programClientService } = require('./program-client.service');
+const { pdaService } = require('./pda.service');
+const { transactionSubmitterService } = require('../transactions/transaction-submitter.service');
 
 function buildDiscriminator(name) {
   return crypto.createHash('sha256').update(`global:${name}`).digest().subarray(0, 8);
@@ -65,8 +64,7 @@ async function buildCreateAttestationInstruction({
 
   return instruction;
 }
-
-export async function createAttestationTransaction({
+async function createAttestationTransaction({
   authority,
   subjectType,
   subjectId,
@@ -116,8 +114,7 @@ export async function createAttestationTransaction({
     lastValidBlockHeight: latest.lastValidBlockHeight,
   };
 }
-
-export async function submitAttestationTransaction({
+async function submitAttestationTransaction({
   serializedTransaction,
   referenceType,
   referenceId,
@@ -131,8 +128,7 @@ export async function submitAttestationTransaction({
     userId,
   });
 }
-
-export async function createAndSubmitAttestation(args) {
+async function createAndSubmitAttestation(args) {
   const built = await createAttestationTransaction(args);
 
   const serialized = await programClientService.getProgramContext({ programKey: 'attestation' }).then(({ web3 }) => built.transaction.serialize({ requireAllSignatures: false, verifySignatures: false }));
@@ -148,9 +144,15 @@ export async function createAndSubmitAttestation(args) {
 
   return { ...submission, pda: built.pda, bump: built.bump };
 }
-
-export const attestationProgramClient = {
+const attestationProgramClient = {
   createAttestationTransaction,
   submitAttestationTransaction,
   createAndSubmitAttestation,
 };
+module.exports.attestationProgramClient = attestationProgramClient;
+
+module.exports.createAttestationTransaction = createAttestationTransaction;
+
+module.exports.submitAttestationTransaction = submitAttestationTransaction;
+
+module.exports.createAndSubmitAttestation = createAndSubmitAttestation;

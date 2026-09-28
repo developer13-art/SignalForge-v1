@@ -5,10 +5,8 @@
  *
  * @module signalforge/server/modules/signal-sources/adapters/base
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class BaseAdapter {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class BaseAdapter {
   constructor(config = {}) {
     this.config = config;
     this.name = 'base';
@@ -55,5 +53,5 @@ export class BaseAdapter {
     return { healthy: true, adapter: this.name };
   }
 }
-
-export default BaseAdapter;
+module.exports = BaseAdapter;
+module.exports.BaseAdapter = BaseAdapter;

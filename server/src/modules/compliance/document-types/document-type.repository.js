@@ -5,11 +5,9 @@
  *
  * @module server/modules/compliance/document-types/document-type.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertDocumentType({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertDocumentType({
   code,
   label,
   description,
@@ -36,32 +34,28 @@ export async function insertDocumentType({
   );
   return rows[0];
 }
-
-export async function findByCode({ code }) {
+async function findByCode({ code }) {
   const { rows } = await db.query(
     `SELECT * FROM kyc_document_types WHERE code = $1 LIMIT 1`,
     [code],
   );
   return rows[0] || null;
 }
-
-export async function findById({ documentTypeId }) {
+async function findById({ documentTypeId }) {
   const { rows } = await db.query(
     `SELECT * FROM kyc_document_types WHERE id = $1 LIMIT 1`,
     [documentTypeId],
   );
   return rows[0] || null;
 }
-
-export async function listAll({ activeOnly = false } = {}) {
+async function listAll({ activeOnly = false } = {}) {
   const where = activeOnly ? `WHERE active = TRUE` : '';
   const { rows } = await db.query(
     `SELECT * FROM kyc_document_types ${where} ORDER BY label ASC`,
   );
   return rows;
 }
-
-export async function updateDocumentType({
+async function updateDocumentType({
   documentTypeId,
   label,
   description,
@@ -94,8 +88,7 @@ export async function updateDocumentType({
   );
   return rows[0] || null;
 }
-
-export async function deactivateDocumentType({ documentTypeId }) {
+async function deactivateDocumentType({ documentTypeId }) {
   const { rowCount } = await db.query(
     `UPDATE kyc_document_types
         SET active = FALSE, updated_at = $1
@@ -104,16 +97,14 @@ export async function deactivateDocumentType({ documentTypeId }) {
   );
   return rowCount > 0;
 }
-
-export async function deleteDocumentType({ documentTypeId }) {
+async function deleteDocumentType({ documentTypeId }) {
   const { rowCount } = await db.query(
     `DELETE FROM kyc_document_types WHERE id = $1`,
     [documentTypeId],
   );
   return rowCount > 0;
 }
-
-export const documentTypeRepository = {
+const documentTypeRepository = {
   insertDocumentType,
   findByCode,
   findById,
@@ -122,3 +113,18 @@ export const documentTypeRepository = {
   deactivateDocumentType,
   deleteDocumentType,
 };
+module.exports.documentTypeRepository = documentTypeRepository;
+
+module.exports.insertDocumentType = insertDocumentType;
+
+module.exports.findByCode = findByCode;
+
+module.exports.findById = findById;
+
+module.exports.listAll = listAll;
+
+module.exports.updateDocumentType = updateDocumentType;
+
+module.exports.deactivateDocumentType = deactivateDocumentType;
+
+module.exports.deleteDocumentType = deleteDocumentType;

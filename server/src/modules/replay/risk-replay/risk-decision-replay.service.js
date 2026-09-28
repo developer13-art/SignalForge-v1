@@ -7,10 +7,9 @@
  *
  * @module server/modules/replay/risk-replay/risk-decision-replay.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { replayRepository } from '../replay.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { replayRepository } = require('../replay.repository');
 
 function parseChecks(checks) {
   if (!checks) {
@@ -28,8 +27,7 @@ function parseChecks(checks) {
   }
   return [];
 }
-
-export async function buildRiskReplay({ signalId, userId }) {
+async function buildRiskReplay({ signalId, userId }) {
   if (!signalId) {
     throw new AppError('signalId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -82,7 +80,9 @@ export async function buildRiskReplay({ signalId, userId }) {
     },
   };
 }
-
-export const riskDecisionReplayService = {
+const riskDecisionReplayService = {
   buildRiskReplay,
 };
+module.exports.riskDecisionReplayService = riskDecisionReplayService;
+
+module.exports.buildRiskReplay = buildRiskReplay;

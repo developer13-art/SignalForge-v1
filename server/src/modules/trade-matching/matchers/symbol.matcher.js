@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/matchers/symbol
  */
-
-import { normalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
-
-export class SymbolMatcher {
+const { normalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
+class SymbolMatcher {
   extractSymbolFromMessage(message) {
     if (!message) {
       return null;
@@ -43,5 +41,5 @@ export class SymbolMatcher {
     }));
   }
 }
-
-export default SymbolMatcher;
+module.exports = SymbolMatcher;
+module.exports.SymbolMatcher = SymbolMatcher;

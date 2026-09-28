@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/kyc/review/repository
  */
-
-import { KycRepository } from '../kyc.repository.js';
-
-export class ReviewRepository {
+const { KycRepository } = require('../kyc.repository.js');
+class ReviewRepository {
   constructor(db = null) {
     this.kycRepository = new KycRepository(db);
   }
@@ -31,5 +29,5 @@ export class ReviewRepository {
     return this.kycRepository.updateUserKycStatus(userId, status);
   }
 }
-
-export default ReviewRepository;
+module.exports = ReviewRepository;
+module.exports.ReviewRepository = ReviewRepository;

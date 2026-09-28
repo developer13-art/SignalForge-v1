@@ -5,10 +5,8 @@
  *
  * @module server/modules/white-label/analytics/wl-analytics.repository
  */
-
-import { db } from '../../../database';
-
-export async function countUsers({ projectId, from, to }) {
+const { db } = require('../../../database');
+async function countUsers({ projectId, from, to }) {
   const conditions = ['wl_project_id = $1'];
   const params = [projectId];
 
@@ -31,8 +29,7 @@ export async function countUsers({ projectId, from, to }) {
 
   return rows[0]?.total || 0;
 }
-
-export async function countActiveUsers({ projectId }) {
+async function countActiveUsers({ projectId }) {
   const { rows } = await db.query(
     `SELECT COUNT(*)::int AS total
        FROM users
@@ -41,8 +38,7 @@ export async function countActiveUsers({ projectId }) {
   );
   return rows[0]?.total || 0;
 }
-
-export async function sumRevenue({ projectId, from, to }) {
+async function sumRevenue({ projectId, from, to }) {
   const conditions = ['s.wl_project_id = $1', `p.status = 'SUCCEEDED'`];
   const params = [projectId];
 
@@ -68,9 +64,15 @@ export async function sumRevenue({ projectId, from, to }) {
 
   return Number(rows[0]?.total || 0);
 }
-
-export const wlAnalyticsRepository = {
+const wlAnalyticsRepository = {
   countUsers,
   countActiveUsers,
   sumRevenue,
 };
+module.exports.wlAnalyticsRepository = wlAnalyticsRepository;
+
+module.exports.countUsers = countUsers;
+
+module.exports.countActiveUsers = countActiveUsers;
+
+module.exports.sumRevenue = sumRevenue;

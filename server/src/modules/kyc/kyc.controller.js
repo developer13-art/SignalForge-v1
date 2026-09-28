@@ -3,15 +3,13 @@
  *
  * @module signalforge/server/modules/kyc/controller
  */
-
-import { KycService } from './kyc.service.js';
-import { ApplicationController } from './application/application.controller.js';
-import { DocumentController } from './documents/document.controller.js';
-import { VerificationController } from './verification/verification.controller.js';
-import { validateReviewDecisionPayload } from './kyc.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class KycController {
+const { KycService } = require('./kyc.service.js');
+const { ApplicationController } = require('./application/application.controller.js');
+const { DocumentController } = require('./documents/document.controller.js');
+const { VerificationController } = require('./verification/verification.controller.js');
+const { validateReviewDecisionPayload } = require('./kyc.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class KycController {
   constructor(service = null) {
     this.service = service || new KycService();
     this.applicationController = new ApplicationController();
@@ -203,5 +201,5 @@ export class KycController {
     }
   };
 }
-
-export default KycController;
+module.exports = KycController;
+module.exports.KycController = KycController;

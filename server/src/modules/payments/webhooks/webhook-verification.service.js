@@ -3,15 +3,10 @@
  *
  * @module signalforge/server/modules/payments/webhooks/verification
  */
-
-import { PaymentProviderFactory } from '../providers/provider.factory.js';
-import {
-  WebhookVerificationError,
-  UnsupportedPaymentProviderError,
-} from '../payment.errors.js';
-import { PAYMENT_PROVIDER_VALUES } from '../payment.constants.js';
-
-export class WebhookVerificationService {
+const { PaymentProviderFactory } = require('../providers/provider.factory.js');
+const { WebhookVerificationError, UnsupportedPaymentProviderError } = require('../payment.errors.js');
+const { PAYMENT_PROVIDER_VALUES } = require('../payment.constants.js');
+class WebhookVerificationService {
   verify(providerName, rawBody, headers = {}) {
     if (!PAYMENT_PROVIDER_VALUES.includes(providerName)) {
       throw new UnsupportedPaymentProviderError(undefined, { provider: providerName });
@@ -48,5 +43,5 @@ export class WebhookVerificationService {
     return provider.parseWebhookEvent(payload);
   }
 }
-
-export default WebhookVerificationService;
+module.exports = WebhookVerificationService;
+module.exports.WebhookVerificationService = WebhookVerificationService;

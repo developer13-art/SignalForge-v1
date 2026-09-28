@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/copy-trading/scaling/balance
  */
-
-import { DEFAULT_MIN_LOT_SIZE, DEFAULT_MAX_LOT_SIZE, DEFAULT_LOT_STEP } from '../copy-trading.constants.js';
-import { ScalingCalculationError } from '../copy-trading.errors.js';
-
-export class BalanceScalingService {
+const { DEFAULT_MIN_LOT_SIZE, DEFAULT_MAX_LOT_SIZE, DEFAULT_LOT_STEP } = require('../copy-trading.constants.js');
+const { ScalingCalculationError } = require('../copy-trading.errors.js');
+class BalanceScalingService {
   calculate(subscription, providerTrade, accountSnapshot, options = {}) {
     const providerVolume = Number(providerTrade?.volume);
     if (!Number.isFinite(providerVolume) || providerVolume <= 0) {
@@ -54,5 +52,5 @@ export class BalanceScalingService {
     };
   }
 }
-
-export default BalanceScalingService;
+module.exports = BalanceScalingService;
+module.exports.BalanceScalingService = BalanceScalingService;

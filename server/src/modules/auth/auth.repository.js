@@ -7,10 +7,8 @@
  *
  * @module signalforge/server/modules/auth/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class AuthRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class AuthRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -553,5 +551,5 @@ export class AuthRepository {
     return result.rowCount;
   }
 }
-
-export default AuthRepository;
+module.exports = AuthRepository;
+module.exports.AuthRepository = AuthRepository;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/tradingview/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class TradingViewRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class TradingViewRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -94,5 +92,5 @@ export class TradingViewRepository {
     );
   }
 }
-
-export default TradingViewRepository;
+module.exports = TradingViewRepository;
+module.exports.TradingViewRepository = TradingViewRepository;

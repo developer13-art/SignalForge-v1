@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/automation/engine/rule-priority
  */
-
-export class RulePriorityService {
+class RulePriorityService {
   sort(rules) {
     if (!Array.isArray(rules)) {
       return [];
@@ -39,5 +38,5 @@ export class RulePriorityService {
     });
   }
 }
-
-export default RulePriorityService;
+module.exports = RulePriorityService;
+module.exports.RulePriorityService = RulePriorityService;

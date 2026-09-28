@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/risk/checks/max-open-trades
  */
-
-import { BaseCheck } from './base.check.js';
-import { RiskRepository } from '../risk.repository.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskLimitHit } from '../risk.events.js';
-
-export class MaxOpenTradesCheck extends BaseCheck {
+const { BaseCheck } = require('./base.check.js');
+const { RiskRepository } = require('../risk.repository.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskLimitHit } = require('../risk.events.js');
+class MaxOpenTradesCheck extends BaseCheck {
   constructor(repository = null) {
     super(RISK_CHECKS.MAX_OPEN_TRADES);
     this.repository = repository || new RiskRepository();
@@ -41,5 +39,5 @@ export class MaxOpenTradesCheck extends BaseCheck {
     });
   }
 }
-
-export default MaxOpenTradesCheck;
+module.exports = MaxOpenTradesCheck;
+module.exports.MaxOpenTradesCheck = MaxOpenTradesCheck;

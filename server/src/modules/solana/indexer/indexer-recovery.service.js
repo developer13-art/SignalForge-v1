@@ -7,14 +7,13 @@
  *
  * @module server/modules/solana/indexer/indexer-recovery.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { connectionService } from '../config/connection.service';
-import { programConfigService } from '../config/program-config.service';
-import { indexerCheckpointService } from './indexer-checkpoint.service';
-import { programEventProcessorService } from './program-event-processor.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { connectionService } = require('../config/connection.service');
+const { programConfigService } = require('../config/program-config.service');
+const { indexerCheckpointService } = require('./indexer-checkpoint.service');
+const { programEventProcessorService } = require('./program-event-processor.service');
 
 const DEFAULT_BATCH_SIZE = 50;
 const MAX_SLOTS_PER_RECOVERY = 1000;
@@ -55,8 +54,7 @@ async function fetchTransaction({ txSignature }) {
     maxSupportedTransactionVersion: 0,
   });
 }
-
-export async function recoverFromCheckpoint({ programKey = 'attestation', maxSlots = MAX_SLOTS_PER_RECOVERY }) {
+async function recoverFromCheckpoint({ programKey = 'attestation', maxSlots = MAX_SLOTS_PER_RECOVERY }) {
   const programId = programConfigService.tryGetProgramId({ key: programKey });
 
   if (!programId) {
@@ -163,8 +161,7 @@ export async function recoverFromCheckpoint({ programKey = 'attestation', maxSlo
     fromSlot: checkpoint.lastProcessedSlot || 0,
   };
 }
-
-export async function recoverAll({ maxSlotsPerProgram = MAX_SLOTS_PER_RECOVERY } = {}) {
+async function recoverAll({ maxSlotsPerProgram = MAX_SLOTS_PER_RECOVERY } = {}) {
   const programs = programConfigService.getPrograms();
 
   const results = [];
@@ -186,9 +183,13 @@ export async function recoverAll({ maxSlotsPerProgram = MAX_SLOTS_PER_RECOVERY }
 
   return { programs: results };
 }
-
-export const indexerRecoveryService = {
+const indexerRecoveryService = {
   recoverFromCheckpoint,
   recoverAll,
   MAX_SLOTS_PER_RECOVERY,
 };
+module.exports.indexerRecoveryService = indexerRecoveryService;
+
+module.exports.recoverFromCheckpoint = recoverFromCheckpoint;
+
+module.exports.recoverAll = recoverAll;

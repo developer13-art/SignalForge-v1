@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/kyc/documents/repository
  */
-
-import { KycRepository } from '../kyc.repository.js';
-
-export class DocumentRepository {
+const { KycRepository } = require('../kyc.repository.js');
+class DocumentRepository {
   constructor(db = null) {
     this.kycRepository = new KycRepository(db);
   }
@@ -43,5 +41,5 @@ export class DocumentRepository {
     return this.kycRepository.deleteSelfieByApplication(applicationId);
   }
 }
-
-export default DocumentRepository;
+module.exports = DocumentRepository;
+module.exports.DocumentRepository = DocumentRepository;

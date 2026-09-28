@@ -6,15 +6,13 @@
  *
  * @module server/modules/affiliate/affiliate.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { successResponse } from '../../lib/response/success.response';
-import { paginatedResponse } from '../../lib/response/paginated.response';
-import { affiliateService } from './affiliate.service';
-
-export async function getDashboard(req, res) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { successResponse } = require('../../lib/response/success.response');
+const { paginatedResponse } = require('../../lib/response/paginated.response');
+const { affiliateService } = require('./affiliate.service');
+async function getDashboard(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -25,8 +23,7 @@ export async function getDashboard(req, res) {
 
   return successResponse(res, { dashboard });
 }
-
-export async function listLinks(req, res) {
+async function listLinks(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -37,8 +34,7 @@ export async function listLinks(req, res) {
 
   return successResponse(res, { links });
 }
-
-export async function createLink(req, res) {
+async function createLink(req, res) {
   const userId = req.user && req.user.id;
   const { label, destination } = req.body || {};
 
@@ -52,8 +48,7 @@ export async function createLink(req, res) {
 
   return successResponse(res, { link }, 201);
 }
-
-export async function deactivateLink(req, res) {
+async function deactivateLink(req, res) {
   const userId = req.user && req.user.id;
   const { linkId } = req.params;
 
@@ -65,8 +60,7 @@ export async function deactivateLink(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function listReferrals(req, res) {
+async function listReferrals(req, res) {
   const userId = req.user && req.user.id;
   const { page, limit, status } = req.query;
 
@@ -85,8 +79,7 @@ export async function listReferrals(req, res) {
     meta: result.meta,
   });
 }
-
-export async function listCommissions(req, res) {
+async function listCommissions(req, res) {
   const userId = req.user && req.user.id;
   const { page, limit, status, from, to } = req.query;
 
@@ -105,8 +98,7 @@ export async function listCommissions(req, res) {
     meta: result.meta,
   });
 }
-
-export async function getCommissionSummary(req, res) {
+async function getCommissionSummary(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -117,8 +109,7 @@ export async function getCommissionSummary(req, res) {
 
   return successResponse(res, { summary });
 }
-
-export async function requestWithdrawal(req, res) {
+async function requestWithdrawal(req, res) {
   const userId = req.user && req.user.id;
   const { amount, method, notes } = req.body || {};
 
@@ -137,8 +128,7 @@ export async function requestWithdrawal(req, res) {
 
   return successResponse(res, { withdrawal }, 201);
 }
-
-export async function listWithdrawals(req, res) {
+async function listWithdrawals(req, res) {
   const userId = req.user && req.user.id;
   const { page, limit, status } = req.query;
 
@@ -157,8 +147,7 @@ export async function listWithdrawals(req, res) {
     meta: result.meta,
   });
 }
-
-export const affiliateController = {
+const affiliateController = {
   getDashboard,
   listLinks,
   createLink,
@@ -169,3 +158,22 @@ export const affiliateController = {
   requestWithdrawal,
   listWithdrawals,
 };
+module.exports.affiliateController = affiliateController;
+
+module.exports.getDashboard = getDashboard;
+
+module.exports.listLinks = listLinks;
+
+module.exports.createLink = createLink;
+
+module.exports.deactivateLink = deactivateLink;
+
+module.exports.listReferrals = listReferrals;
+
+module.exports.listCommissions = listCommissions;
+
+module.exports.getCommissionSummary = getCommissionSummary;
+
+module.exports.requestWithdrawal = requestWithdrawal;
+
+module.exports.listWithdrawals = listWithdrawals;

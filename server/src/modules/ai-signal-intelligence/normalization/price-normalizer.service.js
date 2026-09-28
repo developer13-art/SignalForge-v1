@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/normalization/price
  */
-
-import { parsePrice } from '@signalforge/shared/validators/price.validator';
-
-export class PriceNormalizerService {
+const { parsePrice } = require('@signalforge/shared/validators/price.validator');
+class PriceNormalizerService {
   normalize(input) {
     if (input === null || input === undefined) {
       return null;
@@ -37,5 +35,5 @@ export class PriceNormalizerService {
     return results;
   }
 }
-
-export default PriceNormalizerService;
+module.exports = PriceNormalizerService;
+module.exports.PriceNormalizerService = PriceNormalizerService;

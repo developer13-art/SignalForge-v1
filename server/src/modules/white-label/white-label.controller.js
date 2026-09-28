@@ -6,14 +6,12 @@
  *
  * @module server/modules/white-label/white-label.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { successResponse } from '../../lib/response/success.response';
-import { whiteLabelService } from './white-label.service';
-
-export async function listProjects(req, res) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { successResponse } = require('../../lib/response/success.response');
+const { whiteLabelService } = require('./white-label.service');
+async function listProjects(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -24,8 +22,7 @@ export async function listProjects(req, res) {
 
   return successResponse(res, { projects });
 }
-
-export async function getProject(req, res) {
+async function getProject(req, res) {
   const userId = req.user && req.user.id;
   const { projectId } = req.params;
 
@@ -37,8 +34,7 @@ export async function getProject(req, res) {
 
   return successResponse(res, { project });
 }
-
-export async function createProject(req, res) {
+async function createProject(req, res) {
   const userId = req.user && req.user.id;
   const { name, brandName, brandDomain } = req.body || {};
 
@@ -57,8 +53,7 @@ export async function createProject(req, res) {
 
   return successResponse(res, { project }, 201);
 }
-
-export async function updateBranding(req, res) {
+async function updateBranding(req, res) {
   const userId = req.user && req.user.id;
   const { projectId } = req.params;
   const payload = req.body || {};
@@ -75,8 +70,7 @@ export async function updateBranding(req, res) {
 
   return successResponse(res, { branding });
 }
-
-export async function updateTheme(req, res) {
+async function updateTheme(req, res) {
   const userId = req.user && req.user.id;
   const { projectId } = req.params;
   const payload = req.body || {};
@@ -93,8 +87,7 @@ export async function updateTheme(req, res) {
 
   return successResponse(res, { theme });
 }
-
-export async function addDomain(req, res) {
+async function addDomain(req, res) {
   const userId = req.user && req.user.id;
   const { projectId } = req.params;
   const { domain } = req.body || {};
@@ -107,8 +100,7 @@ export async function addDomain(req, res) {
 
   return successResponse(res, { domain: result }, 201);
 }
-
-export async function verifyDomain(req, res) {
+async function verifyDomain(req, res) {
   const userId = req.user && req.user.id;
   const { projectId, domainId } = req.params;
 
@@ -120,8 +112,7 @@ export async function verifyDomain(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function removeDomain(req, res) {
+async function removeDomain(req, res) {
   const userId = req.user && req.user.id;
   const { projectId, domainId } = req.params;
 
@@ -133,8 +124,7 @@ export async function removeDomain(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function updateCustomPricing(req, res) {
+async function updateCustomPricing(req, res) {
   const userId = req.user && req.user.id;
   const { projectId } = req.params;
   const payload = req.body || {};
@@ -151,8 +141,7 @@ export async function updateCustomPricing(req, res) {
 
   return successResponse(res, { pricing });
 }
-
-export async function getAnalytics(req, res) {
+async function getAnalytics(req, res) {
   const userId = req.user && req.user.id;
   const { projectId } = req.params;
   const { from, to } = req.query;
@@ -170,8 +159,7 @@ export async function getAnalytics(req, res) {
 
   return successResponse(res, { analytics });
 }
-
-export async function deleteProject(req, res) {
+async function deleteProject(req, res) {
   const userId = req.user && req.user.id;
   const { projectId } = req.params;
 
@@ -183,8 +171,7 @@ export async function deleteProject(req, res) {
 
   return successResponse(res, result);
 }
-
-export const whiteLabelController = {
+const whiteLabelController = {
   listProjects,
   getProject,
   createProject,
@@ -197,3 +184,26 @@ export const whiteLabelController = {
   getAnalytics,
   deleteProject,
 };
+module.exports.whiteLabelController = whiteLabelController;
+
+module.exports.listProjects = listProjects;
+
+module.exports.getProject = getProject;
+
+module.exports.createProject = createProject;
+
+module.exports.updateBranding = updateBranding;
+
+module.exports.updateTheme = updateTheme;
+
+module.exports.addDomain = addDomain;
+
+module.exports.verifyDomain = verifyDomain;
+
+module.exports.removeDomain = removeDomain;
+
+module.exports.updateCustomPricing = updateCustomPricing;
+
+module.exports.getAnalytics = getAnalytics;
+
+module.exports.deleteProject = deleteProject;

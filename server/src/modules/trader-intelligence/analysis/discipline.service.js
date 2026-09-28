@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/trader-intelligence/analysis/discipline
  */
-
-export class DisciplineService {
+class DisciplineService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return { score: 0, alerts: [], samples: 0 };
@@ -97,5 +96,5 @@ export class DisciplineService {
     return 'UNDISCIPLINED';
   }
 }
-
-export default DisciplineService;
+module.exports = DisciplineService;
+module.exports.DisciplineService = DisciplineService;

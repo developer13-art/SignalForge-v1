@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/005_create_signal_sources_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS signal_sources (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -272,8 +271,7 @@ export async function up(client) {
       ON message_fingerprints (user_id);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS message_fingerprints CASCADE`);
   await client.query(`DROP TABLE IF EXISTS source_messages CASCADE`);
   await client.query(`DROP TABLE IF EXISTS email_connections CASCADE`);
@@ -289,3 +287,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS telegram_pending_sessions CASCADE`);
   await client.query(`DROP TABLE IF EXISTS signal_sources CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

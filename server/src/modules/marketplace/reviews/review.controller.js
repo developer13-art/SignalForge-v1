@@ -3,16 +3,10 @@
  *
  * @module signalforge/server/modules/marketplace/reviews/controller
  */
-
-import { ReviewService } from './service.js';
-import {
-  validateCreateReview,
-  validateUpdateReview,
-  validateReviewModeration,
-} from './validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class ReviewController {
+const { ReviewService } = require('./service.js');
+const { validateCreateReview, validateUpdateReview, validateReviewModeration } = require('./validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class ReviewController {
   constructor(service = null) {
     this.service = service || new ReviewService();
   }
@@ -134,5 +128,5 @@ export class ReviewController {
     }
   };
 }
-
-export default ReviewController;
+module.exports = ReviewController;
+module.exports.ReviewController = ReviewController;

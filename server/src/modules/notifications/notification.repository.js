@@ -5,11 +5,9 @@
  *
  * @module server/modules/notifications/notification.repository
  */
-
-import { db } from '../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertNotification({
+const { db } = require('../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertNotification({
   userId,
   type,
   category,
@@ -57,16 +55,14 @@ export async function insertNotification({
   );
   return rows[0];
 }
-
-export async function findById({ notificationId }) {
+async function findById({ notificationId }) {
   const { rows } = await db.query(
     `SELECT * FROM notifications WHERE id = $1 LIMIT 1`,
     [notificationId],
   );
   return rows[0] || null;
 }
-
-export async function listByUser({ userId, filters = {}, pagination = {} }) {
+async function listByUser({ userId, filters = {}, pagination = {} }) {
   const conditions = ['user_id = $1'];
   const params = [userId];
 
@@ -117,8 +113,7 @@ export async function listByUser({ userId, filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function updateStatus({ notificationId, status }) {
+async function updateStatus({ notificationId, status }) {
   const { rowCount } = await db.query(
     `UPDATE notifications
         SET status = $1, updated_at = $2
@@ -127,8 +122,7 @@ export async function updateStatus({ notificationId, status }) {
   );
   return rowCount > 0;
 }
-
-export async function markAsRead({ notificationId, userId }) {
+async function markAsRead({ notificationId, userId }) {
   const { rowCount } = await db.query(
     `UPDATE notifications
         SET read_at = $1, updated_at = $1
@@ -137,8 +131,7 @@ export async function markAsRead({ notificationId, userId }) {
   );
   return rowCount > 0;
 }
-
-export async function markAllAsRead({ userId }) {
+async function markAllAsRead({ userId }) {
   const { rowCount } = await db.query(
     `UPDATE notifications
         SET read_at = $1, updated_at = $1
@@ -147,8 +140,7 @@ export async function markAllAsRead({ userId }) {
   );
   return rowCount;
 }
-
-export async function countUnread({ userId }) {
+async function countUnread({ userId }) {
   const { rows } = await db.query(
     `SELECT COUNT(*)::int AS count
        FROM notifications
@@ -157,16 +149,14 @@ export async function countUnread({ userId }) {
   );
   return rows[0]?.count || 0;
 }
-
-export async function deleteNotification({ notificationId, userId }) {
+async function deleteNotification({ notificationId, userId }) {
   const { rowCount } = await db.query(
     `DELETE FROM notifications WHERE id = $1 AND user_id = $2`,
     [notificationId, userId],
   );
   return rowCount > 0;
 }
-
-export async function insertDelivery({
+async function insertDelivery({
   notificationId,
   channel,
   status,
@@ -183,8 +173,7 @@ export async function insertDelivery({
   );
   return rows[0];
 }
-
-export async function listDeliveries({ notificationId }) {
+async function listDeliveries({ notificationId }) {
   const { rows } = await db.query(
     `SELECT * FROM notification_deliveries
       WHERE notification_id = $1
@@ -193,8 +182,7 @@ export async function listDeliveries({ notificationId }) {
   );
   return rows;
 }
-
-export async function findPendingForScheduledDelivery({ limit = 100 }) {
+async function findPendingForScheduledDelivery({ limit = 100 }) {
   const { rows } = await db.query(
     `SELECT * FROM notifications
       WHERE status IN ('QUEUED', 'FAILED')
@@ -213,8 +201,7 @@ export async function findPendingForScheduledDelivery({ limit = 100 }) {
   );
   return rows;
 }
-
-export const notificationRepository = {
+const notificationRepository = {
   insertNotification,
   findById,
   listByUser,
@@ -227,3 +214,26 @@ export const notificationRepository = {
   listDeliveries,
   findPendingForScheduledDelivery,
 };
+module.exports.notificationRepository = notificationRepository;
+
+module.exports.insertNotification = insertNotification;
+
+module.exports.findById = findById;
+
+module.exports.listByUser = listByUser;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.markAsRead = markAsRead;
+
+module.exports.markAllAsRead = markAllAsRead;
+
+module.exports.countUnread = countUnread;
+
+module.exports.deleteNotification = deleteNotification;
+
+module.exports.insertDelivery = insertDelivery;
+
+module.exports.listDeliveries = listDeliveries;
+
+module.exports.findPendingForScheduledDelivery = findPendingForScheduledDelivery;

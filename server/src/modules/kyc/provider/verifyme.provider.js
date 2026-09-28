@@ -5,15 +5,13 @@
  *
  * @module signalforge/server/modules/kyc/provider/verifyme
  */
-
-import verifyMeConfig from '../../../config/verifyme.config.js';
-import { KycProviderInterface } from './kyc-provider.interface.js';
-import { KycProviderError, KycProviderNotConfiguredError } from '../kyc.errors.js';
-import { VERIFICATION_RESULTS } from '../kyc.constants.js';
+const verifyMeConfig = require('../../../config/verifyme.config.js');
+const { KycProviderInterface } = require('./kyc-provider.interface.js');
+const { KycProviderError, KycProviderNotConfiguredError } = require('../kyc.errors.js');
+const { VERIFICATION_RESULTS } = require('../kyc.constants.js');
 
 let tokenCache = null;
-
-export class VerifyMeProvider extends KycProviderInterface {
+class VerifyMeProvider extends KycProviderInterface {
   constructor(config = null) {
     super('verifyme');
     this.config = config || verifyMeConfig;
@@ -163,5 +161,5 @@ export class VerifyMeProvider extends KycProviderInterface {
     };
   }
 }
-
-export default VerifyMeProvider;
+module.exports = VerifyMeProvider;
+module.exports.VerifyMeProvider = VerifyMeProvider;

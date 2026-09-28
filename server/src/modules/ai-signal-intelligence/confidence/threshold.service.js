@@ -3,14 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/confidence/threshold
  */
-
-import {
-  CONFIDENCE_THRESHOLDS,
-  CONFIDENCE_LEVELS,
-  DEFAULT_MIN_CONFIDENCE,
-} from '../ai.constants.js';
-
-export class ThresholdService {
+const { CONFIDENCE_THRESHOLDS, CONFIDENCE_LEVELS, DEFAULT_MIN_CONFIDENCE } = require('../ai.constants.js');
+class ThresholdService {
   constructor(minConfidence = DEFAULT_MIN_CONFIDENCE) {
     this.minConfidence = minConfidence;
   }
@@ -41,5 +35,5 @@ export class ThresholdService {
     return typeof confidence === 'number' && confidence < threshold;
   }
 }
-
-export default ThresholdService;
+module.exports = ThresholdService;
+module.exports.ThresholdService = ThresholdService;

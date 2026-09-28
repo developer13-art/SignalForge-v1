@@ -3,11 +3,9 @@
  *
  * @module server/modules/admin/affiliate/admin-affiliate.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function listPartners({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function listPartners({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -50,16 +48,14 @@ export async function listPartners({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findPartnerById({ partnerId }) {
+async function findPartnerById({ partnerId }) {
   const { rows } = await db.query(
     `SELECT * FROM affiliate_partners WHERE id = $1 LIMIT 1`,
     [partnerId],
   );
   return rows[0] || null;
 }
-
-export async function updatePartnerStatus({ partnerId, status }) {
+async function updatePartnerStatus({ partnerId, status }) {
   const { rowCount } = await db.query(
     `UPDATE affiliate_partners
         SET status = $1, updated_at = $2
@@ -68,8 +64,7 @@ export async function updatePartnerStatus({ partnerId, status }) {
   );
   return rowCount > 0;
 }
-
-export async function updatePartnerTier({ partnerId, tier }) {
+async function updatePartnerTier({ partnerId, tier }) {
   const { rowCount } = await db.query(
     `UPDATE affiliate_partners
         SET tier = $1, updated_at = $2
@@ -78,8 +73,7 @@ export async function updatePartnerTier({ partnerId, tier }) {
   );
   return rowCount > 0;
 }
-
-export async function listCommissions({ filters = {}, pagination = {} }) {
+async function listCommissions({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -119,15 +113,13 @@ export async function listCommissions({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function countPartnersByStatus() {
+async function countPartnersByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count FROM affiliate_partners GROUP BY status`,
   );
   return rows;
 }
-
-export const adminAffiliateRepository = {
+const adminAffiliateRepository = {
   listPartners,
   findPartnerById,
   updatePartnerStatus,
@@ -135,3 +127,16 @@ export const adminAffiliateRepository = {
   listCommissions,
   countPartnersByStatus,
 };
+module.exports.adminAffiliateRepository = adminAffiliateRepository;
+
+module.exports.listPartners = listPartners;
+
+module.exports.findPartnerById = findPartnerById;
+
+module.exports.updatePartnerStatus = updatePartnerStatus;
+
+module.exports.updatePartnerTier = updatePartnerTier;
+
+module.exports.listCommissions = listCommissions;
+
+module.exports.countPartnersByStatus = countPartnersByStatus;

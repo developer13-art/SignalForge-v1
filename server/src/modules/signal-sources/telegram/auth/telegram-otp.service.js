@@ -5,15 +5,12 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/otp
  */
-
-import crypto from 'node:crypto';
-
-import { OTP_EXPIRY_MINUTES, MAX_OTP_ATTEMPTS } from '../telegram.constants.js';
-import { getLogger } from '../../../../bootstrap/initLogger.js';
+const crypto = require('node:crypto');
+const { OTP_EXPIRY_MINUTES, MAX_OTP_ATTEMPTS } = require('../telegram.constants.js');
+const { getLogger } = require('../../../../bootstrap/initLogger.js');
 
 const pendingLogins = new Map();
-
-export class TelegramOtpService {
+class TelegramOtpService {
   constructor() {
     this.logger = getLogger('telegram-otp');
   }
@@ -118,5 +115,5 @@ export class TelegramOtpService {
     return pendingLogins.get(sessionId) || null;
   }
 }
-
-export default TelegramOtpService;
+module.exports = TelegramOtpService;
+module.exports.TelegramOtpService = TelegramOtpService;

@@ -6,13 +6,8 @@
  *
  * @module signalforge/server/modules/signal-classification/scoring/threshold
  */
-
-import {
-  EXECUTABLE_CLASSIFICATIONS,
-  DEFAULT_MIN_CONFIDENCE,
-} from '../classification.constants.js';
-
-export class ClassificationThresholdService {
+const { EXECUTABLE_CLASSIFICATIONS, DEFAULT_MIN_CONFIDENCE } = require('../classification.constants.js');
+class ClassificationThresholdService {
   constructor(minConfidence = DEFAULT_MIN_CONFIDENCE) {
     this.minConfidence = minConfidence;
   }
@@ -48,5 +43,5 @@ export class ClassificationThresholdService {
     );
   }
 }
-
-export default ClassificationThresholdService;
+module.exports = ClassificationThresholdService;
+module.exports.ClassificationThresholdService = ClassificationThresholdService;

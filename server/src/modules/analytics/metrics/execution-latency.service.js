@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/analytics/metrics/execution-latency
  */
-
-export class ExecutionLatencyService {
+class ExecutionLatencyService {
   constructor(repository = null) {
     this.repository = repository;
   }
@@ -41,5 +40,5 @@ export class ExecutionLatencyService {
     return 'CRITICAL';
   }
 }
-
-export default ExecutionLatencyService;
+module.exports = ExecutionLatencyService;
+module.exports.ExecutionLatencyService = ExecutionLatencyService;

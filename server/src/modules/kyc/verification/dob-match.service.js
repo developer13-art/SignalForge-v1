@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/kyc/verification/dob-match
  */
-
-import { VERIFICATION_RESULTS } from '../kyc.constants.js';
+const { VERIFICATION_RESULTS } = require('../kyc.constants.js');
 
 function normalizeDate(input) {
   if (!input) {
@@ -22,8 +21,7 @@ function normalizeDate(input) {
   }
   return null;
 }
-
-export class DobMatchService {
+class DobMatchService {
   compare(declaredDob, documentDob) {
     const declared = normalizeDate(declaredDob);
     const document = normalizeDate(documentDob);
@@ -47,5 +45,5 @@ export class DobMatchService {
     };
   }
 }
-
-export default DobMatchService;
+module.exports = DobMatchService;
+module.exports.DobMatchService = DobMatchService;

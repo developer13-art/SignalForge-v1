@@ -7,11 +7,9 @@
  *
  * @module signalforge/server/modules/provider-dna/learning/rule-extractor
  */
-
-import { DNA_RULE_TYPES } from '../dna.constants.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class RuleExtractorService {
+const { DNA_RULE_TYPES } = require('../dna.constants.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class RuleExtractorService {
   constructor() {
     this.logger = getLogger('dna-rule-extractor');
   }
@@ -156,5 +154,5 @@ export class RuleExtractorService {
     };
   }
 }
-
-export default RuleExtractorService;
+module.exports = RuleExtractorService;
+module.exports.RuleExtractorService = RuleExtractorService;

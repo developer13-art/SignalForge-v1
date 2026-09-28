@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/rbac/role-repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class RoleRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class RoleRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -155,5 +153,5 @@ export class RoleRepository {
     });
   }
 }
-
-export default RoleRepository;
+module.exports = RoleRepository;
+module.exports.RoleRepository = RoleRepository;

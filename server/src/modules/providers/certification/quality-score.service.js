@@ -11,8 +11,7 @@ const WEIGHTS = Object.freeze({
   consistencyScore: 0.2,
   sampleSize: 0.1,
 });
-
-export class QualityScoreService {
+class QualityScoreService {
   calculate({
     parsingAccuracy = 0,
     managementAccuracy = 0,
@@ -52,5 +51,5 @@ export class QualityScoreService {
     return this.classify(score);
   }
 }
-
-export default QualityScoreService;
+module.exports = QualityScoreService;
+module.exports.QualityScoreService = QualityScoreService;

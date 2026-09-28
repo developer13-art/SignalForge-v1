@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/kyc/verification/selfie
  */
-
-import { VERIFICATION_RESULTS } from '../kyc.constants.js';
-
-export class SelfieService {
+const { VERIFICATION_RESULTS } = require('../kyc.constants.js');
+class SelfieService {
   constructor(provider = null) {
     this.provider = provider;
   }
@@ -41,5 +39,5 @@ export class SelfieService {
     };
   }
 }
-
-export default SelfieService;
+module.exports = SelfieService;
+module.exports.SelfieService = SelfieService;

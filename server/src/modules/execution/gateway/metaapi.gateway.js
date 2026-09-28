@@ -3,19 +3,12 @@
  *
  * @module signalforge/server/modules/execution/gateway/metaapi
  */
-
-import { ExecutionGatewayInterface } from './execution-gateway.interface.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-import {
-  GatewayError,
-  GatewayTimeoutError,
-  GatewayRateLimitedError,
-  BrokerRejectedError,
-} from '../execution.errors.js';
-import metaApiConfig from '../../../config/metaapi.config.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class MetaApiGateway extends ExecutionGatewayInterface {
+const { ExecutionGatewayInterface } = require('./execution-gateway.interface.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+const { GatewayError, GatewayTimeoutError, GatewayRateLimitedError, BrokerRejectedError } = require('../execution.errors.js');
+const metaApiConfig = require('../../../config/metaapi.config.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class MetaApiGateway extends ExecutionGatewayInterface {
   constructor(config = null) {
     super(GATEWAY_TYPES.METAAPI);
     this.config = config || metaApiConfig;
@@ -327,5 +320,5 @@ export class MetaApiGateway extends ExecutionGatewayInterface {
     };
   }
 }
-
-export default MetaApiGateway;
+module.exports = MetaApiGateway;
+module.exports.MetaApiGateway = MetaApiGateway;

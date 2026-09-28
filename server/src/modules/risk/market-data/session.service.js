@@ -10,8 +10,7 @@ const SESSIONS = Object.freeze({
   LONDON: { open: 8 * 60, close: 17 * 60 },
   NEW_YORK: { open: 13 * 60, close: 22 * 60 },
 });
-
-export class SessionService {
+class SessionService {
   isInSession(date, sessionName) {
     const session = SESSIONS[sessionName];
     if (!session) {
@@ -38,5 +37,5 @@ export class SessionService {
     return Object.keys(SESSIONS);
   }
 }
-
-export default SessionService;
+module.exports = SessionService;
+module.exports.SessionService = SessionService;

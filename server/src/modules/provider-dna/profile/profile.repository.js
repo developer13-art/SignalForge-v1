@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/provider-dna/profile/repository
  */
-
-import { DnaRepository } from '../dna.repository.js';
-
-export class ProfileRepository {
+const { DnaRepository } = require('../dna.repository.js');
+class ProfileRepository {
   constructor(db = null) {
     this.dnaRepository = new DnaRepository(db);
   }
@@ -19,5 +17,5 @@ export class ProfileRepository {
     return this.dnaRepository.updateDna(providerId, data);
   }
 }
-
-export default ProfileRepository;
+module.exports = ProfileRepository;
+module.exports.ProfileRepository = ProfileRepository;

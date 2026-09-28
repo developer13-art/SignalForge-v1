@@ -6,16 +6,14 @@
  *
  * @module server/modules/solana/verification/verification.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { attestationRepository } from '../attestations/attestation.repository';
-import { provenanceRepository } from '../provenance/provenance.repository';
-import { publicVerificationService } from './public-verification.service';
-import { onChainVerifierService } from './on-chain-verifier.service';
-
-export async function auditAttestation({ attestationId }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { attestationRepository } = require('../attestations/attestation.repository');
+const { provenanceRepository } = require('../provenance/provenance.repository');
+const { publicVerificationService } = require('./public-verification.service');
+const { onChainVerifierService } = require('./on-chain-verifier.service');
+async function auditAttestation({ attestationId }) {
   if (!attestationId) {
     throw new AppError('attestationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -50,8 +48,7 @@ export async function auditAttestation({ attestationId }) {
     transaction,
   };
 }
-
-export async function auditProvenance({ provenanceId }) {
+async function auditProvenance({ provenanceId }) {
   if (!provenanceId) {
     throw new AppError('provenanceId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -86,8 +83,7 @@ export async function auditProvenance({ provenanceId }) {
     transaction,
   };
 }
-
-export async function auditPendingRecords({ limit = 50 }) {
+async function auditPendingRecords({ limit = 50 }) {
   const pendingAttestations = await attestationRepository.listPending({ limit });
   const pendingProvenance = await provenanceRepository.listPending({ limit });
 
@@ -114,8 +110,7 @@ export async function auditPendingRecords({ limit = 50 }) {
 
   return results;
 }
-
-export const verificationService = {
+const verificationService = {
   verifyByAttestationId: publicVerificationService.verifyByAttestationId,
   verifyByHash: publicVerificationService.verifyByHash,
   verifySignalBySignalId: publicVerificationService.verifySignalBySignalId,
@@ -125,3 +120,10 @@ export const verificationService = {
   auditProvenance,
   auditPendingRecords,
 };
+module.exports.verificationService = verificationService;
+
+module.exports.auditAttestation = auditAttestation;
+
+module.exports.auditProvenance = auditProvenance;
+
+module.exports.auditPendingRecords = auditPendingRecords;

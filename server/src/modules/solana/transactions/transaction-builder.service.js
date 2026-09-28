@@ -7,10 +7,9 @@
  *
  * @module server/modules/solana/transactions/transaction-builder.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { connectionService } from '../config/connection.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { connectionService } = require('../config/connection.service');
 
 async function loadWeb3() {
   try {
@@ -27,8 +26,7 @@ async function loadWeb3() {
     );
   }
 }
-
-export async function buildSolTransferTransaction({ from, to, lamports }) {
+async function buildSolTransferTransaction({ from, to, lamports }) {
   if (!from || !to || !lamports) {
     throw new AppError('from, to, and lamports are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -60,8 +58,7 @@ export async function buildSolTransferTransaction({ from, to, lamports }) {
     blockhash: latest.blockhash,
   };
 }
-
-export async function buildMemoTransaction({ from, memo, extraInstructions = [] }) {
+async function buildMemoTransaction({ from, memo, extraInstructions = [] }) {
   if (!from || !memo) {
     throw new AppError('from and memo are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -98,8 +95,7 @@ export async function buildMemoTransaction({ from, memo, extraInstructions = [] 
     blockhash: latest.blockhash,
   };
 }
-
-export async function serializeTransaction({ transaction, requiresAllSignatures = false }) {
+async function serializeTransaction({ transaction, requiresAllSignatures = false }) {
   if (!transaction) {
     throw new AppError('transaction is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -109,9 +105,15 @@ export async function serializeTransaction({ transaction, requiresAllSignatures 
     verifySignatures: false,
   });
 }
-
-export const transactionBuilderService = {
+const transactionBuilderService = {
   buildSolTransferTransaction,
   buildMemoTransaction,
   serializeTransaction,
 };
+module.exports.transactionBuilderService = transactionBuilderService;
+
+module.exports.buildSolTransferTransaction = buildSolTransferTransaction;
+
+module.exports.buildMemoTransaction = buildMemoTransaction;
+
+module.exports.serializeTransaction = serializeTransaction;

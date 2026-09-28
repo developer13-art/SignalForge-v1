@@ -7,15 +7,13 @@
  *
  * @module server/modules/white-label/branding/branding.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { DEFAULT_BRANDING } from '../white-label.constants';
-
-export async function initializeBranding({ projectId, brandName }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { DEFAULT_BRANDING } = require('../white-label.constants');
+async function initializeBranding({ projectId, brandName }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -39,8 +37,7 @@ export async function initializeBranding({ projectId, brandName }) {
 
   logger.info({ projectId }, 'White label branding initialized');
 }
-
-export async function getBranding({ projectId }) {
+async function getBranding({ projectId }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -68,8 +65,7 @@ export async function getBranding({ projectId }) {
     supportEmail: row.support_email,
   };
 }
-
-export async function updateBranding({ projectId, payload }) {
+async function updateBranding({ projectId, payload }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -111,17 +107,24 @@ export async function updateBranding({ projectId, payload }) {
 
   return getBranding({ projectId });
 }
-
-export async function deleteBranding({ projectId }) {
+async function deleteBranding({ projectId }) {
   if (!projectId) {
     return;
   }
   await db.query(`DELETE FROM white_label_branding WHERE project_id = $1`, [projectId]);
 }
-
-export const brandingService = {
+const brandingService = {
   initializeBranding,
   getBranding,
   updateBranding,
   deleteBranding,
 };
+module.exports.brandingService = brandingService;
+
+module.exports.initializeBranding = initializeBranding;
+
+module.exports.getBranding = getBranding;
+
+module.exports.updateBranding = updateBranding;
+
+module.exports.deleteBranding = deleteBranding;

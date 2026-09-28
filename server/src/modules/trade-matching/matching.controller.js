@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/controller
  */
-
-import { MatchingService } from './matching.service.js';
-
-export class MatchingController {
+const { MatchingService } = require('./matching.service.js');
+class MatchingController {
   constructor(service = null) {
     this.service = service || new MatchingService();
   }
@@ -73,5 +71,5 @@ export class MatchingController {
     }
   };
 }
-
-export default MatchingController;
+module.exports = MatchingController;
+module.exports.MatchingController = MatchingController;

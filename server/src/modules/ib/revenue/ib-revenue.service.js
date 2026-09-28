@@ -8,21 +8,19 @@
  *
  * @module server/modules/ib/revenue/ib-revenue.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { publishEvent } from '../../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import { IB_TIER_RATES } from '../ib.constants';
-import * as repository from './ib-revenue.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { publishEvent } = require('../../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const { IB_TIER_RATES } = require('../ib.constants');
+const repository = require('./ib-revenue.repository');
 
 function getRateForTier(tier) {
   return IB_TIER_RATES[tier] || IB_TIER_RATES.STANDARD;
 }
-
-export async function recordRevenue({
+async function recordRevenue({
   partnerUserId,
   referralId,
   baseAmount,
@@ -86,8 +84,7 @@ export async function recordRevenue({
     createdAt: entry.created_at,
   };
 }
-
-export async function approveRevenue({ revenueEntryId, reviewerId }) {
+async function approveRevenue({ revenueEntryId, reviewerId }) {
   if (!revenueEntryId) {
     throw new AppError('revenueEntryId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -105,8 +102,7 @@ export async function approveRevenue({ revenueEntryId, reviewerId }) {
 
   return { approved: true };
 }
-
-export async function markRevenuePaid({ revenueEntryId }) {
+async function markRevenuePaid({ revenueEntryId }) {
   if (!revenueEntryId) {
     throw new AppError('revenueEntryId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -119,8 +115,7 @@ export async function markRevenuePaid({ revenueEntryId }) {
 
   return { paid: true };
 }
-
-export async function rejectRevenue({ revenueEntryId, reason }) {
+async function rejectRevenue({ revenueEntryId, reason }) {
   if (!revenueEntryId) {
     throw new AppError('revenueEntryId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -137,8 +132,7 @@ export async function rejectRevenue({ revenueEntryId, reason }) {
 
   return { rejected: true };
 }
-
-export async function getRevenueSummary({ userId, from, to }) {
+async function getRevenueSummary({ userId, from, to }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -155,8 +149,7 @@ export async function getRevenueSummary({ userId, from, to }) {
     to: to || null,
   };
 }
-
-export async function listRevenueEntries({ userId, filters = {}, pagination = {} }) {
+async function listRevenueEntries({ userId, filters = {}, pagination = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -184,12 +177,10 @@ export async function listRevenueEntries({ userId, filters = {}, pagination = {}
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function listAllPending() {
+async function listAllPending() {
   return repository.listByStatus({ status: 'PENDING' });
 }
-
-export const ibRevenueService = {
+const ibRevenueService = {
   recordRevenue,
   approveRevenue,
   markRevenuePaid,
@@ -198,3 +189,18 @@ export const ibRevenueService = {
   listRevenueEntries,
   listAllPending,
 };
+module.exports.ibRevenueService = ibRevenueService;
+
+module.exports.recordRevenue = recordRevenue;
+
+module.exports.approveRevenue = approveRevenue;
+
+module.exports.markRevenuePaid = markRevenuePaid;
+
+module.exports.rejectRevenue = rejectRevenue;
+
+module.exports.getRevenueSummary = getRevenueSummary;
+
+module.exports.listRevenueEntries = listRevenueEntries;
+
+module.exports.listAllPending = listAllPending;

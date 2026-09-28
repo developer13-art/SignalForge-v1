@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/payments/intents/repository
  */
-
-import { PaymentRepository } from '../payment.repository.js';
-
-export class PaymentIntentRepository {
+const { PaymentRepository } = require('../payment.repository.js');
+class PaymentIntentRepository {
   constructor(db = null) {
     this.paymentRepository = new PaymentRepository(db);
   }
@@ -27,5 +25,5 @@ export class PaymentIntentRepository {
     return this.paymentRepository.updateIntent(intentId, data);
   }
 }
-
-export default PaymentIntentRepository;
+module.exports = PaymentIntentRepository;
+module.exports.PaymentIntentRepository = PaymentIntentRepository;

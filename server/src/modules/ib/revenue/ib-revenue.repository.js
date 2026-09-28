@@ -5,11 +5,9 @@
  *
  * @module server/modules/ib/revenue/ib-revenue.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertRevenueEntry({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertRevenueEntry({
   partnerUserId,
   referralId,
   amount,
@@ -26,16 +24,14 @@ export async function insertRevenueEntry({
   );
   return rows[0];
 }
-
-export async function findById({ revenueEntryId }) {
+async function findById({ revenueEntryId }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_revenue_entries WHERE id = $1 LIMIT 1`,
     [revenueEntryId],
   );
   return rows[0] || null;
 }
-
-export async function updateStatus({ revenueEntryId, status, rejectionReason }) {
+async function updateStatus({ revenueEntryId, status, rejectionReason }) {
   const { rowCount } = await db.query(
     `UPDATE ib_revenue_entries
         SET status = $1,
@@ -47,8 +43,7 @@ export async function updateStatus({ revenueEntryId, status, rejectionReason }) 
   );
   return rowCount > 0;
 }
-
-export async function markPaid({ revenueEntryId }) {
+async function markPaid({ revenueEntryId }) {
   const { rowCount } = await db.query(
     `UPDATE ib_revenue_entries
         SET status = 'PAID',
@@ -59,8 +54,7 @@ export async function markPaid({ revenueEntryId }) {
   );
   return rowCount > 0;
 }
-
-export async function aggregateByPartner({ partnerUserId, from, to }) {
+async function aggregateByPartner({ partnerUserId, from, to }) {
   const conditions = ['partner_user_id = $1'];
   const params = [partnerUserId];
 
@@ -90,8 +84,7 @@ export async function aggregateByPartner({ partnerUserId, from, to }) {
 
   return rows[0] || { pending: 0, approved: 0, paid: 0, rejected: 0, total_count: 0 };
 }
-
-export async function listRevenueEntries({ partnerUserId, filters = {}, limit = 20, offset = 0 }) {
+async function listRevenueEntries({ partnerUserId, filters = {}, limit = 20, offset = 0 }) {
   const conditions = ['partner_user_id = $1'];
   const params = [partnerUserId];
 
@@ -131,8 +124,7 @@ export async function listRevenueEntries({ partnerUserId, filters = {}, limit = 
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function listByStatus({ status }) {
+async function listByStatus({ status }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_revenue_entries
       WHERE status = $1
@@ -141,8 +133,7 @@ export async function listByStatus({ status }) {
   );
   return rows;
 }
-
-export const ibRevenueRepository = {
+const ibRevenueRepository = {
   insertRevenueEntry,
   findById,
   updateStatus,
@@ -151,3 +142,18 @@ export const ibRevenueRepository = {
   listRevenueEntries,
   listByStatus,
 };
+module.exports.ibRevenueRepository = ibRevenueRepository;
+
+module.exports.insertRevenueEntry = insertRevenueEntry;
+
+module.exports.findById = findById;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.markPaid = markPaid;
+
+module.exports.aggregateByPartner = aggregateByPartner;
+
+module.exports.listRevenueEntries = listRevenueEntries;
+
+module.exports.listByStatus = listByStatus;

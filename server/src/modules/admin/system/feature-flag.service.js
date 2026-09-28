@@ -7,19 +7,17 @@
  *
  * @module server/modules/admin/system/feature-flag.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { systemSettingsService } from './system-settings.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { systemSettingsService } = require('./system-settings.service');
 
 const FLAG_PREFIX = 'feature_flags.';
 
 function buildKey(flagName) {
   return `${FLAG_PREFIX}${flagName}`;
 }
-
-export async function isFlagEnabled({ flagName, defaultValue = false }) {
+async function isFlagEnabled({ flagName, defaultValue = false }) {
   if (!flagName) {
     throw new AppError('flagName is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -39,8 +37,7 @@ export async function isFlagEnabled({ flagName, defaultValue = false }) {
 
   return Boolean(value);
 }
-
-export async function setFlag({ flagName, enabled, actorId, description }) {
+async function setFlag({ flagName, enabled, actorId, description }) {
   if (!flagName) {
     throw new AppError('flagName is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -59,8 +56,7 @@ export async function setFlag({ flagName, enabled, actorId, description }) {
 
   return { flagName, enabled: Boolean(enabled) };
 }
-
-export async function listFlags() {
+async function listFlags() {
   const settings = await systemSettingsService.listSettings({ category: 'feature_flags' });
 
   return settings.map((s) => ({
@@ -70,8 +66,7 @@ export async function listFlags() {
     updatedAt: s.updatedAt,
   }));
 }
-
-export async function getFlagsForUser({ userId, roleNames = [] }) {
+async function getFlagsForUser({ userId, roleNames = [] }) {
   const flags = await listFlags();
 
   const result = {};
@@ -82,11 +77,19 @@ export async function getFlagsForUser({ userId, roleNames = [] }) {
 
   return result;
 }
-
-export const featureFlagService = {
+const featureFlagService = {
   isFlagEnabled,
   setFlag,
   listFlags,
   getFlagsForUser,
   FLAG_PREFIX,
 };
+module.exports.featureFlagService = featureFlagService;
+
+module.exports.isFlagEnabled = isFlagEnabled;
+
+module.exports.setFlag = setFlag;
+
+module.exports.listFlags = listFlags;
+
+module.exports.getFlagsForUser = getFlagsForUser;

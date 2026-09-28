@@ -3,26 +3,12 @@
  *
  * @module signalforge/server/modules/traders/followers/service
  */
-
-import { FollowerRepository } from './repository.js';
-import { TraderRepository } from '../trader.repository.js';
-import {
-  TRADER_STATUSES,
-  FOLLOWER_STATUSES,
-} from '../trader.constants.js';
-import {
-  TraderNotFoundError,
-  FollowerNotFoundError,
-  FollowerAlreadyExistsError,
-  CannotFollowSelfError,
-  TraderNotActiveError,
-} from '../trader.errors.js';
-import {
-  emitFollowerAdded,
-  emitFollowerRemoved,
-} from '../trader.events.js';
-
-export class FollowerService {
+const { FollowerRepository } = require('./repository.js');
+const { TraderRepository } = require('../trader.repository.js');
+const { TRADER_STATUSES, FOLLOWER_STATUSES } = require('../trader.constants.js');
+const { TraderNotFoundError, FollowerNotFoundError, FollowerAlreadyExistsError, CannotFollowSelfError, TraderNotActiveError } = require('../trader.errors.js');
+const { emitFollowerAdded, emitFollowerRemoved } = require('../trader.events.js');
+class FollowerService {
   constructor(repository = null, traderRepository = null) {
     this.repository = repository || new FollowerRepository();
     this.traderRepository = traderRepository || new TraderRepository();
@@ -200,5 +186,5 @@ export class FollowerService {
     return input;
   }
 }
-
-export default FollowerService;
+module.exports = FollowerService;
+module.exports.FollowerService = FollowerService;

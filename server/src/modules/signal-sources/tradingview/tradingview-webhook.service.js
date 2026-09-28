@@ -8,31 +8,20 @@
  *
  * @module server/modules/signal-sources/tradingview/tradingview-webhook.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { config } from '../../../config';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { buildMessageFingerprint } from '@signalforge/shared/utils/fingerprint.util';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { publishEvent } from '../../../events/event-publisher';
-import { db } from '../../../database';
-import { messageRawStoreService } from '../messages/message-raw-store.service';
-import {
-  validateWebhookPayload,
-  validatePayloadSize,
-  validateReplayProtection,
-  validateSecret,
-} from './tradingview.validator';
-import {
-  emitTradingViewWebhookReceived,
-  emitTradingViewWebhookRejected,
-  emitTradingViewAlertRegistered,
-  emitTradingViewAlertRemoved,
-} from './tradingview.events';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { config } = require('../../../config');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { buildMessageFingerprint } = require('@signalforge/shared/utils/fingerprint.util');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { publishEvent } = require('../../../events/event-publisher');
+const { db } = require('../../../database');
+const { messageRawStoreService } = require('../messages/message-raw-store.service');
+const { validateWebhookPayload, validatePayloadSize, validateReplayProtection, validateSecret } = require('./tradingview.validator');
+const { emitTradingViewWebhookReceived, emitTradingViewWebhookRejected, emitTradingViewAlertRegistered, emitTradingViewAlertRemoved } = require('./tradingview.events');
 
 function generateRouteToken() {
   return crypto.randomBytes(24).toString('base64url');
@@ -41,8 +30,7 @@ function generateRouteToken() {
 function generateSecret() {
   return crypto.randomBytes(32).toString('hex');
 }
-
-export async function registerIntegration({ userId, label }) {
+async function registerIntegration({ userId, label }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -73,8 +61,7 @@ export async function registerIntegration({ userId, label }) {
 
   return { integrationId, routeToken, secret, webhookUrl };
 }
-
-export async function listIntegrations({ userId }) {
+async function listIntegrations({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -99,8 +86,7 @@ export async function listIntegrations({ userId }) {
     lastDeliveredAt: row.last_delivered_at,
   }));
 }
-
-export async function removeIntegration({ userId, integrationId }) {
+async function removeIntegration({ userId, integrationId }) {
   if (!userId || !integrationId) {
     throw new AppError('userId and integrationId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -139,8 +125,7 @@ async function findIntegrationByRouteToken({ routeToken }) {
 
   return rows[0] || null;
 }
-
-export async function handleDelivery({ routeToken, rawBody, querySecret }) {
+async function handleDelivery({ routeToken, rawBody, querySecret }) {
   if (!routeToken) {
     throw new AppError('TradingView route token is required', ERROR_CODES.TRADINGVIEW_WEBHOOK_INVALID, 400);
   }
@@ -275,10 +260,18 @@ export async function handleDelivery({ routeToken, rawBody, querySecret }) {
     direction: normalized.direction,
   };
 }
-
-export const tradingViewWebhookService = {
+const tradingViewWebhookService = {
   registerIntegration,
   listIntegrations,
   removeIntegration,
   handleDelivery,
 };
+module.exports.tradingViewWebhookService = tradingViewWebhookService;
+
+module.exports.registerIntegration = registerIntegration;
+
+module.exports.listIntegrations = listIntegrations;
+
+module.exports.removeIntegration = removeIntegration;
+
+module.exports.handleDelivery = handleDelivery;

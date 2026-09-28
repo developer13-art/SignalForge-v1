@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/discord/controller
  */
-
-import { DiscordService } from './discord.service.js';
-
-export class DiscordController {
+const { DiscordService } = require('./discord.service.js');
+class DiscordController {
   constructor(service = null) {
     this.service = service || new DiscordService();
   }
@@ -60,5 +58,5 @@ export class DiscordController {
     }
   };
 }
-
-export default DiscordController;
+module.exports = DiscordController;
+module.exports.DiscordController = DiscordController;

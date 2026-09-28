@@ -7,31 +7,12 @@
  *
  * @module signalforge/server/modules/signal-classification/classifiers/rule-based
  */
-
-import { BaseClassifier } from './base.classifier.js';
-import { CLASSIFICATION_TYPES, CLASSIFIER_KINDS } from '../classification.constants.js';
-import {
-  countStrongKeywords as tradeStrong,
-  countMediumKeywords as tradeMedium,
-  countWeakKeywords as tradeWeak,
-  countSymbolHints,
-} from '../keywords/trade-keywords.js';
-import {
-  countStrongKeywords as mgmtStrong,
-  countMediumKeywords as mgmtMedium,
-  countWeakKeywords as mgmtWeak,
-} from '../keywords/management-keywords.js';
-import {
-  countStrongKeywords as analysisStrong,
-  countMediumKeywords as analysisMedium,
-  countWeakKeywords as analysisWeak,
-} from '../keywords/analysis-keywords.js';
-import {
-  countConversationKeywords,
-  countNewsKeywords,
-  countEducationKeywords,
-  countAdvertisementKeywords,
-} from '../keywords/noise-keywords.js';
+const { BaseClassifier } = require('./base.classifier.js');
+const { CLASSIFICATION_TYPES, CLASSIFIER_KINDS } = require('../classification.constants.js');
+const { countStrongKeywords: tradeStrong, countMediumKeywords: tradeMedium, countWeakKeywords: tradeWeak, countSymbolHints } = require('../keywords/trade-keywords.js');
+const { countStrongKeywords: mgmtStrong, countMediumKeywords: mgmtMedium, countWeakKeywords: mgmtWeak } = require('../keywords/management-keywords.js');
+const { countStrongKeywords: analysisStrong, countMediumKeywords: analysisMedium, countWeakKeywords: analysisWeak } = require('../keywords/analysis-keywords.js');
+const { countConversationKeywords, countNewsKeywords, countEducationKeywords, countAdvertisementKeywords } = require('../keywords/noise-keywords.js');
 
 const WEIGHTS = Object.freeze({
   strongTrade: 0.35,
@@ -53,8 +34,7 @@ const WEIGHTS = Object.freeze({
 function clamp(value, min = 0, max = 1) {
   return Math.max(min, Math.min(max, value));
 }
-
-export class RuleBasedClassifier extends BaseClassifier {
+class RuleBasedClassifier extends BaseClassifier {
   constructor() {
     super(CLASSIFIER_KINDS.RULE_BASED, '1.0.0');
   }
@@ -173,5 +153,5 @@ export class RuleBasedClassifier extends BaseClassifier {
     return result;
   }
 }
-
-export default RuleBasedClassifier;
+module.exports = RuleBasedClassifier;
+module.exports.RuleBasedClassifier = RuleBasedClassifier;

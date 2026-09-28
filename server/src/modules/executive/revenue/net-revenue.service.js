@@ -7,10 +7,8 @@
  *
  * @module server/modules/executive/revenue/net-revenue.service
  */
-
-import { db } from '../../../database';
-
-export async function getNetRevenue({ from, to, granularity = 'day' }) {
+const { db } = require('../../../database');
+async function getNetRevenue({ from, to, granularity = 'day' }) {
   const fromDate = from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const toDate = to || new Date().toISOString();
 
@@ -130,7 +128,9 @@ export async function getNetRevenue({ from, to, granularity = 'day' }) {
     series,
   };
 }
-
-export const netRevenueService = {
+const netRevenueService = {
   getNetRevenue,
 };
+module.exports.netRevenueService = netRevenueService;
+
+module.exports.getNetRevenue = getNetRevenue;

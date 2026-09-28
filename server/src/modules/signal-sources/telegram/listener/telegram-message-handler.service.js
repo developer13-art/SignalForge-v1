@@ -7,16 +7,15 @@
  *
  * @module server/modules/signal-sources/telegram/listener/telegram-message-handler.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { buildSourceMessageKey } from '@signalforge/shared/utils/idempotency.util';
-import { buildMessageFingerprint } from '@signalforge/shared/utils/fingerprint.util';
-import { publishEvent } from '../../../../events/event-publisher';
-import { messageRawStoreService } from '../messages/message-raw-store.service';
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
+const { buildMessageFingerprint } = require('@signalforge/shared/utils/fingerprint.util');
+const { publishEvent } = require('../../../../events/event-publisher');
+const { messageRawStoreService } = require('../messages/message-raw-store.service');
 
 function normalizeMedia(media) {
   if (!media) {
@@ -49,8 +48,7 @@ function normalizeMedia(media) {
     storageKey: media.storageKey || null,
   };
 }
-
-export async function handleIncomingMessage({ userId, message, onMessage }) {
+async function handleIncomingMessage({ userId, message, onMessage }) {
   if (!userId || !message) {
     throw new AppError('userId and message are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -134,8 +132,7 @@ export async function handleIncomingMessage({ userId, message, onMessage }) {
 
   return { handled: true, storedMessageId: stored ? stored.id : null, messageId: envelope.externalMessageId };
 }
-
-export function isSignalLike(message) {
+function isSignalLike(message) {
   if (!message || typeof message.text !== 'string') {
     return false;
   }
@@ -148,8 +145,11 @@ export function isSignalLike(message) {
   }
   return true;
 }
-
-export const telegramMessageHandlerService = {
+const telegramMessageHandlerService = {
   handleIncomingMessage,
   isSignalLike,
 };
+module.exports.telegramMessageHandlerService = telegramMessageHandlerService;
+module.exports.isSignalLike = isSignalLike;
+
+module.exports.handleIncomingMessage = handleIncomingMessage;

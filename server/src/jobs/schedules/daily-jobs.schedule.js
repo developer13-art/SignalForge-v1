@@ -3,10 +3,8 @@
  *
  * @module server/jobs/schedules/daily-jobs.schedule
  */
-
-import { logger } from '../../lib/logger';
-
-export async function runScheduledJobs({ enqueueJob }) {
+const { logger } = require('../../lib/logger');
+async function runScheduledJobs({ enqueueJob }) {
   const now = new Date();
   const hour = now.getUTCHours();
 
@@ -35,3 +33,4 @@ export async function runScheduledJobs({ enqueueJob }) {
 
   return { executed: true, enqueued: results.length };
 }
+module.exports.runScheduledJobs = runScheduledJobs;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/affiliate/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class AffiliateRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class AffiliateRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -897,5 +895,5 @@ export class AffiliateRepository {
     };
   }
 }
-
-export default AffiliateRepository;
+module.exports = AffiliateRepository;
+module.exports.AffiliateRepository = AffiliateRepository;

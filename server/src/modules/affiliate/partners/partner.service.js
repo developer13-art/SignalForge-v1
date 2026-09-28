@@ -3,29 +3,11 @@
  *
  * @module signalforge/server/modules/affiliate/partners/service
  */
-
-import { AffiliatePartnerRepository } from './repository.js';
-import {
-  AFFILIATE_PARTNER_STATUSES,
-  AFFILIATE_TIERS,
-  AFFILIATE_TIER_RATES,
-  DEFAULT_AFFILIATE_COMMISSION_RATE,
-  DEFAULT_AFFILIATE_COMMISSION_DURATION_MONTHS,
-} from '../affiliate.constants.js';
-import {
-  AffiliatePartnerNotFoundError,
-  AffiliatePartnerAlreadyExistsError,
-  AffiliatePartnerNotActiveError,
-} from '../affiliate.errors.js';
-import {
-  emitPartnerRegistered,
-  emitPartnerUpdated,
-  emitPartnerApproved,
-  emitPartnerSuspended,
-  emitPartnerReinstated,
-} from '../affiliate.events.js';
-
-export class AffiliatePartnerService {
+const { AffiliatePartnerRepository } = require('./repository.js');
+const { AFFILIATE_PARTNER_STATUSES, AFFILIATE_TIERS, AFFILIATE_TIER_RATES, DEFAULT_AFFILIATE_COMMISSION_RATE, DEFAULT_AFFILIATE_COMMISSION_DURATION_MONTHS } = require('../affiliate.constants.js');
+const { AffiliatePartnerNotFoundError, AffiliatePartnerAlreadyExistsError, AffiliatePartnerNotActiveError } = require('../affiliate.errors.js');
+const { emitPartnerRegistered, emitPartnerUpdated, emitPartnerApproved, emitPartnerSuspended, emitPartnerReinstated } = require('../affiliate.events.js');
+class AffiliatePartnerService {
   constructor(repository = null) {
     this.repository = repository || new AffiliatePartnerRepository();
   }
@@ -231,5 +213,5 @@ export class AffiliatePartnerService {
     return input;
   }
 }
-
-export default AffiliatePartnerService;
+module.exports = AffiliatePartnerService;
+module.exports.AffiliatePartnerService = AffiliatePartnerService;

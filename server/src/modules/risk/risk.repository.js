@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/risk/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class RiskRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class RiskRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -399,5 +397,5 @@ export class RiskRepository {
     return result.rows;
   }
 }
-
-export default RiskRepository;
+module.exports = RiskRepository;
+module.exports.RiskRepository = RiskRepository;

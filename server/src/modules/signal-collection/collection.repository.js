@@ -6,10 +6,8 @@
  *
  * @module signalforge/server/modules/signal-collection/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class CollectionRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class CollectionRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -186,5 +184,5 @@ function truncateError(error) {
   const message = error && error.message ? error.message : String(error);
   return message.length > 4000 ? `${message.substring(0, 4000)}...` : message;
 }
-
-export default CollectionRepository;
+module.exports = CollectionRepository;
+module.exports.CollectionRepository = CollectionRepository;

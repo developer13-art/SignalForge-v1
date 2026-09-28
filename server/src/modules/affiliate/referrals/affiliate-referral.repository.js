@@ -6,11 +6,9 @@
  *
  * @module server/modules/affiliate/referrals/affiliate-referral.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertReferral({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertReferral({
   partnerUserId,
   referredUserId,
   affiliateLinkId,
@@ -26,24 +24,21 @@ export async function insertReferral({
   );
   return rows[0];
 }
-
-export async function findById({ referralId }) {
+async function findById({ referralId }) {
   const { rows } = await db.query(
     `SELECT * FROM affiliate_referrals WHERE id = $1 LIMIT 1`,
     [referralId],
   );
   return rows[0] || null;
 }
-
-export async function findByReferredUserId({ referredUserId }) {
+async function findByReferredUserId({ referredUserId }) {
   const { rows } = await db.query(
     `SELECT * FROM affiliate_referrals WHERE referred_user_id = $1 LIMIT 1`,
     [referredUserId],
   );
   return rows[0] || null;
 }
-
-export async function findByPartnerUserId({ partnerUserId }) {
+async function findByPartnerUserId({ partnerUserId }) {
   const { rows } = await db.query(
     `SELECT * FROM affiliate_referrals
       WHERE partner_user_id = $1
@@ -52,8 +47,7 @@ export async function findByPartnerUserId({ partnerUserId }) {
   );
   return rows;
 }
-
-export async function findActiveByPartnerUserId({ partnerUserId }) {
+async function findActiveByPartnerUserId({ partnerUserId }) {
   const { rows } = await db.query(
     `SELECT * FROM affiliate_referrals
       WHERE partner_user_id = $1 AND status = 'ACTIVE'
@@ -62,8 +56,7 @@ export async function findActiveByPartnerUserId({ partnerUserId }) {
   );
   return rows;
 }
-
-export async function updateStatus({ referralId, status }) {
+async function updateStatus({ referralId, status }) {
   const { rowCount } = await db.query(
     `UPDATE affiliate_referrals
         SET status = $1, updated_at = $2
@@ -72,8 +65,7 @@ export async function updateStatus({ referralId, status }) {
   );
   return rowCount > 0;
 }
-
-export async function countByPartner({ partnerUserId }) {
+async function countByPartner({ partnerUserId }) {
   const { rows } = await db.query(
     `SELECT
        COUNT(*)::int AS total,
@@ -86,8 +78,7 @@ export async function countByPartner({ partnerUserId }) {
   );
   return rows[0] || { total: 0, active: 0, inactive: 0, suspended: 0 };
 }
-
-export async function listReferrals({ filters = {}, pagination = {} }) {
+async function listReferrals({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -140,8 +131,7 @@ export async function listReferrals({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export const affiliateReferralRepository = {
+const affiliateReferralRepository = {
   insertReferral,
   findById,
   findByReferredUserId,
@@ -151,3 +141,20 @@ export const affiliateReferralRepository = {
   countByPartner,
   listReferrals,
 };
+module.exports.affiliateReferralRepository = affiliateReferralRepository;
+
+module.exports.insertReferral = insertReferral;
+
+module.exports.findById = findById;
+
+module.exports.findByReferredUserId = findByReferredUserId;
+
+module.exports.findByPartnerUserId = findByPartnerUserId;
+
+module.exports.findActiveByPartnerUserId = findActiveByPartnerUserId;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.countByPartner = countByPartner;
+
+module.exports.listReferrals = listReferrals;

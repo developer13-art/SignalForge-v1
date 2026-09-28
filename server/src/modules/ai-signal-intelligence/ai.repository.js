@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class AiRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class AiRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -292,5 +290,5 @@ export class AiRepository {
     return { logs: result.rows, limit, offset };
   }
 }
-
-export default AiRepository;
+module.exports = AiRepository;
+module.exports.AiRepository = AiRepository;

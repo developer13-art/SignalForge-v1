@@ -6,14 +6,10 @@
  *
  * @module signalforge/server/modules/auth/services/totp
  */
-
-import crypto from 'node:crypto';
-
-import speakeasy from 'speakeasy';
-
-import securityConfig from '../../../config/security.config.js';
-
-export class TotpService {
+const crypto = require('node:crypto');
+const speakeasy = require('speakeasy');
+const securityConfig = require('../../../config/security.config.js');
+class TotpService {
   generateSecret(userEmail) {
     const secret = speakeasy.generateSecret({
       length: 32,
@@ -70,5 +66,5 @@ export class TotpService {
     return codes;
   }
 }
-
-export default TotpService;
+module.exports = TotpService;
+module.exports.TotpService = TotpService;

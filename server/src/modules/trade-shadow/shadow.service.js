@@ -3,27 +3,16 @@
  *
  * @module signalforge/server/modules/trade-shadow/service
  */
-
-import { ShadowRepository } from './shadow.repository.js';
-import { ComparisonService } from './comparison.service.js';
-import { MissedProfitService } from './missed-profit.service.js';
-import { BetterExitService } from './better-exit.service.js';
-import { BehaviorFeedbackService } from './behavior-feedback.service.js';
-import { TradeStateRepository } from '../trade-state/trade-state.repository.js';
-import {
-  SHADOW_OUTCOMES,
-} from './shadow.constants.js';
-import { ShadowNotFoundError, ShadowAlreadyExistsError } from './shadow.errors.js';
-import {
-  emitShadowCreated,
-  emitShadowCompleted,
-  emitDivergenceDetected,
-  emitMissedProfitDetected,
-  emitBetterExitDetected,
-  emitBehaviorFeedbackGenerated,
-} from './shadow.events.js';
-
-export class ShadowService {
+const { ShadowRepository } = require('./shadow.repository.js');
+const { ComparisonService } = require('./comparison.service.js');
+const { MissedProfitService } = require('./missed-profit.service.js');
+const { BetterExitService } = require('./better-exit.service.js');
+const { BehaviorFeedbackService } = require('./behavior-feedback.service.js');
+const { TradeStateRepository } = require('../trade-state/trade-state.repository.js');
+const { SHADOW_OUTCOMES } = require('./shadow.constants.js');
+const { ShadowNotFoundError, ShadowAlreadyExistsError } = require('./shadow.errors.js');
+const { emitShadowCreated, emitShadowCompleted, emitDivergenceDetected, emitMissedProfitDetected, emitBetterExitDetected, emitBehaviorFeedbackGenerated } = require('./shadow.events.js');
+class ShadowService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ShadowRepository();
     this.tradeRepository = dependencies.tradeRepository || new TradeStateRepository();
@@ -230,5 +219,5 @@ export class ShadowService {
     return input;
   }
 }
-
-export default ShadowService;
+module.exports = ShadowService;
+module.exports.ShadowService = ShadowService;

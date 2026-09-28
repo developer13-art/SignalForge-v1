@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/performance/equity/repository
  */
-
-import { PerformanceRepository } from '../performance.repository.js';
-
-export class EquitySnapshotRepository {
+const { PerformanceRepository } = require('../performance.repository.js');
+class EquitySnapshotRepository {
   constructor(db = null) {
     this.performanceRepository = new PerformanceRepository(db);
   }
@@ -27,5 +25,5 @@ export class EquitySnapshotRepository {
     return this.performanceRepository.deleteEquitySnapshotsForPeriod(periodId);
   }
 }
-
-export default EquitySnapshotRepository;
+module.exports = EquitySnapshotRepository;
+module.exports.EquitySnapshotRepository = EquitySnapshotRepository;

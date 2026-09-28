@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/copy-trading/fan-out/batch-scheduler
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class BatchSchedulerService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class BatchSchedulerService {
   constructor(options = {}) {
     this.maxConcurrent = options.maxConcurrent || 5;
     this.inFlight = 0;
@@ -58,5 +56,5 @@ export class BatchSchedulerService {
     };
   }
 }
-
-export default BatchSchedulerService;
+module.exports = BatchSchedulerService;
+module.exports.BatchSchedulerService = BatchSchedulerService;

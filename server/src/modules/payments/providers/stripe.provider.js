@@ -3,20 +3,13 @@
  *
  * @module signalforge/server/modules/payments/providers/stripe
  */
-
-import crypto from 'node:crypto';
-
-import { PaymentProviderInterface } from './payment-provider.interface.js';
-import stripeConfig from '../../../config/stripe.config.js';
-import {
-  PaymentProviderError,
-  PaymentProviderNotConfiguredError,
-  WebhookVerificationError,
-} from '../payment.errors.js';
+const crypto = require('node:crypto');
+const { PaymentProviderInterface } = require('./payment-provider.interface.js');
+const stripeConfig = require('../../../config/stripe.config.js');
+const { PaymentProviderError, PaymentProviderNotConfiguredError, WebhookVerificationError } = require('../payment.errors.js');
 
 const TIMEOUT_MS = 30000;
-
-export class StripeProvider extends PaymentProviderInterface {
+class StripeProvider extends PaymentProviderInterface {
   constructor(config = null) {
     super('STRIPE');
     this.config = config || stripeConfig;
@@ -222,5 +215,5 @@ export class StripeProvider extends PaymentProviderInterface {
     };
   }
 }
-
-export default StripeProvider;
+module.exports = StripeProvider;
+module.exports.StripeProvider = StripeProvider;

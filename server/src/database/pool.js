@@ -8,11 +8,9 @@
  *
  * @module server/database/pool
  */
-
-import { getPool } from './connection';
-import { logger } from '../lib/logger';
-
-export async function query(text, params) {
+const { getPool } = require('./connection');
+const { logger } = require('../lib/logger');
+async function query(text, params) {
   const start = Date.now();
   const pool = getPool();
   const result = await pool.query(text, params);
@@ -22,23 +20,19 @@ export async function query(text, params) {
 
   return result;
 }
-
-export async function queryOne(text, params) {
+async function queryOne(text, params) {
   const result = await query(text, params);
   return result.rows[0] || null;
 }
-
-export async function queryAll(text, params) {
+async function queryAll(text, params) {
   const result = await query(text, params);
   return result.rows;
 }
-
-export async function queryCount(text, params) {
+async function queryCount(text, params) {
   const result = await query(text, params);
   return result.rows[0] ? Number(result.rows[0].count || result.rows[0].total || 0) : 0;
 }
-
-export async function batchQuery(queries) {
+async function batchQuery(queries) {
   if (!Array.isArray(queries) || queries.length === 0) {
     return [];
   }
@@ -64,8 +58,7 @@ export async function batchQuery(queries) {
     client.release();
   }
 }
-
-export function getPoolStats() {
+function getPoolStats() {
   const pool = getPool();
   return {
     totalCount: pool.totalCount,
@@ -73,8 +66,7 @@ export function getPoolStats() {
     waitingCount: pool.waitingCount,
   };
 }
-
-export const pool = {
+const pool = {
   query,
   queryOne,
   queryAll,
@@ -82,3 +74,15 @@ export const pool = {
   batchQuery,
   getPoolStats,
 };
+module.exports.pool = pool;
+module.exports.getPoolStats = getPoolStats;
+
+module.exports.query = query;
+
+module.exports.queryOne = queryOne;
+
+module.exports.queryAll = queryAll;
+
+module.exports.queryCount = queryCount;
+
+module.exports.batchQuery = batchQuery;

@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/subscriptions/plans/feature
  */
-
-import { PLAN_FEATURES } from '../subscription.constants.js';
+const { PLAN_FEATURES } = require('../subscription.constants.js');
 
 const DEFAULT_FEATURES = Object.freeze({
   MONTHLY: {
@@ -60,8 +59,7 @@ const DEFAULT_FEATURES = Object.freeze({
     [PLAN_FEATURES.SOLANA_FEATURES]: true,
   },
 });
-
-export class PlanFeatureService {
+class PlanFeatureService {
   getDefaultFeatures(planCode) {
     return DEFAULT_FEATURES[planCode] || DEFAULT_FEATURES.MONTHLY;
   }
@@ -97,5 +95,5 @@ export class PlanFeatureService {
     return defaultValue;
   }
 }
-
-export default PlanFeatureService;
+module.exports = PlanFeatureService;
+module.exports.PlanFeatureService = PlanFeatureService;

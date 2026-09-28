@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/execution/retry/dead-letter
  */
-
-import { ExecutionRepository } from '../execution.repository.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { emitRequestDeadLettered } from '../execution.events.js';
-
-export class DeadLetterService {
+const { ExecutionRepository } = require('../execution.repository.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { emitRequestDeadLettered } = require('../execution.events.js');
+class DeadLetterService {
   constructor(repository = null) {
     this.repository = repository || new ExecutionRepository();
     this.logger = getLogger('execution-dead-letter');
@@ -43,5 +41,5 @@ export class DeadLetterService {
     return { retried: true };
   }
 }
-
-export default DeadLetterService;
+module.exports = DeadLetterService;
+module.exports.DeadLetterService = DeadLetterService;

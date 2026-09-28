@@ -7,13 +7,11 @@
  *
  * @module server/modules/audit/audit.events
  */
-
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { publishEvent } from '../../events/event-publisher';
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { publishEvent } = require('../../events/event-publisher');
 
 const SOURCE = 'audit.events';
-
-export async function emitAuditLogCreated({ auditId, action, actorId, actorType, resourceType, resourceId, severity }) {
+async function emitAuditLogCreated({ auditId, action, actorId, actorType, resourceType, resourceId, severity }) {
   return publishEvent({
     eventType: EVENT_TYPES.AUDIT_LOG_CREATED,
     source: SOURCE,
@@ -29,8 +27,7 @@ export async function emitAuditLogCreated({ auditId, action, actorId, actorType,
     },
   });
 }
-
-export async function emitSecurityAlert({ actorId, alertType, details }) {
+async function emitSecurityAlert({ actorId, alertType, details }) {
   return publishEvent({
     eventType: EVENT_TYPES.SECURITY_ALERT,
     source: SOURCE,
@@ -43,8 +40,12 @@ export async function emitSecurityAlert({ actorId, alertType, details }) {
     },
   });
 }
-
-export const AUDIT_EVENT_NAMES = Object.freeze({
+const AUDIT_EVENT_NAMES = Object.freeze({
   AUDIT_LOG_CREATED: EVENT_TYPES.AUDIT_LOG_CREATED,
   SECURITY_ALERT: EVENT_TYPES.SECURITY_ALERT,
 });
+module.exports.AUDIT_EVENT_NAMES = AUDIT_EVENT_NAMES;
+
+module.exports.emitAuditLogCreated = emitAuditLogCreated;
+
+module.exports.emitSecurityAlert = emitSecurityAlert;

@@ -7,16 +7,14 @@
  *
  * @module server/realtime/presence/presence.service
  */
-
-import { logger } from '../../lib/logger';
-import { presenceRepository } from './presence.repository';
+const { logger } = require('../../lib/logger');
+const { presenceRepository } = require('./presence.repository');
 
 const PRESENCE = new Map();
 
 const PERSIST_INTERVAL_MS = 30000;
 let persistTimer = null;
-
-export function markOnline({ userId }) {
+function markOnline({ userId }) {
   if (!userId) {
     return;
   }
@@ -29,16 +27,14 @@ export function markOnline({ userId }) {
     }, PERSIST_INTERVAL_MS);
   }
 }
-
-export function markOffline({ userId }) {
+function markOffline({ userId }) {
   if (!userId) {
     return;
   }
 
   PRESENCE.set(userId, { status: 'offline', lastSeenAt: Date.now() });
 }
-
-export async function persistPresence() {
+async function persistPresence() {
   for (const [userId, entry] of PRESENCE.entries()) {
     try {
       await presenceRepository.upsertPresence({ userId, status: entry.status });
@@ -47,8 +43,7 @@ export async function persistPresence() {
     }
   }
 }
-
-export async function getPresence({ userId }) {
+async function getPresence({ userId }) {
   const inMemory = PRESENCE.get(userId);
 
   if (inMemory) {
@@ -66,13 +61,11 @@ export async function getPresence({ userId }) {
 
   return null;
 }
-
-export function isOnline({ userId }) {
+function isOnline({ userId }) {
   const entry = PRESENCE.get(userId);
   return Boolean(entry && entry.status === 'online' && Date.now() - entry.lastSeenAt < 2 * 60 * 1000);
 }
-
-export async function listOnlineUsers({ limit = 100 }) {
+async function listOnlineUsers({ limit = 100 }) {
   const inMemory = Array.from(PRESENCE.entries())
     .filter(([, entry]) => entry.status === 'online' && Date.now() - entry.lastSeenAt < 2 * 60 * 1000)
     .map(([userId, entry]) => ({ userId, status: entry.status, lastSeenAt: entry.lastSeenAt }));
@@ -89,8 +82,7 @@ export async function listOnlineUsers({ limit = 100 }) {
     lastSeenAt: new Date(row.last_seen_at).getTime(),
   }));
 }
-
-export async function stopPresenceService() {
+async function stopPresenceService() {
   if (persistTimer) {
     clearInterval(persistTimer);
     persistTimer = null;
@@ -98,8 +90,7 @@ export async function stopPresenceService() {
 
   await persistPresence().catch((err) => logger.warn({ err }, 'Final presence persist failed'));
 }
-
-export const presenceService = {
+const presenceService = {
   markOnline,
   markOffline,
   persistPresence,
@@ -108,3 +99,15 @@ export const presenceService = {
   listOnlineUsers,
   stopPresenceService,
 };
+module.exports.presenceService = presenceService;
+module.exports.markOnline = markOnline;
+module.exports.markOffline = markOffline;
+module.exports.isOnline = isOnline;
+
+module.exports.persistPresence = persistPresence;
+
+module.exports.getPresence = getPresence;
+
+module.exports.listOnlineUsers = listOnlineUsers;
+
+module.exports.stopPresenceService = stopPresenceService;

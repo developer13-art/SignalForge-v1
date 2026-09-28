@@ -7,15 +7,13 @@
  *
  * @module signalforge/server/modules/performance/periods/calculator
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { EligibleNetProfitService } from '../metrics/eligible-net-profit.service.js';
-import { GrossProfitService } from '../metrics/gross-profit.service.js';
-import { GrossLossService } from '../metrics/gross-loss.service.js';
-import { TradingCostsService } from '../metrics/trading-costs.service.js';
-import { PeriodCalculationError } from '../performance.errors.js';
-
-export class PeriodCalculatorService {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { EligibleNetProfitService } = require('../metrics/eligible-net-profit.service.js');
+const { GrossProfitService } = require('../metrics/gross-profit.service.js');
+const { GrossLossService } = require('../metrics/gross-loss.service.js');
+const { TradingCostsService } = require('../metrics/trading-costs.service.js');
+const { PeriodCalculationError } = require('../performance.errors.js');
+class PeriodCalculatorService {
   constructor(dependencies = {}) {
     this.db = dependencies.db || getDatabase();
     this.grossProfit = dependencies.grossProfit || new GrossProfitService();
@@ -93,5 +91,5 @@ export class PeriodCalculatorService {
     };
   }
 }
-
-export default PeriodCalculatorService;
+module.exports = PeriodCalculatorService;
+module.exports.PeriodCalculatorService = PeriodCalculatorService;

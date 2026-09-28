@@ -3,13 +3,10 @@
  *
  * @module signalforge/server/modules/auth/services/session
  */
-
-import crypto from 'node:crypto';
-
-import jwtConfig from '../../../config/jwt.config.js';
-import { SessionNotFoundError, SessionRevokedError } from '../auth.errors.js';
-
-export class SessionService {
+const crypto = require('node:crypto');
+const jwtConfig = require('../../../config/jwt.config.js');
+const { SessionNotFoundError, SessionRevokedError } = require('../auth.errors.js');
+class SessionService {
   constructor(repository) {
     this.repository = repository;
   }
@@ -77,5 +74,5 @@ export class SessionService {
     return this.repository.cleanupExpiredSessions();
   }
 }
-
-export default SessionService;
+module.exports = SessionService;
+module.exports.SessionService = SessionService;

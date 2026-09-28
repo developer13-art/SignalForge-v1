@@ -3,21 +3,13 @@
  *
  * @module signalforge/server/modules/trade-state/events/service
  */
-
-import { TradeEventRepository } from './trade-event.repository.js';
-import { ActorAttributionService } from '../lifecycle/actor-attribution.service.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import {
-  isValidTradeEvent,
-  getEventSeverity,
-} from '../trade-state.constants.js';
-import { InvalidTradeEventError } from '../trade-state.errors.js';
-import {
-  emitEventRecorded,
-  emitStateChanged,
-} from '../trade-state.events.js';
-
-export class TradeEventService {
+const { TradeEventRepository } = require('./trade-event.repository.js');
+const { ActorAttributionService } = require('../lifecycle/actor-attribution.service.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { isValidTradeEvent, getEventSeverity } = require('../trade-state.constants.js');
+const { InvalidTradeEventError } = require('../trade-state.errors.js');
+const { emitEventRecorded, emitStateChanged } = require('../trade-state.events.js');
+class TradeEventService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TradeEventRepository();
     this.actorAttribution =
@@ -126,5 +118,5 @@ export class TradeEventService {
     return input;
   }
 }
-
-export default TradeEventService;
+module.exports = TradeEventService;
+module.exports.TradeEventService = TradeEventService;

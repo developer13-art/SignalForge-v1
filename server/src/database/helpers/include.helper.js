@@ -6,10 +6,8 @@
  *
  * @module server/database/helpers/include.helper
  */
-
-import { getPool } from '../connection';
-
-export async function loadRelatedByIds({ table, foreignKey, ids, extraConditions = null }) {
+const { getPool } = require('../connection');
+async function loadRelatedByIds({ table, foreignKey, ids, extraConditions = null }) {
   if (!Array.isArray(ids) || ids.length === 0) {
     return {};
   }
@@ -34,8 +32,7 @@ export async function loadRelatedByIds({ table, foreignKey, ids, extraConditions
 
   return grouped;
 }
-
-export async function loadRelatedOneToOne({ table, foreignKey, ids }) {
+async function loadRelatedOneToOne({ table, foreignKey, ids }) {
   const grouped = await loadRelatedByIds({ table, foreignKey, ids });
 
   const single = {};
@@ -45,8 +42,7 @@ export async function loadRelatedOneToOne({ table, foreignKey, ids }) {
 
   return single;
 }
-
-export async function attachRelated({ items, table, foreignKey, localKey, as }) {
+async function attachRelated({ items, table, foreignKey, localKey, as }) {
   if (!Array.isArray(items) || items.length === 0) {
     return items;
   }
@@ -60,9 +56,15 @@ export async function attachRelated({ items, table, foreignKey, localKey, as }) 
     [as]: grouped[item[localKey]] || [],
   }));
 }
-
-export const includeHelper = {
+const includeHelper = {
   loadRelatedByIds,
   loadRelatedOneToOne,
   attachRelated,
 };
+module.exports.includeHelper = includeHelper;
+
+module.exports.loadRelatedByIds = loadRelatedByIds;
+
+module.exports.loadRelatedOneToOne = loadRelatedOneToOne;
+
+module.exports.attachRelated = attachRelated;

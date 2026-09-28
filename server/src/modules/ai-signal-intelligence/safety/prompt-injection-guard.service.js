@@ -6,12 +6,10 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/safety/prompt-injection-guard
  */
-
-import aiConfig from '../../../config/ai.config.js';
-import { PromptInjectionError } from '../ai.errors.js';
-import { emitPromptInjectionDetected } from '../ai.events.js';
-
-export class PromptInjectionGuardService {
+const aiConfig = require('../../../config/ai.config.js');
+const { PromptInjectionError } = require('../ai.errors.js');
+const { emitPromptInjectionDetected } = require('../ai.events.js');
+class PromptInjectionGuardService {
   constructor(patterns = null) {
     this.patterns = patterns || aiConfig.safety.blocklistPatterns;
   }
@@ -53,5 +51,5 @@ export class PromptInjectionGuardService {
     return sanitized;
   }
 }
-
-export default PromptInjectionGuardService;
+module.exports = PromptInjectionGuardService;
+module.exports.PromptInjectionGuardService = PromptInjectionGuardService;

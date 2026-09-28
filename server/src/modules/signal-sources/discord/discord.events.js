@@ -6,14 +6,12 @@
  *
  * @module server/modules/signal-sources/discord/discord.events
  */
-
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { publishEvent } from '../../../events/event-publisher';
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { publishEvent } = require('../../../events/event-publisher');
 
 const SOURCE = 'discord.events';
-
-export async function emitDiscordOAuthInitiated({ userId }) {
+async function emitDiscordOAuthInitiated({ userId }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_INITIATED,
     source: SOURCE,
@@ -25,8 +23,7 @@ export async function emitDiscordOAuthInitiated({ userId }) {
     },
   });
 }
-
-export async function emitDiscordOAuthConnected({ userId, discordUserId, guildCount }) {
+async function emitDiscordOAuthConnected({ userId, discordUserId, guildCount }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_CONNECTED,
     source: SOURCE,
@@ -40,8 +37,7 @@ export async function emitDiscordOAuthConnected({ userId, discordUserId, guildCo
     },
   });
 }
-
-export async function emitDiscordOAuthRevoked({ userId, reason }) {
+async function emitDiscordOAuthRevoked({ userId, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_REVOKED,
     source: SOURCE,
@@ -54,8 +50,7 @@ export async function emitDiscordOAuthRevoked({ userId, reason }) {
     },
   });
 }
-
-export async function emitDiscordGuildDiscovered({ userId, guildCount }) {
+async function emitDiscordGuildDiscovered({ userId, guildCount }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNELS_DISCOVERED,
     source: SOURCE,
@@ -68,8 +63,7 @@ export async function emitDiscordGuildDiscovered({ userId, guildCount }) {
     },
   });
 }
-
-export async function emitDiscordChannelOptIn({ userId, guildId, channelId, channelName }) {
+async function emitDiscordChannelOptIn({ userId, guildId, channelId, channelName }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNEL_OPT_IN,
     source: SOURCE,
@@ -84,8 +78,7 @@ export async function emitDiscordChannelOptIn({ userId, guildId, channelId, chan
     },
   });
 }
-
-export async function emitDiscordChannelOptOut({ userId, guildId, channelId }) {
+async function emitDiscordChannelOptOut({ userId, guildId, channelId }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNEL_OPT_OUT,
     source: SOURCE,
@@ -99,8 +92,7 @@ export async function emitDiscordChannelOptOut({ userId, guildId, channelId }) {
     },
   });
 }
-
-export async function emitDiscordListenerStarted({ userId, guildCount, channelCount }) {
+async function emitDiscordListenerStarted({ userId, guildCount, channelCount }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_LISTENER_STARTED,
     source: SOURCE,
@@ -114,8 +106,7 @@ export async function emitDiscordListenerStarted({ userId, guildCount, channelCo
     },
   });
 }
-
-export async function emitDiscordListenerStopped({ userId, reason }) {
+async function emitDiscordListenerStopped({ userId, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_LISTENER_STOPPED,
     source: SOURCE,
@@ -128,8 +119,7 @@ export async function emitDiscordListenerStopped({ userId, reason }) {
     },
   });
 }
-
-export async function emitDiscordWebhookReceived({ userId, guildId, channelId, messageId }) {
+async function emitDiscordWebhookReceived({ userId, guildId, channelId, messageId }) {
   return publishEvent({
     eventType: EVENT_TYPES.MESSAGE_RECEIVED,
     source: SOURCE,
@@ -144,8 +134,7 @@ export async function emitDiscordWebhookReceived({ userId, guildId, channelId, m
     },
   });
 }
-
-export async function emitDiscordWebhookRejected({ userId, reason }) {
+async function emitDiscordWebhookRejected({ userId, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_WEBHOOK_REJECTED,
     source: SOURCE,
@@ -158,8 +147,7 @@ export async function emitDiscordWebhookRejected({ userId, reason }) {
     },
   });
 }
-
-export async function emitDiscordHealthCheck({ userId, healthy, details }) {
+async function emitDiscordHealthCheck({ userId, healthy, details }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_HEALTH_CHECK,
     source: SOURCE,
@@ -173,8 +161,7 @@ export async function emitDiscordHealthCheck({ userId, healthy, details }) {
     },
   });
 }
-
-export const DISCORD_EVENT_NAMES = Object.freeze({
+const DISCORD_EVENT_NAMES = Object.freeze({
   OAUTH_INITIATED: EVENT_TYPES.SOURCE_SESSION_INITIATED,
   OAUTH_CONNECTED: EVENT_TYPES.SOURCE_SESSION_CONNECTED,
   OAUTH_REVOKED: EVENT_TYPES.SOURCE_SESSION_REVOKED,
@@ -187,3 +174,26 @@ export const DISCORD_EVENT_NAMES = Object.freeze({
   WEBHOOK_REJECTED: EVENT_TYPES.SOURCE_WEBHOOK_REJECTED,
   HEALTH_CHECK: EVENT_TYPES.SOURCE_HEALTH_CHECK,
 });
+module.exports.DISCORD_EVENT_NAMES = DISCORD_EVENT_NAMES;
+
+module.exports.emitDiscordOAuthInitiated = emitDiscordOAuthInitiated;
+
+module.exports.emitDiscordOAuthConnected = emitDiscordOAuthConnected;
+
+module.exports.emitDiscordOAuthRevoked = emitDiscordOAuthRevoked;
+
+module.exports.emitDiscordGuildDiscovered = emitDiscordGuildDiscovered;
+
+module.exports.emitDiscordChannelOptIn = emitDiscordChannelOptIn;
+
+module.exports.emitDiscordChannelOptOut = emitDiscordChannelOptOut;
+
+module.exports.emitDiscordListenerStarted = emitDiscordListenerStarted;
+
+module.exports.emitDiscordListenerStopped = emitDiscordListenerStopped;
+
+module.exports.emitDiscordWebhookReceived = emitDiscordWebhookReceived;
+
+module.exports.emitDiscordWebhookRejected = emitDiscordWebhookRejected;
+
+module.exports.emitDiscordHealthCheck = emitDiscordHealthCheck;

@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/risk/checks/max-daily-loss
  */
-
-import { BaseCheck } from './base.check.js';
-import { RiskRepository } from '../risk.repository.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskDailyLossExceeded } from '../risk.events.js';
-
-export class MaxDailyLossCheck extends BaseCheck {
+const { BaseCheck } = require('./base.check.js');
+const { RiskRepository } = require('../risk.repository.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskDailyLossExceeded } = require('../risk.events.js');
+class MaxDailyLossCheck extends BaseCheck {
   constructor(repository = null) {
     super(RISK_CHECKS.MAX_DAILY_LOSS);
     this.repository = repository || new RiskRepository();
@@ -44,5 +42,5 @@ export class MaxDailyLossCheck extends BaseCheck {
     });
   }
 }
-
-export default MaxDailyLossCheck;
+module.exports = MaxDailyLossCheck;
+module.exports.MaxDailyLossCheck = MaxDailyLossCheck;

@@ -6,8 +6,7 @@
  *
  * @module server/modules/executive/growth/provider-growth.service
  */
-
-import { db } from '../../../database';
+const { db } = require('../../../database');
 
 const VALID_GRANULARITIES = Object.freeze(['day', 'week', 'month']);
 
@@ -21,8 +20,7 @@ function normalizeRange({ from, to }) {
   const fromDate = from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   return { from: fromDate, to: toDate };
 }
-
-export async function getGrowth({ from, to, granularity }) {
+async function getGrowth({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
   const dateTrunc = g === 'month' ? 'month' : g === 'week' ? 'week' : 'day';
@@ -74,8 +72,7 @@ export async function getGrowth({ from, to, granularity }) {
     series,
   };
 }
-
-export async function getSubscriberGrowth({ from, to, granularity }) {
+async function getSubscriberGrowth({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
   const dateTrunc = g === 'month' ? 'month' : g === 'week' ? 'week' : 'day';
@@ -101,8 +98,7 @@ export async function getSubscriberGrowth({ from, to, granularity }) {
     })),
   };
 }
-
-export async function getTopGrowingProviders({ from, to, limit = 10 }) {
+async function getTopGrowingProviders({ from, to, limit = 10 }) {
   const range = normalizeRange({ from, to });
 
   const { rows } = await db.query(
@@ -125,9 +121,15 @@ export async function getTopGrowingProviders({ from, to, limit = 10 }) {
     newSubscribers: row.new_subscribers,
   }));
 }
-
-export const providerGrowthService = {
+const providerGrowthService = {
   getGrowth,
   getSubscriberGrowth,
   getTopGrowingProviders,
 };
+module.exports.providerGrowthService = providerGrowthService;
+
+module.exports.getGrowth = getGrowth;
+
+module.exports.getSubscriberGrowth = getSubscriberGrowth;
+
+module.exports.getTopGrowingProviders = getTopGrowingProviders;

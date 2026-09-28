@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/users/preferences/service
  */
-
-import { PreferencesRepository } from './preferences.repository.js';
-import { emitPreferencesUpdated } from '../user.events.js';
-
-export class PreferencesService {
+const { PreferencesRepository } = require('./preferences.repository.js');
+const { emitPreferencesUpdated } = require('../user.events.js');
+class PreferencesService {
   constructor(repository = null) {
     this.repository = repository || new PreferencesRepository();
   }
@@ -57,5 +55,5 @@ export class PreferencesService {
     };
   }
 }
-
-export default PreferencesService;
+module.exports = PreferencesService;
+module.exports.PreferencesService = PreferencesService;

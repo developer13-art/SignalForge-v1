@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/trade-matching/matchers/reply-reference
  */
-
-export class ReplyReferenceMatcher {
+class ReplyReferenceMatcher {
   scoreTrade(trade, replyReference) {
     if (!trade || !replyReference) {
       return 0;
@@ -30,5 +29,5 @@ export class ReplyReferenceMatcher {
     });
   }
 }
-
-export default ReplyReferenceMatcher;
+module.exports = ReplyReferenceMatcher;
+module.exports.ReplyReferenceMatcher = ReplyReferenceMatcher;

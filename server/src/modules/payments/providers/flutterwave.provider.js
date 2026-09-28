@@ -3,20 +3,13 @@
  *
  * @module signalforge/server/modules/payments/providers/flutterwave
  */
-
-import crypto from 'node:crypto';
-
-import { PaymentProviderInterface } from './payment-provider.interface.js';
-import flutterwaveConfig from '../../../config/flutterwave.config.js';
-import {
-  PaymentProviderError,
-  PaymentProviderNotConfiguredError,
-  WebhookVerificationError,
-} from '../payment.errors.js';
+const crypto = require('node:crypto');
+const { PaymentProviderInterface } = require('./payment-provider.interface.js');
+const flutterwaveConfig = require('../../../config/flutterwave.config.js');
+const { PaymentProviderError, PaymentProviderNotConfiguredError, WebhookVerificationError } = require('../payment.errors.js');
 
 const TIMEOUT_MS = 30000;
-
-export class FlutterwaveProvider extends PaymentProviderInterface {
+class FlutterwaveProvider extends PaymentProviderInterface {
   constructor(config = null) {
     super('FLUTTERWAVE');
     this.config = config || flutterwaveConfig;
@@ -190,5 +183,5 @@ export class FlutterwaveProvider extends PaymentProviderInterface {
     return crypto.createHash('sha256').update(rawBody).digest('hex');
   }
 }
-
-export default FlutterwaveProvider;
+module.exports = FlutterwaveProvider;
+module.exports.FlutterwaveProvider = FlutterwaveProvider;

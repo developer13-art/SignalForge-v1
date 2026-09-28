@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/providers/subscribers/repository
  */
-
-import { ProviderRepository } from '../provider.repository.js';
-
-export class ProviderSubscriberRepository {
+const { ProviderRepository } = require('../provider.repository.js');
+class ProviderSubscriberRepository {
   constructor(db = null) {
     this.providerRepository = new ProviderRepository(db);
   }
@@ -35,5 +33,5 @@ export class ProviderSubscriberRepository {
     return this.providerRepository.decrementSubscriberCount(providerId);
   }
 }
-
-export default ProviderSubscriberRepository;
+module.exports = ProviderSubscriberRepository;
+module.exports.ProviderSubscriberRepository = ProviderSubscriberRepository;

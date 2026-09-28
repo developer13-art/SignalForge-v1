@@ -5,19 +5,16 @@
  *
  * @module server/modules/white-label/branding/branding.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function findByProjectId({ projectId }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function findByProjectId({ projectId }) {
   const { rows } = await db.query(
     `SELECT * FROM white_label_branding WHERE project_id = $1 LIMIT 1`,
     [projectId],
   );
   return rows[0] || null;
 }
-
-export async function insertBranding({
+async function insertBranding({
   projectId,
   brandName,
   logoUrl,
@@ -44,8 +41,7 @@ export async function insertBranding({
   );
   return rows[0];
 }
-
-export async function updateBranding({
+async function updateBranding({
   projectId,
   brandName,
   logoUrl,
@@ -77,18 +73,25 @@ export async function updateBranding({
   );
   return rowCount > 0;
 }
-
-export async function deleteBranding({ projectId }) {
+async function deleteBranding({ projectId }) {
   const { rowCount } = await db.query(
     `DELETE FROM white_label_branding WHERE project_id = $1`,
     [projectId],
   );
   return rowCount > 0;
 }
-
-export const brandingRepository = {
+const brandingRepository = {
   findByProjectId,
   insertBranding,
   updateBranding,
   deleteBranding,
 };
+module.exports.brandingRepository = brandingRepository;
+
+module.exports.findByProjectId = findByProjectId;
+
+module.exports.insertBranding = insertBranding;
+
+module.exports.updateBranding = updateBranding;
+
+module.exports.deleteBranding = deleteBranding;

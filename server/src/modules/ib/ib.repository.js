@@ -6,19 +6,16 @@
  *
  * @module server/modules/ib/ib.repository
  */
-
-import { db } from '../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function findPartnerByUserId({ userId }) {
+const { db } = require('../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function findPartnerByUserId({ userId }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_partners WHERE user_id = $1 LIMIT 1`,
     [userId],
   );
   return rows[0] || null;
 }
-
-export async function insertPartner({ userId, tier = 'STANDARD' }) {
+async function insertPartner({ userId, tier = 'STANDARD' }) {
   const { rows } = await db.query(
     `INSERT INTO ib_partners
        (user_id, status, tier, created_at, updated_at)
@@ -29,8 +26,7 @@ export async function insertPartner({ userId, tier = 'STANDARD' }) {
   );
   return rows[0] || null;
 }
-
-export async function updatePartnerStatus({ partnerId, status }) {
+async function updatePartnerStatus({ partnerId, status }) {
   const { rowCount } = await db.query(
     `UPDATE ib_partners
         SET status = $1, updated_at = $2
@@ -39,8 +35,7 @@ export async function updatePartnerStatus({ partnerId, status }) {
   );
   return rowCount > 0;
 }
-
-export async function updatePartnerTier({ partnerId, tier }) {
+async function updatePartnerTier({ partnerId, tier }) {
   const { rowCount } = await db.query(
     `UPDATE ib_partners
         SET tier = $1, updated_at = $2
@@ -49,24 +44,21 @@ export async function updatePartnerTier({ partnerId, tier }) {
   );
   return rowCount > 0;
 }
-
-export async function findLinkById({ linkId }) {
+async function findLinkById({ linkId }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_links WHERE id = $1 LIMIT 1`,
     [linkId],
   );
   return rows[0] || null;
 }
-
-export async function findLinkByCode({ code }) {
+async function findLinkByCode({ code }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_links WHERE code = $1 LIMIT 1`,
     [code],
   );
   return rows[0] || null;
 }
-
-export async function listLinksByUser({ userId }) {
+async function listLinksByUser({ userId }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_links
       WHERE user_id = $1
@@ -75,8 +67,7 @@ export async function listLinksByUser({ userId }) {
   );
   return rows;
 }
-
-export async function deactivateLink({ linkId, userId }) {
+async function deactivateLink({ linkId, userId }) {
   const { rowCount } = await db.query(
     `UPDATE ib_links
         SET active = FALSE, updated_at = $1
@@ -85,8 +76,7 @@ export async function deactivateLink({ linkId, userId }) {
   );
   return rowCount > 0;
 }
-
-export async function insertReferral({
+async function insertReferral({
   partnerUserId,
   referredUserId,
   brokerAccountId,
@@ -111,24 +101,21 @@ export async function insertReferral({
   );
   return rows[0];
 }
-
-export async function findReferralById({ referralId }) {
+async function findReferralById({ referralId }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_referrals WHERE id = $1 LIMIT 1`,
     [referralId],
   );
   return rows[0] || null;
 }
-
-export async function findByReferredUserId({ referredUserId }) {
+async function findByReferredUserId({ referredUserId }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_referrals WHERE referred_user_id = $1 LIMIT 1`,
     [referredUserId],
   );
   return rows[0] || null;
 }
-
-export async function countReferralsByPartner({ partnerUserId }) {
+async function countReferralsByPartner({ partnerUserId }) {
   const { rows } = await db.query(
     `SELECT
        COUNT(*)::int AS total,
@@ -139,8 +126,7 @@ export async function countReferralsByPartner({ partnerUserId }) {
   );
   return rows[0] || { total: 0, active: 0 };
 }
-
-export async function insertRevenueEntry({
+async function insertRevenueEntry({
   partnerUserId,
   referralId,
   amount,
@@ -157,8 +143,7 @@ export async function insertRevenueEntry({
   );
   return rows[0];
 }
-
-export async function aggregateRevenueByPartner({ partnerUserId, from, to }) {
+async function aggregateRevenueByPartner({ partnerUserId, from, to }) {
   const conditions = ['partner_user_id = $1'];
   const params = [partnerUserId];
 
@@ -186,8 +171,7 @@ export async function aggregateRevenueByPartner({ partnerUserId, from, to }) {
 
   return rows[0] || { pending: 0, paid: 0, total_count: 0 };
 }
-
-export const ibRepository = {
+const ibRepository = {
   findPartnerByUserId,
   insertPartner,
   updatePartnerStatus,
@@ -203,3 +187,32 @@ export const ibRepository = {
   insertRevenueEntry,
   aggregateRevenueByPartner,
 };
+module.exports.ibRepository = ibRepository;
+
+module.exports.findPartnerByUserId = findPartnerByUserId;
+
+module.exports.insertPartner = insertPartner;
+
+module.exports.updatePartnerStatus = updatePartnerStatus;
+
+module.exports.updatePartnerTier = updatePartnerTier;
+
+module.exports.findLinkById = findLinkById;
+
+module.exports.findLinkByCode = findLinkByCode;
+
+module.exports.listLinksByUser = listLinksByUser;
+
+module.exports.deactivateLink = deactivateLink;
+
+module.exports.insertReferral = insertReferral;
+
+module.exports.findReferralById = findReferralById;
+
+module.exports.findByReferredUserId = findByReferredUserId;
+
+module.exports.countReferralsByPartner = countReferralsByPartner;
+
+module.exports.insertRevenueEntry = insertRevenueEntry;
+
+module.exports.aggregateRevenueByPartner = aggregateRevenueByPartner;

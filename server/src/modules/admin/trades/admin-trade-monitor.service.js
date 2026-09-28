@@ -3,15 +3,13 @@
  *
  * @module server/modules/admin/trades/admin-trade-monitor.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-trade.repository';
-import { adminService } from '../admin.service';
-
-export async function listTrades({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-trade.repository');
+const { adminService } = require('../admin.service');
+async function listTrades({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listTrades({
@@ -37,8 +35,7 @@ export async function listTrades({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getTradeDetails({ tradeId }) {
+async function getTradeDetails({ tradeId }) {
   if (!tradeId) {
     throw new AppError('tradeId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -63,8 +60,7 @@ export async function getTradeDetails({ tradeId }) {
     })),
   };
 }
-
-export async function forceCloseTrade({ tradeId, adminId, reason }) {
+async function forceCloseTrade({ tradeId, adminId, reason }) {
   if (!tradeId || !adminId) {
     throw new AppError('tradeId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -87,8 +83,7 @@ export async function forceCloseTrade({ tradeId, adminId, reason }) {
 
   return { closed: true };
 }
-
-export async function getStatusBreakdown({ since }) {
+async function getStatusBreakdown({ since }) {
   const rows = await repository.countByStatus({ since });
 
   const breakdown = {};
@@ -98,10 +93,18 @@ export async function getStatusBreakdown({ since }) {
 
   return breakdown;
 }
-
-export const adminTradeMonitorService = {
+const adminTradeMonitorService = {
   listTrades,
   getTradeDetails,
   forceCloseTrade,
   getStatusBreakdown,
 };
+module.exports.adminTradeMonitorService = adminTradeMonitorService;
+
+module.exports.listTrades = listTrades;
+
+module.exports.getTradeDetails = getTradeDetails;
+
+module.exports.forceCloseTrade = forceCloseTrade;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

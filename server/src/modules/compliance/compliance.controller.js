@@ -5,13 +5,11 @@
  *
  * @module server/modules/compliance/compliance.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { successResponse } from '../../lib/response/success.response';
-import { complianceService } from './compliance.service';
-
-export async function getDashboard(req, res) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { successResponse } = require('../../lib/response/success.response');
+const { complianceService } = require('./compliance.service');
+async function getDashboard(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -24,8 +22,7 @@ export async function getDashboard(req, res) {
 
   return successResponse(res, { dashboard });
 }
-
-export async function getSlaBreaches(req, res) {
+async function getSlaBreaches(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -41,8 +38,12 @@ export async function getSlaBreaches(req, res) {
 
   return successResponse(res, { breaches });
 }
-
-export const complianceController = {
+const complianceController = {
   getDashboard,
   getSlaBreaches,
 };
+module.exports.complianceController = complianceController;
+
+module.exports.getDashboard = getDashboard;
+
+module.exports.getSlaBreaches = getSlaBreaches;

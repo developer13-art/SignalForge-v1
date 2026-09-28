@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/trades/timeline/service
  */
-
-import { TradeTimelineRepository } from './trade-timeline.repository.js';
-import { emitTimelineRecorded } from '../trade.events.js';
-
-export class TradeTimelineService {
+const { TradeTimelineRepository } = require('./trade-timeline.repository.js');
+const { emitTimelineRecorded } = require('../trade.events.js');
+class TradeTimelineService {
   constructor(repository = null) {
     this.repository = repository || new TradeTimelineRepository();
   }
@@ -69,5 +67,5 @@ export class TradeTimelineService {
     return input;
   }
 }
-
-export default TradeTimelineService;
+module.exports = TradeTimelineService;
+module.exports.TradeTimelineService = TradeTimelineService;

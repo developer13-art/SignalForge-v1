@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/tradingview/controller
  */
-
-import { TradingViewService } from './tradingview.service.js';
-
-export class TradingViewController {
+const { TradingViewService } = require('./tradingview.service.js');
+class TradingViewController {
   constructor(service = null) {
     this.service = service || new TradingViewService();
   }
@@ -56,5 +54,5 @@ export class TradingViewController {
     }
   };
 }
-
-export default TradingViewController;
+module.exports = TradingViewController;
+module.exports.TradingViewController = TradingViewController;

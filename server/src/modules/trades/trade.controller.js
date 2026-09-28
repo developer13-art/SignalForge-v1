@@ -3,17 +3,10 @@
  *
  * @module signalforge/server/modules/trades/controller
  */
-
-import { TradeService } from './trade.service.js';
-import {
-  validateManualOpenPayload,
-  validateManualClosePayload,
-  validateManualModifyPayload,
-  validateTradeListQuery,
-} from './trade.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class TradeController {
+const { TradeService } = require('./trade.service.js');
+const { validateManualOpenPayload, validateManualClosePayload, validateManualModifyPayload, validateTradeListQuery } = require('./trade.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class TradeController {
   constructor(service = null) {
     this.service = service || new TradeService();
   }
@@ -254,5 +247,5 @@ export class TradeController {
     }
   };
 }
-
-export default TradeController;
+module.exports = TradeController;
+module.exports.TradeController = TradeController;

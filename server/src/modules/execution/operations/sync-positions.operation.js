@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/execution/operations/sync-positions
  */
-
-import { GatewayFactory } from '../gateway/gateway.factory.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-
-export class SyncPositionsOperation {
+const { GatewayFactory } = require('../gateway/gateway.factory.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+class SyncPositionsOperation {
   constructor(gatewayFactory = null) {
     this.gatewayFactory = gatewayFactory || GatewayFactory;
   }
@@ -33,5 +31,5 @@ export class SyncPositionsOperation {
     };
   }
 }
-
-export default SyncPositionsOperation;
+module.exports = SyncPositionsOperation;
+module.exports.SyncPositionsOperation = SyncPositionsOperation;

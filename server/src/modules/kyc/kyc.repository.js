@@ -7,10 +7,8 @@
  *
  * @module signalforge/server/modules/kyc/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class KycRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class KycRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -448,5 +446,5 @@ export class KycRepository {
     );
   }
 }
-
-export default KycRepository;
+module.exports = KycRepository;
+module.exports.KycRepository = KycRepository;

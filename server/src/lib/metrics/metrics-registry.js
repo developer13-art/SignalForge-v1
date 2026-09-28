@@ -6,20 +6,17 @@
  *
  * @module server/lib/metrics/metrics-registry
  */
-
-import { httpMetrics } from './http-metrics';
-import { businessMetrics } from './business-metrics';
+const { httpMetrics } = require('./http-metrics');
+const { businessMetrics } = require('./business-metrics');
 
 let externalCollectors = [];
-
-export function registerMetricsCollector({ name, collector }) {
+function registerMetricsCollector({ name, collector }) {
   if (!name || typeof collector !== 'function') {
     throw new Error('name and collector are required');
   }
   externalCollectors.push({ name, collector });
 }
-
-export async function getMetricsSnapshot() {
+async function getMetricsSnapshot() {
   const snapshot = {
     timestamp: new Date().toISOString(),
     http: httpMetrics.getHttpMetrics(),
@@ -37,14 +34,17 @@ export async function getMetricsSnapshot() {
 
   return snapshot;
 }
-
-export function resetMetrics() {
+function resetMetrics() {
   httpMetrics.resetHttpMetrics();
   businessMetrics.resetBusinessMetrics();
 }
-
-export const metricsRegistry = {
+const metricsRegistry = {
   registerMetricsCollector,
   getMetricsSnapshot,
   resetMetrics,
 };
+module.exports.metricsRegistry = metricsRegistry;
+module.exports.registerMetricsCollector = registerMetricsCollector;
+module.exports.resetMetrics = resetMetrics;
+
+module.exports.getMetricsSnapshot = getMetricsSnapshot;

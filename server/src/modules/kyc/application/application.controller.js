@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/kyc/application/controller
  */
-
-import { ApplicationService } from './application.service.js';
-import { validatePersonalInfoPayload } from '../kyc.validator.js';
-import { validateSubmitApplicationPayload, validateResubmitApplicationPayload } from './application.validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class ApplicationController {
+const { ApplicationService } = require('./application.service.js');
+const { validatePersonalInfoPayload } = require('../kyc.validator.js');
+const { validateSubmitApplicationPayload, validateResubmitApplicationPayload } = require('./application.validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class ApplicationController {
   constructor(service = null) {
     this.service = service || new ApplicationService();
   }
@@ -115,5 +113,5 @@ export class ApplicationController {
     }
   };
 }
-
-export default ApplicationController;
+module.exports = ApplicationController;
+module.exports.ApplicationController = ApplicationController;

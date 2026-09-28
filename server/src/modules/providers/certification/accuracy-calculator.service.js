@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/providers/certification/accuracy
  */
-
-export class AccuracyCalculatorService {
+class AccuracyCalculatorService {
   calculateParsingAccuracy(parsed, total) {
     const totalNum = Number(total || 0);
     if (totalNum === 0) {
@@ -68,5 +67,5 @@ export class AccuracyCalculatorService {
     };
   }
 }
-
-export default AccuracyCalculatorService;
+module.exports = AccuracyCalculatorService;
+module.exports.AccuracyCalculatorService = AccuracyCalculatorService;

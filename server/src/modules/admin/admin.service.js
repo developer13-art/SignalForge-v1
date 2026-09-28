@@ -7,31 +7,29 @@
  *
  * @module server/modules/admin/admin.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { db } from '../../database';
-import { publishEvent } from '../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { adminUserService } from './users/admin-user.service';
-import { adminProviderService } from './providers/admin-provider.service';
-import { adminSignalMonitorService } from './signals/admin-signal-monitor.service';
-import { adminTradeMonitorService } from './trades/admin-trade-monitor.service';
-import { adminBrokerService } from './brokers/admin-broker.service';
-import { adminKycService } from './kyc/admin-kyc.service';
-import { adminMarketplaceService } from './marketplace/admin-marketplace.service';
-import { adminReferralService } from './referrals/admin-referral.service';
-import { adminSubscriptionService } from './subscriptions/admin-subscription.service';
-import { adminPaymentService } from './payments/admin-payment.service';
-import { adminWithdrawalService } from './withdrawals/admin-withdrawal.service';
-import { adminAffiliateService } from './affiliate/admin-affiliate.service';
-import { systemSettingsService } from './system/system-settings.service';
-import { systemHealthService } from './system/system-health.service';
-import { featureFlagService } from './system/feature-flag.service';
-import { adminReportService } from './reports/admin-report.service';
-
-export async function getPlatformOverview({ since }) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { db } = require('../../database');
+const { publishEvent } = require('../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { adminUserService } = require('./users/admin-user.service');
+const { adminProviderService } = require('./providers/admin-provider.service');
+const { adminSignalMonitorService } = require('./signals/admin-signal-monitor.service');
+const { adminTradeMonitorService } = require('./trades/admin-trade-monitor.service');
+const { adminBrokerService } = require('./brokers/admin-broker.service');
+const { adminKycService } = require('./kyc/admin-kyc.service');
+const { adminMarketplaceService } = require('./marketplace/admin-marketplace.service');
+const { adminReferralService } = require('./referrals/admin-referral.service');
+const { adminSubscriptionService } = require('./subscriptions/admin-subscription.service');
+const { adminPaymentService } = require('./payments/admin-payment.service');
+const { adminWithdrawalService } = require('./withdrawals/admin-withdrawal.service');
+const { adminAffiliateService } = require('./affiliate/admin-affiliate.service');
+const { systemSettingsService } = require('./system/system-settings.service');
+const { systemHealthService } = require('./system/system-health.service');
+const { featureFlagService } = require('./system/feature-flag.service');
+const { adminReportService } = require('./reports/admin-report.service');
+async function getPlatformOverview({ since }) {
   const sinceDate = since || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
   const { rows: userRows } = await db.query(
@@ -91,8 +89,7 @@ export async function getPlatformOverview({ since }) {
     },
   };
 }
-
-export async function recordAdminAction({ adminId, action, targetType, targetId, details }) {
+async function recordAdminAction({ adminId, action, targetType, targetId, details }) {
   if (!adminId || !action) {
     throw new AppError('adminId and action are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -129,8 +126,7 @@ export async function recordAdminAction({ adminId, action, targetType, targetId,
 
   return { actionId: rows[0]?.id };
 }
-
-export async function listRecentAdminActions({ limit = 50 }) {
+async function listRecentAdminActions({ limit = 50 }) {
   const { rows } = await db.query(
     `SELECT a.id, a.admin_id, u.email AS admin_email, a.action, a.target_type, a.target_id, a.details, a.created_at
        FROM admin_actions a
@@ -151,8 +147,7 @@ export async function listRecentAdminActions({ limit = 50 }) {
     createdAt: row.created_at,
   }));
 }
-
-export const adminService = {
+const adminService = {
   getPlatformOverview,
   recordAdminAction,
   listRecentAdminActions,
@@ -174,3 +169,10 @@ export const adminService = {
   flags: featureFlagService,
   reports: adminReportService,
 };
+module.exports.adminService = adminService;
+
+module.exports.getPlatformOverview = getPlatformOverview;
+
+module.exports.recordAdminAction = recordAdminAction;
+
+module.exports.listRecentAdminActions = listRecentAdminActions;

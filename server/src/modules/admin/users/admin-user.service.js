@@ -6,16 +6,14 @@
  *
  * @module server/modules/admin/users/admin-user.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import { ACCOUNT_STATUS_VALUES, ACCOUNT_STATUSES } from '@signalforge/shared/constants/account-statuses';
-import * as repository from './admin-user.repository';
-import { adminService } from '../admin.service';
-
-export async function listUsers({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const { ACCOUNT_STATUS_VALUES, ACCOUNT_STATUSES } = require('@signalforge/shared/constants/account-statuses');
+const repository = require('./admin-user.repository');
+const { adminService } = require('../admin.service');
+async function listUsers({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listUsers({
@@ -40,8 +38,7 @@ export async function listUsers({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getUserDetails({ userId }) {
+async function getUserDetails({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -80,8 +77,7 @@ export async function getUserDetails({ userId }) {
     })),
   };
 }
-
-export async function suspendUser({ userId, adminId, reason }) {
+async function suspendUser({ userId, adminId, reason }) {
   if (!userId || !adminId) {
     throw new AppError('userId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -111,8 +107,7 @@ export async function suspendUser({ userId, adminId, reason }) {
 
   return { suspended: true };
 }
-
-export async function activateUser({ userId, adminId }) {
+async function activateUser({ userId, adminId }) {
   if (!userId || !adminId) {
     throw new AppError('userId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -141,8 +136,7 @@ export async function activateUser({ userId, adminId }) {
 
   return { activated: true };
 }
-
-export async function deactivateUser({ userId, adminId, reason }) {
+async function deactivateUser({ userId, adminId, reason }) {
   if (!userId || !adminId) {
     throw new AppError('userId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -162,8 +156,7 @@ export async function deactivateUser({ userId, adminId, reason }) {
 
   return { deactivated: true };
 }
-
-export async function revokeUserSessions({ userId, adminId }) {
+async function revokeUserSessions({ userId, adminId }) {
   if (!userId || !adminId) {
     throw new AppError('userId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -180,8 +173,7 @@ export async function revokeUserSessions({ userId, adminId }) {
 
   return { revoked: count };
 }
-
-export async function getStatusBreakdown() {
+async function getStatusBreakdown() {
   const rows = await repository.countUsersByStatus();
 
   const breakdown = {};
@@ -191,8 +183,7 @@ export async function getStatusBreakdown() {
 
   return breakdown;
 }
-
-export const adminUserService = {
+const adminUserService = {
   listUsers,
   getUserDetails,
   suspendUser,
@@ -202,3 +193,18 @@ export const adminUserService = {
   getStatusBreakdown,
   VALID_STATUSES: ACCOUNT_STATUS_VALUES,
 };
+module.exports.adminUserService = adminUserService;
+
+module.exports.listUsers = listUsers;
+
+module.exports.getUserDetails = getUserDetails;
+
+module.exports.suspendUser = suspendUser;
+
+module.exports.activateUser = activateUser;
+
+module.exports.deactivateUser = deactivateUser;
+
+module.exports.revokeUserSessions = revokeUserSessions;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/traders/copy-settings/repository
  */
-
-import { TraderRepository } from '../trader.repository.js';
-
-export class CopySettingsRepository {
+const { TraderRepository } = require('../trader.repository.js');
+class CopySettingsRepository {
   constructor(db = null) {
     this.traderRepository = new TraderRepository(db);
   }
@@ -23,5 +21,5 @@ export class CopySettingsRepository {
     return this.traderRepository.updateFollower(followerId, data);
   }
 }
-
-export default CopySettingsRepository;
+module.exports = CopySettingsRepository;
+module.exports.CopySettingsRepository = CopySettingsRepository;

@@ -6,14 +6,13 @@
  *
  * @module server/modules/solana/transactions/transaction.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import { transactionRepository } from './transaction.repository';
-import { transactionBuilderService } from './transaction-builder.service';
-import { transactionSubmitterService } from './transaction-submitter.service';
-import { transactionConfirmerService } from './transaction-confirmer.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const { transactionRepository } = require('./transaction.repository');
+const { transactionBuilderService } = require('./transaction-builder.service');
+const { transactionSubmitterService } = require('./transaction-submitter.service');
+const { transactionConfirmerService } = require('./transaction-confirmer.service');
 
 function mapTransaction(row) {
   return {
@@ -32,8 +31,7 @@ function mapTransaction(row) {
     updatedAt: row.updated_at,
   };
 }
-
-export async function recordTransaction({
+async function recordTransaction({
   txSignature,
   purpose,
   referenceType,
@@ -60,8 +58,7 @@ export async function recordTransaction({
 
   return record ? mapTransaction(record) : null;
 }
-
-export async function getTransaction({ txSignature }) {
+async function getTransaction({ txSignature }) {
   if (!txSignature) {
     throw new AppError('txSignature is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -74,8 +71,7 @@ export async function getTransaction({ txSignature }) {
 
   return mapTransaction(record);
 }
-
-export async function listUserTransactions({ userId, filters = {}, pagination = {} }) {
+async function listUserTransactions({ userId, filters = {}, pagination = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -93,8 +89,7 @@ export async function listUserTransactions({ userId, filters = {}, pagination = 
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getStatusBreakdown() {
+async function getStatusBreakdown() {
   const rows = await transactionRepository.countByStatus();
 
   const breakdown = {};
@@ -104,8 +99,7 @@ export async function getStatusBreakdown() {
 
   return breakdown;
 }
-
-export const transactionService = {
+const transactionService = {
   recordTransaction,
   getTransaction,
   listUserTransactions,
@@ -121,3 +115,12 @@ export const transactionService = {
   confirmTransaction: transactionConfirmerService.confirmTransaction,
   confirmPendingTransactions: transactionConfirmerService.confirmPendingTransactions,
 };
+module.exports.transactionService = transactionService;
+
+module.exports.recordTransaction = recordTransaction;
+
+module.exports.getTransaction = getTransaction;
+
+module.exports.listUserTransactions = listUserTransactions;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

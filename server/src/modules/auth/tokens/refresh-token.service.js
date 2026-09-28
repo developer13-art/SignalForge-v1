@@ -3,14 +3,10 @@
  *
  * @module signalforge/server/modules/auth/tokens/refresh-token
  */
-
-import crypto from 'node:crypto';
-
-import jwt from 'jsonwebtoken';
-
-import jwtConfig from '../../../config/jwt.config.js';
-
-export class RefreshTokenService {
+const crypto = require('node:crypto');
+const jwt = require('jsonwebtoken');
+const jwtConfig = require('../../../config/jwt.config.js');
+class RefreshTokenService {
   generate() {
     return crypto.randomBytes(48).toString('base64url');
   }
@@ -50,7 +46,6 @@ export class RefreshTokenService {
     });
   }
 }
-
-export const refreshTokenService = new RefreshTokenService();
-
-export default refreshTokenService;
+const refreshTokenService = new RefreshTokenService();
+module.exports = refreshTokenService;
+module.exports.refreshTokenService = refreshTokenService;

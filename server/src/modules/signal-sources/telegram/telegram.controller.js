@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/controller
  */
-
-import { TelegramAuthService } from './telegram-auth.service.js';
-import { TelegramChannelService } from './telegram-channel.service.js';
-import { TelegramSessionStoreService } from './telegram-session-store.service.js';
-import { TelegramListenerService } from './telegram-listener.service.js';
-
-export class TelegramController {
+const { TelegramAuthService } = require('./telegram-auth.service.js');
+const { TelegramChannelService } = require('./telegram-channel.service.js');
+const { TelegramSessionStoreService } = require('./telegram-session-store.service.js');
+const { TelegramListenerService } = require('./telegram-listener.service.js');
+class TelegramController {
   constructor(dependencies = {}) {
     this.authService = dependencies.authService || new TelegramAuthService();
     this.channelService = dependencies.channelService || new TelegramChannelService();
@@ -144,5 +142,5 @@ export class TelegramController {
     }
   };
 }
-
-export default TelegramController;
+module.exports = TelegramController;
+module.exports.TelegramController = TelegramController;

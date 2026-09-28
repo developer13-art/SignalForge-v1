@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trades/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class TradeRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class TradeRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -445,5 +443,5 @@ export class TradeRepository {
     await this.db.query('DELETE FROM trades WHERE id = $1', [tradeId]);
   }
 }
-
-export default TradeRepository;
+module.exports = TradeRepository;
+module.exports.TradeRepository = TradeRepository;

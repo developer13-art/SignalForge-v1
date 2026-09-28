@@ -3,17 +3,12 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/confidence/service
  */
-
-import { ConfidenceRepository } from './confidence.repository.js';
-import { ScoringModelService } from './scoring-model.service.js';
-import { ThresholdService } from './threshold.service.js';
-import { emitConfidenceScored } from '../ai.events.js';
-import {
-  DEFAULT_MIN_CONFIDENCE,
-  DEFAULT_LOW_CONFIDENCE_ACTION,
-} from '../ai.constants.js';
-
-export class ConfidenceService {
+const { ConfidenceRepository } = require('./confidence.repository.js');
+const { ScoringModelService } = require('./scoring-model.service.js');
+const { ThresholdService } = require('./threshold.service.js');
+const { emitConfidenceScored } = require('../ai.events.js');
+const { DEFAULT_MIN_CONFIDENCE, DEFAULT_LOW_CONFIDENCE_ACTION } = require('../ai.constants.js');
+class ConfidenceService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ConfidenceRepository();
     this.scoringModel = dependencies.scoringModel || new ScoringModelService();
@@ -57,5 +52,5 @@ export class ConfidenceService {
     return this.repository.average(filters);
   }
 }
-
-export default ConfidenceService;
+module.exports = ConfidenceService;
+module.exports.ConfidenceService = ConfidenceService;

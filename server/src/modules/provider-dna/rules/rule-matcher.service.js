@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/provider-dna/rules/matcher
  */
-
-export class RuleMatcherService {
+class RuleMatcherService {
   matchRule(rule, text) {
     if (!rule || !text) {
       return false;
@@ -52,5 +51,5 @@ export class RuleMatcherService {
     });
   }
 }
-
-export default RuleMatcherService;
+module.exports = RuleMatcherService;
+module.exports.RuleMatcherService = RuleMatcherService;

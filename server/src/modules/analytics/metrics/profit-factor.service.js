@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/analytics/metrics/profit-factor
  */
-
-export class ProfitFactorService {
+class ProfitFactorService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return { profitFactor: 0, grossProfit: 0, grossLoss: 0 };
@@ -35,5 +34,5 @@ export class ProfitFactorService {
     };
   }
 }
-
-export default ProfitFactorService;
+module.exports = ProfitFactorService;
+module.exports.ProfitFactorService = ProfitFactorService;

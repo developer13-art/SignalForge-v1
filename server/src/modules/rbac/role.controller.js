@@ -3,16 +3,10 @@
  *
  * @module signalforge/server/modules/rbac/role-controller
  */
-
-import { RoleService } from './role.service.js';
-import {
-  validateRoleCreatePayload,
-  validateRoleUpdatePayload,
-  validatePermissionsUpdatePayload,
-} from './role.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class RoleController {
+const { RoleService } = require('./role.service.js');
+const { validateRoleCreatePayload, validateRoleUpdatePayload, validatePermissionsUpdatePayload } = require('./role.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class RoleController {
   constructor(service = null) {
     this.service = service || new RoleService();
   }
@@ -125,5 +119,5 @@ export class RoleController {
     }
   };
 }
-
-export default RoleController;
+module.exports = RoleController;
+module.exports.RoleController = RoleController;

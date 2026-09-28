@@ -3,11 +3,9 @@
  *
  * @module server/modules/admin/marketplace/admin-marketplace.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function listListings({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function listListings({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -47,8 +45,7 @@ export async function listListings({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function updateListingStatus({ listingId, status }) {
+async function updateListingStatus({ listingId, status }) {
   const { rowCount } = await db.query(
     `UPDATE marketplace_listings
         SET status = $1, updated_at = $2
@@ -57,16 +54,14 @@ export async function updateListingStatus({ listingId, status }) {
   );
   return rowCount > 0;
 }
-
-export async function deleteListing({ listingId }) {
+async function deleteListing({ listingId }) {
   const { rowCount } = await db.query(
     `DELETE FROM marketplace_listings WHERE id = $1`,
     [listingId],
   );
   return rowCount > 0;
 }
-
-export async function listReviews({ filters = {}, pagination = {} }) {
+async function listReviews({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -105,8 +100,7 @@ export async function listReviews({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function updateReviewStatus({ reviewId, status }) {
+async function updateReviewStatus({ reviewId, status }) {
   const { rowCount } = await db.query(
     `UPDATE marketplace_reviews
         SET status = $1, updated_at = $2
@@ -115,16 +109,14 @@ export async function updateReviewStatus({ reviewId, status }) {
   );
   return rowCount > 0;
 }
-
-export async function deleteReview({ reviewId }) {
+async function deleteReview({ reviewId }) {
   const { rowCount } = await db.query(
     `DELETE FROM marketplace_reviews WHERE id = $1`,
     [reviewId],
   );
   return rowCount > 0;
 }
-
-export const adminMarketplaceRepository = {
+const adminMarketplaceRepository = {
   listListings,
   updateListingStatus,
   deleteListing,
@@ -132,3 +124,16 @@ export const adminMarketplaceRepository = {
   updateReviewStatus,
   deleteReview,
 };
+module.exports.adminMarketplaceRepository = adminMarketplaceRepository;
+
+module.exports.listListings = listListings;
+
+module.exports.updateListingStatus = updateListingStatus;
+
+module.exports.deleteListing = deleteListing;
+
+module.exports.listReviews = listReviews;
+
+module.exports.updateReviewStatus = updateReviewStatus;
+
+module.exports.deleteReview = deleteReview;

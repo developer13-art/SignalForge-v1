@@ -7,11 +7,9 @@
  *
  * @module server/modules/signal-sources/telegram/session/telegram-session.repository
  */
-
-import { db } from '../../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertPendingSession({
+const { db } = require('../../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertPendingSession({
   userId,
   phoneNumber,
   countryCode,
@@ -27,8 +25,7 @@ export async function insertPendingSession({
   );
   return rows[0];
 }
-
-export async function findPendingSession({ userId, sessionId }) {
+async function findPendingSession({ userId, sessionId }) {
   const { rows } = await db.query(
     `SELECT * FROM telegram_pending_sessions
       WHERE id = $1 AND user_id = $2
@@ -37,12 +34,10 @@ export async function findPendingSession({ userId, sessionId }) {
   );
   return rows[0] || null;
 }
-
-export async function deletePendingSession(sessionId) {
+async function deletePendingSession(sessionId) {
   await db.query(`DELETE FROM telegram_pending_sessions WHERE id = $1`, [sessionId]);
 }
-
-export async function insertActiveSession({
+async function insertActiveSession({
   userId,
   sessionId,
   sessionCiphertext,
@@ -67,8 +62,7 @@ export async function insertActiveSession({
   );
   return rows[0];
 }
-
-export async function findActiveSession({ userId }) {
+async function findActiveSession({ userId }) {
   const { rows } = await db.query(
     `SELECT * FROM telegram_sessions
       WHERE user_id = $1 AND revoked_at IS NULL
@@ -78,8 +72,7 @@ export async function findActiveSession({ userId }) {
   );
   return rows[0] || null;
 }
-
-export async function touchLastUsedAt({ userId }) {
+async function touchLastUsedAt({ userId }) {
   await db.query(
     `UPDATE telegram_sessions
         SET last_used_at = $1, updated_at = $1
@@ -87,8 +80,7 @@ export async function touchLastUsedAt({ userId }) {
     [nowIso(), userId],
   );
 }
-
-export async function markSessionRevoked({ sessionId, revokedAt, reason }) {
+async function markSessionRevoked({ sessionId, revokedAt, reason }) {
   await db.query(
     `UPDATE telegram_sessions
         SET revoked_at = $1,
@@ -98,8 +90,7 @@ export async function markSessionRevoked({ sessionId, revokedAt, reason }) {
     [revokedAt, reason || null, sessionId],
   );
 }
-
-export async function listAllActiveSessions() {
+async function listAllActiveSessions() {
   const { rows } = await db.query(
     `SELECT id, user_id, telegram_user_id, telegram_username,
             connected_at, last_used_at
@@ -109,8 +100,7 @@ export async function listAllActiveSessions() {
   );
   return rows;
 }
-
-export async function listSessionsByUser({ userId }) {
+async function listSessionsByUser({ userId }) {
   const { rows } = await db.query(
     `SELECT id, user_id, telegram_user_id, telegram_username,
             connected_at, last_used_at, revoked_at, revoked_reason
@@ -121,3 +111,12 @@ export async function listSessionsByUser({ userId }) {
   );
   return rows;
 }
+module.exports.insertPendingSession = insertPendingSession;
+module.exports.findPendingSession = findPendingSession;
+module.exports.deletePendingSession = deletePendingSession;
+module.exports.insertActiveSession = insertActiveSession;
+module.exports.findActiveSession = findActiveSession;
+module.exports.touchLastUsedAt = touchLastUsedAt;
+module.exports.markSessionRevoked = markSessionRevoked;
+module.exports.listAllActiveSessions = listAllActiveSessions;
+module.exports.listSessionsByUser = listSessionsByUser;

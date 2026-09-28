@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/kyc/reverification/expiry-check
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { ApplicationRepository } from '../application/application.repository.js';
-import { KycRepository } from '../kyc.repository.js';
-import { emitKycExpired, emitStatusChanged } from '../kyc.events.js';
-
-export class ExpiryCheckService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { ApplicationRepository } = require('../application/application.repository.js');
+const { KycRepository } = require('../kyc.repository.js');
+const { emitKycExpired, emitStatusChanged } = require('../kyc.events.js');
+class ExpiryCheckService {
   constructor(dependencies = {}) {
     this.applicationRepository = dependencies.applicationRepository || new ApplicationRepository();
     this.kycRepository = dependencies.kycRepository || new KycRepository();
@@ -48,5 +46,5 @@ export class ExpiryCheckService {
     return { processed };
   }
 }
-
-export default ExpiryCheckService;
+module.exports = ExpiryCheckService;
+module.exports.ExpiryCheckService = ExpiryCheckService;

@@ -6,13 +6,11 @@
  *
  * @module server/modules/notifications/notification.events
  */
-
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { publishEvent } from '../../events/event-publisher';
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { publishEvent } = require('../../events/event-publisher');
 
 const SOURCE = 'notification.events';
-
-export async function emitNotificationQueued({ notificationId, userId, type, channels }) {
+async function emitNotificationQueued({ notificationId, userId, type, channels }) {
   return publishEvent({
     eventType: EVENT_TYPES.NOTIFICATION_QUEUED,
     source: SOURCE,
@@ -26,8 +24,7 @@ export async function emitNotificationQueued({ notificationId, userId, type, cha
     },
   });
 }
-
-export async function emitNotificationSent({ notificationId, userId, type, channel }) {
+async function emitNotificationSent({ notificationId, userId, type, channel }) {
   return publishEvent({
     eventType: EVENT_TYPES.NOTIFICATION_SENT,
     source: SOURCE,
@@ -41,8 +38,7 @@ export async function emitNotificationSent({ notificationId, userId, type, chann
     },
   });
 }
-
-export async function emitNotificationFailed({ notificationId, userId, type, channel, reason }) {
+async function emitNotificationFailed({ notificationId, userId, type, channel, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.NOTIFICATION_FAILED,
     source: SOURCE,
@@ -57,8 +53,7 @@ export async function emitNotificationFailed({ notificationId, userId, type, cha
     },
   });
 }
-
-export async function emitNotificationDelivered({ notificationId, userId, channel }) {
+async function emitNotificationDelivered({ notificationId, userId, channel }) {
   return publishEvent({
     eventType: EVENT_TYPES.NOTIFICATION_SENT,
     source: SOURCE,
@@ -72,9 +67,17 @@ export async function emitNotificationDelivered({ notificationId, userId, channe
     },
   });
 }
-
-export const NOTIFICATION_EVENT_NAMES = Object.freeze({
+const NOTIFICATION_EVENT_NAMES = Object.freeze({
   QUEUED: EVENT_TYPES.NOTIFICATION_QUEUED,
   SENT: EVENT_TYPES.NOTIFICATION_SENT,
   FAILED: EVENT_TYPES.NOTIFICATION_FAILED,
 });
+module.exports.NOTIFICATION_EVENT_NAMES = NOTIFICATION_EVENT_NAMES;
+
+module.exports.emitNotificationQueued = emitNotificationQueued;
+
+module.exports.emitNotificationSent = emitNotificationSent;
+
+module.exports.emitNotificationFailed = emitNotificationFailed;
+
+module.exports.emitNotificationDelivered = emitNotificationDelivered;

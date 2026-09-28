@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/wallets/controller
  */
-
-import { WalletService } from './wallet.service.js';
-
-export class WalletController {
+const { WalletService } = require('./wallet.service.js');
+class WalletController {
   constructor(service = null) {
     this.service = service || new WalletService();
   }
@@ -216,5 +214,5 @@ export class WalletController {
     }
   };
 }
-
-export default WalletController;
+module.exports = WalletController;
+module.exports.WalletController = WalletController;

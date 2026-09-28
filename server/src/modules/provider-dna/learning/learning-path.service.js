@@ -7,15 +7,13 @@
  *
  * @module signalforge/server/modules/provider-dna/learning/learning-path
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { DnaRepository } from '../dna.repository.js';
-import { RuleExtractorService } from './rule-extractor.service.js';
-import { PatternLearnerService } from './pattern-learner.service.js';
-import { DEFAULT_AUTO_LEARN_THRESHOLD } from '../dna.constants.js';
-import { emitDnaLearningStarted, emitDnaLearningCompleted, emitDnaLearningFailed } from '../dna.events.js';
-
-export class LearningPathService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { DnaRepository } = require('../dna.repository.js');
+const { RuleExtractorService } = require('./rule-extractor.service.js');
+const { PatternLearnerService } = require('./pattern-learner.service.js');
+const { DEFAULT_AUTO_LEARN_THRESHOLD } = require('../dna.constants.js');
+const { emitDnaLearningStarted, emitDnaLearningCompleted, emitDnaLearningFailed } = require('../dna.events.js');
+class LearningPathService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new DnaRepository();
     this.ruleExtractor = dependencies.ruleExtractor || new RuleExtractorService();
@@ -82,5 +80,5 @@ export class LearningPathService {
     }
   }
 }
-
-export default LearningPathService;
+module.exports = LearningPathService;
+module.exports.LearningPathService = LearningPathService;

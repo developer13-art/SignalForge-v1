@@ -3,13 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/metrics/sharpe-ratio
  */
-
-import {
-  RISK_FREE_RATE_ANNUAL,
-  TRADING_DAYS_PER_YEAR,
-} from '../analytics.constants.js';
-
-export class SharpeRatioService {
+const { RISK_FREE_RATE_ANNUAL, TRADING_DAYS_PER_YEAR } = require('../analytics.constants.js');
+class SharpeRatioService {
   calculate(trades, options = {}) {
     if (!Array.isArray(trades) || trades.length < 2) {
       return { sharpeRatio: null, samples: trades?.length || 0 };
@@ -57,5 +52,5 @@ export class SharpeRatioService {
     return Array.from(buckets.values());
   }
 }
-
-export default SharpeRatioService;
+module.exports = SharpeRatioService;
+module.exports.SharpeRatioService = SharpeRatioService;

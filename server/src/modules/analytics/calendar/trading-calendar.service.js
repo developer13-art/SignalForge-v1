@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/calendar/trading-calendar
  */
-
-import { CalendarRepository } from './calendar.repository.js';
-
-export class TradingCalendarService {
+const { CalendarRepository } = require('./calendar.repository.js');
+class TradingCalendarService {
   constructor(repository = null) {
     this.repository = repository || new CalendarRepository();
   }
@@ -80,5 +78,5 @@ export class TradingCalendarService {
     };
   }
 }
-
-export default TradingCalendarService;
+module.exports = TradingCalendarService;
+module.exports.TradingCalendarService = TradingCalendarService;

@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/signal-sources/whatsapp/service
  */
-
-import { WhatsAppRepository } from './whatsapp.repository.js';
-import whatsAppConfig from '../../../config/whatsapp.config.js';
-import { SourceNotConfiguredError } from '../source.errors.js';
-
-export class WhatsAppService {
+const { WhatsAppRepository } = require('./whatsapp.repository.js');
+const whatsAppConfig = require('../../../config/whatsapp.config.js');
+const { SourceNotConfiguredError } = require('../source.errors.js');
+class WhatsAppService {
   constructor(repository = null) {
     this.repository = repository || new WhatsAppRepository();
   }
@@ -69,5 +67,5 @@ export class WhatsAppService {
     return { handled: true, entries: (payload.entry || []).length };
   }
 }
-
-export default WhatsAppService;
+module.exports = WhatsAppService;
+module.exports.WhatsAppService = WhatsAppService;

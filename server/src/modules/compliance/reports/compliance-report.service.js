@@ -6,11 +6,10 @@
  *
  * @module server/modules/compliance/reports/compliance-report.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { REPORT_EXPORT_FORMATS } from '../../admin/admin.constants';
-import * as repository from './compliance-report.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { REPORT_EXPORT_FORMATS } = require('../../admin/admin.constants');
+const repository = require('./compliance-report.repository');
 
 const VALID_GRANULARITIES = Object.freeze(['day', 'week', 'month']);
 
@@ -32,8 +31,7 @@ function normalizeGranularity(granularity) {
   }
   return g;
 }
-
-export async function generateComplianceReport({ from, to, granularity }) {
+async function generateComplianceReport({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
 
@@ -55,8 +53,7 @@ export async function generateComplianceReport({ from, to, granularity }) {
     documentUsage,
   };
 }
-
-export async function generateKycStatusReport({ from, to, granularity }) {
+async function generateKycStatusReport({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
 
@@ -64,32 +61,28 @@ export async function generateKycStatusReport({ from, to, granularity }) {
 
   return { range, granularity: g, series };
 }
-
-export async function generateApprovalRateReport({ from, to }) {
+async function generateApprovalRateReport({ from, to }) {
   const range = normalizeRange({ from, to });
 
   const summary = await repository.approvalRateSummary(range);
 
   return { range, summary };
 }
-
-export async function generateRiskFlagReport({ from, to }) {
+async function generateRiskFlagReport({ from, to }) {
   const range = normalizeRange({ from, to });
 
   const flags = await repository.riskFlagSummary(range);
 
   return { range, flags };
 }
-
-export async function generateReviewerPerformanceReport({ from, to }) {
+async function generateReviewerPerformanceReport({ from, to }) {
   const range = normalizeRange({ from, to });
 
   const reviewers = await repository.reviewerPerformanceSummary(range);
 
   return { range, reviewers };
 }
-
-export async function generateDocumentUsageReport({ from, to }) {
+async function generateDocumentUsageReport({ from, to }) {
   const range = normalizeRange({ from, to });
 
   const usage = await repository.documentTypeUsageSummary(range);
@@ -115,8 +108,7 @@ function toCsv(rows, columns) {
     .join('\n');
   return `${header}\n${body}`;
 }
-
-export async function exportReport({ type, from, to, granularity, format = 'JSON' }) {
+async function exportReport({ type, from, to, granularity, format = 'JSON' }) {
   if (!REPORT_EXPORT_FORMATS[format]) {
     throw new AppError(`Unsupported export format: ${format}`, ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -196,8 +188,7 @@ export async function exportReport({ type, from, to, granularity, format = 'JSON
 
   throw new AppError(`Unsupported export format: ${format}`, ERROR_CODES.VALIDATION_FAILED, 400);
 }
-
-export const complianceReportService = {
+const complianceReportService = {
   generateComplianceReport,
   generateKycStatusReport,
   generateApprovalRateReport,
@@ -206,3 +197,18 @@ export const complianceReportService = {
   generateDocumentUsageReport,
   exportReport,
 };
+module.exports.complianceReportService = complianceReportService;
+
+module.exports.generateComplianceReport = generateComplianceReport;
+
+module.exports.generateKycStatusReport = generateKycStatusReport;
+
+module.exports.generateApprovalRateReport = generateApprovalRateReport;
+
+module.exports.generateRiskFlagReport = generateRiskFlagReport;
+
+module.exports.generateReviewerPerformanceReport = generateReviewerPerformanceReport;
+
+module.exports.generateDocumentUsageReport = generateDocumentUsageReport;
+
+module.exports.exportReport = exportReport;

@@ -7,19 +7,17 @@
  *
  * @module server/realtime/websocket.server
  */
-
-import { Server as SocketIOServer } from 'socket.io';
-import { logger } from '../lib/logger';
-import { authenticateWebSocket } from './websocket-auth';
-import { joinRoom } from './websocket-rooms';
-import { channelRegistry } from './websocket-channels';
-import { attachBroadcaster } from './websocket-broadcaster';
-import { websocketMetrics } from './websocket-metrics';
-import { registerRealtimeListeners } from './register-listeners';
+const { Server: SocketIOServer } = require('socket.io');
+const { logger } = require('../lib/logger');
+const { authenticateWebSocket } = require('./websocket-auth');
+const { joinRoom } = require('./websocket-rooms');
+const { channelRegistry } = require('./websocket-channels');
+const { attachBroadcaster } = require('./websocket-broadcaster');
+const { websocketMetrics } = require('./websocket-metrics');
+const { registerRealtimeListeners } = require('./register-listeners');
 
 let io = null;
-
-export async function initializeWebSocketServer({ httpServer, corsOrigins = '*' }) {
+async function initializeWebSocketServer({ httpServer, corsOrigins = '*' }) {
   if (io) {
     return { initialized: false, alreadyRunning: true };
   }
@@ -125,8 +123,7 @@ export async function initializeWebSocketServer({ httpServer, corsOrigins = '*' 
 
   return { initialized: true, io };
 }
-
-export async function stopWebSocketServer() {
+async function stopWebSocketServer() {
   if (!io) {
     return { stopped: false };
   }
@@ -142,8 +139,7 @@ export async function stopWebSocketServer() {
 
   return { stopped: true };
 }
-
-export function getWebSocketServerStatus() {
+function getWebSocketServerStatus() {
   if (!io) {
     return { running: false };
   }
@@ -154,9 +150,14 @@ export function getWebSocketServerStatus() {
     rooms: io.sockets.adapter.rooms ? io.sockets.adapter.rooms.size : 0,
   };
 }
-
-export const websocketServer = {
+const websocketServer = {
   initializeWebSocketServer,
   stopWebSocketServer,
   getWebSocketServerStatus,
 };
+module.exports.websocketServer = websocketServer;
+module.exports.getWebSocketServerStatus = getWebSocketServerStatus;
+
+module.exports.initializeWebSocketServer = initializeWebSocketServer;
+
+module.exports.stopWebSocketServer = stopWebSocketServer;

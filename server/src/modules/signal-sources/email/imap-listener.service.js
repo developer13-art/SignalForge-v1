@@ -7,19 +7,15 @@
  *
  * @module server/modules/signal-sources/email/imap-listener.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { config } from '../../../config';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { encryptPacked, decryptPacked } from '@signalforge/shared/utils/crypto.util';
-import { handleEmailMessage } from './email-parser.service';
-import {
-  emitEmailSessionConnected,
-  emitEmailSessionRevoked,
-} from './email.events';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { config } = require('../../../config');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { encryptPacked, decryptPacked } = require('@signalforge/shared/utils/crypto.util');
+const { handleEmailMessage } = require('./email-parser.service');
+const { emitEmailSessionConnected, emitEmailSessionRevoked } = require('./email.events');
 
 const ACTIVE_LISTENERS = new Map();
 
@@ -30,8 +26,7 @@ function getEncryptionKey() {
   }
   return key;
 }
-
-export async function subscribeMailbox({ userId, host, port, user, password, secure, mailbox }) {
+async function subscribeMailbox({ userId, host, port, user, password, secure, mailbox }) {
   if (!userId || !host || !port || !user || !password || !mailbox) {
     throw new AppError(
       'userId, host, port, user, password, and mailbox are required',
@@ -67,8 +62,7 @@ export async function subscribeMailbox({ userId, host, port, user, password, sec
 
   return { connectionId, mailbox };
 }
-
-export async function getMailboxConfig({ userId }) {
+async function getMailboxConfig({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -105,8 +99,7 @@ export async function getMailboxConfig({ userId }) {
     mailbox: row.mailbox,
   };
 }
-
-export async function unsubscribeMailbox({ userId, reason }) {
+async function unsubscribeMailbox({ userId, reason }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -118,8 +111,7 @@ export async function unsubscribeMailbox({ userId, reason }) {
 
   return { revoked: true };
 }
-
-export async function start({ userId }) {
+async function start({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -189,8 +181,7 @@ export async function start({ userId }) {
     throw new AppError('Failed to start IMAP listener', ERROR_CODES.EMAIL_LISTENER_START_FAILED, 502);
   }
 }
-
-export async function stop({ userId }) {
+async function stop({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -213,8 +204,7 @@ export async function stop({ userId }) {
 
   return { listening: false };
 }
-
-export async function stopAll() {
+async function stopAll() {
   const userIds = Array.from(ACTIVE_LISTENERS.keys());
   const results = [];
   for (const userId of userIds) {
@@ -227,20 +217,17 @@ export async function stopAll() {
   }
   return results;
 }
-
-export function isRunning({ userId }) {
+function isRunning({ userId }) {
   return ACTIVE_LISTENERS.has(userId);
 }
-
-export function listRunning() {
+function listRunning() {
   return Array.from(ACTIVE_LISTENERS.entries()).map(([userId, entry]) => ({
     userId,
     mailbox: entry.mailbox,
     startedAt: entry.startedAt,
   }));
 }
-
-export const imapListenerService = {
+const imapListenerService = {
   subscribeMailbox,
   getMailboxConfig,
   unsubscribeMailbox,
@@ -250,3 +237,18 @@ export const imapListenerService = {
   isRunning,
   listRunning,
 };
+module.exports.imapListenerService = imapListenerService;
+module.exports.isRunning = isRunning;
+module.exports.listRunning = listRunning;
+
+module.exports.subscribeMailbox = subscribeMailbox;
+
+module.exports.getMailboxConfig = getMailboxConfig;
+
+module.exports.unsubscribeMailbox = unsubscribeMailbox;
+
+module.exports.start = start;
+
+module.exports.stop = stop;
+
+module.exports.stopAll = stopAll;

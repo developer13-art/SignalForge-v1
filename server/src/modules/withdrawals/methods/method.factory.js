@@ -3,11 +3,10 @@
  *
  * @module signalforge/server/modules/withdrawals/methods/factory
  */
-
-import { BankTransferMethod } from './bank-transfer.method.js';
-import { CryptoMethod } from './crypto.method.js';
-import { WITHDRAWAL_METHOD_TYPES } from '../withdrawal.constants.js';
-import { WithdrawalMethodNotSupportedError } from '../withdrawal.errors.js';
+const { BankTransferMethod } = require('./bank-transfer.method.js');
+const { CryptoMethod } = require('./crypto.method.js');
+const { WITHDRAWAL_METHOD_TYPES } = require('../withdrawal.constants.js');
+const { WithdrawalMethodNotSupportedError } = require('../withdrawal.errors.js');
 
 const registry = new Map([
   [WITHDRAWAL_METHOD_TYPES.BANK_TRANSFER, () => new BankTransferMethod()],
@@ -15,8 +14,7 @@ const registry = new Map([
   [WITHDRAWAL_METHOD_TYPES.PAYSTACK, () => new BankTransferMethod()],
   [WITHDRAWAL_METHOD_TYPES.STRIPE, () => new BankTransferMethod()],
 ]);
-
-export class WithdrawalMethodFactory {
+class WithdrawalMethodFactory {
   static register(methodType, factory) {
     if (typeof factory !== 'function') {
       throw new Error('Withdrawal method factory must be a function');
@@ -40,5 +38,5 @@ export class WithdrawalMethodFactory {
     return registry.has(methodType);
   }
 }
-
-export default WithdrawalMethodFactory;
+module.exports = WithdrawalMethodFactory;
+module.exports.WithdrawalMethodFactory = WithdrawalMethodFactory;

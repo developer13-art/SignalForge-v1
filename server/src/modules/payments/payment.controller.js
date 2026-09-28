@@ -3,18 +3,13 @@
  *
  * @module signalforge/server/modules/payments/controller
  */
-
-import { PaymentService } from './payment.service.js';
-import { StripeWebhookHandler } from './webhooks/stripe.webhook.js';
-import { PaystackWebhookHandler } from './webhooks/paystack.webhook.js';
-import { FlutterwaveWebhookHandler } from './webhooks/flutterwave.webhook.js';
-import {
-  validateCreatePaymentPayload,
-  validateRefundPayload,
-} from './payment.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class PaymentController {
+const { PaymentService } = require('./payment.service.js');
+const { StripeWebhookHandler } = require('./webhooks/stripe.webhook.js');
+const { PaystackWebhookHandler } = require('./webhooks/paystack.webhook.js');
+const { FlutterwaveWebhookHandler } = require('./webhooks/flutterwave.webhook.js');
+const { validateCreatePaymentPayload, validateRefundPayload } = require('./payment.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class PaymentController {
   constructor(service = null) {
     this.service = service || new PaymentService();
     this.stripeWebhook = new StripeWebhookHandler();
@@ -212,5 +207,5 @@ export class PaymentController {
     }
   };
 }
-
-export default PaymentController;
+module.exports = PaymentController;
+module.exports.PaymentController = PaymentController;

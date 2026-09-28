@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/subscriptions/lifecycle/trial
  */
-
-import { SUBSCRIPTION_STATUSES, SUBSCRIPTION_TRIAL_DAYS } from '../subscription.constants.js';
-import { emitTrialStarted, emitTrialEnding } from '../subscription.events.js';
-
-export class TrialService {
+const { SUBSCRIPTION_STATUSES, SUBSCRIPTION_TRIAL_DAYS } = require('../subscription.constants.js');
+const { emitTrialStarted, emitTrialEnding } = require('../subscription.events.js');
+class TrialService {
   constructor(repository = null) {
     this.repository = repository;
   }
@@ -54,5 +52,5 @@ export class TrialService {
     return { notified: subscriptions.length };
   }
 }
-
-export default TrialService;
+module.exports = TrialService;
+module.exports.TrialService = TrialService;

@@ -3,14 +3,11 @@
  *
  * @module signalforge/server/modules/referrals/codes/generator
  */
-
-import crypto from 'node:crypto';
-
-import { DEFAULT_REFERRAL_CODE_LENGTH } from '../referral.constants.js';
+const crypto = require('node:crypto');
+const { DEFAULT_REFERRAL_CODE_LENGTH } = require('../referral.constants.js');
 
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-
-export class CodeGeneratorService {
+class CodeGeneratorService {
   constructor(length = DEFAULT_REFERRAL_CODE_LENGTH) {
     this.length = length;
   }
@@ -47,5 +44,5 @@ export class CodeGeneratorService {
     return /^[A-Z0-9_-]{4,32}$/.test(code);
   }
 }
-
-export default CodeGeneratorService;
+module.exports = CodeGeneratorService;
+module.exports.CodeGeneratorService = CodeGeneratorService;

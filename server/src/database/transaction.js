@@ -8,11 +8,9 @@
  *
  * @module server/database/transaction
  */
-
-import { getPool } from './connection';
-import { logger } from '../lib/logger';
-
-export async function withTransaction(fn, options = {}) {
+const { getPool } = require('./connection');
+const { logger } = require('../lib/logger');
+async function withTransaction(fn, options = {}) {
   const pool = getPool();
   const client = await pool.connect();
 
@@ -34,8 +32,7 @@ export async function withTransaction(fn, options = {}) {
     client.release();
   }
 }
-
-export async function withClient(fn) {
+async function withClient(fn) {
   const pool = getPool();
   const client = await pool.connect();
 
@@ -45,8 +42,7 @@ export async function withClient(fn) {
     client.release();
   }
 }
-
-export async function withSavepoint(client, name, fn) {
+async function withSavepoint(client, name, fn) {
   if (!client || !name) {
     throw new Error('client and savepoint name are required');
   }
@@ -64,8 +60,7 @@ export async function withSavepoint(client, name, fn) {
     throw err;
   }
 }
-
-export function createTransactionScope() {
+function createTransactionScope() {
   let client = null;
   let active = false;
 
@@ -108,10 +103,17 @@ export function createTransactionScope() {
     },
   };
 }
-
-export const transaction = {
+const transaction = {
   withTransaction,
   withClient,
   withSavepoint,
   createTransactionScope,
 };
+module.exports.transaction = transaction;
+module.exports.createTransactionScope = createTransactionScope;
+
+module.exports.withTransaction = withTransaction;
+
+module.exports.withClient = withClient;
+
+module.exports.withSavepoint = withSavepoint;

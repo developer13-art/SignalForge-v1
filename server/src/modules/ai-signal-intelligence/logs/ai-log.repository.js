@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/logs/repository
  */
-
-import { AiRepository } from '../ai.repository.js';
-
-export class AiLogRepository {
+const { AiRepository } = require('../ai.repository.js');
+class AiLogRepository {
   constructor(db = null) {
     this.aiRepository = new AiRepository(db);
   }
@@ -23,5 +21,5 @@ export class AiLogRepository {
     return this.aiRepository.sumAiCost(filters);
   }
 }
-
-export default AiLogRepository;
+module.exports = AiLogRepository;
+module.exports.AiLogRepository = AiLogRepository;

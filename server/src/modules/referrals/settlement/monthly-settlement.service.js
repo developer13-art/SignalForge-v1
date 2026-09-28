@@ -3,33 +3,19 @@
  *
  * @module signalforge/server/modules/referrals/settlement/monthly
  */
-
-import { ReferralSettlementRepository } from './repository.js';
-import { SettlementFreezeService } from './freeze.js';
-import { ReferralRewardService } from '../rewards/service.js';
-import { ReferralRelationshipService } from '../relationships/service.js';
-import { ReferralWalletService } from '../wallets/service.js';
-import { ReferralLedgerEntryService } from '../ledger/entry-service.js';
-import { FraudDetectionService } from '../fraud/detection.js';
-import { PerformanceService } from '../../performance/performance.service.js';
-import {
-  REFERRAL_SETTLEMENT_STATUSES,
-  REFERRAL_REWARD_STATUSES,
-  DEFAULT_REFERRAL_REWARD_RATE,
-} from '../referral.constants.js';
-import {
-  SettlementAlreadyRunningError,
-  ReferralRewardCalculationError,
-} from '../referral.errors.js';
-import {
-  emitSettlementStarted,
-  emitSettlementCompleted,
-  emitSettlementFailed,
-  emitRewardSettled,
-} from '../referral.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class MonthlySettlementService {
+const { ReferralSettlementRepository } = require('./repository.js');
+const { SettlementFreezeService } = require('./freeze.js');
+const { ReferralRewardService } = require('../rewards/service.js');
+const { ReferralRelationshipService } = require('../relationships/service.js');
+const { ReferralWalletService } = require('../wallets/service.js');
+const { ReferralLedgerEntryService } = require('../ledger/entry-service.js');
+const { FraudDetectionService } = require('../fraud/detection.js');
+const { PerformanceService } = require('../../performance/performance.service.js');
+const { REFERRAL_SETTLEMENT_STATUSES, REFERRAL_REWARD_STATUSES, DEFAULT_REFERRAL_REWARD_RATE } = require('../referral.constants.js');
+const { SettlementAlreadyRunningError, ReferralRewardCalculationError } = require('../referral.errors.js');
+const { emitSettlementStarted, emitSettlementCompleted, emitSettlementFailed, emitRewardSettled } = require('../referral.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class MonthlySettlementService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ReferralSettlementRepository();
     this.freeze = dependencies.freeze || new SettlementFreezeService();
@@ -312,6 +298,5 @@ export class MonthlySettlementService {
   }
 }
 
-export { ReferralRewardCalculationError };
-
-export default MonthlySettlementService;
+module.exports = MonthlySettlementService;
+module.exports.MonthlySettlementService = MonthlySettlementService;

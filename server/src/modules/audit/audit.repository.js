@@ -7,10 +7,8 @@
  *
  * @module server/modules/audit/audit.repository
  */
-
-import { db } from '../../database';
-
-export async function insertEntry({
+const { db } = require('../../database');
+async function insertEntry({
   actorId,
   actorType,
   action,
@@ -47,8 +45,7 @@ export async function insertEntry({
   );
   return rows[0];
 }
-
-export async function insertBatch(entries) {
+async function insertBatch(entries) {
   if (!Array.isArray(entries) || entries.length === 0) {
     return [];
   }
@@ -94,16 +91,14 @@ export async function insertBatch(entries) {
     client.release();
   }
 }
-
-export async function findById({ auditId }) {
+async function findById({ auditId }) {
   const { rows } = await db.query(
     `SELECT * FROM audit_logs WHERE id = $1 LIMIT 1`,
     [auditId],
   );
   return rows[0] || null;
 }
-
-export async function list({ filters = {}, pagination = {} }) {
+async function list({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -177,8 +172,7 @@ export async function list({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function listByResource({ resourceType, resourceId, limit = 200 }) {
+async function listByResource({ resourceType, resourceId, limit = 200 }) {
   const { rows } = await db.query(
     `SELECT id, actor_id, actor_type, action, severity, details, created_at
        FROM audit_logs
@@ -189,8 +183,7 @@ export async function listByResource({ resourceType, resourceId, limit = 200 }) 
   );
   return rows;
 }
-
-export async function listByCorrelation({ correlationId, limit = 500 }) {
+async function listByCorrelation({ correlationId, limit = 500 }) {
   const { rows } = await db.query(
     `SELECT id, actor_id, actor_type, action, resource_type, resource_id, severity,
             details, created_at
@@ -202,8 +195,7 @@ export async function listByCorrelation({ correlationId, limit = 500 }) {
   );
   return rows;
 }
-
-export async function countByAction({ filters = {} }) {
+async function countByAction({ filters = {} }) {
   const conditions = [];
   const params = [];
 
@@ -229,8 +221,7 @@ export async function countByAction({ filters = {} }) {
   );
   return rows;
 }
-
-export async function countBySeverity({ filters = {} }) {
+async function countBySeverity({ filters = {} }) {
   const conditions = [];
   const params = [];
 
@@ -255,16 +246,14 @@ export async function countBySeverity({ filters = {} }) {
   );
   return rows;
 }
-
-export async function deleteOlderThan({ cutoff }) {
+async function deleteOlderThan({ cutoff }) {
   const { rowCount } = await db.query(
     `DELETE FROM audit_logs WHERE created_at < $1`,
     [cutoff],
   );
   return rowCount;
 }
-
-export const auditRepository = {
+const auditRepository = {
   insertEntry,
   insertBatch,
   findById,
@@ -275,3 +264,22 @@ export const auditRepository = {
   countBySeverity,
   deleteOlderThan,
 };
+module.exports.auditRepository = auditRepository;
+
+module.exports.insertEntry = insertEntry;
+
+module.exports.insertBatch = insertBatch;
+
+module.exports.findById = findById;
+
+module.exports.list = list;
+
+module.exports.listByResource = listByResource;
+
+module.exports.listByCorrelation = listByCorrelation;
+
+module.exports.countByAction = countByAction;
+
+module.exports.countBySeverity = countBySeverity;
+
+module.exports.deleteOlderThan = deleteOlderThan;

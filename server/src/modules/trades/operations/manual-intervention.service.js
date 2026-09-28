@@ -3,21 +3,16 @@
  *
  * @module signalforge/server/modules/trades/operations/manual-intervention
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { TradeRepository } from '../trade.repository.js';
-import { TradeTimelineService } from '../timeline/trade-timeline.service.js';
-import { ManualCloseService } from './manual-close.service.js';
-import { ManualModifyService } from './manual-modify.service.js';
-import { emitManualIntervention } from '../trade.events.js';
-import { TradeNotFoundError } from '../trade.errors.js';
-import { TRADE_ACTORS } from '../trade.constants.js';
-import {
-  emitTradeClosed,
-  emitTradeUpdated,
-} from '../trade.events.js';
-
-export class ManualInterventionService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { TradeRepository } = require('../trade.repository.js');
+const { TradeTimelineService } = require('../timeline/trade-timeline.service.js');
+const { ManualCloseService } = require('./manual-close.service.js');
+const { ManualModifyService } = require('./manual-modify.service.js');
+const { emitManualIntervention } = require('../trade.events.js');
+const { TradeNotFoundError } = require('../trade.errors.js');
+const { TRADE_ACTORS } = require('../trade.constants.js');
+const { emitTradeClosed, emitTradeUpdated } = require('../trade.events.js');
+class ManualInterventionService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TradeRepository();
     this.timeline = dependencies.timeline || new TradeTimelineService();
@@ -92,6 +87,5 @@ export class ManualInterventionService {
   }
 }
 
-export { emitTradeClosed, emitTradeUpdated };
-
-export default ManualInterventionService;
+module.exports = ManualInterventionService;
+module.exports.ManualInterventionService = ManualInterventionService;

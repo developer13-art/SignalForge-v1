@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/automation/engine/action-executor
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { AUTOMATION_ACTION_TYPES } from '../automation.constants.js';
-import { UnsupportedActionError } from '../automation.errors.js';
-
-export class ActionExecutorService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { AUTOMATION_ACTION_TYPES } = require('../automation.constants.js');
+const { UnsupportedActionError } = require('../automation.errors.js');
+class ActionExecutorService {
   constructor(dependencies = {}) {
     this.logger = getLogger('automation-action');
     this.tradeModifier = dependencies.tradeModifier || null;
@@ -192,5 +190,5 @@ export class ActionExecutorService {
     };
   }
 }
-
-export default ActionExecutorService;
+module.exports = ActionExecutorService;
+module.exports.ActionExecutorService = ActionExecutorService;

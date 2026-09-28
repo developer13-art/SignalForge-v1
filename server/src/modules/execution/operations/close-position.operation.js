@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/execution/operations/close-position
  */
-
-import { GatewayFactory } from '../gateway/gateway.factory.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-
-export class ClosePositionOperation {
+const { GatewayFactory } = require('../gateway/gateway.factory.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+class ClosePositionOperation {
   constructor(gatewayFactory = null) {
     this.gatewayFactory = gatewayFactory || GatewayFactory;
   }
@@ -22,5 +20,5 @@ export class ClosePositionOperation {
     };
   }
 }
-
-export default ClosePositionOperation;
+module.exports = ClosePositionOperation;
+module.exports.ClosePositionOperation = ClosePositionOperation;

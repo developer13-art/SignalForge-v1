@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/payments/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class PaymentRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class PaymentRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -685,5 +683,5 @@ export class PaymentRepository {
     return Number(result.rows[0]?.total || 0);
   }
 }
-
-export default PaymentRepository;
+module.exports = PaymentRepository;
+module.exports.PaymentRepository = PaymentRepository;

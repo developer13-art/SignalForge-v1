@@ -8,17 +8,15 @@
  *
  * @module server/modules/signal-sources/telegram/listener/telegram-delete-handler.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { buildSourceMessageKey } from '@signalforge/shared/utils/idempotency.util';
-import { publishEvent } from '../../../../events/event-publisher';
-import { messageRawStoreService } from '../messages/message-raw-store.service';
-
-export async function handleMessageDeleted({ userId, message, onDelete }) {
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
+const { publishEvent } = require('../../../../events/event-publisher');
+const { messageRawStoreService } = require('../messages/message-raw-store.service');
+async function handleMessageDeleted({ userId, message, onDelete }) {
   if (!userId || !message) {
     throw new AppError('userId and message are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -92,7 +90,9 @@ export async function handleMessageDeleted({ userId, message, onDelete }) {
 
   return { handled: true, storedMessageId: stored ? stored.id : null, messageId: envelope.externalMessageId };
 }
-
-export const telegramDeleteHandlerService = {
+const telegramDeleteHandlerService = {
   handleMessageDeleted,
 };
+module.exports.telegramDeleteHandlerService = telegramDeleteHandlerService;
+
+module.exports.handleMessageDeleted = handleMessageDeleted;

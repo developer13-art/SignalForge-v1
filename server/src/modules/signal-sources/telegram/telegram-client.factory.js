@@ -7,14 +7,12 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/client-factory
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import telegramConfig from '../../../config/telegram.config.js';
-import { SourceNotConfiguredError } from '../source.errors.js';
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const telegramConfig = require('../../../config/telegram.config.js');
+const { SourceNotConfiguredError } = require('../source.errors.js');
 
 let clientConstructor = null;
-
-export class TelegramClientFactory {
+class TelegramClientFactory {
   static register(factory) {
     if (typeof factory !== 'function') {
       throw new Error('Telegram client factory must be a function');
@@ -47,5 +45,5 @@ export class TelegramClientFactory {
     return Boolean(clientConstructor) && Boolean(telegramConfig.apiId) && Boolean(telegramConfig.apiHash);
   }
 }
-
-export default TelegramClientFactory;
+module.exports = TelegramClientFactory;
+module.exports.TelegramClientFactory = TelegramClientFactory;

@@ -8,19 +8,14 @@
  *
  * @module server/modules/signal-sources/telegram/reconnect/telegram-reconnect.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { sleep } from '@signalforge/shared/utils/retry.util';
-import { calculateBackoff } from '@signalforge/shared/utils/backoff.util';
-import { telegramSessionService } from '../session/telegram-session.service';
-import { telegramChannelService } from '../channels/telegram-channel.service';
-import {
-  emitTelegramReconnectAttempt,
-  emitTelegramReconnectSucceeded,
-  emitTelegramReconnectFailed,
-} from '../telegram.events';
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { sleep } = require('@signalforge/shared/utils/retry.util');
+const { calculateBackoff } = require('@signalforge/shared/utils/backoff.util');
+const { telegramSessionService } = require('../session/telegram-session.service');
+const { telegramChannelService } = require('../channels/telegram-channel.service');
+const { emitTelegramReconnectAttempt, emitTelegramReconnectSucceeded, emitTelegramReconnectFailed } = require('../telegram.events');
 
 const RECONNECT_STATE = new Map();
 
@@ -41,13 +36,11 @@ function setState(userId, patch) {
   RECONNECT_STATE.set(userId, next);
   return next;
 }
-
-export function isReconnecting({ userId }) {
+function isReconnecting({ userId }) {
   const state = getState(userId);
   return Boolean(state && state.reconnecting);
 }
-
-export async function schedule({ userId, reason, attempt = 1, options = {} }) {
+async function schedule({ userId, reason, attempt = 1, options = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -146,26 +139,22 @@ async function run({ userId, attempt, options }) {
     });
   }
 }
-
-export async function cancel({ userId }) {
+async function cancel({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
   RECONNECT_STATE.delete(userId);
   return { cancelled: true };
 }
-
-export function getReconnectState({ userId }) {
+function getReconnectState({ userId }) {
   return getState(userId);
 }
-
-export function listReconnecting() {
+function listReconnecting() {
   return Array.from(RECONNECT_STATE.entries())
     .filter(([, state]) => state.reconnecting)
     .map(([userId, state]) => ({ userId, attempt: state.attempt, reason: state.reason }));
 }
-
-export const telegramReconnectService = {
+const telegramReconnectService = {
   schedule,
   cancel,
   isReconnecting,
@@ -173,3 +162,11 @@ export const telegramReconnectService = {
   listReconnecting,
   DEFAULTS,
 };
+module.exports.telegramReconnectService = telegramReconnectService;
+module.exports.isReconnecting = isReconnecting;
+module.exports.getReconnectState = getReconnectState;
+module.exports.listReconnecting = listReconnecting;
+
+module.exports.schedule = schedule;
+
+module.exports.cancel = cancel;

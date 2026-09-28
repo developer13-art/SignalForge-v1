@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/referrals/wallets/repository
  */
-
-import { ReferralRepository } from '../referral.repository.js';
-
-export class ReferralWalletRepository {
+const { ReferralRepository } = require('../referral.repository.js');
+class ReferralWalletRepository {
   constructor(db = null) {
     this.referralRepository = new ReferralRepository(db);
   }
@@ -31,5 +29,5 @@ export class ReferralWalletRepository {
     return this.referralRepository.computeWalletBalance(walletId);
   }
 }
-
-export default ReferralWalletRepository;
+module.exports = ReferralWalletRepository;
+module.exports.ReferralWalletRepository = ReferralWalletRepository;

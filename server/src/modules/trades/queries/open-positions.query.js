@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trades/queries/open-positions
  */
-
-import { TradeRepository } from '../trade.repository.js';
-
-export class OpenPositionsQuery {
+const { TradeRepository } = require('../trade.repository.js');
+class OpenPositionsQuery {
   constructor(repository = null) {
     this.repository = repository || new TradeRepository();
   }
@@ -43,5 +41,5 @@ export class OpenPositionsQuery {
     };
   }
 }
-
-export default OpenPositionsQuery;
+module.exports = OpenPositionsQuery;
+module.exports.OpenPositionsQuery = OpenPositionsQuery;

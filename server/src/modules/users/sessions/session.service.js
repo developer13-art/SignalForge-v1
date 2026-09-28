@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/users/sessions/service
  */
-
-import { SessionRepository } from './session.repository.js';
-import { emitSessionRevoked } from '../user.events.js';
-import { NotFoundError } from '../../../lib/errors/not-found-error.js';
-
-export class SessionService {
+const { SessionRepository } = require('./session.repository.js');
+const { emitSessionRevoked } = require('../user.events.js');
+const { NotFoundError } = require('../../../lib/errors/not-found-error.js');
+class SessionService {
   constructor(repository = null) {
     this.repository = repository || new SessionRepository();
   }
@@ -51,5 +49,5 @@ export class SessionService {
     };
   }
 }
-
-export default SessionService;
+module.exports = SessionService;
+module.exports.SessionService = SessionService;

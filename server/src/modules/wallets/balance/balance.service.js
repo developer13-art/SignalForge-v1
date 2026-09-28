@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/wallets/balance/service
  */
-
-import { BalanceRepository } from './repository.js';
-import { BalanceCalculatorService } from './calculator.js';
-import { WalletNotFoundError } from '../wallet.errors.js';
-
-export class BalanceService {
+const { BalanceRepository } = require('./repository.js');
+const { BalanceCalculatorService } = require('./calculator.js');
+const { WalletNotFoundError } = require('../wallet.errors.js');
+class BalanceService {
   constructor(repository = null, calculator = null) {
     this.repository = repository || new BalanceRepository();
     this.calculator = calculator || new BalanceCalculatorService();
@@ -76,5 +74,5 @@ export class BalanceService {
     };
   }
 }
-
-export default BalanceService;
+module.exports = BalanceService;
+module.exports.BalanceService = BalanceService;

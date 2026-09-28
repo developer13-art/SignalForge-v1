@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/validation/duplicate/fingerprint-matcher
  */
-
-import { FingerprintService } from '../../signal-standardization/fingerprint.service.js';
+const { FingerprintService } = require('../../signal-standardization/fingerprint.service.js');
 
 const SIMILARITY_THRESHOLD = 0.98;
-
-export class FingerprintMatcherService {
+class FingerprintMatcherService {
   constructor(fingerprintService = null) {
     this.fingerprints = fingerprintService || new FingerprintService();
   }
@@ -37,5 +35,5 @@ export class FingerprintMatcherService {
     return matching / Math.max(a.length, b.length);
   }
 }
-
-export default FingerprintMatcherService;
+module.exports = FingerprintMatcherService;
+module.exports.FingerprintMatcherService = FingerprintMatcherService;

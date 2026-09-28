@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/parser/controller
  */
-
-import { ParserService } from './parser.service.js';
-
-export class ParserController {
+const { ParserService } = require('./parser.service.js');
+class ParserController {
   constructor(service = null) {
     this.service = service || new ParserService();
   }
@@ -69,5 +67,5 @@ export class ParserController {
     }
   };
 }
-
-export default ParserController;
+module.exports = ParserController;
+module.exports.ParserController = ParserController;

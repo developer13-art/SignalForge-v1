@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/kyc/documents/document-type
  */
-
-import { KycRepository } from '../kyc.repository.js';
-import { KycInvalidDocumentTypeError } from '../kyc.errors.js';
-
-export class DocumentTypeService {
+const { KycRepository } = require('../kyc.repository.js');
+const { KycInvalidDocumentTypeError } = require('../kyc.errors.js');
+class DocumentTypeService {
   constructor(repository = null) {
     this.repository = repository || new KycRepository();
   }
@@ -40,5 +38,5 @@ export class DocumentTypeService {
     return types;
   }
 }
-
-export default DocumentTypeService;
+module.exports = DocumentTypeService;
+module.exports.DocumentTypeService = DocumentTypeService;

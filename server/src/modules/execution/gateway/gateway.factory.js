@@ -3,15 +3,14 @@
  *
  * @module signalforge/server/modules/execution/gateway/factory
  */
-
-import { MetaApiGateway } from './metaapi.gateway.js';
-import { Mt5BridgeGateway } from './mt5-bridge.gateway.js';
-import { CTraderGateway } from './ctrader.gateway.js';
-import { DXTradeGateway } from './dxtrade.gateway.js';
-import { InteractiveBrokersGateway } from './interactive-brokers.gateway.js';
-import { OandaGateway } from './oanda.gateway.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-import { GatewayNotConfiguredError } from '../execution.errors.js';
+const { MetaApiGateway } = require('./metaapi.gateway.js');
+const { Mt5BridgeGateway } = require('./mt5-bridge.gateway.js');
+const { CTraderGateway } = require('./ctrader.gateway.js');
+const { DXTradeGateway } = require('./dxtrade.gateway.js');
+const { InteractiveBrokersGateway } = require('./interactive-brokers.gateway.js');
+const { OandaGateway } = require('./oanda.gateway.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+const { GatewayNotConfiguredError } = require('../execution.errors.js');
 
 const registry = new Map([
   [GATEWAY_TYPES.METAAPI, () => new MetaApiGateway()],
@@ -21,8 +20,7 @@ const registry = new Map([
   [GATEWAY_TYPES.INTERACTIVE_BROKERS, () => new InteractiveBrokersGateway()],
   [GATEWAY_TYPES.OANDA, () => new OandaGateway()],
 ]);
-
-export class GatewayFactory {
+class GatewayFactory {
   static register(gatewayType, factory) {
     if (typeof factory !== 'function') {
       throw new Error('Gateway factory must be a function');
@@ -47,5 +45,5 @@ export class GatewayFactory {
     return gateway;
   }
 }
-
-export default GatewayFactory;
+module.exports = GatewayFactory;
+module.exports.GatewayFactory = GatewayFactory;

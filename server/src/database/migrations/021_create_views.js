@@ -6,8 +6,7 @@
  *
  * @module server/database/migrations/021_create_views
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE OR REPLACE VIEW v_user_trade_summary AS
     SELECT
@@ -81,11 +80,12 @@ export async function up(client) {
     GROUP BY status;
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP VIEW IF EXISTS v_solana_anchor_stats`);
   await client.query(`DROP VIEW IF EXISTS v_kyc_queue_summary`);
   await client.query(`DROP VIEW IF EXISTS v_platform_revenue_monthly`);
   await client.query(`DROP VIEW IF EXISTS v_provider_signal_stats`);
   await client.query(`DROP VIEW IF EXISTS v_user_trade_summary`);
 }
+module.exports.up = up;
+module.exports.down = down;

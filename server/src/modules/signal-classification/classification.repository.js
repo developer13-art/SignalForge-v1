@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-classification/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class ClassificationRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class ClassificationRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -172,5 +170,5 @@ export class ClassificationRepository {
     };
   }
 }
-
-export default ClassificationRepository;
+module.exports = ClassificationRepository;
+module.exports.ClassificationRepository = ClassificationRepository;

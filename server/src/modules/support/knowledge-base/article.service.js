@@ -6,12 +6,11 @@
  *
  * @module server/modules/support/knowledge-base/article.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './article.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./article.repository');
 
 function slugify(title) {
   return String(title)
@@ -24,8 +23,7 @@ function slugify(title) {
     .replace(/-+/g, '-')
     .substring(0, 80);
 }
-
-export async function createArticle({ title, body, category, published, authorId, locale, tags }) {
+async function createArticle({ title, body, category, published, authorId, locale, tags }) {
   if (!title || !body) {
     throw new AppError('title and body are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -64,8 +62,7 @@ export async function createArticle({ title, body, category, published, authorId
     locale: article.locale,
   };
 }
-
-export async function getArticleById({ articleId }) {
+async function getArticleById({ articleId }) {
   if (!articleId) {
     throw new AppError('articleId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -89,8 +86,7 @@ export async function getArticleById({ articleId }) {
     updatedAt: article.updated_at,
   };
 }
-
-export async function getArticleBySlug({ slug, locale = 'en' }) {
+async function getArticleBySlug({ slug, locale = 'en' }) {
   if (!slug) {
     throw new AppError('slug is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -114,8 +110,7 @@ export async function getArticleBySlug({ slug, locale = 'en' }) {
     updatedAt: article.updated_at,
   };
 }
-
-export async function listArticles({ category, locale, pagination = {} }) {
+async function listArticles({ category, locale, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listPublished({
@@ -136,8 +131,7 @@ export async function listArticles({ category, locale, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function searchArticles({ query, locale = 'en' }) {
+async function searchArticles({ query, locale = 'en' }) {
   if (!query) {
     throw new AppError('query is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -151,8 +145,7 @@ export async function searchArticles({ query, locale = 'en' }) {
     category: row.category,
   }));
 }
-
-export async function updateArticle({ articleId, title, body, category, published, tags }) {
+async function updateArticle({ articleId, title, body, category, published, tags }) {
   if (!articleId) {
     throw new AppError('articleId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -179,8 +172,7 @@ export async function updateArticle({ articleId, title, body, category, publishe
     updatedAt: updated.updated_at,
   };
 }
-
-export async function deleteArticle({ articleId }) {
+async function deleteArticle({ articleId }) {
   if (!articleId) {
     throw new AppError('articleId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -193,8 +185,7 @@ export async function deleteArticle({ articleId }) {
 
   return { deleted: true };
 }
-
-export async function listCategories({ locale = 'en' }) {
+async function listCategories({ locale = 'en' }) {
   const rows = await repository.listCategories({ locale });
 
   return rows.map((row) => ({
@@ -202,8 +193,7 @@ export async function listCategories({ locale = 'en' }) {
     count: row.count,
   }));
 }
-
-export const articleService = {
+const articleService = {
   createArticle,
   getArticleById,
   getArticleBySlug,
@@ -213,3 +203,20 @@ export const articleService = {
   deleteArticle,
   listCategories,
 };
+module.exports.articleService = articleService;
+
+module.exports.createArticle = createArticle;
+
+module.exports.getArticleById = getArticleById;
+
+module.exports.getArticleBySlug = getArticleBySlug;
+
+module.exports.listArticles = listArticles;
+
+module.exports.searchArticles = searchArticles;
+
+module.exports.updateArticle = updateArticle;
+
+module.exports.deleteArticle = deleteArticle;
+
+module.exports.listCategories = listCategories;

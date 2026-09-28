@@ -6,11 +6,9 @@
  *
  * @module signalforge/server/modules/provider-dna/learning/pattern-learner
  */
-
-import { DNA_RULE_TYPES, DNA_MATCH_TYPES, DEFAULT_RULE_PRIORITY } from '../dna.constants.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class PatternLearnerService {
+const { DNA_RULE_TYPES, DNA_MATCH_TYPES, DEFAULT_RULE_PRIORITY } = require('../dna.constants.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class PatternLearnerService {
   constructor() {
     this.logger = getLogger('dna-pattern-learner');
   }
@@ -137,5 +135,5 @@ export class PatternLearnerService {
     });
   }
 }
-
-export default PatternLearnerService;
+module.exports = PatternLearnerService;
+module.exports.PatternLearnerService = PatternLearnerService;

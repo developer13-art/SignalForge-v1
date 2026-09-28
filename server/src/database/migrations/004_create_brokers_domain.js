@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/004_create_brokers_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS brokers (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -85,10 +84,11 @@ export async function up(client) {
       ON connection_logs (broker_account_id, created_at DESC);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS connection_logs CASCADE`);
   await client.query(`DROP TABLE IF EXISTS account_snapshots CASCADE`);
   await client.query(`DROP TABLE IF EXISTS broker_accounts CASCADE`);
   await client.query(`DROP TABLE IF EXISTS brokers CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

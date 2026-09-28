@@ -7,16 +7,10 @@
  *
  * @module signalforge/server/modules/provider-dna/learning/reinforcement
  */
-
-import {
-  MIN_RULE_SUCCESS_RATE,
-  MIN_RULE_USAGE_FOR_PROMOTION,
-  MAX_RULE_USAGE_MULTIPLIER,
-} from '../dna.constants.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { emitDnaReinforcementApplied } from '../dna.events.js';
-
-export class ReinforcementService {
+const { MIN_RULE_SUCCESS_RATE, MIN_RULE_USAGE_FOR_PROMOTION, MAX_RULE_USAGE_MULTIPLIER } = require('../dna.constants.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { emitDnaReinforcementApplied } = require('../dna.events.js');
+class ReinforcementService {
   constructor() {
     this.logger = getLogger('dna-reinforcement');
   }
@@ -76,5 +70,5 @@ export class ReinforcementService {
     return basePriority + Math.round(boost * successRate);
   }
 }
-
-export default ReinforcementService;
+module.exports = ReinforcementService;
+module.exports.ReinforcementService = ReinforcementService;

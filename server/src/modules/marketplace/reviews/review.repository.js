@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/marketplace/reviews/repository
  */
-
-import { MarketplaceRepository } from '../marketplace.repository.js';
-
-export class ReviewRepository {
+const { MarketplaceRepository } = require('../marketplace.repository.js');
+class ReviewRepository {
   constructor(db = null) {
     this.marketplaceRepository = new MarketplaceRepository(db);
   }
@@ -46,5 +44,5 @@ export class ReviewRepository {
     return this.marketplaceRepository.recomputeRating(listingId);
   }
 }
-
-export default ReviewRepository;
+module.exports = ReviewRepository;
+module.exports.ReviewRepository = ReviewRepository;

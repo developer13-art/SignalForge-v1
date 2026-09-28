@@ -6,10 +6,8 @@
  *
  * @module server/modules/executive/revenue/subscription-revenue.service
  */
-
-import { db } from '../../../database';
-
-export async function getRevenue({ from, to, granularity = 'day' }) {
+const { db } = require('../../../database');
+async function getRevenue({ from, to, granularity = 'day' }) {
   const fromDate = from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const toDate = to || new Date().toISOString();
 
@@ -50,7 +48,9 @@ export async function getRevenue({ from, to, granularity = 'day' }) {
     })),
   };
 }
-
-export const subscriptionRevenueService = {
+const subscriptionRevenueService = {
   getRevenue,
 };
+module.exports.subscriptionRevenueService = subscriptionRevenueService;
+
+module.exports.getRevenue = getRevenue;

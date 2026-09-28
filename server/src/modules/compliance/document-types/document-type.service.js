@@ -7,11 +7,10 @@
  *
  * @module server/modules/compliance/document-types/document-type.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import * as repository from './document-type.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const repository = require('./document-type.repository');
 
 const DEFAULT_ACCEPTED_FORMATS = ['image/jpeg', 'image/png', 'application/pdf'];
 const DEFAULT_MAX_SIZE_BYTES = 10 * 1024 * 1024;
@@ -19,8 +18,7 @@ const DEFAULT_MAX_SIZE_BYTES = 10 * 1024 * 1024;
 function normalizeCode(code) {
   return String(code).trim().toUpperCase().replace(/[^A-Z0-9_]/g, '_');
 }
-
-export async function createDocumentType({
+async function createDocumentType({
   code,
   label,
   description,
@@ -64,8 +62,7 @@ export async function createDocumentType({
     active: record.active,
   };
 }
-
-export async function listDocumentTypes({ activeOnly = true } = {}) {
+async function listDocumentTypes({ activeOnly = true } = {}) {
   const rows = await repository.listAll({ activeOnly });
 
   return rows.map((row) => ({
@@ -79,8 +76,7 @@ export async function listDocumentTypes({ activeOnly = true } = {}) {
     active: row.active,
   }));
 }
-
-export async function getDocumentTypeById({ documentTypeId }) {
+async function getDocumentTypeById({ documentTypeId }) {
   if (!documentTypeId) {
     throw new AppError('documentTypeId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -102,8 +98,7 @@ export async function getDocumentTypeById({ documentTypeId }) {
     active: record.active,
   };
 }
-
-export async function updateDocumentType({
+async function updateDocumentType({
   documentTypeId,
   label,
   description,
@@ -141,8 +136,7 @@ export async function updateDocumentType({
     active: record.active,
   };
 }
-
-export async function deactivateDocumentType({ documentTypeId }) {
+async function deactivateDocumentType({ documentTypeId }) {
   if (!documentTypeId) {
     throw new AppError('documentTypeId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -155,8 +149,7 @@ export async function deactivateDocumentType({ documentTypeId }) {
 
   return { deactivated: true };
 }
-
-export async function deleteDocumentType({ documentTypeId }) {
+async function deleteDocumentType({ documentTypeId }) {
   if (!documentTypeId) {
     throw new AppError('documentTypeId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -169,8 +162,7 @@ export async function deleteDocumentType({ documentTypeId }) {
 
   return { deleted: true };
 }
-
-export const documentTypeService = {
+const documentTypeService = {
   createDocumentType,
   listDocumentTypes,
   getDocumentTypeById,
@@ -178,3 +170,16 @@ export const documentTypeService = {
   deactivateDocumentType,
   deleteDocumentType,
 };
+module.exports.documentTypeService = documentTypeService;
+
+module.exports.createDocumentType = createDocumentType;
+
+module.exports.listDocumentTypes = listDocumentTypes;
+
+module.exports.getDocumentTypeById = getDocumentTypeById;
+
+module.exports.updateDocumentType = updateDocumentType;
+
+module.exports.deactivateDocumentType = deactivateDocumentType;
+
+module.exports.deleteDocumentType = deleteDocumentType;

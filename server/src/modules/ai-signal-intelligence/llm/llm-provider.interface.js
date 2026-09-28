@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/interface
  */
-
-export class LlmProviderInterface {
+class LlmProviderInterface {
   constructor(name) {
     this.name = name;
   }
@@ -21,5 +20,5 @@ export class LlmProviderInterface {
     return false;
   }
 }
-
-export default LlmProviderInterface;
+module.exports = LlmProviderInterface;
+module.exports.LlmProviderInterface = LlmProviderInterface;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/wallets/balance/calculator
  */
-
-import { BalanceCalculationError } from '../wallet.errors.js';
-
-export class BalanceCalculatorService {
+const { BalanceCalculationError } = require('../wallet.errors.js');
+class BalanceCalculatorService {
   computeTotal(balances) {
     if (!balances || typeof balances !== 'object') {
       throw new BalanceCalculationError('Balances must be an object');
@@ -76,5 +74,5 @@ export class BalanceCalculatorService {
     return available >= Number(amount);
   }
 }
-
-export default BalanceCalculatorService;
+module.exports = BalanceCalculatorService;
+module.exports.BalanceCalculatorService = BalanceCalculatorService;

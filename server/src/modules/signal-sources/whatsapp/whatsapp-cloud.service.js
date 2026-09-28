@@ -8,18 +8,14 @@
  *
  * @module server/modules/signal-sources/whatsapp/whatsapp-cloud.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { config } from '../../../config';
-import { encryptPacked, decryptPacked } from '@signalforge/shared/utils/crypto.util';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import {
-  emitWhatsAppSessionConnected,
-  emitWhatsAppSessionRevoked,
-} from './whatsapp.events';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { config } = require('../../../config');
+const { encryptPacked, decryptPacked } = require('@signalforge/shared/utils/crypto.util');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { emitWhatsAppSessionConnected, emitWhatsAppSessionRevoked } = require('./whatsapp.events');
 
 const GRAPH_BASE = 'https://graph.facebook.com/v20.0';
 
@@ -46,8 +42,7 @@ function getVerifyToken() {
   }
   return token;
 }
-
-export function verifyWebhookChallenge({ mode, token, challenge }) {
+function verifyWebhookChallenge({ mode, token, challenge }) {
   if (mode !== 'subscribe') {
     throw new AppError('Unsupported WhatsApp webhook mode', ERROR_CODES.WHATSAPP_WEBHOOK_INVALID, 400);
   }
@@ -60,8 +55,7 @@ export function verifyWebhookChallenge({ mode, token, challenge }) {
 
   return { challenge };
 }
-
-export async function subscribe({ userId, phoneNumberId, businessAccountId, accessToken }) {
+async function subscribe({ userId, phoneNumberId, businessAccountId, accessToken }) {
   if (!userId || !phoneNumberId || !businessAccountId || !accessToken) {
     throw new AppError(
       'userId, phoneNumberId, businessAccountId, and accessToken are required',
@@ -127,8 +121,7 @@ export async function subscribe({ userId, phoneNumberId, businessAccountId, acce
     verifiedName: profile.verified_name || null,
   };
 }
-
-export async function unsubscribe({ userId, reason }) {
+async function unsubscribe({ userId, reason }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -142,8 +135,7 @@ export async function unsubscribe({ userId, reason }) {
 
   return { revoked: true };
 }
-
-export async function getAccessToken({ userId }) {
+async function getAccessToken({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -180,8 +172,7 @@ export async function getAccessToken({ userId }) {
     verifiedName: row.verified_name,
   };
 }
-
-export async function sendTextMessage({ userId, to, text }) {
+async function sendTextMessage({ userId, to, text }) {
   if (!userId || !to || !text) {
     throw new AppError('userId, to, and text are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -221,13 +212,11 @@ export async function sendTextMessage({ userId, to, text }) {
     throw new AppError('Failed to send WhatsApp message', ERROR_CODES.WHATSAPP_SEND_FAILED, 502);
   }
 }
-
-export async function listConnectedUserIds() {
+async function listConnectedUserIds() {
   const { rows } = await db.query(`SELECT user_id FROM whatsapp_connections`);
   return rows.map((row) => row.user_id);
 }
-
-export async function getConnectionMetadata({ userId }) {
+async function getConnectionMetadata({ userId }) {
   const connection = await getAccessToken({ userId });
   if (!connection) {
     return null;
@@ -240,8 +229,7 @@ export async function getConnectionMetadata({ userId }) {
     verifiedName: connection.verifiedName,
   };
 }
-
-export const whatsappCloudService = {
+const whatsappCloudService = {
   verifyWebhookChallenge,
   subscribe,
   unsubscribe,
@@ -251,3 +239,17 @@ export const whatsappCloudService = {
   listConnectedUserIds,
   getAppSecret,
 };
+module.exports.whatsappCloudService = whatsappCloudService;
+module.exports.verifyWebhookChallenge = verifyWebhookChallenge;
+
+module.exports.subscribe = subscribe;
+
+module.exports.unsubscribe = unsubscribe;
+
+module.exports.getAccessToken = getAccessToken;
+
+module.exports.sendTextMessage = sendTextMessage;
+
+module.exports.listConnectedUserIds = listConnectedUserIds;
+
+module.exports.getConnectionMetadata = getConnectionMetadata;

@@ -6,11 +6,9 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/embedding
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import aiConfig from '../../../config/ai.config.js';
-
-export class EmbeddingService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const aiConfig = require('../../../config/ai.config.js');
+class EmbeddingService {
   constructor(provider = null) {
     this.provider = provider;
     this.logger = getLogger('embeddings');
@@ -65,5 +63,5 @@ export class EmbeddingService {
     return dot / (Math.sqrt(normA) * Math.sqrt(normB));
   }
 }
-
-export default EmbeddingService;
+module.exports = EmbeddingService;
+module.exports.EmbeddingService = EmbeddingService;

@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/referrals/wallets/calculator
  */
-
-export class ReferralWalletCalculatorService {
+class ReferralWalletCalculatorService {
   computeTotal(balances) {
     const pending = Number(balances.pending || 0);
     const available = Number(balances.available || 0);
@@ -56,5 +55,5 @@ export class ReferralWalletCalculatorService {
     return Number(currentBalances.available || 0) >= Number(amount);
   }
 }
-
-export default ReferralWalletCalculatorService;
+module.exports = ReferralWalletCalculatorService;
+module.exports.ReferralWalletCalculatorService = ReferralWalletCalculatorService;

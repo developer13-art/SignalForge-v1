@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/rest-api/controller
  */
-
-import { RestApiService } from './rest-api.service.js';
-
-export class RestApiController {
+const { RestApiService } = require('./rest-api.service.js');
+class RestApiController {
   constructor(service = null) {
     this.service = service || new RestApiService();
   }
@@ -56,5 +54,5 @@ export class RestApiController {
     }
   };
 }
-
-export default RestApiController;
+module.exports = RestApiController;
+module.exports.RestApiController = RestApiController;

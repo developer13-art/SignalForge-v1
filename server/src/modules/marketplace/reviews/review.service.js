@@ -3,29 +3,13 @@
  *
  * @module signalforge/server/modules/marketplace/reviews/service
  */
-
-import { ReviewRepository } from './repository.js';
-import { ModerationService } from './moderation.js';
-import { ListingRepository } from '../listings/repository.js';
-import {
-  REVIEW_STATUSES,
-  LISTING_STATUSES,
-} from '../marketplace.constants.js';
-import {
-  ReviewNotFoundError,
-  ReviewAlreadyExistsError,
-  ReviewNotOwnedError,
-  CannotReviewOwnListingError,
-  ListingNotPublishedError,
-} from '../marketplace.errors.js';
-import {
-  emitReviewAdded,
-  emitReviewUpdated,
-  emitReviewDeleted,
-  emitReviewReplied,
-} from '../marketplace.events.js';
-
-export class ReviewService {
+const { ReviewRepository } = require('./repository.js');
+const { ModerationService } = require('./moderation.js');
+const { ListingRepository } = require('../listings/repository.js');
+const { REVIEW_STATUSES, LISTING_STATUSES } = require('../marketplace.constants.js');
+const { ReviewNotFoundError, ReviewAlreadyExistsError, ReviewNotOwnedError, CannotReviewOwnListingError, ListingNotPublishedError } = require('../marketplace.errors.js');
+const { emitReviewAdded, emitReviewUpdated, emitReviewDeleted, emitReviewReplied } = require('../marketplace.events.js');
+class ReviewService {
   constructor(repository = null, listingRepository = null, moderation = null) {
     this.repository = repository || new ReviewRepository();
     this.listings = listingRepository || new ListingRepository();
@@ -205,5 +189,5 @@ export class ReviewService {
     return input;
   }
 }
-
-export default ReviewService;
+module.exports = ReviewService;
+module.exports.ReviewService = ReviewService;

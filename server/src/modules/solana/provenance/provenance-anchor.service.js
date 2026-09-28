@@ -8,15 +8,13 @@
  *
  * @module server/modules/solana/provenance/provenance-anchor.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { provenanceRepository } from './provenance.repository';
-import { programConfigService } from '../config/program-config.service';
-import { emitProvenanceAnchored } from '../solana.events';
-
-export async function anchorProvenance({ provenanceId }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { provenanceRepository } = require('./provenance.repository');
+const { programConfigService } = require('../config/program-config.service');
+const { emitProvenanceAnchored } = require('../solana.events');
+async function anchorProvenance({ provenanceId }) {
   if (!provenanceId) {
     throw new AppError('provenanceId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -47,8 +45,7 @@ export async function anchorProvenance({ provenanceId }) {
 
   return { anchored: false, submitted: true };
 }
-
-export async function confirmAnchor({
+async function confirmAnchor({
   provenanceId,
   txSignature,
   slot,
@@ -83,8 +80,7 @@ export async function confirmAnchor({
 
   return { anchored: true, txSignature };
 }
-
-export async function failAnchor({ provenanceId, reason }) {
+async function failAnchor({ provenanceId, reason }) {
   if (!provenanceId) {
     throw new AppError('provenanceId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -97,9 +93,15 @@ export async function failAnchor({ provenanceId, reason }) {
 
   return { failed: updated };
 }
-
-export const provenanceAnchorService = {
+const provenanceAnchorService = {
   anchorProvenance,
   confirmAnchor,
   failAnchor,
 };
+module.exports.provenanceAnchorService = provenanceAnchorService;
+
+module.exports.anchorProvenance = anchorProvenance;
+
+module.exports.confirmAnchor = confirmAnchor;
+
+module.exports.failAnchor = failAnchor;

@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/011_create_payments_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS subscription_plans (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -141,8 +140,7 @@ export async function up(client) {
       ON wallet_ledger (user_id, created_at DESC);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS wallet_ledger CASCADE`);
   await client.query(`DROP TABLE IF EXISTS invoices CASCADE`);
   await client.query(`DROP TABLE IF EXISTS payment_events CASCADE`);
@@ -150,3 +148,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS subscriptions CASCADE`);
   await client.query(`DROP TABLE IF EXISTS subscription_plans CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

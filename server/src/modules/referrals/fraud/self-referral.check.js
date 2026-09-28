@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/referrals/fraud/self-referral
  */
-
-import { FRAUD_FLAG_TYPES, FRAUD_FLAG_SEVERITIES } from '../referral.constants.js';
-
-export class SelfReferralCheck {
+const { FRAUD_FLAG_TYPES, FRAUD_FLAG_SEVERITIES } = require('../referral.constants.js');
+class SelfReferralCheck {
   constructor() {
     this.name = FRAUD_FLAG_TYPES.SELF_REFERRAL;
   }
@@ -22,5 +20,5 @@ export class SelfReferralCheck {
     };
   }
 }
-
-export default SelfReferralCheck;
+module.exports = SelfReferralCheck;
+module.exports.SelfReferralCheck = SelfReferralCheck;

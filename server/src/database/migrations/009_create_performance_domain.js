@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/009_create_performance_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS performance_periods (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -83,10 +82,11 @@ export async function up(client) {
     );
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS trade_analytics_daily CASCADE`);
   await client.query(`DROP TABLE IF EXISTS equity_snapshots CASCADE`);
   await client.query(`DROP TABLE IF EXISTS performance_metrics CASCADE`);
   await client.query(`DROP TABLE IF EXISTS performance_periods CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

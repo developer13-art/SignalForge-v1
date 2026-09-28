@@ -6,13 +6,11 @@
  *
  * @module signalforge/server/modules/kyc/reverification/service
  */
-
-import { ApplicationRepository } from '../application/application.repository.js';
-import { KycRepository } from '../kyc.repository.js';
-import { KycApplicationNotFoundError } from '../kyc.errors.js';
-import { emitReverificationRequired, emitStatusChanged } from '../kyc.events.js';
-
-export class ReverificationService {
+const { ApplicationRepository } = require('../application/application.repository.js');
+const { KycRepository } = require('../kyc.repository.js');
+const { KycApplicationNotFoundError } = require('../kyc.errors.js');
+const { emitReverificationRequired, emitStatusChanged } = require('../kyc.events.js');
+class ReverificationService {
   constructor(dependencies = {}) {
     this.applicationRepository = dependencies.applicationRepository || new ApplicationRepository();
     this.kycRepository = dependencies.kycRepository || new KycRepository();
@@ -49,5 +47,5 @@ export class ReverificationService {
     return { triggered: true, applicationId: application.id };
   }
 }
-
-export default ReverificationService;
+module.exports = ReverificationService;
+module.exports.ReverificationService = ReverificationService;

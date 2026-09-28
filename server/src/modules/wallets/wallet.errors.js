@@ -3,69 +3,59 @@
  *
  * @module signalforge/server/modules/wallets/errors
  */
-
-import { NotFoundError } from '../../lib/errors/not-found-error.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-import { ConflictError } from '../../lib/errors/conflict-error.js';
-import { AuthorizationError } from '../../lib/errors/authorization-error.js';
-
-export class WalletNotFoundError extends NotFoundError {
+const { NotFoundError } = require('../../lib/errors/not-found-error.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+const { ConflictError } = require('../../lib/errors/conflict-error.js');
+const { AuthorizationError } = require('../../lib/errors/authorization-error.js');
+class WalletNotFoundError extends NotFoundError {
   constructor(message = 'Wallet not found', details = {}) {
     super(message, { code: 'WALLET_NOT_FOUND', details });
     this.name = 'WalletNotFoundError';
   }
 }
-
-export class WalletAlreadyExistsError extends ConflictError {
+class WalletAlreadyExistsError extends ConflictError {
   constructor(message = 'Wallet already exists for this user and type') {
     super(message, { code: 'WALLET_ALREADY_EXISTS' });
     this.name = 'WalletAlreadyExistsError';
   }
 }
-
-export class WalletNotActiveError extends AuthorizationError {
+class WalletNotActiveError extends AuthorizationError {
   constructor(message = 'Wallet is not active', details = {}) {
     super(message, { code: 'WALLET_NOT_ACTIVE', details });
     this.name = 'WalletNotActiveError';
   }
 }
-
-export class WalletFrozenError extends AuthorizationError {
+class WalletFrozenError extends AuthorizationError {
   constructor(message = 'Wallet is frozen and cannot perform this operation') {
     super(message, { code: 'WALLET_FROZEN' });
     this.name = 'WalletFrozenError';
   }
 }
-
-export class InsufficientBalanceError extends ConflictError {
+class InsufficientBalanceError extends ConflictError {
   constructor(message = 'Insufficient wallet balance', details = {}) {
     super(message, { code: 'INSUFFICIENT_BALANCE', details });
     this.name = 'InsufficientBalanceError';
   }
 }
-
-export class InvalidTransactionAmountError extends ValidationError {
+class InvalidTransactionAmountError extends ValidationError {
   constructor(message = 'Transaction amount is invalid', details = {}) {
     super(message, { code: 'INVALID_TRANSACTION_AMOUNT', details });
     this.name = 'InvalidTransactionAmountError';
   }
 }
-
-export class LedgerEntryNotFoundError extends NotFoundError {
+class LedgerEntryNotFoundError extends NotFoundError {
   constructor(message = 'Ledger entry not found', details = {}) {
     super(message, { code: 'LEDGER_ENTRY_NOT_FOUND', details });
     this.name = 'LedgerEntryNotFoundError';
   }
 }
-
-export class LedgerEntryAlreadyReversedError extends ConflictError {
+class LedgerEntryAlreadyReversedError extends ConflictError {
   constructor(message = 'Ledger entry has already been reversed') {
     super(message, { code: 'LEDGER_ENTRY_ALREADY_REVERSED' });
     this.name = 'LedgerEntryAlreadyReversedError';
   }
 }
-
-export class LedgerIntegrityError extends Error {
+class LedgerIntegrityError extends Error {
   constructor(message = 'Ledger integrity check failed', details = {}) {
     super(message);
     this.name = 'LedgerIntegrityError';
@@ -73,8 +63,7 @@ export class LedgerIntegrityError extends Error {
     this.details = details;
   }
 }
-
-export class BalanceCalculationError extends Error {
+class BalanceCalculationError extends Error {
   constructor(message = 'Balance calculation failed', details = {}) {
     super(message);
     this.name = 'BalanceCalculationError';
@@ -82,3 +71,13 @@ export class BalanceCalculationError extends Error {
     this.details = details;
   }
 }
+module.exports.WalletNotFoundError = WalletNotFoundError;
+module.exports.WalletAlreadyExistsError = WalletAlreadyExistsError;
+module.exports.WalletNotActiveError = WalletNotActiveError;
+module.exports.WalletFrozenError = WalletFrozenError;
+module.exports.InsufficientBalanceError = InsufficientBalanceError;
+module.exports.InvalidTransactionAmountError = InvalidTransactionAmountError;
+module.exports.LedgerEntryNotFoundError = LedgerEntryNotFoundError;
+module.exports.LedgerEntryAlreadyReversedError = LedgerEntryAlreadyReversedError;
+module.exports.LedgerIntegrityError = LedgerIntegrityError;
+module.exports.BalanceCalculationError = BalanceCalculationError;

@@ -28,3 +28,4 @@ async function initSolanaIndexer() {
 }
 
 module.exports = initSolanaIndexer;
+module.exports.initSolanaIndexer = initSolanaIndexer;

@@ -3,21 +3,13 @@
  *
  * @module signalforge/server/modules/performance/periods/closer
  */
-
-import { PeriodRepository } from './repository.js';
-import { PeriodFreezeService } from './freeze.js';
-import { PERFORMANCE_METRIC_TYPES } from '../performance.constants.js';
-import {
-  PeriodAlreadyClosedError,
-  PerformancePeriodNotFoundError,
-} from '../performance.errors.js';
-import {
-  emitPeriodClosed,
-  emitMetricCalculated,
-} from '../performance.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class PeriodCloserService {
+const { PeriodRepository } = require('./repository.js');
+const { PeriodFreezeService } = require('./freeze.js');
+const { PERFORMANCE_METRIC_TYPES } = require('../performance.constants.js');
+const { PeriodAlreadyClosedError, PerformancePeriodNotFoundError } = require('../performance.errors.js');
+const { emitPeriodClosed, emitMetricCalculated } = require('../performance.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class PeriodCloserService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new PeriodRepository();
     this.freeze = dependencies.freeze || new PeriodFreezeService();
@@ -92,5 +84,5 @@ export class PeriodCloserService {
     return results;
   }
 }
-
-export default PeriodCloserService;
+module.exports = PeriodCloserService;
+module.exports.PeriodCloserService = PeriodCloserService;

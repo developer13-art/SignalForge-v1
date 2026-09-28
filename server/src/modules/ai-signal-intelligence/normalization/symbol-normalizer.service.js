@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/normalization/symbol
  */
-
-import { normalizeSymbol as sharedNormalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
+const { normalizeSymbol: sharedNormalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
 
 const ADDITIONAL_ALIASES = Object.freeze({
   'GOLD SPOT': 'XAUUSD',
@@ -22,8 +21,7 @@ const ADDITIONAL_ALIASES = Object.freeze({
   'FTSE 100': 'UK100',
   'NIKKEI 225': 'JP225',
 });
-
-export class SymbolNormalizerService {
+class SymbolNormalizerService {
   normalize(input) {
     if (!input || typeof input !== 'string') {
       return null;
@@ -54,5 +52,5 @@ export class SymbolNormalizerService {
     return matches;
   }
 }
-
-export default SymbolNormalizerService;
+module.exports = SymbolNormalizerService;
+module.exports.SymbolNormalizerService = SymbolNormalizerService;

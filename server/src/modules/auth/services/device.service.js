@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/auth/services/device
  */
-
-import { DEVICE_TYPES } from '../auth.constants.js';
-
-export class DeviceService {
+const { DEVICE_TYPES } = require('../auth.constants.js');
+class DeviceService {
   constructor(repository) {
     this.repository = repository;
   }
@@ -99,5 +97,5 @@ export class DeviceService {
     return Array.from(deviceMap.values());
   }
 }
-
-export default DeviceService;
+module.exports = DeviceService;
+module.exports.DeviceService = DeviceService;

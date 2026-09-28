@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/referrals/fraud/abnormal-activity
  */
-
-import { FRAUD_FLAG_TYPES, FRAUD_FLAG_SEVERITIES } from '../referral.constants.js';
+const { FRAUD_FLAG_TYPES, FRAUD_FLAG_SEVERITIES } = require('../referral.constants.js');
 
 const HIGH_TRADE_COUNT_THRESHOLD = 500;
 const HIGH_REFERRAL_GROWTH_THRESHOLD = 50;
 const WINDOW_HOURS = 24;
-
-export class AbnormalActivityCheck {
+class AbnormalActivityCheck {
   constructor() {
     this.name = FRAUD_FLAG_TYPES.ABNORMAL_ACTIVITY;
   }
@@ -47,5 +45,5 @@ export class AbnormalActivityCheck {
     };
   }
 }
-
-export default AbnormalActivityCheck;
+module.exports = AbnormalActivityCheck;
+module.exports.AbnormalActivityCheck = AbnormalActivityCheck;

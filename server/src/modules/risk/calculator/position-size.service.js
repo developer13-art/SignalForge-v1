@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/risk/calculator/position-size
  */
-
-import { LotSizeCalculatorService } from './lot-size-calculator.service.js';
+const { LotSizeCalculatorService } = require('./lot-size-calculator.service.js');
 
 const MIN_VOLUME = 0.01;
 const MAX_VOLUME = 1000;
 const STEP = 0.01;
-
-export class PositionSizeService {
+class PositionSizeService {
   constructor(lotSizeCalculator = null) {
     this.lotSizeCalculator = lotSizeCalculator || new LotSizeCalculatorService();
   }
@@ -43,5 +41,5 @@ export class PositionSizeService {
     };
   }
 }
-
-export default PositionSizeService;
+module.exports = PositionSizeService;
+module.exports.PositionSizeService = PositionSizeService;

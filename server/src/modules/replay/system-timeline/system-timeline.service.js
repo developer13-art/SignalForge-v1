@@ -7,13 +7,11 @@
  *
  * @module server/modules/replay/system-timeline/system-timeline.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { timelineBuilderService } from '../signal-replay/timeline-builder.service';
-import { eventReconstructorService } from './event-reconstructor.service';
-
-export async function buildSystemTimeline({ correlationId, userId }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { timelineBuilderService } = require('../signal-replay/timeline-builder.service');
+const { eventReconstructorService } = require('./event-reconstructor.service');
+async function buildSystemTimeline({ correlationId, userId }) {
   if (!correlationId) {
     throw new AppError('correlationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -38,7 +36,9 @@ export async function buildSystemTimeline({ correlationId, userId }) {
     causationChain: flat,
   };
 }
-
-export const systemTimelineService = {
+const systemTimelineService = {
   buildSystemTimeline,
 };
+module.exports.systemTimelineService = systemTimelineService;
+
+module.exports.buildSystemTimeline = buildSystemTimeline;

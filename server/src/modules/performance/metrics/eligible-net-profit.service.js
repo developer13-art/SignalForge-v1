@@ -7,8 +7,7 @@
  *
  * @module signalforge/server/modules/performance/metrics/eligible-net-profit
  */
-
-export class EligibleNetProfitService {
+class EligibleNetProfitService {
   calculate({ grossProfit, grossLoss, tradingCosts }) {
     const profit = Number(grossProfit || 0);
     const loss = Number(grossLoss || 0);
@@ -27,5 +26,5 @@ export class EligibleNetProfitService {
     };
   }
 }
-
-export default EligibleNetProfitService;
+module.exports = EligibleNetProfitService;
+module.exports.EligibleNetProfitService = EligibleNetProfitService;

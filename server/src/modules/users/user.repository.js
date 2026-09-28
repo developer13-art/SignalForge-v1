@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/users/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class UserRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class UserRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -293,5 +291,5 @@ export class UserRepository {
     return result.rowCount > 0;
   }
 }
-
-export default UserRepository;
+module.exports = UserRepository;
+module.exports.UserRepository = UserRepository;

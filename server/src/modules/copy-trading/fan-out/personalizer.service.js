@@ -3,17 +3,11 @@
  *
  * @module signalforge/server/modules/copy-trading/fan-out/personalizer
  */
-
-import { LotScalingService } from '../scaling/lot-scaling.service.js';
-import { CopyTradingRepository } from '../copy-trading.repository.js';
-import {
-  emitPersonalizedTradeCreated,
-  emitPersonalizationFailed,
-  emitCopyFailed,
-} from '../copy-trading.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class PersonalizerService {
+const { LotScalingService } = require('../scaling/lot-scaling.service.js');
+const { CopyTradingRepository } = require('../copy-trading.repository.js');
+const { emitPersonalizedTradeCreated, emitPersonalizationFailed, emitCopyFailed } = require('../copy-trading.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class PersonalizerService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new CopyTradingRepository();
     this.scaling = dependencies.scaling || new LotScalingService();
@@ -101,5 +95,5 @@ export class PersonalizerService {
     await emitCopyFailed(subscriberId, reason);
   }
 }
-
-export default PersonalizerService;
+module.exports = PersonalizerService;
+module.exports.PersonalizerService = PersonalizerService;

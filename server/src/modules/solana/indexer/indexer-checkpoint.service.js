@@ -7,14 +7,12 @@
  *
  * @module server/modules/solana/indexer/indexer-checkpoint.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-
-export async function getCheckpoint({ programId }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+async function getCheckpoint({ programId }) {
   if (!programId) {
     throw new AppError('programId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -40,8 +38,7 @@ export async function getCheckpoint({ programId }) {
     updatedAt: row.updated_at,
   };
 }
-
-export async function saveCheckpoint({ programId, lastProcessedSlot }) {
+async function saveCheckpoint({ programId, lastProcessedSlot }) {
   if (!programId || lastProcessedSlot === undefined || lastProcessedSlot === null) {
     throw new AppError('programId and lastProcessedSlot are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -74,8 +71,7 @@ export async function saveCheckpoint({ programId, lastProcessedSlot }) {
     updatedAt: rows[0].updated_at,
   };
 }
-
-export async function getCheckpoints() {
+async function getCheckpoints() {
   const { rows } = await db.query(
     `SELECT program_id, last_processed_slot, updated_at
        FROM solana_indexer_checkpoints
@@ -88,8 +84,7 @@ export async function getCheckpoints() {
     updatedAt: row.updated_at,
   }));
 }
-
-export async function resetCheckpoint({ programId }) {
+async function resetCheckpoint({ programId }) {
   if (!programId) {
     throw new AppError('programId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -101,10 +96,18 @@ export async function resetCheckpoint({ programId }) {
 
   return { reset: rowCount > 0 };
 }
-
-export const indexerCheckpointService = {
+const indexerCheckpointService = {
   getCheckpoint,
   saveCheckpoint,
   getCheckpoints,
   resetCheckpoint,
 };
+module.exports.indexerCheckpointService = indexerCheckpointService;
+
+module.exports.getCheckpoint = getCheckpoint;
+
+module.exports.saveCheckpoint = saveCheckpoint;
+
+module.exports.getCheckpoints = getCheckpoints;
+
+module.exports.resetCheckpoint = resetCheckpoint;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/traders/followers/repository
  */
-
-import { TraderRepository } from '../trader.repository.js';
-
-export class FollowerRepository {
+const { TraderRepository } = require('../trader.repository.js');
+class FollowerRepository {
   constructor(db = null) {
     this.traderRepository = new TraderRepository(db);
   }
@@ -47,5 +45,5 @@ export class FollowerRepository {
     return this.traderRepository.decrementFollowerCount(traderId);
   }
 }
-
-export default FollowerRepository;
+module.exports = FollowerRepository;
+module.exports.FollowerRepository = FollowerRepository;

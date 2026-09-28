@@ -3,27 +3,12 @@
  *
  * @module signalforge/server/modules/kyc/application/service
  */
-
-import { ApplicationRepository } from './application.repository.js';
-import {
-  KycApplicationNotFoundError,
-  KycApplicationAlreadyExistsError,
-  KycApplicationNotSubmittableError,
-  KycSelfieRequiredError,
-  KycDocumentRequiredError,
-  KycAlreadyVerifiedError,
-} from '../kyc.errors.js';
-import { KycRepository } from '../kyc.repository.js';
-import {
-  emitApplicationCreated,
-  emitApplicationSubmitted,
-  emitApplicationUpdated,
-  emitResubmissionCompleted,
-  emitStatusChanged,
-} from '../kyc.events.js';
-import { KYC_DOCUMENT_TYPES } from '../kyc.constants.js';
-
-export class ApplicationService {
+const { ApplicationRepository } = require('./application.repository.js');
+const { KycApplicationNotFoundError, KycApplicationAlreadyExistsError, KycApplicationNotSubmittableError, KycSelfieRequiredError, KycDocumentRequiredError, KycAlreadyVerifiedError } = require('../kyc.errors.js');
+const { KycRepository } = require('../kyc.repository.js');
+const { emitApplicationCreated, emitApplicationSubmitted, emitApplicationUpdated, emitResubmissionCompleted, emitStatusChanged } = require('../kyc.events.js');
+const { KYC_DOCUMENT_TYPES } = require('../kyc.constants.js');
+class ApplicationService {
   constructor(repository = null) {
     this.repository = repository || new ApplicationRepository();
     this.kycRepository = new KycRepository();
@@ -223,5 +208,5 @@ export class ApplicationService {
     };
   }
 }
-
-export default ApplicationService;
+module.exports = ApplicationService;
+module.exports.ApplicationService = ApplicationService;

@@ -3,15 +3,13 @@
  *
  * @module signalforge/server/modules/risk/checks/duplicate-trade
  */
-
-import { BaseCheck } from './base.check.js';
-import { RiskRepository } from '../risk.repository.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { normalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
+const { BaseCheck } = require('./base.check.js');
+const { RiskRepository } = require('../risk.repository.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { normalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
 
 const DUPLICATE_WINDOW_MINUTES = 5;
-
-export class DuplicateTradeCheck extends BaseCheck {
+class DuplicateTradeCheck extends BaseCheck {
   constructor(repository = null) {
     super(RISK_CHECKS.DUPLICATE_TRADE);
     this.repository = repository || new RiskRepository();
@@ -47,5 +45,5 @@ export class DuplicateTradeCheck extends BaseCheck {
     return this.pass();
   }
 }
-
-export default DuplicateTradeCheck;
+module.exports = DuplicateTradeCheck;
+module.exports.DuplicateTradeCheck = DuplicateTradeCheck;

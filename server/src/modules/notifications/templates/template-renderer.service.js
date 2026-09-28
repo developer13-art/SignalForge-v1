@@ -7,12 +7,11 @@
  *
  * @module server/modules/notifications/templates/template-renderer.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { escapeHtml } from '@signalforge/shared/utils/string.util';
-import { templateService } from './template.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { escapeHtml } = require('@signalforge/shared/utils/string.util');
+const { templateService } = require('./template.service');
 
 const VARIABLE_PATTERN = /\{\{\s*([\w.]+)\s*\}\}/g;
 
@@ -56,8 +55,7 @@ function renderHtml({ template, data }) {
     return escapeHtml(String(value));
   });
 }
-
-export async function renderTemplate({ templateKey, channel, data = {}, locale = 'en' }) {
+async function renderTemplate({ templateKey, channel, data = {}, locale = 'en' }) {
   if (!templateKey || !channel) {
     throw new AppError('templateKey and channel are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -86,17 +84,21 @@ export async function renderTemplate({ templateKey, channel, data = {}, locale =
     fallback: false,
   };
 }
-
-export async function renderInlineText({ templateText, data = {} }) {
+async function renderInlineText({ templateText, data = {} }) {
   return renderText({ template: templateText, data });
 }
-
-export async function renderInlineHtml({ templateHtml, data = {} }) {
+async function renderInlineHtml({ templateHtml, data = {} }) {
   return renderHtml({ template: templateHtml, data });
 }
-
-export const templateRendererService = {
+const templateRendererService = {
   renderTemplate,
   renderInlineText,
   renderInlineHtml,
 };
+module.exports.templateRendererService = templateRendererService;
+
+module.exports.renderTemplate = renderTemplate;
+
+module.exports.renderInlineText = renderInlineText;
+
+module.exports.renderInlineHtml = renderInlineHtml;

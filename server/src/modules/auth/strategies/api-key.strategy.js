@@ -6,12 +6,9 @@
  *
  * @module signalforge/server/modules/auth/strategies/api-key
  */
-
-import crypto from 'node:crypto';
-
-import { InvalidTokenError } from '../auth.errors.js';
-
-export class ApiKeyStrategy {
+const crypto = require('node:crypto');
+const { InvalidTokenError } = require('../auth.errors.js');
+class ApiKeyStrategy {
   constructor(repository) {
     this.repository = repository;
   }
@@ -87,5 +84,5 @@ export class ApiKeyStrategy {
     return { user, apiKey: record };
   }
 }
-
-export default ApiKeyStrategy;
+module.exports = ApiKeyStrategy;
+module.exports.ApiKeyStrategy = ApiKeyStrategy;

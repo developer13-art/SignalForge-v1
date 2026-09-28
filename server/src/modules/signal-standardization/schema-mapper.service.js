@@ -7,12 +7,8 @@
  *
  * @module signalforge/server/modules/signal-standardization/schema-mapper
  */
-
-import {
-  STANDARD_SIGNAL_REQUIRED_FIELDS,
-  STANDARD_SIGNAL_SCHEMA_VERSION,
-} from './standardization.constants.js';
-import { StandardizationInvalidInputError } from './standardization.errors.js';
+const { STANDARD_SIGNAL_REQUIRED_FIELDS, STANDARD_SIGNAL_SCHEMA_VERSION } = require('./standardization.constants.js');
+const { StandardizationInvalidInputError } = require('./standardization.errors.js');
 
 const FIELD_ALIASES = Object.freeze({
   symbol: ['symbol', 'Symbol', 'ticker', 'pair'],
@@ -37,8 +33,7 @@ function pick(obj, keys) {
   }
   return undefined;
 }
-
-export class SchemaMapperService {
+class SchemaMapperService {
   map(input, envelope = {}) {
     if (!input || typeof input !== 'object') {
       throw new StandardizationInvalidInputError('Signal input must be an object');
@@ -101,5 +96,5 @@ export class SchemaMapperService {
     }
   }
 }
-
-export default SchemaMapperService;
+module.exports = SchemaMapperService;
+module.exports.SchemaMapperService = SchemaMapperService;

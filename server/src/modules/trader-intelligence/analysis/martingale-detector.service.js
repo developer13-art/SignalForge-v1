@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trader-intelligence/analysis/martingale-detector
  */
-
-import { MARTINGALE_THRESHOLDS } from '../intelligence.constants.js';
-
-export class MartingaleDetectorService {
+const { MARTINGALE_THRESHOLDS } = require('../intelligence.constants.js');
+class MartingaleDetectorService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length < MARTINGALE_THRESHOLDS.minTrades) {
       return { score: 0, detected: false, samples: trades?.length || 0 };
@@ -70,5 +68,5 @@ export class MartingaleDetectorService {
     };
   }
 }
-
-export default MartingaleDetectorService;
+module.exports = MartingaleDetectorService;
+module.exports.MartingaleDetectorService = MartingaleDetectorService;

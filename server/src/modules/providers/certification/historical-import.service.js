@@ -3,17 +3,12 @@
  *
  * @module signalforge/server/modules/providers/certification/historical
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import {
-  DEFAULT_MIN_HISTORICAL_MESSAGES,
-  DEFAULT_MAX_HISTORICAL_MESSAGES,
-} from '../provider.constants.js';
-import { InsufficientHistoricalDataError } from '../provider.errors.js';
-import { emitHistoricalImportStarted, emitHistoricalImportCompleted } from '../provider.events.js';
-
-export class HistoricalImportService {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { DEFAULT_MIN_HISTORICAL_MESSAGES, DEFAULT_MAX_HISTORICAL_MESSAGES } = require('../provider.constants.js');
+const { InsufficientHistoricalDataError } = require('../provider.errors.js');
+const { emitHistoricalImportStarted, emitHistoricalImportCompleted } = require('../provider.events.js');
+class HistoricalImportService {
   constructor(db = null) {
     this.db = db || getDatabase();
     this.logger = getLogger('provider-historical-import');
@@ -63,5 +58,5 @@ export class HistoricalImportService {
     };
   }
 }
-
-export default HistoricalImportService;
+module.exports = HistoricalImportService;
+module.exports.HistoricalImportService = HistoricalImportService;

@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/validation/validators/symbol
  */
-
-import { isValidSymbol, normalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
-import { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES } from '../validation.constants.js';
-
-export class SymbolCheck {
+const { isValidSymbol, normalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
+const { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES } = require('../validation.constants.js');
+class SymbolCheck {
   constructor() {
     this.name = VALIDATION_CHECK_NAMES.SYMBOL;
   }
@@ -58,5 +56,5 @@ export class SymbolCheck {
     };
   }
 }
-
-export default SymbolCheck;
+module.exports = SymbolCheck;
+module.exports.SymbolCheck = SymbolCheck;

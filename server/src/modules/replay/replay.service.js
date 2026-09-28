@@ -7,20 +7,18 @@
  *
  * @module server/modules/replay/replay.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { REPLAY_TYPES } from './replay.constants';
-import { signalReplayService } from './signal-replay/signal-replay.service';
-import { tradeReplayService } from './trade-replay/trade-replay.service';
-import { aiReplayService } from './ai-replay/ai-replay.service';
-import { riskDecisionReplayService } from './risk-replay/risk-decision-replay.service';
-import { executionReplayService } from './execution-replay/execution-replay.service';
-import { providerMessageReplayService } from './provider-message-replay/provider-message-replay.service';
-import { systemTimelineService } from './system-timeline/system-timeline.service';
-
-export async function replaySignal({ signalId, userId, includeAi = true, includeRisk = true, includeExecution = true }) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { REPLAY_TYPES } = require('./replay.constants');
+const { signalReplayService } = require('./signal-replay/signal-replay.service');
+const { tradeReplayService } = require('./trade-replay/trade-replay.service');
+const { aiReplayService } = require('./ai-replay/ai-replay.service');
+const { riskDecisionReplayService } = require('./risk-replay/risk-decision-replay.service');
+const { executionReplayService } = require('./execution-replay/execution-replay.service');
+const { providerMessageReplayService } = require('./provider-message-replay/provider-message-replay.service');
+const { systemTimelineService } = require('./system-timeline/system-timeline.service');
+async function replaySignal({ signalId, userId, includeAi = true, includeRisk = true, includeExecution = true }) {
   if (!signalId) {
     throw new AppError('signalId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -37,8 +35,7 @@ export async function replaySignal({ signalId, userId, includeAi = true, include
 
   return result;
 }
-
-export async function replayTrade({ tradeId, userId }) {
+async function replayTrade({ tradeId, userId }) {
   if (!tradeId) {
     throw new AppError('tradeId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -49,32 +46,28 @@ export async function replayTrade({ tradeId, userId }) {
 
   return result;
 }
-
-export async function replayAiProcessing({ signalId, userId }) {
+async function replayAiProcessing({ signalId, userId }) {
   if (!signalId) {
     throw new AppError('signalId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
   return aiReplayService.buildAiReplay({ signalId, userId });
 }
-
-export async function replayRiskDecision({ signalId, userId }) {
+async function replayRiskDecision({ signalId, userId }) {
   if (!signalId) {
     throw new AppError('signalId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
   return riskDecisionReplayService.buildRiskReplay({ signalId, userId });
 }
-
-export async function replayExecution({ tradeId, userId }) {
+async function replayExecution({ tradeId, userId }) {
   if (!tradeId) {
     throw new AppError('tradeId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
   return executionReplayService.buildExecutionReplay({ tradeId, userId });
 }
-
-export async function replayProviderMessage({ providerId, sourceId, externalMessageId, userId }) {
+async function replayProviderMessage({ providerId, sourceId, externalMessageId, userId }) {
   if (!providerId || !externalMessageId) {
     throw new AppError('providerId and externalMessageId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -86,16 +79,14 @@ export async function replayProviderMessage({ providerId, sourceId, externalMess
     userId,
   });
 }
-
-export async function replaySystemTimeline({ correlationId, userId }) {
+async function replaySystemTimeline({ correlationId, userId }) {
   if (!correlationId) {
     throw new AppError('correlationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
   return systemTimelineService.buildSystemTimeline({ correlationId, userId });
 }
-
-export async function replayAny({ type, id, userId, options = {} }) {
+async function replayAny({ type, id, userId, options = {} }) {
   if (!type || !id) {
     throw new AppError('type and id are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -119,8 +110,7 @@ export async function replayAny({ type, id, userId, options = {} }) {
       throw new AppError(`Unsupported replay type: ${type}`, ERROR_CODES.VALIDATION_FAILED, 400);
   }
 }
-
-export const replayService = {
+const replayService = {
   replaySignal,
   replayTrade,
   replayAiProcessing,
@@ -130,3 +120,20 @@ export const replayService = {
   replaySystemTimeline,
   replayAny,
 };
+module.exports.replayService = replayService;
+
+module.exports.replaySignal = replaySignal;
+
+module.exports.replayTrade = replayTrade;
+
+module.exports.replayAiProcessing = replayAiProcessing;
+
+module.exports.replayRiskDecision = replayRiskDecision;
+
+module.exports.replayExecution = replayExecution;
+
+module.exports.replayProviderMessage = replayProviderMessage;
+
+module.exports.replaySystemTimeline = replaySystemTimeline;
+
+module.exports.replayAny = replayAny;

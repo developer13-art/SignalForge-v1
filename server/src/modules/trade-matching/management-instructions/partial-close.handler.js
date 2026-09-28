@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/management-instructions/partial-close
  */
-
-import { MANAGEMENT_INSTRUCTION_TYPES } from '../matching.constants.js';
-
-export class PartialCloseHandler {
+const { MANAGEMENT_INSTRUCTION_TYPES } = require('../matching.constants.js');
+class PartialCloseHandler {
   constructor() {
     this.instructionType = MANAGEMENT_INSTRUCTION_TYPES.PARTIAL_CLOSE;
   }
@@ -38,5 +36,5 @@ export class PartialCloseHandler {
     };
   }
 }
-
-export default PartialCloseHandler;
+module.exports = PartialCloseHandler;
+module.exports.PartialCloseHandler = PartialCloseHandler;

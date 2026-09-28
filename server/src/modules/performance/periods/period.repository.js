@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/performance/periods/repository
  */
-
-import { PerformanceRepository } from '../performance.repository.js';
-
-export class PeriodRepository {
+const { PerformanceRepository } = require('../performance.repository.js');
+class PeriodRepository {
   constructor(db = null) {
     this.performanceRepository = new PerformanceRepository(db);
   }
@@ -47,5 +45,5 @@ export class PeriodRepository {
     return this.performanceRepository.findPeriodsToClose(referenceTime, graceHours);
   }
 }
-
-export default PeriodRepository;
+module.exports = PeriodRepository;
+module.exports.PeriodRepository = PeriodRepository;

@@ -3,8 +3,7 @@
  *
  * @module server/utils/retry.util
  */
-
-import { sleep } from './sleep.util';
+const { sleep } = require('./sleep.util');
 
 const DEFAULT_MAX_ATTEMPTS = 3;
 const DEFAULT_DELAY_MS = 1000;
@@ -18,8 +17,7 @@ function calculateDelay({ attempt, baseDelay = DEFAULT_DELAY_MS, factor = 2, max
   const jitterAmount = capped * 0.25;
   return Math.max(0, capped + (Math.random() * 2 - 1) * jitterAmount);
 }
-
-export async function retry(fn, options = {}) {
+async function retry(fn, options = {}) {
   const maxAttempts = options.maxAttempts || DEFAULT_MAX_ATTEMPTS;
   const shouldRetry = options.shouldRetry;
   const onRetry = options.onRetry;
@@ -52,8 +50,7 @@ export async function retry(fn, options = {}) {
 
   throw lastError;
 }
-
-export async function retryWithResult(fn, options = {}) {
+async function retryWithResult(fn, options = {}) {
   const maxAttempts = options.maxAttempts || DEFAULT_MAX_ATTEMPTS;
 
   let lastError;
@@ -72,8 +69,7 @@ export async function retryWithResult(fn, options = {}) {
 
   return { success: false, error: lastError, attempts: maxAttempts };
 }
-
-export function isRetryableError(error) {
+function isRetryableError(error) {
   if (!error) {
     return false;
   }
@@ -102,10 +98,15 @@ export function isRetryableError(error) {
   const message = String(error.message || '').toLowerCase();
   return ['timeout', 'network', 'rate limit', 'temporary'].some((p) => message.includes(p));
 }
-
-export const retryUtil = {
+const retryUtil = {
   retry,
   retryWithResult,
   isRetryableError,
   calculateDelay,
 };
+module.exports.retryUtil = retryUtil;
+module.exports.isRetryableError = isRetryableError;
+
+module.exports.retry = retry;
+
+module.exports.retryWithResult = retryWithResult;

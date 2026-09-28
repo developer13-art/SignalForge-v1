@@ -7,10 +7,9 @@
  *
  * @module signalforge/server/modules/signal-classification/classifiers/ai
  */
-
-import { BaseClassifier } from './base.classifier.js';
-import { CLASSIFICATION_TYPES, CLASSIFIER_KINDS } from '../classification.constants.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
+const { BaseClassifier } = require('./base.classifier.js');
+const { CLASSIFICATION_TYPES, CLASSIFIER_KINDS } = require('../classification.constants.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
 
 const SYSTEM_PROMPT = `You are a trading message classifier. Classify the user-provided trading message into exactly one of these categories:
 
@@ -25,8 +24,7 @@ const SYSTEM_PROMPT = `You are a trading message classifier. Classify the user-p
 
 Respond with a JSON object: {"classification": "<TYPE>", "confidence": <0.0-1.0>}.
 Do not include any other text.`;
-
-export class AiClassifier extends BaseClassifier {
+class AiClassifier extends BaseClassifier {
   constructor(llmGateway = null) {
     super(CLASSIFIER_KINDS.AI, '1.0.0');
     this.llmGateway = llmGateway;
@@ -126,5 +124,5 @@ export class AiClassifier extends BaseClassifier {
     }
   }
 }
-
-export default AiClassifier;
+module.exports = AiClassifier;
+module.exports.AiClassifier = AiClassifier;

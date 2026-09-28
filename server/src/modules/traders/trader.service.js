@@ -3,29 +3,15 @@
  *
  * @module signalforge/server/modules/traders/service
  */
-
-import { TraderRepository } from './trader.repository.js';
-import { TraderProfileService } from './profile/service.js';
-import { FollowerService } from './followers/service.js';
-import { LeaderboardService } from './leaderboard/service.js';
-import { CopySettingsService } from './copy-settings/service.js';
-import {
-  TRADER_STATUSES,
-} from './trader.constants.js';
-import {
-  TraderNotFoundError,
-  TraderAlreadyRegisteredError,
-  TraderNotActiveError,
-} from './trader.errors.js';
-import {
-  emitTraderRegistered,
-  emitTraderUpdated,
-  emitTraderApproved,
-  emitTraderSuspended,
-  emitTraderReinstated,
-} from './trader.events.js';
-
-export class TraderService {
+const { TraderRepository } = require('./trader.repository.js');
+const { TraderProfileService } = require('./profile/service.js');
+const { FollowerService } = require('./followers/service.js');
+const { LeaderboardService } = require('./leaderboard/service.js');
+const { CopySettingsService } = require('./copy-settings/service.js');
+const { TRADER_STATUSES } = require('./trader.constants.js');
+const { TraderNotFoundError, TraderAlreadyRegisteredError, TraderNotActiveError } = require('./trader.errors.js');
+const { emitTraderRegistered, emitTraderUpdated, emitTraderApproved, emitTraderSuspended, emitTraderReinstated } = require('./trader.events.js');
+class TraderService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TraderRepository();
 
@@ -290,5 +276,5 @@ export class TraderService {
     return input;
   }
 }
-
-export default TraderService;
+module.exports = TraderService;
+module.exports.TraderService = TraderService;

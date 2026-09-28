@@ -3,19 +3,17 @@
  *
  * @module signalforge/server/modules/analytics/reports/report-generator
  */
-
-import { EquityCurveService } from '../metrics/equity-curve.service.js';
-import { DrawdownService } from '../metrics/drawdown.service.js';
-import { WinRateService } from '../metrics/win-rate.service.js';
-import { ProfitFactorService } from '../metrics/profit-factor.service.js';
-import { AverageRrService } from '../metrics/average-rr.service.js';
-import { SharpeRatioService } from '../metrics/sharpe-ratio.service.js';
-import { SortinoRatioService } from '../metrics/sortino-ratio.service.js';
-import { SymbolPerformanceService } from '../metrics/symbol-performance.service.js';
-import { BehaviorAnalysisService } from '../metrics/behavior-analysis.service.js';
-import { REPORT_TYPES } from '../analytics.constants.js';
-
-export class ReportGeneratorService {
+const { EquityCurveService } = require('../metrics/equity-curve.service.js');
+const { DrawdownService } = require('../metrics/drawdown.service.js');
+const { WinRateService } = require('../metrics/win-rate.service.js');
+const { ProfitFactorService } = require('../metrics/profit-factor.service.js');
+const { AverageRrService } = require('../metrics/average-rr.service.js');
+const { SharpeRatioService } = require('../metrics/sharpe-ratio.service.js');
+const { SortinoRatioService } = require('../metrics/sortino-ratio.service.js');
+const { SymbolPerformanceService } = require('../metrics/symbol-performance.service.js');
+const { BehaviorAnalysisService } = require('../metrics/behavior-analysis.service.js');
+const { REPORT_TYPES } = require('../analytics.constants.js');
+class ReportGeneratorService {
   constructor(dependencies = {}) {
     this.equity = dependencies.equity || new EquityCurveService();
     this.drawdown = dependencies.drawdown || new DrawdownService();
@@ -149,5 +147,5 @@ export class ReportGeneratorService {
     };
   }
 }
-
-export default ReportGeneratorService;
+module.exports = ReportGeneratorService;
+module.exports.ReportGeneratorService = ReportGeneratorService;

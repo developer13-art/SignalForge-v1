@@ -3,14 +3,8 @@
  *
  * @module signalforge/server/modules/brokers/metaapi/error-handler
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import {
-  BrokerConnectionError,
-  BrokerDeploymentError,
-  BrokerRateLimitError,
-  BrokerSyncError,
-} from '../broker.errors.js';
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { BrokerConnectionError, BrokerDeploymentError, BrokerRateLimitError, BrokerSyncError } = require('../broker.errors.js');
 
 const RETRYABLE_ERROR_PATTERNS = [
   'timeout',
@@ -21,8 +15,7 @@ const RETRYABLE_ERROR_PATTERNS = [
   'ECONNRESET',
   'ETIMEDOUT',
 ];
-
-export class MetaApiErrorHandlerService {
+class MetaApiErrorHandlerService {
   constructor() {
     this.logger = getLogger('metaapi-error-handler');
   }
@@ -66,5 +59,5 @@ export class MetaApiErrorHandlerService {
     return new BrokerConnectionError(error.message, { cause: error.message });
   }
 }
-
-export default MetaApiErrorHandlerService;
+module.exports = MetaApiErrorHandlerService;
+module.exports.MetaApiErrorHandlerService = MetaApiErrorHandlerService;

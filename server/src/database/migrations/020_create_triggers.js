@@ -76,8 +76,7 @@ const TABLES_WITH_UPDATED_AT = [
   'solana_payments',
   'solana_transactions',
 ];
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE OR REPLACE FUNCTION set_updated_at()
     RETURNS TRIGGER AS $$
@@ -101,11 +100,12 @@ export async function up(client) {
     `);
   }
 }
-
-export async function down(client) {
+async function down(client) {
   for (const table of TABLES_WITH_UPDATED_AT) {
     await client.query(`DROP TRIGGER IF EXISTS trg_${table}_updated_at ON ${table};`);
   }
 
   await client.query(`DROP FUNCTION IF EXISTS set_updated_at();`);
 }
+module.exports.up = up;
+module.exports.down = down;

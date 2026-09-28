@@ -3,12 +3,9 @@
  *
  * @module signalforge/server/modules/auth/tokens/email-token
  */
-
-import crypto from 'node:crypto';
-
-import jwtConfig from '../../../config/jwt.config.js';
-
-export class EmailTokenService {
+const crypto = require('node:crypto');
+const jwtConfig = require('../../../config/jwt.config.js');
+class EmailTokenService {
   generate() {
     return crypto.randomBytes(32).toString('base64url');
   }
@@ -26,7 +23,6 @@ export class EmailTokenService {
     return new Date(expiresAt).getTime() < Date.now();
   }
 }
-
-export const emailTokenService = new EmailTokenService();
-
-export default emailTokenService;
+const emailTokenService = new EmailTokenService();
+module.exports = emailTokenService;
+module.exports.emailTokenService = emailTokenService;

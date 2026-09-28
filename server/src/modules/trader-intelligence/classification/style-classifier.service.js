@@ -3,13 +3,8 @@
  *
  * @module signalforge/server/modules/trader-intelligence/classification/style-classifier
  */
-
-import {
-  TRADING_STYLES,
-  MIN_TRADES_FOR_CLASSIFICATION,
-} from '../intelligence.constants.js';
-
-export class StyleClassifierService {
+const { TRADING_STYLES, MIN_TRADES_FOR_CLASSIFICATION } = require('../intelligence.constants.js');
+class StyleClassifierService {
   classify({ trades, holdingTime, martingale, grid }) {
     if (!Array.isArray(trades) || trades.length < MIN_TRADES_FOR_CLASSIFICATION) {
       return {
@@ -91,5 +86,5 @@ export class StyleClassifierService {
     return samples > 0 ? totalRr / samples : 0;
   }
 }
-
-export default StyleClassifierService;
+module.exports = StyleClassifierService;
+module.exports.StyleClassifierService = StyleClassifierService;

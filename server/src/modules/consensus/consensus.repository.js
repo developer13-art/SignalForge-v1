@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/consensus/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class ConsensusRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class ConsensusRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -186,5 +184,5 @@ export class ConsensusRepository {
     return result.rows;
   }
 }
-
-export default ConsensusRepository;
+module.exports = ConsensusRepository;
+module.exports.ConsensusRepository = ConsensusRepository;

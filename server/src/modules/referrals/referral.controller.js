@@ -3,17 +3,10 @@
  *
  * @module signalforge/server/modules/referrals/controller
  */
-
-import { ReferralService } from './referral.service.js';
-import {
-  validateCreateCodePayload,
-  validateRelationshipPayload,
-  validateSettlementPayload,
-  validateRewardDecisionPayload,
-} from './referral.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class ReferralController {
+const { ReferralService } = require('./referral.service.js');
+const { validateCreateCodePayload, validateRelationshipPayload, validateSettlementPayload, validateRewardDecisionPayload } = require('./referral.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class ReferralController {
   constructor(service = null) {
     this.service = service || new ReferralService();
   }
@@ -325,5 +318,5 @@ export class ReferralController {
     }
   };
 }
-
-export default ReferralController;
+module.exports = ReferralController;
+module.exports.ReferralController = ReferralController;

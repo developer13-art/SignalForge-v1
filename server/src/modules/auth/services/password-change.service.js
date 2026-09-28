@@ -3,15 +3,12 @@
  *
  * @module signalforge/server/modules/auth/services/password-change
  */
-
-import bcrypt from 'bcrypt';
-
-import { LocalStrategy } from '../strategies/local.strategy.js';
-import { SessionService } from './session.service.js';
-import { InvalidCredentialsError } from '../auth.errors.js';
-import { emitPasswordChanged } from '../auth.events.js';
-
-export class PasswordChangeService {
+const bcrypt = require('bcrypt');
+const { LocalStrategy } = require('../strategies/local.strategy.js');
+const { SessionService } = require('./session.service.js');
+const { InvalidCredentialsError } = require('../auth.errors.js');
+const { emitPasswordChanged } = require('../auth.events.js');
+class PasswordChangeService {
   constructor(repository) {
     this.repository = repository;
     this.localStrategy = new LocalStrategy(repository);
@@ -39,5 +36,5 @@ export class PasswordChangeService {
     return { changed: true };
   }
 }
-
-export default PasswordChangeService;
+module.exports = PasswordChangeService;
+module.exports.PasswordChangeService = PasswordChangeService;

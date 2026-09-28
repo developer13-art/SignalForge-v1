@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trader-intelligence/classification/risk-classifier
  */
-
-import { RISK_STYLES } from '../intelligence.constants.js';
-
-export class RiskClassifierService {
+const { RISK_STYLES } = require('../intelligence.constants.js');
+class RiskClassifierService {
   classify({ trades, maxDrawdownPercent, averageRr }) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return {
@@ -45,5 +43,5 @@ export class RiskClassifierService {
     };
   }
 }
-
-export default RiskClassifierService;
+module.exports = RiskClassifierService;
+module.exports.RiskClassifierService = RiskClassifierService;

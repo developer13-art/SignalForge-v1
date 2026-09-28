@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/wallets/ledger/repository
  */
-
-import { WalletRepository } from '../wallet.repository.js';
-
-export class LedgerRepository {
+const { WalletRepository } = require('../wallet.repository.js');
+class LedgerRepository {
   constructor(db = null) {
     this.walletRepository = new WalletRepository(db);
   }
@@ -35,5 +33,5 @@ export class LedgerRepository {
     return this.walletRepository.listWalletsWithDrift(tolerance);
   }
 }
-
-export default LedgerRepository;
+module.exports = LedgerRepository;
+module.exports.LedgerRepository = LedgerRepository;

@@ -3,15 +3,13 @@
  *
  * @module signalforge/server/modules/users/controller
  */
-
-import { UserService } from './user.service.js';
-import { ProfileService } from './profile/profile.service.js';
-import { PreferencesService } from './preferences/preferences.service.js';
-import { validateUpdateUserPayload } from './user.validator.js';
-import { validateProfilePayload } from './profile/profile.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class UserController {
+const { UserService } = require('./user.service.js');
+const { ProfileService } = require('./profile/profile.service.js');
+const { PreferencesService } = require('./preferences/preferences.service.js');
+const { validateUpdateUserPayload } = require('./user.validator.js');
+const { validateProfilePayload } = require('./profile/profile.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class UserController {
   constructor(service = null) {
     this.service = service || new UserService();
     this.profileService = new ProfileService();
@@ -148,5 +146,5 @@ export class UserController {
     }
   };
 }
-
-export default UserController;
+module.exports = UserController;
+module.exports.UserController = UserController;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class SourceRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class SourceRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -190,5 +188,5 @@ export class SourceRepository {
     return result.rows[0]?.count || 0;
   }
 }
-
-export default SourceRepository;
+module.exports = SourceRepository;
+module.exports.SourceRepository = SourceRepository;

@@ -3,15 +3,12 @@
  *
  * @module signalforge/server/modules/auth/services/account-recovery
  */
-
-import crypto from 'node:crypto';
-
-import { resetTokenService } from '../tokens/reset-token.service.js';
-import { SessionService } from './session.service.js';
-import { TOKEN_TYPES, AUTH_METHODS } from '../auth.constants.js';
-import { InvalidTokenError } from '../auth.errors.js';
-
-export class AccountRecoveryService {
+const crypto = require('node:crypto');
+const { resetTokenService } = require('../tokens/reset-token.service.js');
+const { SessionService } = require('./session.service.js');
+const { TOKEN_TYPES, AUTH_METHODS } = require('../auth.constants.js');
+const { InvalidTokenError } = require('../auth.errors.js');
+class AccountRecoveryService {
   constructor(repository, notificationService = null) {
     this.repository = repository;
     this.notifications = notificationService;
@@ -74,5 +71,5 @@ export class AccountRecoveryService {
     return { recovered: true, userId: record.user_id };
   }
 }
-
-export default AccountRecoveryService;
+module.exports = AccountRecoveryService;
+module.exports.AccountRecoveryService = AccountRecoveryService;

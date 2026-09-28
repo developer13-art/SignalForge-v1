@@ -6,19 +6,14 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/gateway
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import llmConfig from '../../../config/llm.config.js';
-import { LlmProviderFactory } from './provider.factory.js';
-import { LlmRateLimiterService } from './rate-limiter.service.js';
-import { TokenCounterService } from './token-counter.service.js';
-import {
-  LlmProviderError,
-  LlmRateLimitError,
-} from '../ai.errors.js';
-import { emitLlmRequest, emitLlmResponse, emitLlmError, emitLlmRateLimited } from '../ai.events.js';
-
-export class LlmGatewayService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const llmConfig = require('../../../config/llm.config.js');
+const { LlmProviderFactory } = require('./provider.factory.js');
+const { LlmRateLimiterService } = require('./rate-limiter.service.js');
+const { TokenCounterService } = require('./token-counter.service.js');
+const { LlmProviderError, LlmRateLimitError } = require('../ai.errors.js');
+const { emitLlmRequest, emitLlmResponse, emitLlmError, emitLlmRateLimited } = require('../ai.events.js');
+class LlmGatewayService {
   constructor(dependencies = {}) {
     this.logger = getLogger('llm-gateway');
     this.primaryProvider =
@@ -111,5 +106,5 @@ export class LlmGatewayService {
     };
   }
 }
-
-export default LlmGatewayService;
+module.exports = LlmGatewayService;
+module.exports.LlmGatewayService = LlmGatewayService;

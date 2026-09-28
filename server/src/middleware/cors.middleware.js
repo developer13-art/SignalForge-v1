@@ -80,6 +80,9 @@ function corsMiddleware() {
   return cors(buildCorsOptions());
 }
 
+corsMiddleware.buildCorsOptions = buildCorsOptions;
+corsMiddleware.resolveOrigins = resolveOrigins;
+corsMiddleware.corsMiddleware = corsMiddleware;
+
+module.exports.corsMiddleware = corsMiddleware;
 module.exports = corsMiddleware;
-module.exports.buildCorsOptions = buildCorsOptions;
-module.exports.resolveOrigins = resolveOrigins;

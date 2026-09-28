@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/referrals/rewards/repository
  */
-
-import { ReferralRepository } from '../referral.repository.js';
-
-export class ReferralRewardRepository {
+const { ReferralRepository } = require('../referral.repository.js');
+class ReferralRewardRepository {
   constructor(db = null) {
     this.referralRepository = new ReferralRepository(db);
   }
@@ -51,5 +49,5 @@ export class ReferralRewardRepository {
     return this.referralRepository.sumRewardsByReferrer(referrerId, filters);
   }
 }
-
-export default ReferralRewardRepository;
+module.exports = ReferralRewardRepository;
+module.exports.ReferralRewardRepository = ReferralRewardRepository;

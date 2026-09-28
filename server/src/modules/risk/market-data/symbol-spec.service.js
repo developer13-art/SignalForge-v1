@@ -27,8 +27,7 @@ const DEFAULT_SPEC = Object.freeze({
   minVolume: 0.01,
   maxVolume: 100,
 });
-
-export class SymbolSpecService {
+class SymbolSpecService {
   getSpec(symbol) {
     if (!symbol) {
       return DEFAULT_SPEC;
@@ -44,5 +43,5 @@ export class SymbolSpecService {
     return Boolean(SYMBOL_SPECS[String(symbol).toUpperCase()]);
   }
 }
-
-export default SymbolSpecService;
+module.exports = SymbolSpecService;
+module.exports.SymbolSpecService = SymbolSpecService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/copy-trading/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class CopyTradingRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class CopyTradingRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -305,5 +303,5 @@ export class CopyTradingRepository {
     return result.rows;
   }
 }
-
-export default CopyTradingRepository;
+module.exports = CopyTradingRepository;
+module.exports.CopyTradingRepository = CopyTradingRepository;

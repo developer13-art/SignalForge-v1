@@ -3,24 +3,13 @@
  *
  * @module signalforge/server/modules/payments/webhooks/paystack
  */
-
-import { WebhookVerificationService } from './webhook-verification.service.js';
-import { PaymentEventService } from '../events/payment-event.service.js';
-import { PaymentRepository } from '../payment.repository.js';
-import {
-  PAYMENT_STATUSES,
-  PAYMENT_PROVIDERS,
-} from '../payment.constants.js';
-import {
-  emitWebhookReceived,
-  emitWebhookVerified,
-  emitWebhookFailed,
-  emitPaymentCompleted,
-  emitPaymentFailed,
-} from '../payment.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class PaystackWebhookHandler {
+const { WebhookVerificationService } = require('./webhook-verification.service.js');
+const { PaymentEventService } = require('../events/payment-event.service.js');
+const { PaymentRepository } = require('../payment.repository.js');
+const { PAYMENT_STATUSES, PAYMENT_PROVIDERS } = require('../payment.constants.js');
+const { emitWebhookReceived, emitWebhookVerified, emitWebhookFailed, emitPaymentCompleted, emitPaymentFailed } = require('../payment.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class PaystackWebhookHandler {
   constructor(dependencies = {}) {
     this.verification =
       dependencies.verification || new WebhookVerificationService();
@@ -125,5 +114,5 @@ export class PaystackWebhookHandler {
     }
   }
 }
-
-export default PaystackWebhookHandler;
+module.exports = PaystackWebhookHandler;
+module.exports.PaystackWebhookHandler = PaystackWebhookHandler;

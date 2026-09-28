@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/payments/events/service
  */
-
-import { PaymentEventRepository } from './repository.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class PaymentEventService {
+const { PaymentEventRepository } = require('./repository.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class PaymentEventService {
   constructor(repository = null) {
     this.repository = repository || new PaymentEventRepository();
     this.logger = getLogger('payment-events');
@@ -39,5 +37,5 @@ export class PaymentEventService {
     return this.repository.list(filters, pagination);
   }
 }
-
-export default PaymentEventService;
+module.exports = PaymentEventService;
+module.exports.PaymentEventService = PaymentEventService;

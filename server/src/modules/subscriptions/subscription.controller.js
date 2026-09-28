@@ -3,17 +3,11 @@
  *
  * @module signalforge/server/modules/subscriptions/controller
  */
-
-import { SubscriptionService } from './subscription.service.js';
-import { PlanController } from './plans/plan.controller.js';
-import {
-  validateSubscribePayload,
-  validateCancelPayload,
-  validateUpgradePayload,
-} from './subscription.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class SubscriptionController {
+const { SubscriptionService } = require('./subscription.service.js');
+const { PlanController } = require('./plans/plan.controller.js');
+const { validateSubscribePayload, validateCancelPayload, validateUpgradePayload } = require('./subscription.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class SubscriptionController {
   constructor(service = null) {
     this.service = service || new SubscriptionService();
     this.planController = new PlanController(this.service.plans);
@@ -187,5 +181,5 @@ export class SubscriptionController {
     }
   };
 }
-
-export default SubscriptionController;
+module.exports = SubscriptionController;
+module.exports.SubscriptionController = SubscriptionController;

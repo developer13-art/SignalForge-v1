@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/validation/duplicate/repository
  */
-
-import { ValidationRepository } from '../validation.repository.js';
-
-export class DuplicateRepository {
+const { ValidationRepository } = require('../validation.repository.js');
+class DuplicateRepository {
   constructor(db = null) {
     this.validationRepository = new ValidationRepository(db);
   }
@@ -19,5 +17,5 @@ export class DuplicateRepository {
     return this.validationRepository.findDuplicatesBySignal(signalId);
   }
 }
-
-export default DuplicateRepository;
+module.exports = DuplicateRepository;
+module.exports.DuplicateRepository = DuplicateRepository;

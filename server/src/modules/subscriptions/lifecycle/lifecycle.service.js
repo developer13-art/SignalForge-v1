@@ -3,18 +3,16 @@
  *
  * @module signalforge/server/modules/subscriptions/lifecycle/service
  */
-
-import { SubscriptionRepository } from '../subscription.repository.js';
-import { TrialService } from './trial.service.js';
-import { ActivationService } from './activation.service.js';
-import { RenewalService } from './renewal.service.js';
-import { GracePeriodService } from './grace-period.service.js';
-import { PastDueService } from './past-due.service.js';
-import { ExpiryService } from './expiry.service.js';
-import { CancellationService } from './cancellation.service.js';
-import { SUBSCRIPTION_STATUSES } from '../subscription.constants.js';
-
-export class LifecycleService {
+const { SubscriptionRepository } = require('../subscription.repository.js');
+const { TrialService } = require('./trial.service.js');
+const { ActivationService } = require('./activation.service.js');
+const { RenewalService } = require('./renewal.service.js');
+const { GracePeriodService } = require('./grace-period.service.js');
+const { PastDueService } = require('./past-due.service.js');
+const { ExpiryService } = require('./expiry.service.js');
+const { CancellationService } = require('./cancellation.service.js');
+const { SUBSCRIPTION_STATUSES } = require('../subscription.constants.js');
+class LifecycleService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new SubscriptionRepository();
 
@@ -115,5 +113,5 @@ export class LifecycleService {
     ].includes(subscription.status);
   }
 }
-
-export default LifecycleService;
+module.exports = LifecycleService;
+module.exports.LifecycleService = LifecycleService;

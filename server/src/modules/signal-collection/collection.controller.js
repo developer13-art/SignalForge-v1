@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-collection/controller
  */
-
-import { CollectionService } from './collection.service.js';
-
-export class CollectionController {
+const { CollectionService } = require('./collection.service.js');
+class CollectionController {
   constructor(service = null) {
     this.service = service || new CollectionService();
   }
@@ -47,5 +45,5 @@ export class CollectionController {
     }
   };
 }
-
-export default CollectionController;
+module.exports = CollectionController;
+module.exports.CollectionController = CollectionController;

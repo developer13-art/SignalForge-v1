@@ -3,20 +3,13 @@
  *
  * @module signalforge/server/modules/auth/services/refresh-token
  */
-
-import crypto from 'node:crypto';
-
-import jwtConfig from '../../../config/jwt.config.js';
-import { accessTokenService } from '../tokens/access-token.service.js';
-import { refreshTokenService as tokenGenerator } from '../tokens/refresh-token.service.js';
-import { SessionService } from './session.service.js';
-import {
-  InvalidTokenError,
-  SessionNotFoundError,
-  SessionRevokedError,
-} from '../auth.errors.js';
-
-export class RefreshTokenService {
+const crypto = require('node:crypto');
+const jwtConfig = require('../../../config/jwt.config.js');
+const { accessTokenService } = require('../tokens/access-token.service.js');
+const { refreshTokenService: tokenGenerator } = require('../tokens/refresh-token.service.js');
+const { SessionService } = require('./session.service.js');
+const { InvalidTokenError, SessionNotFoundError, SessionRevokedError } = require('../auth.errors.js');
+class RefreshTokenService {
   constructor(repository) {
     this.repository = repository;
     this.sessionService = new SessionService(repository);
@@ -102,5 +95,5 @@ export class RefreshTokenService {
     };
   }
 }
-
-export default RefreshTokenService;
+module.exports = RefreshTokenService;
+module.exports.RefreshTokenService = RefreshTokenService;

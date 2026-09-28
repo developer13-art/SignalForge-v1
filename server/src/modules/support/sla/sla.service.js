@@ -6,13 +6,12 @@
  *
  * @module server/modules/support/sla/sla.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import * as repository from './sla.repository';
-import { ticketRepository } from '../ticket.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const repository = require('./sla.repository');
+const { ticketRepository } = require('../ticket.repository');
 
 const BREACH_TYPES = Object.freeze({
   RESPONSE: 'RESPONSE',
@@ -37,8 +36,7 @@ async function recordBreachIfNew({ ticketId, breachType, dueAt, minutesOverdue }
 
   return { recorded: true, breachId: breach.id };
 }
-
-export async function checkTicketSla({ ticketId }) {
+async function checkTicketSla({ ticketId }) {
   if (!ticketId) {
     throw new AppError('ticketId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -89,8 +87,7 @@ export async function checkTicketSla({ ticketId }) {
     results,
   };
 }
-
-export async function sweepOpenTicketsForBreaches({ limit = 200 }) {
+async function sweepOpenTicketsForBreaches({ limit = 200 }) {
   const breaches = await ticketRepository.listSlaBreaches({ limit });
 
   const results = [];
@@ -107,8 +104,7 @@ export async function sweepOpenTicketsForBreaches({ limit = 200 }) {
 
   return { checked: results.length, results };
 }
-
-export async function listBreachesForTicket({ ticketId }) {
+async function listBreachesForTicket({ ticketId }) {
   if (!ticketId) {
     throw new AppError('ticketId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -123,8 +119,7 @@ export async function listBreachesForTicket({ ticketId }) {
     recordedAt: row.recorded_at,
   }));
 }
-
-export async function listRecentBreaches({ limit = 100 }) {
+async function listRecentBreaches({ limit = 100 }) {
   const rows = await repository.listRecentBreaches({ limit });
 
   return rows.map((row) => ({
@@ -139,8 +134,7 @@ export async function listRecentBreaches({ limit = 100 }) {
     recordedAt: row.recorded_at,
   }));
 }
-
-export async function aggregateBreaches({ windowDays = 30 } = {}) {
+async function aggregateBreaches({ windowDays = 30 } = {}) {
   const since = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000).toISOString();
 
   const rows = await repository.aggregateBreachesByType({ since });
@@ -165,8 +159,7 @@ export async function aggregateBreaches({ windowDays = 30 } = {}) {
 
   return stats;
 }
-
-export const slaService = {
+const slaService = {
   checkTicketSla,
   sweepOpenTicketsForBreaches,
   listBreachesForTicket,
@@ -174,3 +167,14 @@ export const slaService = {
   aggregateBreaches,
   BREACH_TYPES,
 };
+module.exports.slaService = slaService;
+
+module.exports.checkTicketSla = checkTicketSla;
+
+module.exports.sweepOpenTicketsForBreaches = sweepOpenTicketsForBreaches;
+
+module.exports.listBreachesForTicket = listBreachesForTicket;
+
+module.exports.listRecentBreaches = listRecentBreaches;
+
+module.exports.aggregateBreaches = aggregateBreaches;

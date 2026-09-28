@@ -7,19 +7,17 @@
  *
  * @module server/modules/compliance/compliance.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { kycQueueService } from './kyc-queue/kyc-queue.service';
-import { reviewService } from './review/review.service';
-import { documentTypeService } from './document-types/document-type.service';
-import { verificationProviderService } from './verification-providers/verification-provider.service';
-import { riskFlagService } from './risk-flags/risk-flag.service';
-import { complianceAuditService } from './audit/compliance-audit.service';
-import { complianceReportService } from './reports/compliance-report.service';
-import * as repository from './compliance.repository';
-
-export async function getComplianceDashboard({ since }) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { kycQueueService } = require('./kyc-queue/kyc-queue.service');
+const { reviewService } = require('./review/review.service');
+const { documentTypeService } = require('./document-types/document-type.service');
+const { verificationProviderService } = require('./verification-providers/verification-provider.service');
+const { riskFlagService } = require('./risk-flags/risk-flag.service');
+const { complianceAuditService } = require('./audit/compliance-audit.service');
+const { complianceReportService } = require('./reports/compliance-report.service');
+const repository = require('./compliance.repository');
+async function getComplianceDashboard({ since }) {
   const [statusCounts, openRiskFlags] = await Promise.all([
     repository.countKycApplicationsByStatus(),
     repository.countOpenRiskFlags(),
@@ -42,8 +40,7 @@ export async function getComplianceDashboard({ since }) {
     slaBreachCount: slaBreaches.length,
   };
 }
-
-export async function getSlaBreaches({ hours = 48, limit = 100 }) {
+async function getSlaBreaches({ hours = 48, limit = 100 }) {
   const rows = await repository.findApplicationsExceedingSla({ hours, limit });
 
   return rows.map((row) => ({
@@ -53,8 +50,7 @@ export async function getSlaBreaches({ hours = 48, limit = 100 }) {
     submittedAt: row.submitted_at,
   }));
 }
-
-export async function recordComplianceAction({
+async function recordComplianceAction({
   actorId,
   action,
   resourceType,
@@ -84,8 +80,7 @@ export async function recordComplianceAction({
     resourceId,
   };
 }
-
-export async function assertReviewerAccess({ userId }) {
+async function assertReviewerAccess({ userId }) {
   if (!userId) {
     throw new AppError('Authentication required', ERROR_CODES.AUTHENTICATION_REQUIRED, 401);
   }
@@ -110,8 +105,7 @@ export async function assertReviewerAccess({ userId }) {
 
   return { roleNames };
 }
-
-export const complianceService = {
+const complianceService = {
   getComplianceDashboard,
   getSlaBreaches,
   recordComplianceAction,
@@ -125,3 +119,12 @@ export const complianceService = {
   audit: complianceAuditService,
   reports: complianceReportService,
 };
+module.exports.complianceService = complianceService;
+
+module.exports.getComplianceDashboard = getComplianceDashboard;
+
+module.exports.getSlaBreaches = getSlaBreaches;
+
+module.exports.recordComplianceAction = recordComplianceAction;
+
+module.exports.assertReviewerAccess = assertReviewerAccess;

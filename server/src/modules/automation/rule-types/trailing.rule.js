@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/automation/rule-types/trailing
  */
-
-import { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } from '../automation.constants.js';
-
-export class TrailingRule {
+const { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } = require('../automation.constants.js');
+class TrailingRule {
   static supports(condition) {
     return [
       AUTOMATION_CONDITION_TYPES.PROFIT_GREATER_THAN,
@@ -18,5 +16,5 @@ export class TrailingRule {
     return [AUTOMATION_ACTION_TYPES.TRAILING_STOP_ENABLE];
   }
 }
-
-export default TrailingRule;
+module.exports = TrailingRule;
+module.exports.TrailingRule = TrailingRule;

@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/risk/controller
  */
-
-import { RiskService } from './risk.service.js';
-import { RiskProfileController } from './profile/risk-profile.controller.js';
-
-export class RiskController {
+const { RiskService } = require('./risk.service.js');
+const { RiskProfileController } = require('./profile/risk-profile.controller.js');
+class RiskController {
   constructor(service = null) {
     this.service = service || new RiskService();
     this.profileController = new RiskProfileController(this.service.profileService);
@@ -130,5 +128,5 @@ export class RiskController {
     return this.profileController.deactivateEmergencyStop(req, res, next);
   };
 }
-
-export default RiskController;
+module.exports = RiskController;
+module.exports.RiskController = RiskController;

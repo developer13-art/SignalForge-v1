@@ -6,10 +6,9 @@
  *
  * @module server/modules/replay/execution-replay/execution-replay.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { replayRepository } from '../replay.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { replayRepository } = require('../replay.repository');
 
 function parseBrokerResponse(response) {
   if (!response) {
@@ -24,8 +23,7 @@ function parseBrokerResponse(response) {
   }
   return response;
 }
-
-export async function buildExecutionReplay({ tradeId, userId }) {
+async function buildExecutionReplay({ tradeId, userId }) {
   if (!tradeId) {
     throw new AppError('tradeId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -83,7 +81,9 @@ export async function buildExecutionReplay({ tradeId, userId }) {
     },
   };
 }
-
-export const executionReplayService = {
+const executionReplayService = {
   buildExecutionReplay,
 };
+module.exports.executionReplayService = executionReplayService;
+
+module.exports.buildExecutionReplay = buildExecutionReplay;

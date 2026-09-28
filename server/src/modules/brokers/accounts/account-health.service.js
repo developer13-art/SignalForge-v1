@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/brokers/accounts/health
  */
-
-import { AccountRepository } from './account.repository.js';
-import { emitAccountHealthCheck, emitAccountError } from '../broker.events.js';
-import { DEFAULT_HEALTH_CHECK_INTERVAL_MS } from '../broker.constants.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class AccountHealthService {
+const { AccountRepository } = require('./account.repository.js');
+const { emitAccountHealthCheck, emitAccountError } = require('../broker.events.js');
+const { DEFAULT_HEALTH_CHECK_INTERVAL_MS } = require('../broker.constants.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class AccountHealthService {
   constructor(repository = null) {
     this.repository = repository || new AccountRepository();
     this.logger = getLogger('broker-account-health');
@@ -72,5 +70,5 @@ export class AccountHealthService {
     }
   }
 }
-
-export default AccountHealthService;
+module.exports = AccountHealthService;
+module.exports.AccountHealthService = AccountHealthService;

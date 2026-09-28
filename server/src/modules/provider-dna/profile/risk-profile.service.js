@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/provider-dna/profile/risk-profile
  */
-
-import { DnaRepository } from '../dna.repository.js';
-
-export class RiskProfileService {
+const { DnaRepository } = require('../dna.repository.js');
+class RiskProfileService {
   constructor(repository = null) {
     this.repository = repository || new DnaRepository();
   }
@@ -38,5 +36,5 @@ export class RiskProfileService {
     return 'VERY_AGGRESSIVE';
   }
 }
-
-export default RiskProfileService;
+module.exports = RiskProfileService;
+module.exports.RiskProfileService = RiskProfileService;

@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/trades/queries/trade-history
  */
-
-import { TradeRepository } from '../trade.repository.js';
-import { DEFAULT_HISTORY_DAYS } from '../trade.constants.js';
-
-export class TradeHistoryQuery {
+const { TradeRepository } = require('../trade.repository.js');
+const { DEFAULT_HISTORY_DAYS } = require('../trade.constants.js');
+class TradeHistoryQuery {
   constructor(repository = null) {
     this.repository = repository || new TradeRepository();
   }
@@ -63,5 +61,5 @@ export class TradeHistoryQuery {
     };
   }
 }
-
-export default TradeHistoryQuery;
+module.exports = TradeHistoryQuery;
+module.exports.TradeHistoryQuery = TradeHistoryQuery;

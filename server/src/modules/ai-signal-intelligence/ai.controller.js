@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/controller
  */
-
-import { AiService } from './ai.service.js';
-import { ParserController } from './parser/parser.controller.js';
-import { ConfidenceController } from './confidence/confidence.controller.js';
-
-export class AiController {
+const { AiService } = require('./ai.service.js');
+const { ParserController } = require('./parser/parser.controller.js');
+const { ConfidenceController } = require('./confidence/confidence.controller.js');
+class AiController {
   constructor(service = null) {
     this.service = service || new AiService();
     this.parserController = new ParserController(this.service.parser);
@@ -75,5 +73,5 @@ export class AiController {
     }
   };
 }
-
-export default AiController;
+module.exports = AiController;
+module.exports.AiController = AiController;

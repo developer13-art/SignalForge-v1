@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/subscriptions/lifecycle/cancellation
  */
-
-import { SubscriptionRepository } from '../subscription.repository.js';
-import { SUBSCRIPTION_STATUSES } from '../subscription.constants.js';
-import { emitSubscriptionCancelled } from '../subscription.events.js';
-import { SubscriptionNotCancellableError } from '../subscription.errors.js';
-
-export class CancellationService {
+const { SubscriptionRepository } = require('../subscription.repository.js');
+const { SUBSCRIPTION_STATUSES } = require('../subscription.constants.js');
+const { emitSubscriptionCancelled } = require('../subscription.events.js');
+const { SubscriptionNotCancellableError } = require('../subscription.errors.js');
+class CancellationService {
   constructor(repository = null) {
     this.repository = repository || new SubscriptionRepository();
   }
@@ -89,5 +87,5 @@ export class CancellationService {
     };
   }
 }
-
-export default CancellationService;
+module.exports = CancellationService;
+module.exports.CancellationService = CancellationService;

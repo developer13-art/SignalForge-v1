@@ -7,11 +7,9 @@
  *
  * @module server/modules/solana/payments/solana-payment.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertPayment({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertPayment({
   userId,
   subscriptionId,
   purpose,
@@ -54,32 +52,28 @@ export async function insertPayment({
   );
   return rows[0];
 }
-
-export async function findById({ paymentId }) {
+async function findById({ paymentId }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_payments WHERE id = $1 LIMIT 1`,
     [paymentId],
   );
   return rows[0] || null;
 }
-
-export async function findBySignature({ txSignature }) {
+async function findBySignature({ txSignature }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_payments WHERE tx_signature = $1 LIMIT 1`,
     [txSignature],
   );
   return rows[0] || null;
 }
-
-export async function findByReference({ reference }) {
+async function findByReference({ reference }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_payments WHERE reference = $1 LIMIT 1`,
     [reference],
   );
   return rows[0] || null;
 }
-
-export async function attachSignature({ paymentId, txSignature, senderWallet }) {
+async function attachSignature({ paymentId, txSignature, senderWallet }) {
   const { rowCount } = await db.query(
     `UPDATE solana_payments
         SET tx_signature = $1,
@@ -92,8 +86,7 @@ export async function attachSignature({ paymentId, txSignature, senderWallet }) 
   );
   return rowCount > 0;
 }
-
-export async function updateStatus({
+async function updateStatus({
   paymentId,
   status,
   slot,
@@ -116,8 +109,7 @@ export async function updateStatus({
   );
   return rowCount > 0;
 }
-
-export async function markRefunded({ paymentId, refundTxSignature, reason }) {
+async function markRefunded({ paymentId, refundTxSignature, reason }) {
   const { rowCount } = await db.query(
     `UPDATE solana_payments
         SET status = 'REFUNDED',
@@ -130,8 +122,7 @@ export async function markRefunded({ paymentId, refundTxSignature, reason }) {
   );
   return rowCount > 0;
 }
-
-export async function listByUser({ userId, filters = {}, pagination = {} }) {
+async function listByUser({ userId, filters = {}, pagination = {} }) {
   const conditions = ['user_id = $1'];
   const params = [userId];
 
@@ -173,8 +164,7 @@ export async function listByUser({ userId, filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findPendingForVerification({ limit = 100 }) {
+async function findPendingForVerification({ limit = 100 }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_payments
       WHERE status IN ('SUBMITTED', 'CONFIRMING')
@@ -184,8 +174,7 @@ export async function findPendingForVerification({ limit = 100 }) {
   );
   return rows;
 }
-
-export async function findExpired({ limit = 200 }) {
+async function findExpired({ limit = 200 }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_payments
       WHERE status = 'AWAITING_SIGNATURE'
@@ -196,8 +185,7 @@ export async function findExpired({ limit = 200 }) {
   );
   return rows;
 }
-
-export async function countByStatus() {
+async function countByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count, COALESCE(SUM(amount_usd), 0)::numeric AS total_usd
        FROM solana_payments
@@ -205,8 +193,7 @@ export async function countByStatus() {
   );
   return rows;
 }
-
-export async function listRecent({ limit = 50 }) {
+async function listRecent({ limit = 50 }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_payments
       ORDER BY created_at DESC
@@ -215,8 +202,7 @@ export async function listRecent({ limit = 50 }) {
   );
   return rows;
 }
-
-export const solanaPaymentRepository = {
+const solanaPaymentRepository = {
   insertPayment,
   findById,
   findBySignature,
@@ -230,3 +216,28 @@ export const solanaPaymentRepository = {
   countByStatus,
   listRecent,
 };
+module.exports.solanaPaymentRepository = solanaPaymentRepository;
+
+module.exports.insertPayment = insertPayment;
+
+module.exports.findById = findById;
+
+module.exports.findBySignature = findBySignature;
+
+module.exports.findByReference = findByReference;
+
+module.exports.attachSignature = attachSignature;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.markRefunded = markRefunded;
+
+module.exports.listByUser = listByUser;
+
+module.exports.findPendingForVerification = findPendingForVerification;
+
+module.exports.findExpired = findExpired;
+
+module.exports.countByStatus = countByStatus;
+
+module.exports.listRecent = listRecent;

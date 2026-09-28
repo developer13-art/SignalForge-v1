@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trades/timeline/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class TradeTimelineRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class TradeTimelineRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -85,5 +83,5 @@ export class TradeTimelineRepository {
     return result.rows[0] || null;
   }
 }
-
-export default TradeTimelineRepository;
+module.exports = TradeTimelineRepository;
+module.exports.TradeTimelineRepository = TradeTimelineRepository;

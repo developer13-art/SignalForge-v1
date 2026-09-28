@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/risk/calculator/lot-size
  */
-
-import { PipValueService } from './pip-value.service.js';
-
-export class LotSizeCalculatorService {
+const { PipValueService } = require('./pip-value.service.js');
+class LotSizeCalculatorService {
   constructor(pipValueService = null) {
     this.pipValue = pipValueService || new PipValueService();
   }
@@ -38,5 +36,5 @@ export class LotSizeCalculatorService {
     };
   }
 }
-
-export default LotSizeCalculatorService;
+module.exports = LotSizeCalculatorService;
+module.exports.LotSizeCalculatorService = LotSizeCalculatorService;

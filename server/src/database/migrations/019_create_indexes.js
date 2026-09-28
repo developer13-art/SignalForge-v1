@@ -7,8 +7,7 @@
  *
  * @module server/database/migrations/019_create_indexes
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE INDEX IF NOT EXISTS idx_source_messages_unprocessed
       ON source_messages (created_at ASC)
@@ -57,8 +56,7 @@ export async function up(client) {
       WHERE status IN ('SUBMITTED', 'CONFIRMING');
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP INDEX IF EXISTS idx_solana_payments_pending`);
   await client.query(`DROP INDEX IF EXISTS idx_solana_provenance_pending`);
   await client.query(`DROP INDEX IF EXISTS idx_solana_attestations_pending`);
@@ -68,3 +66,5 @@ export async function down(client) {
   await client.query(`DROP INDEX IF EXISTS idx_signals_pending_fanout`);
   await client.query(`DROP INDEX IF EXISTS idx_source_messages_unprocessed`);
 }
+module.exports.up = up;
+module.exports.down = down;

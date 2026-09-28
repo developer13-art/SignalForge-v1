@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/execution/gateway/oanda
  */
-
-import { ExecutionGatewayInterface } from './execution-gateway.interface.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-import { GatewayNotConfiguredError } from '../execution.errors.js';
-
-export class OandaGateway extends ExecutionGatewayInterface {
+const { ExecutionGatewayInterface } = require('./execution-gateway.interface.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+const { GatewayNotConfiguredError } = require('../execution.errors.js');
+class OandaGateway extends ExecutionGatewayInterface {
   constructor() {
     super(GATEWAY_TYPES.OANDA);
   }
@@ -53,5 +51,5 @@ export class OandaGateway extends ExecutionGatewayInterface {
     this.assertAvailable();
   }
 }
-
-export default OandaGateway;
+module.exports = OandaGateway;
+module.exports.OandaGateway = OandaGateway;

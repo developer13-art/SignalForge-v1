@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/automation/engine/rule-scheduler
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class RuleSchedulerService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class RuleSchedulerService {
   constructor() {
     this.logger = getLogger('automation-scheduler');
     this.schedules = new Map();
@@ -65,5 +63,5 @@ export class RuleSchedulerService {
     }
   }
 }
-
-export default RuleSchedulerService;
+module.exports = RuleSchedulerService;
+module.exports.RuleSchedulerService = RuleSchedulerService;

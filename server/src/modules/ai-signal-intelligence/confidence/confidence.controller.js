@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/confidence/controller
  */
-
-import { ConfidenceService } from './confidence.service.js';
-
-export class ConfidenceController {
+const { ConfidenceService } = require('./confidence.service.js');
+class ConfidenceController {
   constructor(service = null) {
     this.service = service || new ConfidenceService();
   }
@@ -47,5 +45,5 @@ export class ConfidenceController {
     }
   };
 }
-
-export default ConfidenceController;
+module.exports = ConfidenceController;
+module.exports.ConfidenceController = ConfidenceController;

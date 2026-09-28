@@ -8,13 +8,12 @@
  *
  * @module server/modules/solana/wallets/siws.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { config } from '../../../config';
-import { walletNonceService } from './wallet-nonce.service';
-import { signatureVerificationService } from './signature-verification.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { config } = require('../../../config');
+const { walletNonceService } = require('./wallet-nonce.service');
+const { signatureVerificationService } = require('./signature-verification.service');
 
 function getAppDomain() {
   if (config.app && config.app.url) {
@@ -26,8 +25,7 @@ function getAppDomain() {
   }
   return 'signalforge.ai';
 }
-
-export function buildSiwsMessage({ walletAddress, nonce, issuedAt }) {
+function buildSiwsMessage({ walletAddress, nonce, issuedAt }) {
   if (!walletAddress || !nonce) {
     throw new AppError('walletAddress and nonce are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -49,8 +47,7 @@ export function buildSiwsMessage({ walletAddress, nonce, issuedAt }) {
     `Issued At: ${issuedAtText}`,
   ].join('\n');
 }
-
-export async function createNonceAndMessage({ walletAddress }) {
+async function createNonceAndMessage({ walletAddress }) {
   const { nonce } = walletNonceService.generateNonce({ walletAddress });
 
   const issuedAt = new Date().toISOString();
@@ -59,8 +56,7 @@ export async function createNonceAndMessage({ walletAddress }) {
 
   return { walletAddress, nonce, issuedAt, message };
 }
-
-export async function verifySiwsSignature({ walletAddress, message, signatureBase58 }) {
+async function verifySiwsSignature({ walletAddress, message, signatureBase58 }) {
   if (!walletAddress || !message || !signatureBase58) {
     throw new AppError(
       'walletAddress, message, and signatureBase58 are required',
@@ -96,9 +92,14 @@ export async function verifySiwsSignature({ walletAddress, message, signatureBas
 
   return { valid: true, walletAddress, nonce };
 }
-
-export const siwsService = {
+const siwsService = {
   buildSiwsMessage,
   createNonceAndMessage,
   verifySiwsSignature,
 };
+module.exports.siwsService = siwsService;
+module.exports.buildSiwsMessage = buildSiwsMessage;
+
+module.exports.createNonceAndMessage = createNonceAndMessage;
+
+module.exports.verifySiwsSignature = verifySiwsSignature;

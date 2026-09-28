@@ -8,11 +8,9 @@
  *
  * @module signalforge/server/modules/signal-collection/dispatcher
  */
-
-import { getLogger } from '../../bootstrap/initLogger.js';
-import { COLLECTION_STAGES } from './collection.constants.js';
-
-export class CollectionDispatcherService {
+const { getLogger } = require('../../bootstrap/initLogger.js');
+const { COLLECTION_STAGES } = require('./collection.constants.js');
+class CollectionDispatcherService {
   constructor(options = {}) {
     this.stages = new Map();
     this.logger = getLogger('collection-dispatcher');
@@ -61,5 +59,5 @@ export class CollectionDispatcherService {
     return { completed: true, stage: COLLECTION_STAGES.COMPLETED };
   }
 }
-
-export default CollectionDispatcherService;
+module.exports = CollectionDispatcherService;
+module.exports.CollectionDispatcherService = CollectionDispatcherService;

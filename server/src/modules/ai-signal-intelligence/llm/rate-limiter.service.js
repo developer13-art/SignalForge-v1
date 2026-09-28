@@ -5,8 +5,7 @@
  */
 
 const WINDOW_MS = 60000;
-
-export class LlmRateLimiterService {
+class LlmRateLimiterService {
   constructor(options = {}) {
     this.requestsPerMinute = options.requestsPerMinute || 500;
     this.tokensPerMinute = options.tokensPerMinute || 90000;
@@ -73,5 +72,5 @@ export class LlmRateLimiterService {
     this.inFlight = Math.max(0, this.inFlight - 1);
   }
 }
-
-export default LlmRateLimiterService;
+module.exports = LlmRateLimiterService;
+module.exports.LlmRateLimiterService = LlmRateLimiterService;

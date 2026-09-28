@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/providers/controller
  */
-
-import { ProviderService } from './service.js';
-import { ProviderProfileController } from './profile/controller.js';
-import { CertificationController } from './certification/controller.js';
-import { validateProviderRegistrationPayload, validateProviderUpdatePayload } from './provider.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class ProviderController {
+const { ProviderService } = require('./service.js');
+const { ProviderProfileController } = require('./profile/controller.js');
+const { CertificationController } = require('./certification/controller.js');
+const { validateProviderRegistrationPayload, validateProviderUpdatePayload } = require('./provider.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class ProviderController {
   constructor(service = null) {
     this.service = service || new ProviderService();
     this.profileController = new ProviderProfileController(this.service.profile);
@@ -364,5 +362,5 @@ export class ProviderController {
     }
   };
 }
-
-export default ProviderController;
+module.exports = ProviderController;
+module.exports.ProviderController = ProviderController;

@@ -8,13 +8,12 @@
  *
  * @module server/modules/signal-sources/telegram/listener/telegram-media-handler.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { getTelegramClient } from '../client/telegram-client.factory';
-import { storageService } from '../../../../lib/storage';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { getTelegramClient } = require('../client/telegram-client.factory');
+const { storageService } = require('../../../../lib/storage');
 
 const MAX_MEDIA_BYTES = 25 * 1024 * 1024;
 
@@ -60,8 +59,7 @@ function inferExtension(mimeType, fallbackFileName) {
 
   return map[mimeType] || 'bin';
 }
-
-export async function handleMediaMessage({ userId, message }) {
+async function handleMediaMessage({ userId, message }) {
   if (!userId || !message) {
     throw new AppError('userId and message are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -171,9 +169,11 @@ export async function handleMediaMessage({ userId, message }) {
 
   return { handled: true, media: processed };
 }
-
-export const telegramMediaHandlerService = {
+const telegramMediaHandlerService = {
   handleMediaMessage,
   ALLOWED_MEDIA_TYPES,
   MAX_MEDIA_BYTES,
 };
+module.exports.telegramMediaHandlerService = telegramMediaHandlerService;
+
+module.exports.handleMediaMessage = handleMediaMessage;

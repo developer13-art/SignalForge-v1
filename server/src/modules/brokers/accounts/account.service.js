@@ -3,15 +3,13 @@
  *
  * @module signalforge/server/modules/brokers/accounts/service
  */
-
-import { AccountRepository } from './account.repository.js';
-import { AccountConnectionService } from './account-connection.service.js';
-import { AccountSyncService } from './account-sync.service.js';
-import { AccountSnapshotService } from './account-snapshot.service.js';
-import { AccountHealthService } from './account-health.service.js';
-import { BrokerAccountNotFoundError } from '../broker.errors.js';
-
-export class AccountService {
+const { AccountRepository } = require('./account.repository.js');
+const { AccountConnectionService } = require('./account-connection.service.js');
+const { AccountSyncService } = require('./account-sync.service.js');
+const { AccountSnapshotService } = require('./account-snapshot.service.js');
+const { AccountHealthService } = require('./account-health.service.js');
+const { BrokerAccountNotFoundError } = require('../broker.errors.js');
+class AccountService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new AccountRepository();
     this.connection = dependencies.connection || new AccountConnectionService({
@@ -110,5 +108,5 @@ export class AccountService {
     };
   }
 }
-
-export default AccountService;
+module.exports = AccountService;
+module.exports.AccountService = AccountService;

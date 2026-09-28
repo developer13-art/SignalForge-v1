@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/trade-matching/matchers/ticket
  */
-
-export class TicketMatcher {
+class TicketMatcher {
   extractTicketFromMessage(message) {
     if (!message) {
       return null;
@@ -48,5 +47,5 @@ export class TicketMatcher {
     });
   }
 }
-
-export default TicketMatcher;
+module.exports = TicketMatcher;
+module.exports.TicketMatcher = TicketMatcher;

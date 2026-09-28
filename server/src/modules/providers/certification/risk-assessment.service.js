@@ -11,8 +11,7 @@ const WEIGHTS = Object.freeze({
   martingale: 0.15,
   newsExposure: 0.15,
 });
-
-export class RiskAssessmentService {
+class RiskAssessmentService {
   calculate({
     maxDrawdownPercent = 0,
     averageRiskPercent = 0,
@@ -51,5 +50,5 @@ export class RiskAssessmentService {
     return 'CRITICAL';
   }
 }
-
-export default RiskAssessmentService;
+module.exports = RiskAssessmentService;
+module.exports.RiskAssessmentService = RiskAssessmentService;

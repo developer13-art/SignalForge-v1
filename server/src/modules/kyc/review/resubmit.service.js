@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/kyc/review/resubmit
  */
-
-import { ReviewRepository } from './review.repository.js';
-import { KycApplicationNotFoundError } from '../kyc.errors.js';
-import { emitResubmissionRequested, emitStatusChanged } from '../kyc.events.js';
-
-export class ResubmitService {
+const { ReviewRepository } = require('./review.repository.js');
+const { KycApplicationNotFoundError } = require('../kyc.errors.js');
+const { emitResubmissionRequested, emitStatusChanged } = require('../kyc.events.js');
+class ResubmitService {
   constructor(repository = null) {
     this.repository = repository || new ReviewRepository();
   }
@@ -48,5 +46,5 @@ export class ResubmitService {
     return { resubmissionRequested: true };
   }
 }
-
-export default ResubmitService;
+module.exports = ResubmitService;
+module.exports.ResubmitService = ResubmitService;

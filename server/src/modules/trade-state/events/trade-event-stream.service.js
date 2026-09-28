@@ -6,12 +6,10 @@
  *
  * @module signalforge/server/modules/trade-state/events/stream
  */
-
-import { getEventBus } from '../../../bootstrap/initEventBus.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { TRADE_STATE_EVENTS } from '../trade-state.constants.js';
-
-export class TradeEventStreamService {
+const { getEventBus } = require('../../../bootstrap/initEventBus.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { TRADE_STATE_EVENTS } = require('../trade-state.constants.js');
+class TradeEventStreamService {
   constructor() {
     this.logger = getLogger('trade-event-stream');
     this.subscriptions = new Map();
@@ -68,5 +66,5 @@ export class TradeEventStreamService {
     this.subscriptions.clear();
   }
 }
-
-export default TradeEventStreamService;
+module.exports = TradeEventStreamService;
+module.exports.TradeEventStreamService = TradeEventStreamService;

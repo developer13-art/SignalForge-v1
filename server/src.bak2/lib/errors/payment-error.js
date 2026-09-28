@@ -1,0 +1,15 @@
+/**
+ * Payment Error
+ *
+ * @module server/lib/errors/payment-error
+ */
+const { AppError } = require('./app-error');
+const { ERROR_CODES } = require('./error-codes');
+
+export class PaymentError extends AppError {
+  constructor(message, code = ERROR_CODES.PAYMENT_FAILED, statusCode = 400, details = null) {
+    super(message, code, statusCode, details);
+    this.name = 'PaymentError';
+  }
+}
+module.exports = PaymentError;

@@ -3,21 +3,20 @@
  *
  * @module signalforge/server/modules/risk/checks/registry
  */
-
-import { RISK_CHECKS } from '../risk.constants.js';
-import { MaxDailyLossCheck } from './max-daily-loss.check.js';
-import { MaxDrawdownCheck } from './max-drawdown.check.js';
-import { TradingSessionCheck } from './trading-session.check.js';
-import { NewsFilterCheck } from './news-filter.check.js';
-import { MaxOpenTradesCheck } from './max-open-trades.check.js';
-import { LotSizeCheck } from './lot-size.check.js';
-import { DuplicateTradeCheck } from './duplicate-trade.check.js';
-import { AlreadyClosedCheck } from './already-closed.check.js';
-import { ProviderDisabledCheck } from './provider-disabled.check.js';
-import { CorrelationCheck } from './correlation.check.js';
-import { MarginCheck } from './margin.check.js';
-import { SpreadCheck } from './spread.check.js';
-import { SlippageCheck } from './slippage.check.js';
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { MaxDailyLossCheck } = require('./max-daily-loss.check.js');
+const { MaxDrawdownCheck } = require('./max-drawdown.check.js');
+const { TradingSessionCheck } = require('./trading-session.check.js');
+const { NewsFilterCheck } = require('./news-filter.check.js');
+const { MaxOpenTradesCheck } = require('./max-open-trades.check.js');
+const { LotSizeCheck } = require('./lot-size.check.js');
+const { DuplicateTradeCheck } = require('./duplicate-trade.check.js');
+const { AlreadyClosedCheck } = require('./already-closed.check.js');
+const { ProviderDisabledCheck } = require('./provider-disabled.check.js');
+const { CorrelationCheck } = require('./correlation.check.js');
+const { MarginCheck } = require('./margin.check.js');
+const { SpreadCheck } = require('./spread.check.js');
+const { SlippageCheck } = require('./slippage.check.js');
 
 const registry = new Map();
 
@@ -34,8 +33,7 @@ registry.set(RISK_CHECKS.CORRELATION, () => new CorrelationCheck());
 registry.set(RISK_CHECKS.MARGIN, () => new MarginCheck());
 registry.set(RISK_CHECKS.SPREAD, () => new SpreadCheck());
 registry.set(RISK_CHECKS.SLIPPAGE, () => new SlippageCheck());
-
-export class CheckRegistry {
+class CheckRegistry {
   static register(checkName, factory) {
     if (typeof factory !== 'function') {
       throw new Error('Check factory must be a function');
@@ -71,5 +69,5 @@ export class CheckRegistry {
     return Array.from(registry.keys());
   }
 }
-
-export default CheckRegistry;
+module.exports = CheckRegistry;
+module.exports.CheckRegistry = CheckRegistry;

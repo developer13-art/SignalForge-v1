@@ -8,13 +8,12 @@
  *
  * @module server/modules/security/rbac/feature-access.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { KYC_STATUSES } from '@signalforge/shared/constants/kyc-statuses';
-import { ACCOUNT_STATUSES } from '@signalforge/shared/constants/account-statuses';
-import { canExecuteTrades, canAccessPlatform } from '@signalforge/shared/constants/subscription-statuses';
-import { db } from '../../../database';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { KYC_STATUSES } = require('@signalforge/shared/constants/kyc-statuses');
+const { ACCOUNT_STATUSES } = require('@signalforge/shared/constants/account-statuses');
+const { canExecuteTrades, canAccessPlatform } = require('@signalforge/shared/constants/subscription-statuses');
+const { db } = require('../../../database');
 
 const FEATURE_REQUIREMENTS = Object.freeze({
   VIEW_DASHBOARD: { requiresAuth: true, requiresKyc: false, requiresSubscription: false },
@@ -33,8 +32,7 @@ const FEATURE_REQUIREMENTS = Object.freeze({
   MANAGE_SOLANA_WALLET: { requiresAuth: true, requiresKyc: false, requiresSubscription: false },
   ANCHOR_ATTESTATION: { requiresAuth: true, requiresKyc: true, requiresSubscription: false },
 });
-
-export async function loadUserContext({ userId }) {
+async function loadUserContext({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -71,8 +69,7 @@ export async function loadUserContext({ userId }) {
     subscriptionStatus,
   };
 }
-
-export function evaluateFeatureAccess({ userContext, feature }) {
+function evaluateFeatureAccess({ userContext, feature }) {
   const requirements = FEATURE_REQUIREMENTS[feature];
 
   if (!requirements) {
@@ -115,8 +112,7 @@ export function evaluateFeatureAccess({ userContext, feature }) {
 
   return { allowed: true };
 }
-
-export async function checkFeatureAccess({ userId, feature }) {
+async function checkFeatureAccess({ userId, feature }) {
   const requirements = FEATURE_REQUIREMENTS[feature];
 
   if (!requirements) {
@@ -133,8 +129,7 @@ export async function checkFeatureAccess({ userId, feature }) {
 
   return { ...result, feature, userContext };
 }
-
-export async function assertFeatureAccess({ userId, feature }) {
+async function assertFeatureAccess({ userId, feature }) {
   const result = await checkFeatureAccess({ userId, feature });
 
   if (!result.allowed) {
@@ -159,8 +154,7 @@ function mapReasonToErrorCode(reason) {
       return ERROR_CODES.AUTHORIZATION_FAILED;
   }
 }
-
-export async function listAccessibleFeatures({ userId }) {
+async function listAccessibleFeatures({ userId }) {
   const userContext = await loadUserContext({ userId });
 
   const accessible = [];
@@ -174,8 +168,7 @@ export async function listAccessibleFeatures({ userId }) {
 
   return { userId, accessibleFeatures: accessible };
 }
-
-export const featureAccessService = {
+const featureAccessService = {
   loadUserContext,
   evaluateFeatureAccess,
   checkFeatureAccess,
@@ -183,3 +176,13 @@ export const featureAccessService = {
   listAccessibleFeatures,
   FEATURE_REQUIREMENTS,
 };
+module.exports.featureAccessService = featureAccessService;
+module.exports.evaluateFeatureAccess = evaluateFeatureAccess;
+
+module.exports.loadUserContext = loadUserContext;
+
+module.exports.checkFeatureAccess = checkFeatureAccess;
+
+module.exports.assertFeatureAccess = assertFeatureAccess;
+
+module.exports.listAccessibleFeatures = listAccessibleFeatures;

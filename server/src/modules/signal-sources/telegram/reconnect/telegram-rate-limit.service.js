@@ -9,11 +9,10 @@
  *
  * @module server/modules/signal-sources/telegram/reconnect/telegram-rate-limit.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { emitTelegramRateLimitHit } from '../telegram.events';
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { emitTelegramRateLimitHit } = require('../telegram.events');
 
 const BUCKETS = new Map();
 
@@ -56,8 +55,7 @@ function getOrCreateBucket(userId, operation) {
 
   return bucket;
 }
-
-export async function guard({ userId, operation = 'default', cost = 1 }) {
+async function guard({ userId, operation = 'default', cost = 1 }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -87,8 +85,7 @@ export async function guard({ userId, operation = 'default', cost = 1 }) {
     429,
   );
 }
-
-export async function consume({ userId, operation = 'default', cost = 1 }) {
+async function consume({ userId, operation = 'default', cost = 1 }) {
   const bucket = getOrCreateBucket(userId, operation);
   refillBucket(bucket, bucket);
 
@@ -99,8 +96,7 @@ export async function consume({ userId, operation = 'default', cost = 1 }) {
 
   return { consumed: false, remaining: bucket.tokens };
 }
-
-export function peek({ userId, operation = 'default' }) {
+function peek({ userId, operation = 'default' }) {
   const bucket = getOrCreateBucket(userId, operation);
   refillBucket(bucket, bucket);
   return {
@@ -109,16 +105,13 @@ export function peek({ userId, operation = 'default' }) {
     refillPerSecond: bucket.refillPerSecond,
   };
 }
-
-export function resetBucket({ userId, operation }) {
+function resetBucket({ userId, operation }) {
   BUCKETS.delete(getBucketKey(userId, operation));
 }
-
-export function resetAll() {
+function resetAll() {
   BUCKETS.clear();
 }
-
-export function listBuckets() {
+function listBuckets() {
   return Array.from(BUCKETS.entries()).map(([key, bucket]) => {
     const [userId, operation] = key.split(':');
     return {
@@ -129,8 +122,7 @@ export function listBuckets() {
     };
   });
 }
-
-export const telegramRateLimitService = {
+const telegramRateLimitService = {
   guard,
   consume,
   peek,
@@ -139,3 +131,12 @@ export const telegramRateLimitService = {
   listBuckets,
   LIMITS,
 };
+module.exports.telegramRateLimitService = telegramRateLimitService;
+module.exports.peek = peek;
+module.exports.resetBucket = resetBucket;
+module.exports.resetAll = resetAll;
+module.exports.listBuckets = listBuckets;
+
+module.exports.guard = guard;
+
+module.exports.consume = consume;

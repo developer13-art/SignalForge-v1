@@ -3,30 +3,17 @@
  *
  * @module signalforge/server/modules/users/service
  */
-
-import { UserRepository } from './user.repository.js';
-import { ProfileService } from './profile/profile.service.js';
-import { PreferencesService } from './preferences/preferences.service.js';
-import { SessionService } from './sessions/session.service.js';
-import { DeviceService } from './devices/device.service.js';
-import { normalizeEmail } from '@signalforge/shared/validators/email.validator';
-import { normalizePhone } from '@signalforge/shared/validators/phone.validator';
-import { normalizeUsername } from '@signalforge/shared/validators/username.validator';
-import {
-  UserNotFoundError,
-  UsernameAlreadyTakenError,
-  EmailAlreadyRegisteredError,
-  PhoneAlreadyRegisteredError,
-  AccountAlreadyDeactivatedError,
-  AccountNotDeactivatedError,
-} from './user.errors.js';
-import {
-  emitUserUpdated,
-  emitAccountDeactivated,
-  emitAccountReactivated,
-} from './user.events.js';
-
-export class UserService {
+const { UserRepository } = require('./user.repository.js');
+const { ProfileService } = require('./profile/profile.service.js');
+const { PreferencesService } = require('./preferences/preferences.service.js');
+const { SessionService } = require('./sessions/session.service.js');
+const { DeviceService } = require('./devices/device.service.js');
+const { normalizeEmail } = require('@signalforge/shared/validators/email.validator');
+const { normalizePhone } = require('@signalforge/shared/validators/phone.validator');
+const { normalizeUsername } = require('@signalforge/shared/validators/username.validator');
+const { UserNotFoundError, UsernameAlreadyTakenError, EmailAlreadyRegisteredError, PhoneAlreadyRegisteredError, AccountAlreadyDeactivatedError, AccountNotDeactivatedError } = require('./user.errors.js');
+const { emitUserUpdated, emitAccountDeactivated, emitAccountReactivated } = require('./user.events.js');
+class UserService {
   constructor(repository = null, dependencies = {}) {
     this.repository = repository || new UserRepository();
     this.profileService = dependencies.profileService || new ProfileService();
@@ -196,5 +183,5 @@ export class UserService {
     return result;
   }
 }
-
-export default UserService;
+module.exports = UserService;
+module.exports.UserService = UserService;

@@ -6,18 +6,16 @@
  *
  * @module server/modules/white-label/domains/domain-verification.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { domainService } from './domain.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { domainService } = require('./domain.service');
 
 const STALE_PENDING_HOURS = 72;
 const STALE_FAILED_HOURS = 168;
-
-export async function reverifyProjectDomains({ projectId }) {
+async function reverifyProjectDomains({ projectId }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -46,8 +44,7 @@ export async function reverifyProjectDomains({ projectId }) {
 
   return { rechecked: results.length, results };
 }
-
-export async function cleanupStaleDomains() {
+async function cleanupStaleDomains() {
   const pendingCutoff = new Date(Date.now() - STALE_PENDING_HOURS * 60 * 60 * 1000).toISOString();
   const failedCutoff = new Date(Date.now() - STALE_FAILED_HOURS * 60 * 60 * 1000).toISOString();
 
@@ -70,8 +67,7 @@ export async function cleanupStaleDomains() {
 
   return { expiredPending, expiredFailed };
 }
-
-export async function reverifyAll() {
+async function reverifyAll() {
   const { rows } = await db.query(
     `SELECT DISTINCT project_id
        FROM white_label_domains
@@ -91,8 +87,7 @@ export async function reverifyAll() {
 
   return results;
 }
-
-export async function recordVerificationAttempt({ domainId, success, reason }) {
+async function recordVerificationAttempt({ domainId, success, reason }) {
   if (!domainId) {
     return;
   }
@@ -104,8 +99,7 @@ export async function recordVerificationAttempt({ domainId, success, reason }) {
     [domainId, Boolean(success), reason || null, nowIso()],
   );
 }
-
-export const domainVerificationService = {
+const domainVerificationService = {
   reverifyProjectDomains,
   cleanupStaleDomains,
   reverifyAll,
@@ -113,3 +107,12 @@ export const domainVerificationService = {
   STALE_PENDING_HOURS,
   STALE_FAILED_HOURS,
 };
+module.exports.domainVerificationService = domainVerificationService;
+
+module.exports.reverifyProjectDomains = reverifyProjectDomains;
+
+module.exports.cleanupStaleDomains = cleanupStaleDomains;
+
+module.exports.reverifyAll = reverifyAll;
+
+module.exports.recordVerificationAttempt = recordVerificationAttempt;

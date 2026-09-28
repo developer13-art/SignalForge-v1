@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/providers/certification/repository
  */
-
-import { ProviderRepository } from '../provider.repository.js';
-
-export class CertificationRepository {
+const { ProviderRepository } = require('../provider.repository.js');
+class CertificationRepository {
   constructor(db = null) {
     this.providerRepository = new ProviderRepository(db);
   }
@@ -35,5 +33,5 @@ export class CertificationRepository {
     return this.providerRepository.findExpiredCertifications(referenceTime);
   }
 }
-
-export default CertificationRepository;
+module.exports = CertificationRepository;
+module.exports.CertificationRepository = CertificationRepository;

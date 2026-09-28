@@ -3,21 +3,12 @@
  *
  * @module signalforge/server/modules/automation/engine/rules-engine
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { ConditionEvaluatorService } from './condition-evaluator.service.js';
-import { ActionExecutorService } from './action-executor.service.js';
-import { RulePriorityService } from './rule-priority.service.js';
-import {
-  emitEvaluationStarted,
-  emitEvaluationCompleted,
-  emitRuleTriggered,
-  emitRuleMatched,
-  emitRuleExecuted,
-  emitRuleFailed,
-} from '../automation.events.js';
-
-export class RulesEngineService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { ConditionEvaluatorService } = require('./condition-evaluator.service.js');
+const { ActionExecutorService } = require('./action-executor.service.js');
+const { RulePriorityService } = require('./rule-priority.service.js');
+const { emitEvaluationStarted, emitEvaluationCompleted, emitRuleTriggered, emitRuleMatched, emitRuleExecuted, emitRuleFailed } = require('../automation.events.js');
+class RulesEngineService {
   constructor(dependencies = {}) {
     this.logger = getLogger('rules-engine');
     this.conditionEvaluator =
@@ -134,5 +125,5 @@ export class RulesEngineService {
     }
   }
 }
-
-export default RulesEngineService;
+module.exports = RulesEngineService;
+module.exports.RulesEngineService = RulesEngineService;

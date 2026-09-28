@@ -6,11 +6,9 @@
  *
  * @module server/modules/affiliate/commissions/commission.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertCommission({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertCommission({
   partnerUserId,
   referralId,
   amount,
@@ -27,16 +25,14 @@ export async function insertCommission({
   );
   return rows[0];
 }
-
-export async function findById({ commissionId }) {
+async function findById({ commissionId }) {
   const { rows } = await db.query(
     `SELECT * FROM affiliate_commissions WHERE id = $1 LIMIT 1`,
     [commissionId],
   );
   return rows[0] || null;
 }
-
-export async function findByReferralId({ referralId }) {
+async function findByReferralId({ referralId }) {
   const { rows } = await db.query(
     `SELECT * FROM affiliate_commissions
       WHERE referral_id = $1
@@ -45,8 +41,7 @@ export async function findByReferralId({ referralId }) {
   );
   return rows;
 }
-
-export async function findByPartnerUserId({ partnerUserId }) {
+async function findByPartnerUserId({ partnerUserId }) {
   const { rows } = await db.query(
     `SELECT * FROM affiliate_commissions
       WHERE partner_user_id = $1
@@ -55,8 +50,7 @@ export async function findByPartnerUserId({ partnerUserId }) {
   );
   return rows;
 }
-
-export async function updateStatus({
+async function updateStatus({
   commissionId,
   status,
   rejectionReason,
@@ -71,8 +65,7 @@ export async function updateStatus({
   );
   return rowCount > 0;
 }
-
-export async function approve({ commissionId }) {
+async function approve({ commissionId }) {
   const { rowCount } = await db.query(
     `UPDATE affiliate_commissions
         SET status = 'APPROVED',
@@ -83,8 +76,7 @@ export async function approve({ commissionId }) {
   );
   return rowCount > 0;
 }
-
-export async function reject({ commissionId, reason }) {
+async function reject({ commissionId, reason }) {
   const { rowCount } = await db.query(
     `UPDATE affiliate_commissions
         SET status = 'REJECTED',
@@ -95,8 +87,7 @@ export async function reject({ commissionId, reason }) {
   );
   return rowCount > 0;
 }
-
-export async function markPaid({ commissionId }) {
+async function markPaid({ commissionId }) {
   const { rowCount } = await db.query(
     `UPDATE affiliate_commissions
         SET status = 'PAID',
@@ -107,8 +98,7 @@ export async function markPaid({ commissionId }) {
   );
   return rowCount > 0;
 }
-
-export async function aggregateByStatus({ partnerUserId }) {
+async function aggregateByStatus({ partnerUserId }) {
   const { rows } = await db.query(
     `SELECT status, COALESCE(SUM(amount), 0)::numeric AS total, COUNT(*)::int AS count
        FROM affiliate_commissions
@@ -118,8 +108,7 @@ export async function aggregateByStatus({ partnerUserId }) {
   );
   return rows;
 }
-
-export async function listCommissions({ filters = {}, pagination = {} }) {
+async function listCommissions({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -166,8 +155,7 @@ export async function listCommissions({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export const commissionRepository = {
+const commissionRepository = {
   insertCommission,
   findById,
   findByReferralId,
@@ -179,3 +167,24 @@ export const commissionRepository = {
   aggregateByStatus,
   listCommissions,
 };
+module.exports.commissionRepository = commissionRepository;
+
+module.exports.insertCommission = insertCommission;
+
+module.exports.findById = findById;
+
+module.exports.findByReferralId = findByReferralId;
+
+module.exports.findByPartnerUserId = findByPartnerUserId;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.approve = approve;
+
+module.exports.reject = reject;
+
+module.exports.markPaid = markPaid;
+
+module.exports.aggregateByStatus = aggregateByStatus;
+
+module.exports.listCommissions = listCommissions;

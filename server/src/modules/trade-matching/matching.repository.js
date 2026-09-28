@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class MatchingRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class MatchingRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -173,5 +171,5 @@ export class MatchingRepository {
     return result.rows;
   }
 }
-
-export default MatchingRepository;
+module.exports = MatchingRepository;
+module.exports.MatchingRepository = MatchingRepository;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/management-instructions/close-half
  */
-
-import { MANAGEMENT_INSTRUCTION_TYPES } from '../matching.constants.js';
-
-export class CloseHalfHandler {
+const { MANAGEMENT_INSTRUCTION_TYPES } = require('../matching.constants.js');
+class CloseHalfHandler {
   constructor() {
     this.instructionType = MANAGEMENT_INSTRUCTION_TYPES.CLOSE_HALF;
   }
@@ -45,5 +43,5 @@ export class CloseHalfHandler {
     };
   }
 }
-
-export default CloseHalfHandler;
+module.exports = CloseHalfHandler;
+module.exports.CloseHalfHandler = CloseHalfHandler;

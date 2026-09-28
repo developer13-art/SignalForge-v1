@@ -3,23 +3,16 @@
  *
  * @module signalforge/server/modules/trade-state/lifecycle/service
  */
-
-import { StateTransitions } from './state-transitions.js';
-import { TransitionValidatorService } from './transition-validator.service.js';
-import { ActorAttributionService } from './actor-attribution.service.js';
-import { TradeStateRepository } from '../trade-state.repository.js';
-import { TradeEventService } from '../events/trade-event.service.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import {
-  InvalidTradeStateError,
-  TradeNotFoundError,
-} from '../trade-state.errors.js';
-import {
-  isValidTradeState,
-} from '../trade-state.constants.js';
-import { emitLifecycleStarted, emitLifecycleCompleted } from '../trade-state.events.js';
-
-export class LifecycleService {
+const { StateTransitions } = require('./state-transitions.js');
+const { TransitionValidatorService } = require('./transition-validator.service.js');
+const { ActorAttributionService } = require('./actor-attribution.service.js');
+const { TradeStateRepository } = require('../trade-state.repository.js');
+const { TradeEventService } = require('../events/trade-event.service.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { InvalidTradeStateError, TradeNotFoundError } = require('../trade-state.errors.js');
+const { isValidTradeState } = require('../trade-state.constants.js');
+const { emitLifecycleStarted, emitLifecycleCompleted } = require('../trade-state.events.js');
+class LifecycleService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TradeStateRepository();
     this.transitions = dependencies.transitions || new StateTransitions();
@@ -109,5 +102,5 @@ export class LifecycleService {
     });
   }
 }
-
-export default LifecycleService;
+module.exports = LifecycleService;
+module.exports.LifecycleService = LifecycleService;

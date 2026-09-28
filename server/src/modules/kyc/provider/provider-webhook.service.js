@@ -6,16 +6,14 @@
  *
  * @module signalforge/server/modules/kyc/provider/webhook
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { ProviderFactory } from './provider.factory.js';
-import { ApplicationRepository } from '../application/application.repository.js';
-import { KycRepository } from '../kyc.repository.js';
-import { VERIFICATION_RESULTS } from '../kyc.constants.js';
-import { KycApplicationNotFoundError } from '../kyc.errors.js';
-import { emitStatusChanged, emitApplicationApproved } from '../kyc.events.js';
-
-export class ProviderWebhookService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { ProviderFactory } = require('./provider.factory.js');
+const { ApplicationRepository } = require('../application/application.repository.js');
+const { KycRepository } = require('../kyc.repository.js');
+const { VERIFICATION_RESULTS } = require('../kyc.constants.js');
+const { KycApplicationNotFoundError } = require('../kyc.errors.js');
+const { emitStatusChanged, emitApplicationApproved } = require('../kyc.events.js');
+class ProviderWebhookService {
   constructor(dependencies = {}) {
     this.applicationRepository = dependencies.applicationRepository || new ApplicationRepository();
     this.kycRepository = dependencies.kycRepository || new KycRepository();
@@ -72,5 +70,5 @@ export class ProviderWebhookService {
     return { processed: true, applicationId: application.id, status: newStatus };
   }
 }
-
-export default ProviderWebhookService;
+module.exports = ProviderWebhookService;
+module.exports.ProviderWebhookService = ProviderWebhookService;

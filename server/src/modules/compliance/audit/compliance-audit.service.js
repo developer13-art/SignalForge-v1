@@ -7,14 +7,12 @@
  *
  * @module server/modules/compliance/audit/compliance-audit.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './compliance-audit.repository';
-
-export async function recordEntry({
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./compliance-audit.repository');
+async function recordEntry({
   actorId,
   action,
   resourceType,
@@ -52,8 +50,7 @@ export async function recordEntry({
     createdAt: record.created_at,
   };
 }
-
-export async function listEntries({ filters = {}, pagination = {} }) {
+async function listEntries({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listEntries({
@@ -78,8 +75,7 @@ export async function listEntries({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function listByResource({ resourceType, resourceId }) {
+async function listByResource({ resourceType, resourceId }) {
   if (!resourceType || !resourceId) {
     throw new AppError('resourceType and resourceId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -96,8 +92,7 @@ export async function listByResource({ resourceType, resourceId }) {
     createdAt: row.created_at,
   }));
 }
-
-export async function getActorSummary({ actorId, since }) {
+async function getActorSummary({ actorId, since }) {
   if (!actorId) {
     throw new AppError('actorId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -111,10 +106,18 @@ export async function getActorSummary({ actorId, since }) {
 
   return summary;
 }
-
-export const complianceAuditService = {
+const complianceAuditService = {
   recordEntry,
   listEntries,
   listByResource,
   getActorSummary,
 };
+module.exports.complianceAuditService = complianceAuditService;
+
+module.exports.recordEntry = recordEntry;
+
+module.exports.listEntries = listEntries;
+
+module.exports.listByResource = listByResource;
+
+module.exports.getActorSummary = getActorSummary;

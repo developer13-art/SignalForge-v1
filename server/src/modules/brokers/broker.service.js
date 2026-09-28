@@ -3,16 +3,14 @@
  *
  * @module signalforge/server/modules/brokers/service
  */
-
-import { BrokerRepository } from './broker.repository.js';
-import { BrokerRegistryService } from './registry/broker-registry.service.js';
-import { BrokerSpecService } from './registry/broker-spec.service.js';
-import { BrokerMappingService } from './registry/broker-mapping.service.js';
-import { AccountService } from './accounts/account.service.js';
-import { ConnectionLogService } from './logs/connection-log.service.js';
-import { BrokerNotFoundError } from './broker.errors.js';
-
-export class BrokerService {
+const { BrokerRepository } = require('./broker.repository.js');
+const { BrokerRegistryService } = require('./registry/broker-registry.service.js');
+const { BrokerSpecService } = require('./registry/broker-spec.service.js');
+const { BrokerMappingService } = require('./registry/broker-mapping.service.js');
+const { AccountService } = require('./accounts/account.service.js');
+const { ConnectionLogService } = require('./logs/connection-log.service.js');
+const { BrokerNotFoundError } = require('./broker.errors.js');
+class BrokerService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new BrokerRepository();
     this.registry = dependencies.registry || new BrokerRegistryService(this.repository);
@@ -135,5 +133,5 @@ export class BrokerService {
     return input;
   }
 }
-
-export default BrokerService;
+module.exports = BrokerService;
+module.exports.BrokerService = BrokerService;

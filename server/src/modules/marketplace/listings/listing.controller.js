@@ -3,15 +3,10 @@
  *
  * @module signalforge/server/modules/marketplace/listings/controller
  */
-
-import { ListingService } from './service.js';
-import {
-  validateCreateListing,
-  validateUpdateListing,
-} from './validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class ListingController {
+const { ListingService } = require('./service.js');
+const { validateCreateListing, validateUpdateListing } = require('./validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class ListingController {
   constructor(service = null) {
     this.service = service || new ListingService();
   }
@@ -172,5 +167,5 @@ export class ListingController {
     }
   };
 }
-
-export default ListingController;
+module.exports = ListingController;
+module.exports.ListingController = ListingController;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/validation/validators/account-permission
  */
-
-import { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES } from '../validation.constants.js';
-
-export class AccountPermissionCheck {
+const { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES } = require('../validation.constants.js');
+class AccountPermissionCheck {
   constructor() {
     this.name = VALIDATION_CHECK_NAMES.ACCOUNT_PERMISSION;
   }
@@ -49,5 +47,5 @@ export class AccountPermissionCheck {
     return { name: this.name, result: VALIDATION_RESULTS.PASSED };
   }
 }
-
-export default AccountPermissionCheck;
+module.exports = AccountPermissionCheck;
+module.exports.AccountPermissionCheck = AccountPermissionCheck;

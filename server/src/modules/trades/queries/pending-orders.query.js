@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trades/queries/pending-orders
  */
-
-import { TradeRepository } from '../trade.repository.js';
-
-export class PendingOrdersQuery {
+const { TradeRepository } = require('../trade.repository.js');
+class PendingOrdersQuery {
   constructor(repository = null) {
     this.repository = repository || new TradeRepository();
   }
@@ -40,5 +38,5 @@ export class PendingOrdersQuery {
     };
   }
 }
-
-export default PendingOrdersQuery;
+module.exports = PendingOrdersQuery;
+module.exports.PendingOrdersQuery = PendingOrdersQuery;

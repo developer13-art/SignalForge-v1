@@ -18,8 +18,7 @@ const LANGUAGE_HINTS = Object.freeze({
   zh: ['买入', '卖出', '入场', '目标', '市场', '价格'],
   ja: ['買い', '売り', 'エントリー', 'ターゲット', '市場', '価格'],
 });
-
-export class LanguageService {
+class LanguageService {
   detect(text) {
     if (typeof text !== 'string' || text.length === 0) {
       return 'en';
@@ -56,5 +55,5 @@ export class LanguageService {
     return this.detect(text) === 'en';
   }
 }
-
-export default LanguageService;
+module.exports = LanguageService;
+module.exports.LanguageService = LanguageService;

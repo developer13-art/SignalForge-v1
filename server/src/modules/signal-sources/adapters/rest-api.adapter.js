@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/signal-sources/adapters/rest-api
  */
-
-import { BaseAdapter } from './base.adapter.js';
-import { SOURCE_TYPES } from '../source.constants.js';
-
-export class RestApiAdapter extends BaseAdapter {
+const { BaseAdapter } = require('./base.adapter.js');
+const { SOURCE_TYPES } = require('../source.constants.js');
+class RestApiAdapter extends BaseAdapter {
   constructor(config = {}) {
     super(config);
     this.name = SOURCE_TYPES.REST_API;
@@ -50,5 +48,5 @@ export class RestApiAdapter extends BaseAdapter {
     };
   }
 }
-
-export default RestApiAdapter;
+module.exports = RestApiAdapter;
+module.exports.RestApiAdapter = RestApiAdapter;

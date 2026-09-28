@@ -161,7 +161,7 @@ module.exports = {
     await client.query(`
       CREATE TABLE IF NOT EXISTS crypto_volume_rollups (
         canonical_symbol TEXT NOT NULL,
-        window TEXT NOT NULL,
+        "window" TEXT NOT NULL,
         volume_quote NUMERIC(24, 4) NOT NULL,
         volume_base NUMERIC(24, 9) NULL,
         trades_count INT NOT NULL DEFAULT 0,
@@ -169,13 +169,13 @@ module.exports = {
         window_end TIMESTAMPTZ NOT NULL,
         fetched_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
-        PRIMARY KEY (canonical_symbol, window)
+        PRIMARY KEY (canonical_symbol, "window")
       );
     `);
 
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_crypto_volume_rollups_window
-        ON crypto_volume_rollups (window);
+        ON crypto_volume_rollups ("window");
     `);
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_crypto_volume_rollups_fetched_at

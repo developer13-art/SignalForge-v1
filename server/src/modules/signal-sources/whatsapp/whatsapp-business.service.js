@@ -8,15 +8,14 @@
  *
  * @module server/modules/signal-sources/whatsapp/whatsapp-business.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { config } from '../../../config';
-import { encryptPacked, decryptPacked } from '@signalforge/shared/utils/crypto.util';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { emitWhatsAppSessionConnected, emitWhatsAppSessionRevoked } from './whatsapp.events';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { config } = require('../../../config');
+const { encryptPacked, decryptPacked } = require('@signalforge/shared/utils/crypto.util');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { emitWhatsAppSessionConnected, emitWhatsAppSessionRevoked } = require('./whatsapp.events');
 
 function getEncryptionKey() {
   const key = config.whatsapp?.sessionEncryptionKey || config.security?.encryptionKey;
@@ -33,8 +32,7 @@ function getBusinessBaseUrl() {
   }
   return base;
 }
-
-export async function subscribeBusiness({ userId, phoneNumberId, accessToken }) {
+async function subscribeBusiness({ userId, phoneNumberId, accessToken }) {
   if (!userId || !phoneNumberId || !accessToken) {
     throw new AppError(
       'userId, phoneNumberId, and accessToken are required',
@@ -69,8 +67,7 @@ export async function subscribeBusiness({ userId, phoneNumberId, accessToken }) 
 
   return { subscribed: true, phoneNumberId, provider: 'BUSINESS' };
 }
-
-export async function unsubscribeBusiness({ userId, reason }) {
+async function unsubscribeBusiness({ userId, reason }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -81,8 +78,7 @@ export async function unsubscribeBusiness({ userId, reason }) {
 
   return { revoked: true };
 }
-
-export async function getBusinessAccessToken({ userId }) {
+async function getBusinessAccessToken({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -116,8 +112,7 @@ export async function getBusinessAccessToken({ userId }) {
     provider: 'BUSINESS',
   };
 }
-
-export async function sendBusinessTextMessage({ userId, to, text }) {
+async function sendBusinessTextMessage({ userId, to, text }) {
   if (!userId || !to || !text) {
     throw new AppError('userId, to, and text are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -157,8 +152,7 @@ export async function sendBusinessTextMessage({ userId, to, text }) {
     throw new AppError('Failed to send WhatsApp Business message', ERROR_CODES.WHATSAPP_SEND_FAILED, 502);
   }
 }
-
-export async function healthCheckBusiness({ userId }) {
+async function healthCheckBusiness({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -184,11 +178,21 @@ export async function healthCheckBusiness({ userId }) {
     return { healthy: false, reason: err.message };
   }
 }
-
-export const whatsappBusinessService = {
+const whatsappBusinessService = {
   subscribeBusiness,
   unsubscribeBusiness,
   getBusinessAccessToken,
   sendBusinessTextMessage,
   healthCheckBusiness,
 };
+module.exports.whatsappBusinessService = whatsappBusinessService;
+
+module.exports.subscribeBusiness = subscribeBusiness;
+
+module.exports.unsubscribeBusiness = unsubscribeBusiness;
+
+module.exports.getBusinessAccessToken = getBusinessAccessToken;
+
+module.exports.sendBusinessTextMessage = sendBusinessTextMessage;
+
+module.exports.healthCheckBusiness = healthCheckBusiness;

@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/execution/gateway/interactive-brokers
  */
-
-import { ExecutionGatewayInterface } from './execution-gateway.interface.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-import { GatewayNotConfiguredError } from '../execution.errors.js';
-
-export class InteractiveBrokersGateway extends ExecutionGatewayInterface {
+const { ExecutionGatewayInterface } = require('./execution-gateway.interface.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+const { GatewayNotConfiguredError } = require('../execution.errors.js');
+class InteractiveBrokersGateway extends ExecutionGatewayInterface {
   constructor() {
     super(GATEWAY_TYPES.INTERACTIVE_BROKERS);
   }
@@ -53,5 +51,5 @@ export class InteractiveBrokersGateway extends ExecutionGatewayInterface {
     this.assertAvailable();
   }
 }
-
-export default InteractiveBrokersGateway;
+module.exports = InteractiveBrokersGateway;
+module.exports.InteractiveBrokersGateway = InteractiveBrokersGateway;

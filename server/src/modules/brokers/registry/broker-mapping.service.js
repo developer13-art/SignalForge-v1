@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/brokers/registry/broker-mapping
  */
-
-import { BROKER_PLATFORMS } from '../broker.constants.js';
+const { BROKER_PLATFORMS } = require('../broker.constants.js');
 
 const SYMBOL_MAPS = Object.freeze({
   [BROKER_PLATFORMS.MT4]: {
@@ -24,8 +23,7 @@ const SYMBOL_MAPS = Object.freeze({
     SPX500: ['SPX500', 'US500'],
   },
 });
-
-export class BrokerMappingService {
+class BrokerMappingService {
   getSymbolCandidates(platform, canonicalSymbol) {
     const map = SYMBOL_MAPS[platform] || SYMBOL_MAPS[BROKER_PLATFORMS.MT5];
     return map[canonicalSymbol] || [canonicalSymbol];
@@ -45,5 +43,5 @@ export class BrokerMappingService {
     return this.resolveSymbol(platform, brokerSymbol);
   }
 }
-
-export default BrokerMappingService;
+module.exports = BrokerMappingService;
+module.exports.BrokerMappingService = BrokerMappingService;

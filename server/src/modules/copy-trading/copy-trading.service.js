@@ -3,31 +3,19 @@
  *
  * @module signalforge/server/modules/copy-trading/service
  */
-
-import { CopyTradingRepository } from './copy-trading.repository.js';
-import { FanOutService } from './fan-out/fan-out.service.js';
-import { SubscriberResolverService } from './fan-out/subscriber-resolver.service.js';
-import { PersonalizerService } from './fan-out/personalizer.service.js';
-import { LotScalingService } from './scaling/lot-scaling.service.js';
-import { ProviderStopSyncService } from './sync/provider-stop-sync.service.js';
-import { PartialCopyService } from './sync/partial-copy.service.js';
-import { LatencyMonitorService } from './sync/latency-monitor.service.js';
-import { SubscriberReconciliationService } from './sync/subscriber-reconciliation.service.js';
-import { MAX_SUBSCRIBERS_PER_PROVIDER } from './copy-trading.constants.js';
-import {
-  SubscriptionNotFoundError,
-  SubscriptionAlreadyExistsError,
-  SubscriberLimitExceededError,
-} from './copy-trading.errors.js';
-import {
-  emitSubscribed,
-  emitUnsubscribed,
-  emitSubscriptionUpdated,
-  emitSubscriptionPaused,
-  emitSubscriptionResumed,
-} from './copy-trading.events.js';
-
-export class CopyTradingService {
+const { CopyTradingRepository } = require('./copy-trading.repository.js');
+const { FanOutService } = require('./fan-out/fan-out.service.js');
+const { SubscriberResolverService } = require('./fan-out/subscriber-resolver.service.js');
+const { PersonalizerService } = require('./fan-out/personalizer.service.js');
+const { LotScalingService } = require('./scaling/lot-scaling.service.js');
+const { ProviderStopSyncService } = require('./sync/provider-stop-sync.service.js');
+const { PartialCopyService } = require('./sync/partial-copy.service.js');
+const { LatencyMonitorService } = require('./sync/latency-monitor.service.js');
+const { SubscriberReconciliationService } = require('./sync/subscriber-reconciliation.service.js');
+const { MAX_SUBSCRIBERS_PER_PROVIDER } = require('./copy-trading.constants.js');
+const { SubscriptionNotFoundError, SubscriptionAlreadyExistsError, SubscriberLimitExceededError } = require('./copy-trading.errors.js');
+const { emitSubscribed, emitUnsubscribed, emitSubscriptionUpdated, emitSubscriptionPaused, emitSubscriptionResumed } = require('./copy-trading.events.js');
+class CopyTradingService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new CopyTradingRepository();
     this.scaling = dependencies.scaling || new LotScalingService();
@@ -228,5 +216,5 @@ export class CopyTradingService {
     };
   }
 }
-
-export default CopyTradingService;
+module.exports = CopyTradingService;
+module.exports.CopyTradingService = CopyTradingService;

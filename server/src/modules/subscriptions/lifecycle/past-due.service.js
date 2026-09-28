@@ -3,20 +3,12 @@
  *
  * @module signalforge/server/modules/subscriptions/lifecycle/past-due
  */
-
-import { SubscriptionRepository } from '../subscription.repository.js';
-import {
-  SUBSCRIPTION_STATUSES,
-  SUBSCRIPTION_RETRY_INTERVAL_DAYS,
-  SUBSCRIPTION_MAX_RETRY_ATTEMPTS,
-} from '../subscription.constants.js';
-import {
-  emitSubscriptionPastDue,
-} from '../subscription.events.js';
-import { GracePeriodService } from './grace-period.service.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class PastDueService {
+const { SubscriptionRepository } = require('../subscription.repository.js');
+const { SUBSCRIPTION_STATUSES, SUBSCRIPTION_RETRY_INTERVAL_DAYS, SUBSCRIPTION_MAX_RETRY_ATTEMPTS } = require('../subscription.constants.js');
+const { emitSubscriptionPastDue } = require('../subscription.events.js');
+const { GracePeriodService } = require('./grace-period.service.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class PastDueService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new SubscriptionRepository();
     this.gracePeriod = dependencies.gracePeriod || new GracePeriodService({
@@ -78,5 +70,5 @@ export class PastDueService {
     return results;
   }
 }
-
-export default PastDueService;
+module.exports = PastDueService;
+module.exports.PastDueService = PastDueService;

@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/trader-intelligence/analysis/average-rr
  */
-
-export class AverageRrService {
+class AverageRrService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return { averageRr: 0, samples: 0 };
@@ -57,5 +56,5 @@ export class AverageRrService {
     return 'EXCELLENT';
   }
 }
-
-export default AverageRrService;
+module.exports = AverageRrService;
+module.exports.AverageRrService = AverageRrService;

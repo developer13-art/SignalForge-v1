@@ -7,25 +7,23 @@
  *
  * @module server/modules/affiliate/affiliate.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../database';
-import { publishEvent } from '../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import { validateAmount, validateCurrency } from '../wallets/wallet.validator';
-import { affiliateReferralService } from './referrals/affiliate-referral.service';
-import { commissionService } from './commissions/commission.service';
+const crypto = require('node:crypto');
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../database');
+const { publishEvent } = require('../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const { validateAmount, validateCurrency } = require('../wallets/wallet.validator');
+const { affiliateReferralService } = require('./referrals/affiliate-referral.service');
+const { commissionService } = require('./commissions/commission.service');
 
 function generateLinkCode() {
   return crypto.randomBytes(8).toString('hex');
 }
-
-export async function getDashboard({ userId }) {
+async function getDashboard({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -78,8 +76,7 @@ export async function getDashboard({ userId }) {
     },
   };
 }
-
-export async function listLinks({ userId }) {
+async function listLinks({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -103,8 +100,7 @@ export async function listLinks({ userId }) {
     createdAt: row.created_at,
   }));
 }
-
-export async function createLink({ userId, label, destination }) {
+async function createLink({ userId, label, destination }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -132,8 +128,7 @@ export async function createLink({ userId, label, destination }) {
     createdAt: row.created_at,
   };
 }
-
-export async function deactivateLink({ userId, linkId }) {
+async function deactivateLink({ userId, linkId }) {
   if (!userId || !linkId) {
     throw new AppError('userId and linkId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -151,8 +146,7 @@ export async function deactivateLink({ userId, linkId }) {
 
   return { deactivated: true };
 }
-
-export async function listReferrals({ userId, filters = {}, pagination = {} }) {
+async function listReferrals({ userId, filters = {}, pagination = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -197,8 +191,7 @@ export async function listReferrals({ userId, filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total }),
   };
 }
-
-export async function listCommissions({ userId, filters = {}, pagination = {} }) {
+async function listCommissions({ userId, filters = {}, pagination = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -255,8 +248,7 @@ export async function listCommissions({ userId, filters = {}, pagination = {} })
     meta: buildPaginationMeta({ page, limit, total }),
   };
 }
-
-export async function getCommissionSummary({ userId }) {
+async function getCommissionSummary({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -281,8 +273,7 @@ export async function getCommissionSummary({ userId }) {
     totalCount: row.total_count,
   };
 }
-
-export async function requestWithdrawal({ userId, amount, method, notes }) {
+async function requestWithdrawal({ userId, amount, method, notes }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -338,8 +329,7 @@ export async function requestWithdrawal({ userId, amount, method, notes }) {
     createdAt: row.created_at,
   };
 }
-
-export async function listWithdrawals({ userId, filters = {}, pagination = {} }) {
+async function listWithdrawals({ userId, filters = {}, pagination = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -387,8 +377,7 @@ export async function listWithdrawals({ userId, filters = {}, pagination = {} })
     meta: buildPaginationMeta({ page, limit, total }),
   };
 }
-
-export async function registerPartner({ userId }) {
+async function registerPartner({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -414,8 +403,7 @@ export async function registerPartner({ userId }) {
 
   return rows[0];
 }
-
-export const affiliateService = {
+const affiliateService = {
   getDashboard,
   listLinks,
   createLink,
@@ -429,3 +417,24 @@ export const affiliateService = {
   recordReferral: affiliateReferralService.recordReferral,
   calculateCommission: commissionService.calculateCommission,
 };
+module.exports.affiliateService = affiliateService;
+
+module.exports.getDashboard = getDashboard;
+
+module.exports.listLinks = listLinks;
+
+module.exports.createLink = createLink;
+
+module.exports.deactivateLink = deactivateLink;
+
+module.exports.listReferrals = listReferrals;
+
+module.exports.listCommissions = listCommissions;
+
+module.exports.getCommissionSummary = getCommissionSummary;
+
+module.exports.requestWithdrawal = requestWithdrawal;
+
+module.exports.listWithdrawals = listWithdrawals;
+
+module.exports.registerPartner = registerPartner;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/matchers/time
  */
-
-import { DEFAULT_TIME_WINDOW_MS } from '../matching.constants.js';
-
-export class TimeMatcher {
+const { DEFAULT_TIME_WINDOW_MS } = require('../matching.constants.js');
+class TimeMatcher {
   constructor(windowMs = DEFAULT_TIME_WINDOW_MS) {
     this.windowMs = windowMs;
   }
@@ -38,5 +36,5 @@ export class TimeMatcher {
     });
   }
 }
-
-export default TimeMatcher;
+module.exports = TimeMatcher;
+module.exports.TimeMatcher = TimeMatcher;

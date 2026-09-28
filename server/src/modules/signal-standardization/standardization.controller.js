@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-standardization/controller
  */
-
-import { StandardizationService } from './standardization.service.js';
-
-export class StandardizationController {
+const { StandardizationService } = require('./standardization.service.js');
+class StandardizationController {
   constructor(service = null) {
     this.service = service || new StandardizationService();
   }
@@ -100,5 +98,5 @@ export class StandardizationController {
     }
   };
 }
-
-export default StandardizationController;
+module.exports = StandardizationController;
+module.exports.StandardizationController = StandardizationController;

@@ -5,13 +5,11 @@
  *
  * @module signalforge/server/bootstrap/initEmailListeners
  */
-
-import { getLogger } from './initLogger.js';
-import imapConfig from '../config/imap.config.js';
+const { getLogger } = require('./initLogger.js');
+const imapConfig = require('../config/imap.config.js');
 
 let listenersState = null;
-
-export async function initEmailListeners(dependencies = {}) {
+async function initEmailListeners(dependencies = {}) {
   const logger = getLogger('email-listeners');
 
   if (!imapConfig.enabled || !imapConfig.listener.enabled) {
@@ -37,10 +35,8 @@ export async function initEmailListeners(dependencies = {}) {
     try {
       const result = await db.query(
         `
-          SELECT id, user_id, mailbox, host, port
+          SELECT id, user_id, host, port, imap_user, mailbox, secure
           FROM email_connections
-          WHERE status = 'CONNECTED'
-            AND listener_enabled = true
         `,
       );
       return result.rows;
@@ -106,9 +102,10 @@ export async function initEmailListeners(dependencies = {}) {
 
   return listenersState;
 }
-
-export function getEmailListeners() {
+function getEmailListeners() {
   return listenersState;
 }
+module.exports = initEmailListeners;
+module.exports.getEmailListeners = getEmailListeners;
 
-export default initEmailListeners;
+module.exports.initEmailListeners = initEmailListeners;

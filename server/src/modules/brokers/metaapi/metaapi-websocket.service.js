@@ -7,11 +7,9 @@
  *
  * @module signalforge/server/modules/brokers/metaapi/websocket
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import metaApiConfig from '../../../config/metaapi.config.js';
-
-export class MetaApiWebSocketService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const metaApiConfig = require('../../../config/metaapi.config.js');
+class MetaApiWebSocketService {
   constructor(config = null) {
     this.config = config || metaApiConfig;
     this.logger = getLogger('metaapi-websocket');
@@ -94,5 +92,5 @@ export class MetaApiWebSocketService {
     return this.sockets.has(metaApiAccountId);
   }
 }
-
-export default MetaApiWebSocketService;
+module.exports = MetaApiWebSocketService;
+module.exports.MetaApiWebSocketService = MetaApiWebSocketService;

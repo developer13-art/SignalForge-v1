@@ -3,22 +3,13 @@
  *
  * @module signalforge/server/modules/auth/services/phone-verification
  */
-
-import { phoneTokenService } from '../tokens/phone-token.service.js';
-import { TOKEN_TYPES, OTP_MAX_ATTEMPTS } from '../auth.constants.js';
-import {
-  InvalidOtpError,
-  OtpExpiredError,
-  OtpAttemptsExceededError,
-} from '../auth.errors.js';
-import {
-  emitPhoneVerificationSent,
-  emitPhoneVerified,
-} from '../auth.events.js';
+const { phoneTokenService } = require('../tokens/phone-token.service.js');
+const { TOKEN_TYPES, OTP_MAX_ATTEMPTS } = require('../auth.constants.js');
+const { InvalidOtpError, OtpExpiredError, OtpAttemptsExceededError } = require('../auth.errors.js');
+const { emitPhoneVerificationSent, emitPhoneVerified } = require('../auth.events.js');
 
 const attemptStore = new Map();
-
-export class PhoneVerificationService {
+class PhoneVerificationService {
   constructor(repository, notificationService = null) {
     this.repository = repository;
     this.notifications = notificationService;
@@ -87,5 +78,5 @@ export class PhoneVerificationService {
     return { verified: true, userId };
   }
 }
-
-export default PhoneVerificationService;
+module.exports = PhoneVerificationService;
+module.exports.PhoneVerificationService = PhoneVerificationService;

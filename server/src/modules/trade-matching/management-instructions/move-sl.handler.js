@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/management-instructions/move-sl
  */
-
-import { MANAGEMENT_INSTRUCTION_TYPES } from '../matching.constants.js';
-
-export class MoveSlHandler {
+const { MANAGEMENT_INSTRUCTION_TYPES } = require('../matching.constants.js');
+class MoveSlHandler {
   constructor() {
     this.instructionType = MANAGEMENT_INSTRUCTION_TYPES.MOVE_SL;
   }
@@ -46,5 +44,5 @@ export class MoveSlHandler {
     };
   }
 }
-
-export default MoveSlHandler;
+module.exports = MoveSlHandler;
+module.exports.MoveSlHandler = MoveSlHandler;

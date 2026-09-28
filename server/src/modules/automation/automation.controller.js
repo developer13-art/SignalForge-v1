@@ -3,16 +3,10 @@
  *
  * @module signalforge/server/modules/automation/controller
  */
-
-import { AutomationService } from './automation.service.js';
-import {
-  validateRuleCreatePayload,
-  validateRuleUpdatePayload,
-  validateEvaluatePayload,
-} from './automation.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class AutomationController {
+const { AutomationService } = require('./automation.service.js');
+const { validateRuleCreatePayload, validateRuleUpdatePayload, validateEvaluatePayload } = require('./automation.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class AutomationController {
   constructor(service = null) {
     this.service = service || new AutomationService();
   }
@@ -152,5 +146,5 @@ export class AutomationController {
     }
   };
 }
-
-export default AutomationController;
+module.exports = AutomationController;
+module.exports.AutomationController = AutomationController;

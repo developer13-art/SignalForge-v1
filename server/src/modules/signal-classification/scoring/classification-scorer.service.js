@@ -7,11 +7,7 @@
  *
  * @module signalforge/server/modules/signal-classification/scoring/scorer
  */
-
-import {
-  DEFAULT_HIGH_CONFIDENCE,
-  DEFAULT_LOW_CONFIDENCE,
-} from '../classification.constants.js';
+const { DEFAULT_HIGH_CONFIDENCE, DEFAULT_LOW_CONFIDENCE } = require('../classification.constants.js');
 
 const KIND_WEIGHTS = Object.freeze({
   RULE_BASED: 0.7,
@@ -19,8 +15,7 @@ const KIND_WEIGHTS = Object.freeze({
   HYBRID: 1.0,
   MANUAL: 1.0,
 });
-
-export class ClassificationScorerService {
+class ClassificationScorerService {
   scoreResult(result) {
     if (!result || typeof result.confidence !== 'number') {
       return 0;
@@ -71,5 +66,5 @@ export class ClassificationScorerService {
     };
   }
 }
-
-export default ClassificationScorerService;
+module.exports = ClassificationScorerService;
+module.exports.ClassificationScorerService = ClassificationScorerService;

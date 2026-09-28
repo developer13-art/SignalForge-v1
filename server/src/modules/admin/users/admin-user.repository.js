@@ -5,11 +5,9 @@
  *
  * @module server/modules/admin/users/admin-user.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function listUsers({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function listUsers({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -63,40 +61,35 @@ export async function listUsers({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findUserById({ userId }) {
+async function findUserById({ userId }) {
   const { rows } = await db.query(
     `SELECT * FROM users WHERE id = $1 LIMIT 1`,
     [userId],
   );
   return rows[0] || null;
 }
-
-export async function findUserByEmail({ email }) {
+async function findUserByEmail({ email }) {
   const { rows } = await db.query(
     `SELECT * FROM users WHERE LOWER(email) = LOWER($1) LIMIT 1`,
     [email],
   );
   return rows[0] || null;
 }
-
-export async function updateUserStatus({ userId, status }) {
+async function updateUserStatus({ userId, status }) {
   const { rowCount } = await db.query(
     `UPDATE users SET status = $1, updated_at = $2 WHERE id = $3`,
     [status, nowIso(), userId],
   );
   return rowCount > 0;
 }
-
-export async function updateUserKycStatus({ userId, kycStatus }) {
+async function updateUserKycStatus({ userId, kycStatus }) {
   const { rowCount } = await db.query(
     `UPDATE users SET kyc_status = $1, updated_at = $2 WHERE id = $3`,
     [kycStatus, nowIso(), userId],
   );
   return rowCount > 0;
 }
-
-export async function deleteUser({ userId }) {
+async function deleteUser({ userId }) {
   const { rowCount } = await db.query(
     `UPDATE users
         SET status = 'DEACTIVATED',
@@ -108,8 +101,7 @@ export async function deleteUser({ userId }) {
   );
   return rowCount > 0;
 }
-
-export async function listUserSessions({ userId }) {
+async function listUserSessions({ userId }) {
   const { rows } = await db.query(
     `SELECT id, ip_address, user_agent, created_at, expires_at, revoked_at
        FROM user_sessions
@@ -119,8 +111,7 @@ export async function listUserSessions({ userId }) {
   );
   return rows;
 }
-
-export async function revokeAllSessions({ userId }) {
+async function revokeAllSessions({ userId }) {
   const { rowCount } = await db.query(
     `UPDATE user_sessions
         SET revoked_at = $1
@@ -129,15 +120,13 @@ export async function revokeAllSessions({ userId }) {
   );
   return rowCount;
 }
-
-export async function countUsersByStatus() {
+async function countUsersByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count FROM users GROUP BY status`,
   );
   return rows;
 }
-
-export const adminUserRepository = {
+const adminUserRepository = {
   listUsers,
   findUserById,
   findUserByEmail,
@@ -148,3 +137,22 @@ export const adminUserRepository = {
   revokeAllSessions,
   countUsersByStatus,
 };
+module.exports.adminUserRepository = adminUserRepository;
+
+module.exports.listUsers = listUsers;
+
+module.exports.findUserById = findUserById;
+
+module.exports.findUserByEmail = findUserByEmail;
+
+module.exports.updateUserStatus = updateUserStatus;
+
+module.exports.updateUserKycStatus = updateUserKycStatus;
+
+module.exports.deleteUser = deleteUser;
+
+module.exports.listUserSessions = listUserSessions;
+
+module.exports.revokeAllSessions = revokeAllSessions;
+
+module.exports.countUsersByStatus = countUsersByStatus;

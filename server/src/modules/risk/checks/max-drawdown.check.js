@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/risk/checks/max-drawdown
  */
-
-import { BaseCheck } from './base.check.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskDrawdownExceeded } from '../risk.events.js';
-
-export class MaxDrawdownCheck extends BaseCheck {
+const { BaseCheck } = require('./base.check.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskDrawdownExceeded } = require('../risk.events.js');
+class MaxDrawdownCheck extends BaseCheck {
   constructor() {
     super(RISK_CHECKS.MAX_DRAWDOWN);
   }
@@ -51,5 +49,5 @@ export class MaxDrawdownCheck extends BaseCheck {
     });
   }
 }
-
-export default MaxDrawdownCheck;
+module.exports = MaxDrawdownCheck;
+module.exports.MaxDrawdownCheck = MaxDrawdownCheck;

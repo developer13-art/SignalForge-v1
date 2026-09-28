@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/risk/profile/repository
  */
-
-import { RiskRepository } from '../risk.repository.js';
-
-export class RiskProfileRepository {
+const { RiskRepository } = require('../risk.repository.js');
+class RiskProfileRepository {
   constructor(db = null) {
     this.riskRepository = new RiskRepository(db);
   }
@@ -35,5 +33,5 @@ export class RiskProfileRepository {
     return this.riskRepository.deleteProfile(profileId);
   }
 }
-
-export default RiskProfileRepository;
+module.exports = RiskProfileRepository;
+module.exports.RiskProfileRepository = RiskProfileRepository;

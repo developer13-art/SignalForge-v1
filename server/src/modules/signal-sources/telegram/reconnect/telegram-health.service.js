@@ -8,9 +8,8 @@
  *
  * @module server/modules/signal-sources/telegram/reconnect/telegram-health.service
  */
-
-import { logger } from '../../../../lib/logger';
-import { emitTelegramHealthCheck } from '../telegram.events';
+const { logger } = require('../../../../lib/logger');
+const { emitTelegramHealthCheck } = require('../telegram.events');
 
 const HEALTH_STATE = new Map();
 
@@ -41,40 +40,34 @@ function getEntry(userId) {
   }
   return entry;
 }
-
-export function recordListenerStarted({ userId }) {
+function recordListenerStarted({ userId }) {
   const entry = getEntry(userId);
   entry.connectedAt = Date.now();
   entry.lastActivityAt = Date.now();
 }
-
-export function recordMessageReceived({ userId }) {
+function recordMessageReceived({ userId }) {
   const entry = getEntry(userId);
   entry.messagesReceived += 1;
   entry.lastActivityAt = Date.now();
 }
-
-export function recordEditReceived({ userId }) {
+function recordEditReceived({ userId }) {
   const entry = getEntry(userId);
   entry.editsReceived += 1;
   entry.lastActivityAt = Date.now();
 }
-
-export function recordDeleteReceived({ userId }) {
+function recordDeleteReceived({ userId }) {
   const entry = getEntry(userId);
   entry.deletesReceived += 1;
   entry.lastActivityAt = Date.now();
 }
-
-export function recordError({ userId, error }) {
+function recordError({ userId, error }) {
   const entry = getEntry(userId);
   const now = Date.now();
   entry.errors.push({ at: now, message: error ? String(error) : null });
   entry.errors = entry.errors.filter((e) => now - e.at <= HEALTH_THRESHOLDS.errorBurstWindowMs);
   entry.lastErrorAt = now;
 }
-
-export function recordDisconnection({ userId }) {
+function recordDisconnection({ userId }) {
   const entry = getEntry(userId);
   const now = Date.now();
   entry.disconnects.push({ at: now });
@@ -83,8 +76,7 @@ export function recordDisconnection({ userId }) {
   );
   entry.lastDisconnectAt = now;
 }
-
-export function isHealthy({ userId }) {
+function isHealthy({ userId }) {
   const entry = HEALTH_STATE.get(userId);
 
   if (!entry) {
@@ -107,8 +99,7 @@ export function isHealthy({ userId }) {
 
   return { healthy: true };
 }
-
-export function snapshot({ userId }) {
+function snapshot({ userId }) {
   const entry = HEALTH_STATE.get(userId);
   if (!entry) {
     return null;
@@ -126,8 +117,7 @@ export function snapshot({ userId }) {
     connectedAt: entry.connectedAt,
   };
 }
-
-export async function runHealthCheck({ userId }) {
+async function runHealthCheck({ userId }) {
   const health = isHealthy({ userId });
   const snap = snapshot({ userId });
 
@@ -142,24 +132,21 @@ export async function runHealthCheck({ userId }) {
 
   return { ...health, snapshot: snap };
 }
-
-export function listAllHealth() {
+function listAllHealth() {
   return Array.from(HEALTH_STATE.keys()).map((userId) => ({
     userId,
     health: isHealthy({ userId }),
     snapshot: snapshot({ userId }),
   }));
 }
-
-export function reset({ userId }) {
+function reset({ userId }) {
   if (userId) {
     HEALTH_STATE.delete(userId);
   } else {
     HEALTH_STATE.clear();
   }
 }
-
-export const telegramHealthService = {
+const telegramHealthService = {
   recordListenerStarted,
   recordMessageReceived,
   recordEditReceived,
@@ -173,3 +160,16 @@ export const telegramHealthService = {
   reset,
   HEALTH_THRESHOLDS,
 };
+module.exports.telegramHealthService = telegramHealthService;
+module.exports.recordListenerStarted = recordListenerStarted;
+module.exports.recordMessageReceived = recordMessageReceived;
+module.exports.recordEditReceived = recordEditReceived;
+module.exports.recordDeleteReceived = recordDeleteReceived;
+module.exports.recordError = recordError;
+module.exports.recordDisconnection = recordDisconnection;
+module.exports.isHealthy = isHealthy;
+module.exports.snapshot = snapshot;
+module.exports.listAllHealth = listAllHealth;
+module.exports.reset = reset;
+
+module.exports.runHealthCheck = runHealthCheck;

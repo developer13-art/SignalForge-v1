@@ -3,41 +3,12 @@
  *
  * @module signalforge/server/modules/withdrawals/requests/service
  */
-
-import { WithdrawalRequestRepository } from './repository.js';
-import { WithdrawalRepository } from '../withdrawal.repository.js';
-import { WithdrawalMethodFactory } from '../methods/method.factory.js';
-import {
-  WITHDRAWAL_STATUSES,
-  DEFAULT_MIN_WITHDRAWAL_USD,
-  DEFAULT_MAX_WITHDRAWAL_USD,
-  DEFAULT_DAILY_WITHDRAWAL_LIMIT_USD,
-  DEFAULT_MONTHLY_WITHDRAWAL_LIMIT_USD,
-  DEFAULT_MANUAL_REVIEW_THRESHOLD_USD,
-  requiresManualReview,
-} from '../withdrawal.constants.js';
-import {
-  WithdrawalNotFoundError,
-  WithdrawalAccountNotFoundError,
-  WithdrawalAccountNotVerifiedError,
-  InsufficientWithdrawableBalanceError,
-  WithdrawalBelowMinimumError,
-  WithdrawalAboveMaximumError,
-  WithdrawalLimitExceededError,
-  WithdrawalNotCancellableError,
-  WithdrawalAlreadyDecidedError,
-} from '../withdrawal.errors.js';
-import {
-  emitWithdrawalRequested,
-  emitWithdrawalUnderReview,
-  emitWithdrawalApproved,
-  emitWithdrawalRejected,
-  emitWithdrawalCompleted,
-  emitWithdrawalFailed,
-  emitWithdrawalCancelled,
-  emitWithdrawalProcessing,
-  emitWithdrawalLimitExceeded,
-} from '../withdrawal.events.js';
+const { WithdrawalRequestRepository } = require('./repository.js');
+const { WithdrawalRepository } = require('../withdrawal.repository.js');
+const { WithdrawalMethodFactory } = require('../methods/method.factory.js');
+const { WITHDRAWAL_STATUSES, DEFAULT_MIN_WITHDRAWAL_USD, DEFAULT_MAX_WITHDRAWAL_USD, DEFAULT_DAILY_WITHDRAWAL_LIMIT_USD, DEFAULT_MONTHLY_WITHDRAWAL_LIMIT_USD, DEFAULT_MANUAL_REVIEW_THRESHOLD_USD, requiresManualReview } = require('../withdrawal.constants.js');
+const { WithdrawalNotFoundError, WithdrawalAccountNotFoundError, WithdrawalAccountNotVerifiedError, InsufficientWithdrawableBalanceError, WithdrawalBelowMinimumError, WithdrawalAboveMaximumError, WithdrawalLimitExceededError, WithdrawalNotCancellableError, WithdrawalAlreadyDecidedError } = require('../withdrawal.errors.js');
+const { emitWithdrawalRequested, emitWithdrawalUnderReview, emitWithdrawalApproved, emitWithdrawalRejected, emitWithdrawalCompleted, emitWithdrawalFailed, emitWithdrawalCancelled, emitWithdrawalProcessing, emitWithdrawalLimitExceeded } = require('../withdrawal.events.js');
 
 const EXCHANGE_RATES_USD = Object.freeze({
   USD: 1,
@@ -48,8 +19,7 @@ const EXCHANGE_RATES_USD = Object.freeze({
   EUR: 1.08,
   GBP: 1.27,
 });
-
-export class WithdrawalRequestService {
+class WithdrawalRequestService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new WithdrawalRequestRepository();
     this.withdrawalRepository =
@@ -428,5 +398,5 @@ export class WithdrawalRequestService {
     return input;
   }
 }
-
-export default WithdrawalRequestService;
+module.exports = WithdrawalRequestService;
+module.exports.WithdrawalRequestService = WithdrawalRequestService;

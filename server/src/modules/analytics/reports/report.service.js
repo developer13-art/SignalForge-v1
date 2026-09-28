@@ -3,27 +3,16 @@
  *
  * @module signalforge/server/modules/analytics/reports/service
  */
-
-import crypto from 'node:crypto';
-
-import { ReportRepository } from './report.repository.js';
-import { ReportGeneratorService } from './report-generator.service.js';
-import { ReportExporterService } from './report-exporter.service.js';
-import { AnalyticsRepository } from '../analytics.repository.js';
-import { AnalyticsFilterService } from '../filters/analytics-filter.service.js';
-import { ReportNotFoundError, ReportGenerationError } from '../analytics.errors.js';
-import {
-  REPORT_STATUSES,
-  DEFAULT_REPORT_RETENTION_DAYS,
-} from '../analytics.constants.js';
-import {
-  emitReportRequested,
-  emitReportGenerated,
-  emitReportFailed,
-  emitReportExported,
-} from '../analytics.events.js';
-
-export class ReportService {
+const crypto = require('node:crypto');
+const { ReportRepository } = require('./report.repository.js');
+const { ReportGeneratorService } = require('./report-generator.service.js');
+const { ReportExporterService } = require('./report-exporter.service.js');
+const { AnalyticsRepository } = require('../analytics.repository.js');
+const { AnalyticsFilterService } = require('../filters/analytics-filter.service.js');
+const { ReportNotFoundError, ReportGenerationError } = require('../analytics.errors.js');
+const { REPORT_STATUSES, DEFAULT_REPORT_RETENTION_DAYS } = require('../analytics.constants.js');
+const { emitReportRequested, emitReportGenerated, emitReportFailed, emitReportExported } = require('../analytics.events.js');
+class ReportService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ReportRepository();
     this.analyticsRepository = dependencies.analyticsRepository || new AnalyticsRepository();
@@ -212,5 +201,5 @@ export class ReportService {
     return input;
   }
 }
-
-export default ReportService;
+module.exports = ReportService;
+module.exports.ReportService = ReportService;

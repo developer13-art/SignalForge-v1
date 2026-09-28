@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/safety/safety-filter
  */
-
-import aiConfig from '../../../config/ai.config.js';
-import { SAFETY_FILTER_ACTIONS } from '../ai.constants.js';
-import { SafetyFilterError } from '../ai.errors.js';
-import { emitSafetyFilterTriggered } from '../ai.events.js';
-
-export class SafetyFilterService {
+const aiConfig = require('../../../config/ai.config.js');
+const { SAFETY_FILTER_ACTIONS } = require('../ai.constants.js');
+const { SafetyFilterError } = require('../ai.errors.js');
+const { emitSafetyFilterTriggered } = require('../ai.events.js');
+class SafetyFilterService {
   constructor(options = {}) {
     this.maxInputLength = options.maxInputLength || aiConfig.safety.maxInputLength;
     this.blockHarmful = options.blockHarmful ?? aiConfig.safety.blockHarmful;
@@ -57,5 +55,5 @@ export class SafetyFilterService {
     return hits;
   }
 }
-
-export default SafetyFilterService;
+module.exports = SafetyFilterService;
+module.exports.SafetyFilterService = SafetyFilterService;

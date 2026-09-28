@@ -7,16 +7,14 @@
  *
  * @module server/modules/affiliate/referrals/affiliate-referral.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { publishEvent } from '../../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-
-export async function recordReferral({ affiliateCode, referredUserId, source }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { publishEvent } = require('../../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+async function recordReferral({ affiliateCode, referredUserId, source }) {
   if (!affiliateCode || !referredUserId) {
     throw new AppError('affiliateCode and referredUserId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -94,8 +92,7 @@ export async function recordReferral({ affiliateCode, referredUserId, source }) 
     createdAt: referral.created_at,
   };
 }
-
-export async function getReferralById({ referralId }) {
+async function getReferralById({ referralId }) {
   if (!referralId) {
     throw new AppError('referralId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -124,8 +121,7 @@ export async function getReferralById({ referralId }) {
     updatedAt: row.updated_at,
   };
 }
-
-export async function listActiveReferralsForPartner({ partnerUserId }) {
+async function listActiveReferralsForPartner({ partnerUserId }) {
   if (!partnerUserId) {
     throw new AppError('partnerUserId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -145,8 +141,7 @@ export async function listActiveReferralsForPartner({ partnerUserId }) {
     createdAt: row.created_at,
   }));
 }
-
-export async function updateReferralStatus({ referralId, status }) {
+async function updateReferralStatus({ referralId, status }) {
   if (!referralId || !status) {
     throw new AppError('referralId and status are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -166,8 +161,7 @@ export async function updateReferralStatus({ referralId, status }) {
 
   return { updated: rowCount > 0 };
 }
-
-export async function countReferralsForPartner({ partnerUserId }) {
+async function countReferralsForPartner({ partnerUserId }) {
   if (!partnerUserId) {
     throw new AppError('partnerUserId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -186,11 +180,21 @@ export async function countReferralsForPartner({ partnerUserId }) {
     active: rows[0]?.active || 0,
   };
 }
-
-export const affiliateReferralService = {
+const affiliateReferralService = {
   recordReferral,
   getReferralById,
   listActiveReferralsForPartner,
   updateReferralStatus,
   countReferralsForPartner,
 };
+module.exports.affiliateReferralService = affiliateReferralService;
+
+module.exports.recordReferral = recordReferral;
+
+module.exports.getReferralById = getReferralById;
+
+module.exports.listActiveReferralsForPartner = listActiveReferralsForPartner;
+
+module.exports.updateReferralStatus = updateReferralStatus;
+
+module.exports.countReferralsForPartner = countReferralsForPartner;

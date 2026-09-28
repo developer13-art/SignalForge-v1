@@ -5,18 +5,12 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/channel
  */
-
-import { TelegramRepository } from './telegram.repository.js';
-import { TelegramSessionStoreService } from './telegram-session-store.service.js';
-import { TelegramClientFactory } from './telegram-client.factory.js';
-import { CHANNEL_OPT_IN_STATUSES } from '../source.constants.js';
-import {
-  ChannelAlreadyOptedInError,
-  ChannelNotOptedInError,
-  SourceNotFoundError,
-} from '../source.errors.js';
-
-export class TelegramChannelService {
+const { TelegramRepository } = require('./telegram.repository.js');
+const { TelegramSessionStoreService } = require('./telegram-session-store.service.js');
+const { TelegramClientFactory } = require('./telegram-client.factory.js');
+const { CHANNEL_OPT_IN_STATUSES } = require('../source.constants.js');
+const { ChannelAlreadyOptedInError, ChannelNotOptedInError, SourceNotFoundError } = require('../source.errors.js');
+class TelegramChannelService {
   constructor(repository = null, sessionStore = null) {
     this.repository = repository || new TelegramRepository();
     this.sessionStore = sessionStore || new TelegramSessionStoreService(this.repository);
@@ -139,5 +133,5 @@ export class TelegramChannelService {
     };
   }
 }
-
-export default TelegramChannelService;
+module.exports = TelegramChannelService;
+module.exports.TelegramChannelService = TelegramChannelService;

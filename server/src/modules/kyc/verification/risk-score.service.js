@@ -15,8 +15,7 @@ const RISK_WEIGHTS = Object.freeze({
   documentCheck: 0.2,
   identityCheck: 0.2,
 });
-
-export class RiskScoreService {
+class RiskScoreService {
   compute(signals = {}) {
     const components = {};
     let totalWeight = 0;
@@ -49,5 +48,5 @@ export class RiskScoreService {
     return { score, components };
   }
 }
-
-export default RiskScoreService;
+module.exports = RiskScoreService;
+module.exports.RiskScoreService = RiskScoreService;

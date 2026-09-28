@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/010_create_referral_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS referral_codes (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -123,8 +122,7 @@ export async function up(client) {
       ON referral_ledger (wallet_id, created_at DESC);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS referral_ledger CASCADE`);
   await client.query(`DROP TABLE IF EXISTS referral_wallets CASCADE`);
   await client.query(`DROP TABLE IF EXISTS referral_settlements CASCADE`);
@@ -132,3 +130,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS referral_relationships CASCADE`);
   await client.query(`DROP TABLE IF EXISTS referral_codes CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

@@ -8,8 +8,7 @@
  *
  * @module signalforge/server/modules/kyc/documents/image-quality
  */
-
-import { DEFAULT_MIN_RESOLUTION, QUALITY_CHECK_RESULTS } from '../kyc.constants.js';
+const { DEFAULT_MIN_RESOLUTION, QUALITY_CHECK_RESULTS } = require('../kyc.constants.js');
 
 function readPngDimensions(buffer) {
   if (buffer.length < 24) {
@@ -46,8 +45,7 @@ function readJpegDimensions(buffer) {
   }
   return null;
 }
-
-export class ImageQualityService {
+class ImageQualityService {
   extractDimensions(buffer, mimeType) {
     try {
       if (mimeType === 'image/png') {
@@ -124,5 +122,5 @@ export class ImageQualityService {
     };
   }
 }
-
-export default ImageQualityService;
+module.exports = ImageQualityService;
+module.exports.ImageQualityService = ImageQualityService;

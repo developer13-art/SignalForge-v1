@@ -6,14 +6,12 @@
  *
  * @module server/modules/replay/trade-replay/trade-replay.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { replayRepository } from '../replay.repository';
-import { timelineBuilderService } from '../signal-replay/timeline-builder.service';
-import { tradeTimelineService } from './trade-timeline.service';
-
-export async function buildTradeReplay({ tradeId, userId }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { replayRepository } = require('../replay.repository');
+const { timelineBuilderService } = require('../signal-replay/timeline-builder.service');
+const { tradeTimelineService } = require('./trade-timeline.service');
+async function buildTradeReplay({ tradeId, userId }) {
   if (!tradeId) {
     throw new AppError('tradeId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -57,7 +55,9 @@ export async function buildTradeReplay({ tradeId, userId }) {
     durations,
   };
 }
-
-export const tradeReplayService = {
+const tradeReplayService = {
   buildTradeReplay,
 };
+module.exports.tradeReplayService = tradeReplayService;
+
+module.exports.buildTradeReplay = buildTradeReplay;

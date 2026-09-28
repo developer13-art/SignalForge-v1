@@ -6,13 +6,11 @@
  *
  * @module server/modules/solana/solana.events
  */
-
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { publishEvent } from '../../events/event-publisher';
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { publishEvent } = require('../../events/event-publisher');
 
 const SOURCE = 'solana.events';
-
-export async function emitWalletConnected({ userId, walletAddress, isPrimary }) {
+async function emitWalletConnected({ userId, walletAddress, isPrimary }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOLANA_WALLET_CONNECTED,
     source: SOURCE,
@@ -25,8 +23,7 @@ export async function emitWalletConnected({ userId, walletAddress, isPrimary }) 
     },
   });
 }
-
-export async function emitWalletDisconnected({ userId, walletAddress, reason }) {
+async function emitWalletDisconnected({ userId, walletAddress, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOLANA_WALLET_DISCONNECTED,
     source: SOURCE,
@@ -39,8 +36,7 @@ export async function emitWalletDisconnected({ userId, walletAddress, reason }) 
     },
   });
 }
-
-export async function emitAttestationAnchored({ attestationId, subjectType, subjectId, txSignature, slot }) {
+async function emitAttestationAnchored({ attestationId, subjectType, subjectId, txSignature, slot }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOLANA_ATTESTATION_ANCHORED,
     source: SOURCE,
@@ -55,8 +51,7 @@ export async function emitAttestationAnchored({ attestationId, subjectType, subj
     },
   });
 }
-
-export async function emitProvenanceAnchored({ provenanceId, signalId, txSignature, slot }) {
+async function emitProvenanceAnchored({ provenanceId, signalId, txSignature, slot }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOLANA_PROVENANCE_ANCHORED,
     source: SOURCE,
@@ -70,8 +65,7 @@ export async function emitProvenanceAnchored({ provenanceId, signalId, txSignatu
     },
   });
 }
-
-export async function emitTransactionConfirmed({ txSignature, purpose, slot }) {
+async function emitTransactionConfirmed({ txSignature, purpose, slot }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOLANA_TRANSACTION_CONFIRMED,
     source: SOURCE,
@@ -84,8 +78,7 @@ export async function emitTransactionConfirmed({ txSignature, purpose, slot }) {
     },
   });
 }
-
-export async function emitTransactionFailed({ txSignature, purpose, reason }) {
+async function emitTransactionFailed({ txSignature, purpose, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOLANA_TRANSACTION_FAILED,
     source: SOURCE,
@@ -98,8 +91,7 @@ export async function emitTransactionFailed({ txSignature, purpose, reason }) {
     },
   });
 }
-
-export async function emitPaymentConfirmed({ paymentId, userId, amount, token, txSignature }) {
+async function emitPaymentConfirmed({ paymentId, userId, amount, token, txSignature }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOLANA_PAYMENT_CONFIRMED,
     source: SOURCE,
@@ -114,8 +106,7 @@ export async function emitPaymentConfirmed({ paymentId, userId, amount, token, t
     },
   });
 }
-
-export const SOLANA_EVENT_NAMES = Object.freeze({
+const SOLANA_EVENT_NAMES = Object.freeze({
   WALLET_CONNECTED: EVENT_TYPES.SOLANA_WALLET_CONNECTED,
   WALLET_DISCONNECTED: EVENT_TYPES.SOLANA_WALLET_DISCONNECTED,
   ATTESTATION_ANCHORED: EVENT_TYPES.SOLANA_ATTESTATION_ANCHORED,
@@ -124,3 +115,18 @@ export const SOLANA_EVENT_NAMES = Object.freeze({
   TRANSACTION_FAILED: EVENT_TYPES.SOLANA_TRANSACTION_FAILED,
   PAYMENT_CONFIRMED: EVENT_TYPES.SOLANA_PAYMENT_CONFIRMED,
 });
+module.exports.SOLANA_EVENT_NAMES = SOLANA_EVENT_NAMES;
+
+module.exports.emitWalletConnected = emitWalletConnected;
+
+module.exports.emitWalletDisconnected = emitWalletDisconnected;
+
+module.exports.emitAttestationAnchored = emitAttestationAnchored;
+
+module.exports.emitProvenanceAnchored = emitProvenanceAnchored;
+
+module.exports.emitTransactionConfirmed = emitTransactionConfirmed;
+
+module.exports.emitTransactionFailed = emitTransactionFailed;
+
+module.exports.emitPaymentConfirmed = emitPaymentConfirmed;

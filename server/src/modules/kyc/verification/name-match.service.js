@@ -6,8 +6,7 @@
  *
  * @module signalforge/server/modules/kyc/verification/name-match
  */
-
-import { DEFAULT_NAME_MATCH_THRESHOLD, VERIFICATION_RESULTS } from '../kyc.constants.js';
+const { DEFAULT_NAME_MATCH_THRESHOLD, VERIFICATION_RESULTS } = require('../kyc.constants.js');
 
 function normalizeName(name) {
   if (!name || typeof name !== 'string') {
@@ -25,8 +24,7 @@ function normalizeName(name) {
 function tokenize(name) {
   return normalizeName(name).split(' ').filter(Boolean);
 }
-
-export class NameMatchService {
+class NameMatchService {
   compare(declaredName, documentName, threshold = DEFAULT_NAME_MATCH_THRESHOLD) {
     const declaredTokens = tokenize(declaredName);
     const documentTokens = tokenize(documentName);
@@ -63,5 +61,5 @@ export class NameMatchService {
     };
   }
 }
-
-export default NameMatchService;
+module.exports = NameMatchService;
+module.exports.NameMatchService = NameMatchService;

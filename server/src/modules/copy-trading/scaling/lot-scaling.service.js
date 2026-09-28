@@ -3,17 +3,15 @@
  *
  * @module signalforge/server/modules/copy-trading/scaling/lot
  */
-
-import { FixedLotService } from './fixed-lot.service.js';
-import { PercentageScalingService } from './percentage-scaling.service.js';
-import { BalanceScalingService } from './balance-scaling.service.js';
-import { EquityScalingService } from './equity-scaling.service.js';
-import { SCALING_MODES, SCALING_MODE_VALUES } from '../copy-trading.constants.js';
-import { InvalidScalingModeError } from '../copy-trading.errors.js';
+const { FixedLotService } = require('./fixed-lot.service.js');
+const { PercentageScalingService } = require('./percentage-scaling.service.js');
+const { BalanceScalingService } = require('./balance-scaling.service.js');
+const { EquityScalingService } = require('./equity-scaling.service.js');
+const { SCALING_MODES, SCALING_MODE_VALUES } = require('../copy-trading.constants.js');
+const { InvalidScalingModeError } = require('../copy-trading.errors.js');
 
 const DEFAULT_RATIO_MODE = SCALING_MODES.PERCENTAGE;
-
-export class LotScalingService {
+class LotScalingService {
   constructor(dependencies = {}) {
     this.fixedLot = dependencies.fixedLot || new FixedLotService();
     this.percentage = dependencies.percentage || new PercentageScalingService();
@@ -47,5 +45,5 @@ export class LotScalingService {
     }
   }
 }
-
-export default LotScalingService;
+module.exports = LotScalingService;
+module.exports.LotScalingService = LotScalingService;

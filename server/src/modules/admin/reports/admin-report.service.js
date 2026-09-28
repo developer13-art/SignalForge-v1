@@ -6,11 +6,10 @@
  *
  * @module server/modules/admin/reports/admin-report.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { REPORT_EXPORT_FORMATS } from '../admin.constants';
-import * as repository from './admin-report.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { REPORT_EXPORT_FORMATS } = require('../admin.constants');
+const repository = require('./admin-report.repository');
 
 const VALID_GRANULARITIES = Object.freeze(['day', 'week', 'month']);
 
@@ -32,8 +31,7 @@ function normalizeGranularity(granularity) {
   }
   return g;
 }
-
-export async function generatePlatformReport({ from, to, granularity }) {
+async function generatePlatformReport({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
 
@@ -60,8 +58,7 @@ export async function generatePlatformReport({ from, to, granularity }) {
     topProviders,
   };
 }
-
-export async function generateUserGrowthReport({ from, to, granularity }) {
+async function generateUserGrowthReport({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
 
@@ -69,8 +66,7 @@ export async function generateUserGrowthReport({ from, to, granularity }) {
 
   return { range, granularity: g, series };
 }
-
-export async function generateSignalActivityReport({ from, to, granularity }) {
+async function generateSignalActivityReport({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
 
@@ -78,8 +74,7 @@ export async function generateSignalActivityReport({ from, to, granularity }) {
 
   return { range, granularity: g, series };
 }
-
-export async function generateTradeActivityReport({ from, to, granularity }) {
+async function generateTradeActivityReport({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
 
@@ -87,8 +82,7 @@ export async function generateTradeActivityReport({ from, to, granularity }) {
 
   return { range, granularity: g, series };
 }
-
-export async function generateRevenueReport({ from, to, granularity }) {
+async function generateRevenueReport({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
 
@@ -96,8 +90,7 @@ export async function generateRevenueReport({ from, to, granularity }) {
 
   return { range, granularity: g, series };
 }
-
-export async function generateReferralReport({ from, to }) {
+async function generateReferralReport({ from, to }) {
   const range = normalizeRange({ from, to });
 
   const summary = await repository.referralSettlementSummary(range);
@@ -123,8 +116,7 @@ function toCsv(rows, columns) {
     .join('\n');
   return `${header}\n${body}`;
 }
-
-export async function exportReport({ type, from, to, granularity, format = 'JSON' }) {
+async function exportReport({ type, from, to, granularity, format = 'JSON' }) {
   if (!REPORT_EXPORT_FORMATS[format]) {
     throw new AppError(`Unsupported export format: ${format}`, ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -204,8 +196,7 @@ export async function exportReport({ type, from, to, granularity, format = 'JSON
 
   throw new AppError(`Unsupported export format: ${format}`, ERROR_CODES.VALIDATION_FAILED, 400);
 }
-
-export const adminReportService = {
+const adminReportService = {
   generatePlatformReport,
   generateUserGrowthReport,
   generateSignalActivityReport,
@@ -214,3 +205,18 @@ export const adminReportService = {
   generateReferralReport,
   exportReport,
 };
+module.exports.adminReportService = adminReportService;
+
+module.exports.generatePlatformReport = generatePlatformReport;
+
+module.exports.generateUserGrowthReport = generateUserGrowthReport;
+
+module.exports.generateSignalActivityReport = generateSignalActivityReport;
+
+module.exports.generateTradeActivityReport = generateTradeActivityReport;
+
+module.exports.generateRevenueReport = generateRevenueReport;
+
+module.exports.generateReferralReport = generateReferralReport;
+
+module.exports.exportReport = exportReport;

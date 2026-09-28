@@ -3,16 +3,14 @@
  *
  * @module signalforge/server/modules/wallets/ledger/integrity
  */
-
-import { LedgerEntryRepository } from './ledger-entry.repository.js';
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { LedgerIntegrityError } from '../wallet.errors.js';
-import { emitLedgerIntegrityCheck } from '../wallet.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
+const { LedgerEntryRepository } = require('./ledger-entry.repository.js');
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { LedgerIntegrityError } = require('../wallet.errors.js');
+const { emitLedgerIntegrityCheck } = require('../wallet.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
 
 const DEFAULT_TOLERANCE = 0.01;
-
-export class LedgerIntegrityService {
+class LedgerIntegrityService {
   constructor(repository = null) {
     this.repository = repository || new LedgerEntryRepository();
     this.db = getDatabase();
@@ -78,5 +76,5 @@ export class LedgerIntegrityService {
     return results;
   }
 }
-
-export default LedgerIntegrityService;
+module.exports = LedgerIntegrityService;
+module.exports.LedgerIntegrityService = LedgerIntegrityService;

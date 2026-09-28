@@ -7,21 +7,16 @@
  *
  * @module server/modules/notifications/notification.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { db } from '../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { NOTIFICATION_STATUSES, CHANNEL_STATUSES, MAX_RETRY_ATTEMPTS, CHANNEL_RETRY_DELAYS_MS, NOTIFICATION_EXPIRY_HOURS } from './notification.constants';
-import * as repository from './notification.repository';
-import { channelFactory } from './channels/channel.factory';
-import { preferenceService } from './preferences/preference.service';
-import {
-  emitNotificationQueued,
-  emitNotificationSent,
-  emitNotificationFailed,
-} from './notification.events';
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { db } = require('../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { NOTIFICATION_STATUSES, CHANNEL_STATUSES, MAX_RETRY_ATTEMPTS, CHANNEL_RETRY_DELAYS_MS, NOTIFICATION_EXPIRY_HOURS } = require('./notification.constants');
+const repository = require('./notification.repository');
+const { channelFactory } = require('./channels/channel.factory');
+const { preferenceService } = require('./preferences/preference.service');
+const { emitNotificationQueued, emitNotificationSent, emitNotificationFailed } = require('./notification.events');
 
 async function loadUser({ userId }) {
   const { rows } = await db.query(
@@ -137,8 +132,7 @@ async function deliverToChannel({ notification, user, channelName, templateData,
     return { channel: channelName, status: CHANNEL_STATUSES.FAILED, error: err.message };
   }
 }
-
-export async function sendNotification(payload) {
+async function sendNotification(payload) {
   if (!payload.userId || !payload.type || !payload.title) {
     throw new AppError('userId, type, and title are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -189,8 +183,7 @@ export async function sendNotification(payload) {
     createdAt: record.created_at,
   };
 }
-
-export async function dispatch({ notificationId }) {
+async function dispatch({ notificationId }) {
   if (!notificationId) {
     throw new AppError('notificationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -284,8 +277,7 @@ export async function dispatch({ notificationId }) {
 
   return { dispatched: true, results };
 }
-
-export async function retryFailed({ notificationId, attempt }) {
+async function retryFailed({ notificationId, attempt }) {
   if (!notificationId) {
     throw new AppError('notificationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -309,8 +301,7 @@ export async function retryFailed({ notificationId, attempt }) {
 
   return dispatch({ notificationId });
 }
-
-export async function sendBulkNotifications({ userIds, type, title, body, channels, category, priority, templateKey, templateData }) {
+async function sendBulkNotifications({ userIds, type, title, body, channels, category, priority, templateKey, templateData }) {
   if (!Array.isArray(userIds) || userIds.length === 0) {
     throw new AppError('userIds must be a non-empty array', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -339,8 +330,7 @@ export async function sendBulkNotifications({ userIds, type, title, body, channe
 
   return { total: results.length, results };
 }
-
-export async function listUserNotifications({ userId, filters = {}, pagination = {} }) {
+async function listUserNotifications({ userId, filters = {}, pagination = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -364,8 +354,7 @@ export async function listUserNotifications({ userId, filters = {}, pagination =
     total: result.total,
   };
 }
-
-export async function markAsRead({ notificationId, userId }) {
+async function markAsRead({ notificationId, userId }) {
   if (!notificationId || !userId) {
     throw new AppError('notificationId and userId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -378,8 +367,7 @@ export async function markAsRead({ notificationId, userId }) {
 
   return { marked: true };
 }
-
-export async function markAllAsRead({ userId }) {
+async function markAllAsRead({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -388,16 +376,14 @@ export async function markAllAsRead({ userId }) {
 
   return { markedCount: count };
 }
-
-export async function countUnread({ userId }) {
+async function countUnread({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
   const count = await repository.countUnread({ userId });
   return { unreadCount: count };
 }
-
-export async function deleteNotification({ notificationId, userId }) {
+async function deleteNotification({ notificationId, userId }) {
   if (!notificationId || !userId) {
     throw new AppError('notificationId and userId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -410,8 +396,7 @@ export async function deleteNotification({ notificationId, userId }) {
 
   return { deleted: true };
 }
-
-export async function processPendingNotifications({ limit = 100 }) {
+async function processPendingNotifications({ limit = 100 }) {
   const pending = await repository.findPendingForScheduledDelivery({ limit });
 
   const results = [];
@@ -428,8 +413,7 @@ export async function processPendingNotifications({ limit = 100 }) {
 
   return { processed: results.length, results };
 }
-
-export const notificationService = {
+const notificationService = {
   sendNotification,
   dispatch,
   retryFailed,
@@ -442,3 +426,24 @@ export const notificationService = {
   processPendingNotifications,
   CHANNEL_RETRY_DELAYS_MS,
 };
+module.exports.notificationService = notificationService;
+
+module.exports.sendNotification = sendNotification;
+
+module.exports.dispatch = dispatch;
+
+module.exports.retryFailed = retryFailed;
+
+module.exports.sendBulkNotifications = sendBulkNotifications;
+
+module.exports.listUserNotifications = listUserNotifications;
+
+module.exports.markAsRead = markAsRead;
+
+module.exports.markAllAsRead = markAllAsRead;
+
+module.exports.countUnread = countUnread;
+
+module.exports.deleteNotification = deleteNotification;
+
+module.exports.processPendingNotifications = processPendingNotifications;

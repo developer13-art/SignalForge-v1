@@ -5,10 +5,8 @@
  *
  * @module server/modules/compliance/kyc-queue/kyc-queue.repository
  */
-
-import { db } from '../../../database';
-
-export async function listQueueItems({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+async function listQueueItems({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -63,8 +61,7 @@ export async function listQueueItems({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function assignReviewer({ applicationId, reviewerId }) {
+async function assignReviewer({ applicationId, reviewerId }) {
   const { rowCount } = await db.query(
     `UPDATE kyc_applications
         SET reviewer_id = $1,
@@ -75,8 +72,7 @@ export async function assignReviewer({ applicationId, reviewerId }) {
   );
   return rowCount > 0;
 }
-
-export async function releaseReviewer({ applicationId }) {
+async function releaseReviewer({ applicationId }) {
   const { rowCount } = await db.query(
     `UPDATE kyc_applications
         SET reviewer_id = NULL, updated_at = $1
@@ -85,8 +81,7 @@ export async function releaseReviewer({ applicationId }) {
   );
   return rowCount > 0;
 }
-
-export async function countQueueByStatus() {
+async function countQueueByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count
        FROM kyc_applications
@@ -95,8 +90,7 @@ export async function countQueueByStatus() {
   );
   return rows;
 }
-
-export async function findAssignedToReviewer({ reviewerId, limit = 50 }) {
+async function findAssignedToReviewer({ reviewerId, limit = 50 }) {
   const { rows } = await db.query(
     `SELECT id, user_id, status, submitted_at, sla_due_at
        FROM kyc_applications
@@ -108,11 +102,21 @@ export async function findAssignedToReviewer({ reviewerId, limit = 50 }) {
   );
   return rows;
 }
-
-export const kycQueueRepository = {
+const kycQueueRepository = {
   listQueueItems,
   assignReviewer,
   releaseReviewer,
   countQueueByStatus,
   findAssignedToReviewer,
 };
+module.exports.kycQueueRepository = kycQueueRepository;
+
+module.exports.listQueueItems = listQueueItems;
+
+module.exports.assignReviewer = assignReviewer;
+
+module.exports.releaseReviewer = releaseReviewer;
+
+module.exports.countQueueByStatus = countQueueByStatus;
+
+module.exports.findAssignedToReviewer = findAssignedToReviewer;

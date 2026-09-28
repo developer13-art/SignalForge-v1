@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/provider-dna/versioning/diff
  */
-
-export class VersionDiffService {
+class VersionDiffService {
   diff(snapshotA, snapshotB) {
     const a = snapshotA || {};
     const b = snapshotB || {};
@@ -29,5 +28,5 @@ export class VersionDiffService {
     };
   }
 }
-
-export default VersionDiffService;
+module.exports = VersionDiffService;
+module.exports.VersionDiffService = VersionDiffService;

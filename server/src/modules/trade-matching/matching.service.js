@@ -6,36 +6,13 @@
  *
  * @module signalforge/server/modules/trade-matching/service
  */
-
-import { MatchingRepository } from './matching.repository.js';
-import { HybridMatcher } from './matchers/hybrid.matcher.js';
-import {
-  ManagementInstructionRegistry,
-} from './management-instructions/management-instruction.registry.js';
-import {
-  MATCH_OUTCOMES,
-  MANAGEMENT_INSTRUCTION_TYPES,
-  MIN_MATCH_CONFIDENCE,
-  AMBIGUITY_MARGIN,
-  DEFAULT_TIME_WINDOW_MS,
-  MAX_OPEN_TRADES_TO_SCAN,
-} from './matching.constants.js';
-import {
-  MatchNotFoundError,
-  AmbiguousMatchError,
-  ManagementInstructionInvalidError,
-} from './matching.errors.js';
-import {
-  emitMatchAttempted,
-  emitMatchSucceeded,
-  emitMatchFailed,
-  emitMatchAmbiguous,
-  emitManagementInstructionParsed,
-  emitManagementInstructionApplied,
-  emitManagementInstructionFailed,
-} from './matching.events.js';
-
-export class MatchingService {
+const { MatchingRepository } = require('./matching.repository.js');
+const { HybridMatcher } = require('./matchers/hybrid.matcher.js');
+const { ManagementInstructionRegistry } = require('./management-instructions/management-instruction.registry.js');
+const { MATCH_OUTCOMES, MANAGEMENT_INSTRUCTION_TYPES, MIN_MATCH_CONFIDENCE, AMBIGUITY_MARGIN, DEFAULT_TIME_WINDOW_MS, MAX_OPEN_TRADES_TO_SCAN } = require('./matching.constants.js');
+const { MatchNotFoundError, AmbiguousMatchError, ManagementInstructionInvalidError } = require('./matching.errors.js');
+const { emitMatchAttempted, emitMatchSucceeded, emitMatchFailed, emitMatchAmbiguous, emitManagementInstructionParsed, emitManagementInstructionApplied, emitManagementInstructionFailed } = require('./matching.events.js');
+class MatchingService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new MatchingRepository();
     this.matcher = dependencies.matcher || new HybridMatcher();
@@ -230,5 +207,5 @@ export class MatchingService {
     };
   }
 }
-
-export default MatchingService;
+module.exports = MatchingService;
+module.exports.MatchingService = MatchingService;

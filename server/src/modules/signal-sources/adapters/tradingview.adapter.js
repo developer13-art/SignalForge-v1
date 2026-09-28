@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/signal-sources/adapters/tradingview
  */
-
-import { BaseAdapter } from './base.adapter.js';
-import { SOURCE_TYPES } from '../source.constants.js';
-
-export class TradingViewAdapter extends BaseAdapter {
+const { BaseAdapter } = require('./base.adapter.js');
+const { SOURCE_TYPES } = require('../source.constants.js');
+class TradingViewAdapter extends BaseAdapter {
   constructor(config = {}) {
     super(config);
     this.name = SOURCE_TYPES.TRADINGVIEW;
@@ -52,5 +50,5 @@ export class TradingViewAdapter extends BaseAdapter {
     };
   }
 }
-
-export default TradingViewAdapter;
+module.exports = TradingViewAdapter;
+module.exports.TradingViewAdapter = TradingViewAdapter;

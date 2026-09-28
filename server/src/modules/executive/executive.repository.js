@@ -5,10 +5,8 @@
  *
  * @module server/modules/executive/executive.repository
  */
-
-import { db } from '../../database';
-
-export async function getPlatformTotals({ from, to }) {
+const { db } = require('../../database');
+async function getPlatformTotals({ from, to }) {
   const fromDate = from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const toDate = to || new Date().toISOString();
 
@@ -67,8 +65,7 @@ export async function getPlatformTotals({ from, to }) {
     revenue: Number(revenue.rows[0]?.total_revenue || 0),
   };
 }
-
-export async function userGrowthSeries({ from, to, granularity = 'day' }) {
+async function userGrowthSeries({ from, to, granularity = 'day' }) {
   const dateTrunc = granularity === 'month' ? 'month' : granularity === 'week' ? 'week' : 'day';
 
   const { rows } = await db.query(
@@ -81,8 +78,12 @@ export async function userGrowthSeries({ from, to, granularity = 'day' }) {
   );
   return rows;
 }
-
-export const executiveRepository = {
+const executiveRepository = {
   getPlatformTotals,
   userGrowthSeries,
 };
+module.exports.executiveRepository = executiveRepository;
+
+module.exports.getPlatformTotals = getPlatformTotals;
+
+module.exports.userGrowthSeries = userGrowthSeries;

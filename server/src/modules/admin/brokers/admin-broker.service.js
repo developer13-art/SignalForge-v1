@@ -3,15 +3,13 @@
  *
  * @module server/modules/admin/brokers/admin-broker.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-broker.repository';
-import { adminService } from '../admin.service';
-
-export async function listBrokerAccounts({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-broker.repository');
+const { adminService } = require('../admin.service');
+async function listBrokerAccounts({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listBrokerAccounts({
@@ -38,8 +36,7 @@ export async function listBrokerAccounts({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getBrokerAccountDetails({ brokerAccountId }) {
+async function getBrokerAccountDetails({ brokerAccountId }) {
   if (!brokerAccountId) {
     throw new AppError('brokerAccountId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -52,8 +49,7 @@ export async function getBrokerAccountDetails({ brokerAccountId }) {
 
   return account;
 }
-
-export async function forceDisconnectBroker({ brokerAccountId, adminId, reason }) {
+async function forceDisconnectBroker({ brokerAccountId, adminId, reason }) {
   if (!brokerAccountId || !adminId) {
     throw new AppError('brokerAccountId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -76,8 +72,7 @@ export async function forceDisconnectBroker({ brokerAccountId, adminId, reason }
 
   return { disconnected: true };
 }
-
-export async function getConnectionStatusBreakdown() {
+async function getConnectionStatusBreakdown() {
   const rows = await repository.countByConnectionStatus();
 
   const breakdown = {};
@@ -87,10 +82,18 @@ export async function getConnectionStatusBreakdown() {
 
   return breakdown;
 }
-
-export const adminBrokerService = {
+const adminBrokerService = {
   listBrokerAccounts,
   getBrokerAccountDetails,
   forceDisconnectBroker,
   getConnectionStatusBreakdown,
 };
+module.exports.adminBrokerService = adminBrokerService;
+
+module.exports.listBrokerAccounts = listBrokerAccounts;
+
+module.exports.getBrokerAccountDetails = getBrokerAccountDetails;
+
+module.exports.forceDisconnectBroker = forceDisconnectBroker;
+
+module.exports.getConnectionStatusBreakdown = getConnectionStatusBreakdown;

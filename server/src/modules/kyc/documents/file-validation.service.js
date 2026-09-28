@@ -6,27 +6,16 @@
  *
  * @module signalforge/server/modules/kyc/documents/file-validation
  */
-
-import crypto from 'node:crypto';
-
-import {
-  ALLOWED_DOCUMENT_MIME_TYPES,
-  ALLOWED_SELFIE_MIME_TYPES,
-  DEFAULT_MAX_FILE_SIZE_MB,
-  DEFAULT_SELFIE_MAX_FILE_SIZE_MB,
-} from '../kyc.constants.js';
-import {
-  KycDocumentTooLargeError,
-  KycInvalidDocumentFormatError,
-} from '../kyc.errors.js';
+const crypto = require('node:crypto');
+const { ALLOWED_DOCUMENT_MIME_TYPES, ALLOWED_SELFIE_MIME_TYPES, DEFAULT_MAX_FILE_SIZE_MB, DEFAULT_SELFIE_MAX_FILE_SIZE_MB } = require('../kyc.constants.js');
+const { KycDocumentTooLargeError, KycInvalidDocumentFormatError } = require('../kyc.errors.js');
 
 const PDF_MAGIC = Buffer.from([0x25, 0x50, 0x44, 0x46]); // %PDF
 const JPEG_MAGIC = Buffer.from([0xff, 0xd8, 0xff]);
 const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 const WEBP_RIFF = Buffer.from([0x52, 0x49, 0x46, 0x46]); // RIFF
 const WEBP_TAG = Buffer.from([0x57, 0x45, 0x42, 0x50]); // WEBP
-
-export class FileValidationService {
+class FileValidationService {
   detectMimeType(buffer) {
     if (!buffer || buffer.length < 4) {
       return null;
@@ -118,5 +107,5 @@ export class FileValidationService {
     };
   }
 }
-
-export default FileValidationService;
+module.exports = FileValidationService;
+module.exports.FileValidationService = FileValidationService;

@@ -3,26 +3,22 @@
  *
  * @module signalforge/server/modules/trade-shadow/errors
  */
-
-import { NotFoundError } from '../../lib/errors/not-found-error.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-import { ConflictError } from '../../lib/errors/conflict-error.js';
-
-export class ShadowNotFoundError extends NotFoundError {
+const { NotFoundError } = require('../../lib/errors/not-found-error.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+const { ConflictError } = require('../../lib/errors/conflict-error.js');
+class ShadowNotFoundError extends NotFoundError {
   constructor(message = 'Trade shadow not found', details = {}) {
     super(message, { code: 'SHADOW_NOT_FOUND', details });
     this.name = 'ShadowNotFoundError';
   }
 }
-
-export class ShadowAlreadyExistsError extends ConflictError {
+class ShadowAlreadyExistsError extends ConflictError {
   constructor(message = 'Trade shadow already exists for this trade pair') {
     super(message, { code: 'SHADOW_ALREADY_EXISTS' });
     this.name = 'ShadowAlreadyExistsError';
   }
 }
-
-export class ShadowComparisonError extends Error {
+class ShadowComparisonError extends Error {
   constructor(message = 'Trade shadow comparison failed', details = {}) {
     super(message);
     this.name = 'ShadowComparisonError';
@@ -30,15 +26,13 @@ export class ShadowComparisonError extends Error {
     this.details = details;
   }
 }
-
-export class ShadowInvalidError extends ValidationError {
+class ShadowInvalidError extends ValidationError {
   constructor(message = 'Trade shadow is invalid', details = {}) {
     super(message, { code: 'SHADOW_INVALID', details });
     this.name = 'ShadowInvalidError';
   }
 }
-
-export class ShadowDivergenceError extends Error {
+class ShadowDivergenceError extends Error {
   constructor(message = 'Divergence analysis failed', details = {}) {
     super(message);
     this.name = 'ShadowDivergenceError';
@@ -46,3 +40,8 @@ export class ShadowDivergenceError extends Error {
     this.details = details;
   }
 }
+module.exports.ShadowNotFoundError = ShadowNotFoundError;
+module.exports.ShadowAlreadyExistsError = ShadowAlreadyExistsError;
+module.exports.ShadowComparisonError = ShadowComparisonError;
+module.exports.ShadowInvalidError = ShadowInvalidError;
+module.exports.ShadowDivergenceError = ShadowDivergenceError;

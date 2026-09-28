@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-shadow/better-exit
  */
-
-import { DEFAULT_BETTER_EXIT_THRESHOLD, DIVERGENCE_TYPES } from './shadow.constants.js';
-
-export class BetterExitService {
+const { DEFAULT_BETTER_EXIT_THRESHOLD, DIVERGENCE_TYPES } = require('./shadow.constants.js');
+class BetterExitService {
   constructor(threshold = DEFAULT_BETTER_EXIT_THRESHOLD) {
     this.threshold = threshold;
   }
@@ -86,5 +84,5 @@ export class BetterExitService {
     };
   }
 }
-
-export default BetterExitService;
+module.exports = BetterExitService;
+module.exports.BetterExitService = BetterExitService;

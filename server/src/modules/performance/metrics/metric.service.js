@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/performance/metrics/service
  */
-
-import { MetricRepository } from './repository.js';
-import { PERFORMANCE_METRIC_TYPES } from '../performance.constants.js';
-import { emitMetricCalculated } from '../performance.events.js';
-
-export class MetricService {
+const { MetricRepository } = require('./repository.js');
+const { PERFORMANCE_METRIC_TYPES } = require('../performance.constants.js');
+const { emitMetricCalculated } = require('../performance.events.js');
+class MetricService {
   constructor(repository = null) {
     this.repository = repository || new MetricRepository();
   }
@@ -67,5 +65,5 @@ export class MetricService {
     return input;
   }
 }
-
-export default MetricService;
+module.exports = MetricService;
+module.exports.MetricService = MetricService;

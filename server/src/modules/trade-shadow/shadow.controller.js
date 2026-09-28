@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-shadow/controller
  */
-
-import { ShadowService } from './shadow.service.js';
-
-export class ShadowController {
+const { ShadowService } = require('./shadow.service.js');
+class ShadowController {
   constructor(service = null) {
     this.service = service || new ShadowService();
   }
@@ -90,5 +88,5 @@ export class ShadowController {
     }
   };
 }
-
-export default ShadowController;
+module.exports = ShadowController;
+module.exports.ShadowController = ShadowController;

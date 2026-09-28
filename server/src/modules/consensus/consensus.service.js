@@ -6,38 +6,16 @@
  *
  * @module signalforge/server/modules/consensus/service
  */
-
-import { ConsensusRepository } from './consensus.repository.js';
-import { VotingService } from './voting.service.js';
-import { AgreementCalculatorService } from './agreement-calculator.service.js';
-import { ConflictResolverService } from './conflict-resolver.service.js';
-import { StrategyService } from './strategy.service.js';
-import {
-  CONSENSUS_OUTCOMES,
-  CONSENSUS_DIRECTIONS,
-  VOTING_STRATEGIES,
-  DEFAULT_MINIMUM_PARTICIPANTS,
-  DEFAULT_MINIMUM_AGREEMENT,
-  DEFAULT_CONSENSUS_WINDOW_MINUTES,
-} from './consensus.constants.js';
-import {
-  InsufficientParticipantsError,
-  ConsensusConflictError,
-  NoConsensusError,
-  ConsensusComputationError,
-} from './consensus.errors.js';
-import {
-  emitConsensusStarted,
-  emitConsensusReached,
-  emitConsensusFailed,
-  emitConsensusConflictDetected,
-  emitConsensusInsufficientParticipants,
-  emitConsensusMemberAdded,
-  emitConsensusDecisionMade,
-} from './consensus.events.js';
-import { normalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
-
-export class ConsensusService {
+const { ConsensusRepository } = require('./consensus.repository.js');
+const { VotingService } = require('./voting.service.js');
+const { AgreementCalculatorService } = require('./agreement-calculator.service.js');
+const { ConflictResolverService } = require('./conflict-resolver.service.js');
+const { StrategyService } = require('./strategy.service.js');
+const { CONSENSUS_OUTCOMES, CONSENSUS_DIRECTIONS, VOTING_STRATEGIES, DEFAULT_MINIMUM_PARTICIPANTS, DEFAULT_MINIMUM_AGREEMENT, DEFAULT_CONSENSUS_WINDOW_MINUTES } = require('./consensus.constants.js');
+const { InsufficientParticipantsError, ConsensusConflictError, NoConsensusError, ConsensusComputationError } = require('./consensus.errors.js');
+const { emitConsensusStarted, emitConsensusReached, emitConsensusFailed, emitConsensusConflictDetected, emitConsensusInsufficientParticipants, emitConsensusMemberAdded, emitConsensusDecisionMade } = require('./consensus.events.js');
+const { normalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
+class ConsensusService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ConsensusRepository();
     this.voting = dependencies.voting || new VotingService();
@@ -235,5 +213,5 @@ export class ConsensusService {
     };
   }
 }
-
-export default ConsensusService;
+module.exports = ConsensusService;
+module.exports.ConsensusService = ConsensusService;

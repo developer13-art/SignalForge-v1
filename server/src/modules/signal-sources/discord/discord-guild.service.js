@@ -8,19 +8,14 @@
  *
  * @module server/modules/signal-sources/discord/discord-guild.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { config } from '../../../config';
-import { encryptPacked, decryptPacked } from '@signalforge/shared/utils/crypto.util';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import {
-  emitDiscordOAuthConnected,
-  emitDiscordOAuthRevoked,
-  emitDiscordGuildDiscovered,
-} from './discord.events';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { config } = require('../../../config');
+const { encryptPacked, decryptPacked } = require('@signalforge/shared/utils/crypto.util');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { emitDiscordOAuthConnected, emitDiscordOAuthRevoked, emitDiscordGuildDiscovered } = require('./discord.events');
 
 const DISCORD_API_BASE = 'https://discord.com/api/v10';
 
@@ -48,8 +43,7 @@ async function discordFetch(path, accessToken) {
 
   return response.json();
 }
-
-export async function exchangeOAuthCode({ userId, code, redirectUri }) {
+async function exchangeOAuthCode({ userId, code, redirectUri }) {
   if (!userId || !code) {
     throw new AppError('userId and code are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -138,8 +132,7 @@ export async function exchangeOAuthCode({ userId, code, redirectUri }) {
     guildCount: guilds.length,
   };
 }
-
-export async function discoverGuilds({ userId, accessToken }) {
+async function discoverGuilds({ userId, accessToken }) {
   if (!userId || !accessToken) {
     throw new AppError('userId and accessToken are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -200,8 +193,7 @@ export async function discoverGuilds({ userId, accessToken }) {
     permissions: g.permissions || null,
   }));
 }
-
-export async function listConnectedGuilds({ userId }) {
+async function listConnectedGuilds({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -225,8 +217,7 @@ export async function listConnectedGuilds({ userId }) {
     updatedAt: row.updated_at,
   }));
 }
-
-export async function getAccessToken({ userId }) {
+async function getAccessToken({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -262,8 +253,7 @@ export async function getAccessToken({ userId }) {
     expiresAt: row.expires_at,
   };
 }
-
-export async function revokeConnection({ userId, reason }) {
+async function revokeConnection({ userId, reason }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -296,8 +286,7 @@ export async function revokeConnection({ userId, reason }) {
 
   return { revoked: true };
 }
-
-export async function listAllConnectedUserIds() {
+async function listAllConnectedUserIds() {
   const { rows } = await db.query(
     `SELECT user_id
        FROM discord_connections
@@ -306,8 +295,7 @@ export async function listAllConnectedUserIds() {
   );
   return rows.map((row) => row.user_id);
 }
-
-export const discordGuildService = {
+const discordGuildService = {
   exchangeOAuthCode,
   discoverGuilds,
   listConnectedGuilds,
@@ -315,3 +303,16 @@ export const discordGuildService = {
   revokeConnection,
   listAllConnectedUserIds,
 };
+module.exports.discordGuildService = discordGuildService;
+
+module.exports.exchangeOAuthCode = exchangeOAuthCode;
+
+module.exports.discoverGuilds = discoverGuilds;
+
+module.exports.listConnectedGuilds = listConnectedGuilds;
+
+module.exports.getAccessToken = getAccessToken;
+
+module.exports.revokeConnection = revokeConnection;
+
+module.exports.listAllConnectedUserIds = listAllConnectedUserIds;

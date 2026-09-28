@@ -6,10 +6,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/logs/metrics
  */
-
-import { AiLogRepository } from './ai-log.repository.js';
-
-export class AiMetricsService {
+const { AiLogRepository } = require('./ai-log.repository.js');
+class AiMetricsService {
   constructor(repository = null) {
     this.repository = repository || new AiLogRepository();
   }
@@ -29,5 +27,5 @@ export class AiMetricsService {
     };
   }
 }
-
-export default AiMetricsService;
+module.exports = AiMetricsService;
+module.exports.AiMetricsService = AiMetricsService;

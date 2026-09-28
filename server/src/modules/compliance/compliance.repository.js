@@ -7,10 +7,8 @@
  *
  * @module server/modules/compliance/compliance.repository
  */
-
-import { db } from '../../database';
-
-export async function countKycApplicationsByStatus() {
+const { db } = require('../../database');
+async function countKycApplicationsByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count
        FROM kyc_applications
@@ -18,8 +16,7 @@ export async function countKycApplicationsByStatus() {
   );
   return rows;
 }
-
-export async function countOpenRiskFlags({ minSeverity } = {}) {
+async function countOpenRiskFlags({ minSeverity } = {}) {
   const params = [];
   let where = `WHERE resolved_at IS NULL`;
 
@@ -34,8 +31,7 @@ export async function countOpenRiskFlags({ minSeverity } = {}) {
   );
   return rows[0]?.count || 0;
 }
-
-export async function findApplicationsExceedingSla({ hours = 48, limit = 100 }) {
+async function findApplicationsExceedingSla({ hours = 48, limit = 100 }) {
   const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
   const { rows } = await db.query(
@@ -51,8 +47,7 @@ export async function findApplicationsExceedingSla({ hours = 48, limit = 100 }) 
 
   return rows;
 }
-
-export async function listAuditLogs({ filters = {}, pagination = {} }) {
+async function listAuditLogs({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -100,8 +95,7 @@ export async function listAuditLogs({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function insertAuditLog({
+async function insertAuditLog({
   actorId,
   action,
   resourceType,
@@ -128,11 +122,21 @@ export async function insertAuditLog({
   );
   return rows[0];
 }
-
-export const complianceRepository = {
+const complianceRepository = {
   countKycApplicationsByStatus,
   countOpenRiskFlags,
   findApplicationsExceedingSla,
   listAuditLogs,
   insertAuditLog,
 };
+module.exports.complianceRepository = complianceRepository;
+
+module.exports.countKycApplicationsByStatus = countKycApplicationsByStatus;
+
+module.exports.countOpenRiskFlags = countOpenRiskFlags;
+
+module.exports.findApplicationsExceedingSla = findApplicationsExceedingSla;
+
+module.exports.listAuditLogs = listAuditLogs;
+
+module.exports.insertAuditLog = insertAuditLog;

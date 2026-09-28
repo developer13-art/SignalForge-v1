@@ -5,11 +5,9 @@
  *
  * @module server/modules/support/ticket.repository
  */
-
-import { db } from '../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertTicket({
+const { db } = require('../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertTicket({
   userId,
   subject,
   priority,
@@ -42,24 +40,21 @@ export async function insertTicket({
   );
   return rows[0];
 }
-
-export async function findById({ ticketId }) {
+async function findById({ ticketId }) {
   const { rows } = await db.query(
     `SELECT * FROM support_tickets WHERE id = $1 LIMIT 1`,
     [ticketId],
   );
   return rows[0] || null;
 }
-
-export async function findByNumber({ ticketNumber }) {
+async function findByNumber({ ticketNumber }) {
   const { rows } = await db.query(
     `SELECT * FROM support_tickets WHERE ticket_number = $1 LIMIT 1`,
     [ticketNumber],
   );
   return rows[0] || null;
 }
-
-export async function listByUser({ userId, filters = {}, pagination = {} }) {
+async function listByUser({ userId, filters = {}, pagination = {} }) {
   const conditions = ['user_id = $1'];
   const params = [userId];
 
@@ -108,8 +103,7 @@ export async function listByUser({ userId, filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function listAssignedToAgent({ agentId, filters = {}, pagination = {} }) {
+async function listAssignedToAgent({ agentId, filters = {}, pagination = {} }) {
   const conditions = ['assigned_agent_id = $1'];
   const params = [agentId];
 
@@ -141,8 +135,7 @@ export async function listAssignedToAgent({ agentId, filters = {}, pagination = 
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function listByQueue({ filters = {}, pagination = {} }) {
+async function listByQueue({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -198,8 +191,7 @@ export async function listByQueue({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function updateStatus({ ticketId, status, reason }) {
+async function updateStatus({ ticketId, status, reason }) {
   const { rowCount } = await db.query(
     `UPDATE support_tickets
         SET status = $1,
@@ -211,8 +203,7 @@ export async function updateStatus({ ticketId, status, reason }) {
   );
   return rowCount > 0;
 }
-
-export async function updatePriority({ ticketId, priority }) {
+async function updatePriority({ ticketId, priority }) {
   const { rowCount } = await db.query(
     `UPDATE support_tickets
         SET priority = $1, updated_at = $2
@@ -221,8 +212,7 @@ export async function updatePriority({ ticketId, priority }) {
   );
   return rowCount > 0;
 }
-
-export async function assignAgent({ ticketId, agentId }) {
+async function assignAgent({ ticketId, agentId }) {
   const { rowCount } = await db.query(
     `UPDATE support_tickets
         SET assigned_agent_id = $1, updated_at = $2
@@ -231,8 +221,7 @@ export async function assignAgent({ ticketId, agentId }) {
   );
   return rowCount > 0;
 }
-
-export async function touchFirstResponse({ ticketId }) {
+async function touchFirstResponse({ ticketId }) {
   const { rowCount } = await db.query(
     `UPDATE support_tickets
         SET first_responded_at = COALESCE(first_responded_at, $1),
@@ -242,8 +231,7 @@ export async function touchFirstResponse({ ticketId }) {
   );
   return rowCount > 0;
 }
-
-export async function incrementReopenedCount({ ticketId }) {
+async function incrementReopenedCount({ ticketId }) {
   await db.query(
     `UPDATE support_tickets
         SET reopened_count = reopened_count + 1,
@@ -252,8 +240,7 @@ export async function incrementReopenedCount({ ticketId }) {
     [nowIso(), ticketId],
   );
 }
-
-export async function insertMessage({
+async function insertMessage({
   ticketId,
   authorId,
   authorType,
@@ -276,8 +263,7 @@ export async function insertMessage({
   );
   return rows[0];
 }
-
-export async function listMessages({ ticketId }) {
+async function listMessages({ ticketId }) {
   const { rows } = await db.query(
     `SELECT * FROM support_messages
       WHERE ticket_id = $1
@@ -286,16 +272,14 @@ export async function listMessages({ ticketId }) {
   );
   return rows;
 }
-
-export async function findMessageById({ messageId }) {
+async function findMessageById({ messageId }) {
   const { rows } = await db.query(
     `SELECT * FROM support_messages WHERE id = $1 LIMIT 1`,
     [messageId],
   );
   return rows[0] || null;
 }
-
-export async function listSlaBreaches({ limit = 100 }) {
+async function listSlaBreaches({ limit = 100 }) {
   const { rows } = await db.query(
     `SELECT * FROM support_tickets
       WHERE status NOT IN ('RESOLVED', 'CLOSED')
@@ -313,8 +297,7 @@ export async function listSlaBreaches({ limit = 100 }) {
   );
   return rows;
 }
-
-export async function countByStatusForUser({ userId }) {
+async function countByStatusForUser({ userId }) {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count
        FROM support_tickets
@@ -324,8 +307,7 @@ export async function countByStatusForUser({ userId }) {
   );
   return rows;
 }
-
-export async function countByStatusForAgent({ agentId }) {
+async function countByStatusForAgent({ agentId }) {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count
        FROM support_tickets
@@ -335,8 +317,7 @@ export async function countByStatusForAgent({ agentId }) {
   );
   return rows;
 }
-
-export async function countAllByStatus() {
+async function countAllByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count
        FROM support_tickets
@@ -344,8 +325,7 @@ export async function countAllByStatus() {
   );
   return rows;
 }
-
-export const ticketRepository = {
+const ticketRepository = {
   insertTicket,
   findById,
   findByNumber,
@@ -365,3 +345,40 @@ export const ticketRepository = {
   countByStatusForAgent,
   countAllByStatus,
 };
+module.exports.ticketRepository = ticketRepository;
+
+module.exports.insertTicket = insertTicket;
+
+module.exports.findById = findById;
+
+module.exports.findByNumber = findByNumber;
+
+module.exports.listByUser = listByUser;
+
+module.exports.listAssignedToAgent = listAssignedToAgent;
+
+module.exports.listByQueue = listByQueue;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.updatePriority = updatePriority;
+
+module.exports.assignAgent = assignAgent;
+
+module.exports.touchFirstResponse = touchFirstResponse;
+
+module.exports.incrementReopenedCount = incrementReopenedCount;
+
+module.exports.insertMessage = insertMessage;
+
+module.exports.listMessages = listMessages;
+
+module.exports.findMessageById = findMessageById;
+
+module.exports.listSlaBreaches = listSlaBreaches;
+
+module.exports.countByStatusForUser = countByStatusForUser;
+
+module.exports.countByStatusForAgent = countByStatusForAgent;
+
+module.exports.countAllByStatus = countAllByStatus;

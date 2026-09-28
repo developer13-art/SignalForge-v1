@@ -5,10 +5,8 @@
  *
  * @module server/modules/admin/reports/admin-report.repository
  */
-
-import { db } from '../../../database';
-
-export async function userGrowthSeries({ from, to, granularity = 'day' }) {
+const { db } = require('../../../database');
+async function userGrowthSeries({ from, to, granularity = 'day' }) {
   const dateTrunc = granularity === 'month' ? 'month' : granularity === 'week' ? 'week' : 'day';
 
   const { rows } = await db.query(
@@ -22,8 +20,7 @@ export async function userGrowthSeries({ from, to, granularity = 'day' }) {
 
   return rows.map((row) => ({ bucket: row.bucket, count: row.count }));
 }
-
-export async function providerGrowthSeries({ from, to, granularity = 'day' }) {
+async function providerGrowthSeries({ from, to, granularity = 'day' }) {
   const dateTrunc = granularity === 'month' ? 'month' : granularity === 'week' ? 'week' : 'day';
 
   const { rows } = await db.query(
@@ -37,8 +34,7 @@ export async function providerGrowthSeries({ from, to, granularity = 'day' }) {
 
   return rows.map((row) => ({ bucket: row.bucket, count: row.count }));
 }
-
-export async function signalActivitySeries({ from, to, granularity = 'day' }) {
+async function signalActivitySeries({ from, to, granularity = 'day' }) {
   const dateTrunc = granularity === 'month' ? 'month' : granularity === 'week' ? 'week' : 'day';
 
   const { rows } = await db.query(
@@ -60,8 +56,7 @@ export async function signalActivitySeries({ from, to, granularity = 'day' }) {
     rejected: row.rejected,
   }));
 }
-
-export async function tradeActivitySeries({ from, to, granularity = 'day' }) {
+async function tradeActivitySeries({ from, to, granularity = 'day' }) {
   const dateTrunc = granularity === 'month' ? 'month' : granularity === 'week' ? 'week' : 'day';
 
   const { rows } = await db.query(
@@ -85,8 +80,7 @@ export async function tradeActivitySeries({ from, to, granularity = 'day' }) {
     losers: row.losers,
   }));
 }
-
-export async function revenueSeries({ from, to, granularity = 'day' }) {
+async function revenueSeries({ from, to, granularity = 'day' }) {
   const dateTrunc = granularity === 'month' ? 'month' : granularity === 'week' ? 'week' : 'day';
 
   const { rows } = await db.query(
@@ -106,8 +100,7 @@ export async function revenueSeries({ from, to, granularity = 'day' }) {
     successfulPayments: row.successful_payments,
   }));
 }
-
-export async function referralSettlementSummary({ from, to }) {
+async function referralSettlementSummary({ from, to }) {
   const { rows } = await db.query(
     `SELECT
        COUNT(*)::int AS total_rewards,
@@ -130,8 +123,7 @@ export async function referralSettlementSummary({ from, to }) {
     underReviewCount: row.under_review_count || 0,
   };
 }
-
-export async function topProvidersByRevenue({ from, to, limit = 10 }) {
+async function topProvidersByRevenue({ from, to, limit = 10 }) {
   const { rows } = await db.query(
     `SELECT p.id, p.display_name, COALESCE(SUM(pr.amount), 0)::numeric AS revenue
        FROM providers p
@@ -148,8 +140,7 @@ export async function topProvidersByRevenue({ from, to, limit = 10 }) {
     revenue: Number(row.revenue || 0),
   }));
 }
-
-export const adminReportRepository = {
+const adminReportRepository = {
   userGrowthSeries,
   providerGrowthSeries,
   signalActivitySeries,
@@ -158,3 +149,18 @@ export const adminReportRepository = {
   referralSettlementSummary,
   topProvidersByRevenue,
 };
+module.exports.adminReportRepository = adminReportRepository;
+
+module.exports.userGrowthSeries = userGrowthSeries;
+
+module.exports.providerGrowthSeries = providerGrowthSeries;
+
+module.exports.signalActivitySeries = signalActivitySeries;
+
+module.exports.tradeActivitySeries = tradeActivitySeries;
+
+module.exports.revenueSeries = revenueSeries;
+
+module.exports.referralSettlementSummary = referralSettlementSummary;
+
+module.exports.topProvidersByRevenue = topProvidersByRevenue;

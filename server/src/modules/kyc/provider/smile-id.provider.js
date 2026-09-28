@@ -6,14 +6,12 @@
  *
  * @module signalforge/server/modules/kyc/provider/smile-id
  */
-
-import smileIdConfig from '../../../config/smileid.config.js';
-import { KycProviderInterface } from './kyc-provider.interface.js';
-import { KycProviderError, KycProviderNotConfiguredError } from '../kyc.errors.js';
-import { VERIFICATION_RESULTS } from '../kyc.constants.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class SmileIdProvider extends KycProviderInterface {
+const smileIdConfig = require('../../../config/smileid.config.js');
+const { KycProviderInterface } = require('./kyc-provider.interface.js');
+const { KycProviderError, KycProviderNotConfiguredError } = require('../kyc.errors.js');
+const { VERIFICATION_RESULTS } = require('../kyc.constants.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class SmileIdProvider extends KycProviderInterface {
   constructor(config = null) {
     super('smileid');
     this.config = config || smileIdConfig;
@@ -117,5 +115,5 @@ export class SmileIdProvider extends KycProviderInterface {
     };
   }
 }
-
-export default SmileIdProvider;
+module.exports = SmileIdProvider;
+module.exports.SmileIdProvider = SmileIdProvider;

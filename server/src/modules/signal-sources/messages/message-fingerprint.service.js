@@ -8,15 +8,13 @@
  *
  * @module server/modules/signal-sources/messages/message-fingerprint.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { buildMessageFingerprint } from '@signalforge/shared/utils/fingerprint.util';
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function computeFingerprint({ userId, messageId }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { buildMessageFingerprint } = require('@signalforge/shared/utils/fingerprint.util');
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function computeFingerprint({ userId, messageId }) {
   if (!userId || !messageId) {
     throw new AppError('userId and messageId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -64,8 +62,7 @@ export async function computeFingerprint({ userId, messageId }) {
     envelope,
   };
 }
-
-export async function findByFingerprint({ fingerprint, sourceType }) {
+async function findByFingerprint({ fingerprint, sourceType }) {
   if (!fingerprint) {
     throw new AppError('fingerprint is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -93,8 +90,7 @@ export async function findByFingerprint({ fingerprint, sourceType }) {
     timestamp: row.timestamp,
   }));
 }
-
-export async function recordFingerprint({ userId, messageId, fingerprint, sourceType, sourceId, externalMessageId, timestamp }) {
+async function recordFingerprint({ userId, messageId, fingerprint, sourceType, sourceId, externalMessageId, timestamp }) {
   if (!userId || !messageId || !fingerprint) {
     throw new AppError('userId, messageId, and fingerprint are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -109,9 +105,15 @@ export async function recordFingerprint({ userId, messageId, fingerprint, source
 
   logger.debug({ userId, messageId, fingerprint }, 'Message fingerprint recorded');
 }
-
-export const messageFingerprintService = {
+const messageFingerprintService = {
   computeFingerprint,
   findByFingerprint,
   recordFingerprint,
 };
+module.exports.messageFingerprintService = messageFingerprintService;
+
+module.exports.computeFingerprint = computeFingerprint;
+
+module.exports.findByFingerprint = findByFingerprint;
+
+module.exports.recordFingerprint = recordFingerprint;

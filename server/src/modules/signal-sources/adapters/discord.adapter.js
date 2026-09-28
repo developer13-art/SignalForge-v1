@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/signal-sources/adapters/discord
  */
-
-import { BaseAdapter } from './base.adapter.js';
-import { SOURCE_TYPES } from '../source.constants.js';
-
-export class DiscordAdapter extends BaseAdapter {
+const { BaseAdapter } = require('./base.adapter.js');
+const { SOURCE_TYPES } = require('../source.constants.js');
+class DiscordAdapter extends BaseAdapter {
   constructor(config = {}) {
     super(config);
     this.name = SOURCE_TYPES.DISCORD;
@@ -66,5 +64,5 @@ export class DiscordAdapter extends BaseAdapter {
     };
   }
 }
-
-export default DiscordAdapter;
+module.exports = DiscordAdapter;
+module.exports.DiscordAdapter = DiscordAdapter;

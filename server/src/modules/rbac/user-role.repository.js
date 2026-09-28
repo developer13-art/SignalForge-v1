@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/rbac/user-role-repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class UserRoleRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class UserRoleRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -94,5 +92,5 @@ export class UserRoleRepository {
     return result.rows[0]?.count || 0;
   }
 }
-
-export default UserRoleRepository;
+module.exports = UserRoleRepository;
+module.exports.UserRoleRepository = UserRoleRepository;

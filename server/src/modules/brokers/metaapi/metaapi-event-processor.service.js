@@ -6,10 +6,9 @@
  *
  * @module signalforge/server/modules/brokers/metaapi/event-processor
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { AccountRepository } from '../accounts/account.repository.js';
-import { emitStreamEvent } from '../broker.events.js';
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { AccountRepository } = require('../accounts/account.repository.js');
+const { emitStreamEvent } = require('../broker.events.js');
 
 const SUPPORTED_EVENT_TYPES = Object.freeze([
   'positions',
@@ -21,8 +20,7 @@ const SUPPORTED_EVENT_TYPES = Object.freeze([
   'synchronization',
   'terminalState',
 ]);
-
-export class MetaApiEventProcessorService {
+class MetaApiEventProcessorService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new AccountRepository();
     this.logger = getLogger('metaapi-event-processor');
@@ -116,5 +114,5 @@ export class MetaApiEventProcessorService {
     this.logger.debug({ accountId: account.id, state: event?.state }, 'Terminal state event');
   }
 }
-
-export default MetaApiEventProcessorService;
+module.exports = MetaApiEventProcessorService;
+module.exports.MetaApiEventProcessorService = MetaApiEventProcessorService;

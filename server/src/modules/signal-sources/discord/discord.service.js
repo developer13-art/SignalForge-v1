@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/signal-sources/discord/service
  */
-
-import { DiscordRepository } from './discord.repository.js';
-import { DiscordOAuthService } from './discord-oauth.service.js';
-import { DiscordListenerService } from './discord-listener.service.js';
-
-export class DiscordService {
+const { DiscordRepository } = require('./discord.repository.js');
+const { DiscordOAuthService } = require('./discord-oauth.service.js');
+const { DiscordListenerService } = require('./discord-listener.service.js');
+class DiscordService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new DiscordRepository();
     this.oauth = dependencies.oauth || new DiscordOAuthService(this.repository);
@@ -90,5 +88,5 @@ export class DiscordService {
     return { updated: true, channelCount: channelIds.length };
   }
 }
-
-export default DiscordService;
+module.exports = DiscordService;
+module.exports.DiscordService = DiscordService;

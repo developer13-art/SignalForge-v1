@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trader-intelligence/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class IntelligenceRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class IntelligenceRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -211,5 +209,5 @@ export class IntelligenceRepository {
     ]);
   }
 }
-
-export default IntelligenceRepository;
+module.exports = IntelligenceRepository;
+module.exports.IntelligenceRepository = IntelligenceRepository;

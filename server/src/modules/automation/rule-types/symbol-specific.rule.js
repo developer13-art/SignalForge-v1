@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/automation/rule-types/symbol-specific
  */
-
-import { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } from '../automation.constants.js';
-
-export class SymbolSpecificRule {
+const { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } = require('../automation.constants.js');
+class SymbolSpecificRule {
   static supports(condition) {
     return [
       AUTOMATION_CONDITION_TYPES.SYMBOL_IS,
@@ -18,5 +16,5 @@ export class SymbolSpecificRule {
     return [AUTOMATION_ACTION_TYPES.SKIP_SIGNAL];
   }
 }
-
-export default SymbolSpecificRule;
+module.exports = SymbolSpecificRule;
+module.exports.SymbolSpecificRule = SymbolSpecificRule;

@@ -3,18 +3,12 @@
  *
  * @module signalforge/server/modules/provider-dna/rules/service
  */
-
-import { RuleRepository } from './rule.repository.js';
-import { RuleMatcherService } from './rule-matcher.service.js';
-import { DnaRepository } from '../dna.repository.js';
-import { DnaRuleNotFoundError } from '../dna.errors.js';
-import {
-  emitDnaRuleCreated,
-  emitDnaRuleUpdated,
-  emitDnaRuleDeleted,
-} from '../dna.events.js';
-
-export class RuleService {
+const { RuleRepository } = require('./rule.repository.js');
+const { RuleMatcherService } = require('./rule-matcher.service.js');
+const { DnaRepository } = require('../dna.repository.js');
+const { DnaRuleNotFoundError } = require('../dna.errors.js');
+const { emitDnaRuleCreated, emitDnaRuleUpdated, emitDnaRuleDeleted } = require('../dna.events.js');
+class RuleService {
   constructor(repository = null, dnaRepository = null) {
     this.repository = repository || new RuleRepository();
     this.dnaRepository = dnaRepository || new DnaRepository();
@@ -111,5 +105,5 @@ export class RuleService {
     };
   }
 }
-
-export default RuleService;
+module.exports = RuleService;
+module.exports.RuleService = RuleService;

@@ -3,17 +3,10 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/google
  */
-
-import { LlmProviderInterface } from './llm-provider.interface.js';
-import llmConfig from '../../../config/llm.config.js';
-import {
-  LlmProviderError,
-  LlmProviderNotConfiguredError,
-  LlmRateLimitError,
-  LlmTimeoutError,
-} from '../ai.errors.js';
-
-export class GoogleProvider extends LlmProviderInterface {
+const { LlmProviderInterface } = require('./llm-provider.interface.js');
+const llmConfig = require('../../../config/llm.config.js');
+const { LlmProviderError, LlmProviderNotConfiguredError, LlmRateLimitError, LlmTimeoutError } = require('../ai.errors.js');
+class GoogleProvider extends LlmProviderInterface {
   constructor(config = null) {
     super('google');
     this.config = (config || llmConfig).providers.google;
@@ -121,5 +114,5 @@ export class GoogleProvider extends LlmProviderInterface {
     }
   }
 }
-
-export default GoogleProvider;
+module.exports = GoogleProvider;
+module.exports.GoogleProvider = GoogleProvider;

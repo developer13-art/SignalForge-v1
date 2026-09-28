@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/subscriptions/upgrade/upgrade
  */
-
-import { SubscriptionRepository } from '../subscription.repository.js';
-import { PlanService } from '../plans/service.js';
-import { ActivationService } from '../lifecycle/activation.service.js';
-import { UpgradeFailedError } from '../subscription.errors.js';
-import { emitSubscriptionUpgraded } from '../subscription.events.js';
-
-export class UpgradeService {
+const { SubscriptionRepository } = require('../subscription.repository.js');
+const { PlanService } = require('../plans/service.js');
+const { ActivationService } = require('../lifecycle/activation.service.js');
+const { UpgradeFailedError } = require('../subscription.errors.js');
+const { emitSubscriptionUpgraded } = require('../subscription.events.js');
+class UpgradeService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new SubscriptionRepository();
     this.plans = dependencies.plans || new PlanService();
@@ -75,5 +73,5 @@ export class UpgradeService {
     };
   }
 }
-
-export default UpgradeService;
+module.exports = UpgradeService;
+module.exports.UpgradeService = UpgradeService;

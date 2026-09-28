@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/confidence/repository
  */
-
-import { AiRepository } from '../ai.repository.js';
-
-export class ConfidenceRepository {
+const { AiRepository } = require('../ai.repository.js');
+class ConfidenceRepository {
   constructor(db = null) {
     this.aiRepository = new AiRepository(db);
   }
@@ -23,5 +21,5 @@ export class ConfidenceRepository {
     return this.aiRepository.averageConfidence(filters);
   }
 }
-
-export default ConfidenceRepository;
+module.exports = ConfidenceRepository;
+module.exports.ConfidenceRepository = ConfidenceRepository;

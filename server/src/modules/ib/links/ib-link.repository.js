@@ -6,11 +6,9 @@
  *
  * @module server/modules/ib/links/ib-link.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertLink({ userId, brokerId, code, label, destination }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertLink({ userId, brokerId, code, label, destination }) {
   const { rows } = await db.query(
     `INSERT INTO ib_links
        (user_id, broker_id, code, label, destination, active, clicks, conversions, created_at, updated_at)
@@ -20,24 +18,21 @@ export async function insertLink({ userId, brokerId, code, label, destination })
   );
   return rows[0];
 }
-
-export async function findById({ linkId }) {
+async function findById({ linkId }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_links WHERE id = $1 LIMIT 1`,
     [linkId],
   );
   return rows[0] || null;
 }
-
-export async function findByCode({ code }) {
+async function findByCode({ code }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_links WHERE code = $1 LIMIT 1`,
     [code],
   );
   return rows[0] || null;
 }
-
-export async function listByUser({ userId }) {
+async function listByUser({ userId }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_links
       WHERE user_id = $1
@@ -46,8 +41,7 @@ export async function listByUser({ userId }) {
   );
   return rows;
 }
-
-export async function listActiveByUser({ userId }) {
+async function listActiveByUser({ userId }) {
   const { rows } = await db.query(
     `SELECT * FROM ib_links
       WHERE user_id = $1 AND active = TRUE
@@ -56,8 +50,7 @@ export async function listActiveByUser({ userId }) {
   );
   return rows;
 }
-
-export async function deactivateLink({ linkId, userId }) {
+async function deactivateLink({ linkId, userId }) {
   const { rowCount } = await db.query(
     `UPDATE ib_links
         SET active = FALSE, updated_at = $1
@@ -66,8 +59,7 @@ export async function deactivateLink({ linkId, userId }) {
   );
   return rowCount > 0;
 }
-
-export async function incrementClicks({ linkId }) {
+async function incrementClicks({ linkId }) {
   await db.query(
     `UPDATE ib_links
         SET clicks = clicks + 1, updated_at = $1
@@ -75,8 +67,7 @@ export async function incrementClicks({ linkId }) {
     [nowIso(), linkId],
   );
 }
-
-export async function incrementConversions({ linkId }) {
+async function incrementConversions({ linkId }) {
   await db.query(
     `UPDATE ib_links
         SET conversions = conversions + 1, updated_at = $1
@@ -84,8 +75,7 @@ export async function incrementConversions({ linkId }) {
     [nowIso(), linkId],
   );
 }
-
-export async function countByUser({ userId }) {
+async function countByUser({ userId }) {
   const { rows } = await db.query(
     `SELECT
        COUNT(*)::int AS total,
@@ -96,8 +86,7 @@ export async function countByUser({ userId }) {
   );
   return rows[0] || { total: 0, active: 0 };
 }
-
-export const ibLinkRepository = {
+const ibLinkRepository = {
   insertLink,
   findById,
   findByCode,
@@ -108,3 +97,22 @@ export const ibLinkRepository = {
   incrementConversions,
   countByUser,
 };
+module.exports.ibLinkRepository = ibLinkRepository;
+
+module.exports.insertLink = insertLink;
+
+module.exports.findById = findById;
+
+module.exports.findByCode = findByCode;
+
+module.exports.listByUser = listByUser;
+
+module.exports.listActiveByUser = listActiveByUser;
+
+module.exports.deactivateLink = deactivateLink;
+
+module.exports.incrementClicks = incrementClicks;
+
+module.exports.incrementConversions = incrementConversions;
+
+module.exports.countByUser = countByUser;

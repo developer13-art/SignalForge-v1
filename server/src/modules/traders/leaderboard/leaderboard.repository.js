@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/traders/leaderboard/repository
  */
-
-import { TraderRepository } from '../trader.repository.js';
-
-export class LeaderboardRepository {
+const { TraderRepository } = require('../trader.repository.js');
+class LeaderboardRepository {
   constructor(db = null) {
     this.traderRepository = new TraderRepository(db);
   }
@@ -15,5 +13,5 @@ export class LeaderboardRepository {
     return this.traderRepository.getLeaderboard(metric, period, limit);
   }
 }
-
-export default LeaderboardRepository;
+module.exports = LeaderboardRepository;
+module.exports.LeaderboardRepository = LeaderboardRepository;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/parser/symbol
  */
-
-import { SymbolNormalizerService } from '../normalization/symbol-normalizer.service.js';
-
-export class SymbolExtractorService {
+const { SymbolNormalizerService } = require('../normalization/symbol-normalizer.service.js');
+class SymbolExtractorService {
   constructor(normalizer = null) {
     this.normalizer = normalizer || new SymbolNormalizerService();
   }
@@ -26,5 +24,5 @@ export class SymbolExtractorService {
     return this.normalizer.extractFromText(text);
   }
 }
-
-export default SymbolExtractorService;
+module.exports = SymbolExtractorService;
+module.exports.SymbolExtractorService = SymbolExtractorService;

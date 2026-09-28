@@ -3,15 +3,11 @@
  *
  * @module signalforge/server/modules/validation/conflict/detector
  */
-
-import { ConflictRepository } from './conflict.repository.js';
-import { StandardizationRepository } from '../../signal-standardization/standardization.repository.js';
-import {
-  DEFAULT_CONFLICT_WINDOW_MINUTES,
-} from '../validation.constants.js';
-import { emitConflictDetected } from '../validation.events.js';
-
-export class ConflictDetectorService {
+const { ConflictRepository } = require('./conflict.repository.js');
+const { StandardizationRepository } = require('../../signal-standardization/standardization.repository.js');
+const { DEFAULT_CONFLICT_WINDOW_MINUTES } = require('../validation.constants.js');
+const { emitConflictDetected } = require('../validation.events.js');
+class ConflictDetectorService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ConflictRepository();
     this.standardizationRepository =
@@ -83,5 +79,5 @@ export class ConflictDetectorService {
     return this.repository.findUnresolvedBySymbol(symbol, since);
   }
 }
-
-export default ConflictDetectorService;
+module.exports = ConflictDetectorService;
+module.exports.ConflictDetectorService = ConflictDetectorService;

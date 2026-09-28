@@ -3,19 +3,13 @@
  *
  * @module signalforge/server/modules/validation/validators/session
  */
-
-import {
-  VALIDATION_RESULTS,
-  VALIDATION_CHECK_NAMES,
-  TRADING_SESSIONS,
-} from '../validation.constants.js';
+const { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES, TRADING_SESSIONS } = require('../validation.constants.js');
 
 function parseMinutes(time) {
   const [hours, minutes] = time.split(':').map(Number);
   return hours * 60 + minutes;
 }
-
-export class SessionCheck {
+class SessionCheck {
   constructor() {
     this.name = VALIDATION_CHECK_NAMES.SESSION;
   }
@@ -54,5 +48,5 @@ export class SessionCheck {
     };
   }
 }
-
-export default SessionCheck;
+module.exports = SessionCheck;
+module.exports.SessionCheck = SessionCheck;

@@ -5,13 +5,11 @@
  *
  * @module signalforge/server/bootstrap/initWhatsAppListeners
  */
-
-import { getLogger } from './initLogger.js';
-import whatsAppConfig from '../config/whatsapp.config.js';
+const { getLogger } = require('./initLogger.js');
+const whatsAppConfig = require('../config/whatsapp.config.js');
 
 let listenersState = null;
-
-export async function initWhatsAppListeners(dependencies = {}) {
+async function initWhatsAppListeners(dependencies = {}) {
   const logger = getLogger('whatsapp-listeners');
 
   if (!whatsAppConfig.enabled || !whatsAppConfig.listener.enabled) {
@@ -37,10 +35,17 @@ export async function initWhatsAppListeners(dependencies = {}) {
     try {
       const result = await db.query(
         `
-          SELECT id, user_id, phone_number_id, group_ids
-          FROM whatsapp_connections
-          WHERE status = 'CONNECTED'
-            AND listener_enabled = true
+          SELECT
+            c.id,
+            c.user_id,
+            c.phone_number_id,
+            ARRAY(
+              SELECT g.group_id
+              FROM whatsapp_groups g
+              WHERE g.user_id = c.user_id
+                AND g.monitored = TRUE
+            ) AS group_ids
+          FROM whatsapp_connections c
         `,
       );
       return result.rows;
@@ -106,9 +111,10 @@ export async function initWhatsAppListeners(dependencies = {}) {
 
   return listenersState;
 }
-
-export function getWhatsAppListeners() {
+function getWhatsAppListeners() {
   return listenersState;
 }
+module.exports = initWhatsAppListeners;
+module.exports.getWhatsAppListeners = getWhatsAppListeners;
 
-export default initWhatsAppListeners;
+module.exports.initWhatsAppListeners = initWhatsAppListeners;

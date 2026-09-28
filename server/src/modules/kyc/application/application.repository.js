@@ -5,10 +5,8 @@
  *
  * @module signalforge/server/modules/kyc/application/repository
  */
-
-import { KycRepository } from '../kyc.repository.js';
-
-export class ApplicationRepository {
+const { KycRepository } = require('../kyc.repository.js');
+class ApplicationRepository {
   constructor(db = null) {
     this.kycRepository = new KycRepository(db);
   }
@@ -49,5 +47,5 @@ export class ApplicationRepository {
     return this.kycRepository.updateUserKycStatus(userId, status);
   }
 }
-
-export default ApplicationRepository;
+module.exports = ApplicationRepository;
+module.exports.ApplicationRepository = ApplicationRepository;

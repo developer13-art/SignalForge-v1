@@ -8,8 +8,7 @@
  *
  * @module signalforge/server/bootstrap/initJobRunner
  */
-
-import { getLogger } from './initLogger.js';
+const { getLogger } = require('./initLogger.js');
 
 const DEFAULT_POLL_INTERVAL_MS = 2000;
 const DEFAULT_BATCH_SIZE = 10;
@@ -17,8 +16,7 @@ const DEFAULT_CONCURRENCY = 5;
 const DEFAULT_JOB_TIMEOUT_MS = 60000;
 
 let runnerState = null;
-
-export async function initJobRunner(dependencies = {}) {
+async function initJobRunner(dependencies = {}) {
   const logger = getLogger('job-runner');
 
   if (runnerState) {
@@ -65,8 +63,8 @@ export async function initJobRunner(dependencies = {}) {
           SELECT id, job_type, payload, attempts, max_attempts
           FROM jobs
           WHERE status IN ('PENDING', 'SCHEDULED', 'RETRYING')
-            AND scheduled_for <= NOW()
-          ORDER BY scheduled_for ASC
+            AND scheduled_at <= NOW()
+          ORDER BY scheduled_at ASC
           LIMIT $1
           FOR UPDATE SKIP LOCKED
         `,
@@ -241,12 +239,13 @@ export async function initJobRunner(dependencies = {}) {
 
   return runnerState;
 }
-
-export function getJobRunner() {
+function getJobRunner() {
   if (!runnerState) {
     throw new Error('Job runner has not been initialized');
   }
   return runnerState;
 }
+module.exports = initJobRunner;
+module.exports.getJobRunner = getJobRunner;
 
-export default initJobRunner;
+module.exports.initJobRunner = initJobRunner;

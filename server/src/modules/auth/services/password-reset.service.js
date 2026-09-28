@@ -3,20 +3,14 @@
  *
  * @module signalforge/server/modules/auth/services/password-reset
  */
-
-import { normalizeEmail } from '@signalforge/shared/validators/email.validator';
-
-import { resetTokenService } from '../tokens/reset-token.service.js';
-import { LocalStrategy } from '../strategies/local.strategy.js';
-import { SessionService } from './session.service.js';
-import { TOKEN_TYPES } from '../auth.constants.js';
-import { InvalidTokenError } from '../auth.errors.js';
-import {
-  emitPasswordResetRequested,
-  emitPasswordResetCompleted,
-} from '../auth.events.js';
-
-export class PasswordResetService {
+const { normalizeEmail } = require('@signalforge/shared/validators/email.validator');
+const { resetTokenService } = require('../tokens/reset-token.service.js');
+const { LocalStrategy } = require('../strategies/local.strategy.js');
+const { SessionService } = require('./session.service.js');
+const { TOKEN_TYPES } = require('../auth.constants.js');
+const { InvalidTokenError } = require('../auth.errors.js');
+const { emitPasswordResetRequested, emitPasswordResetCompleted } = require('../auth.events.js');
+class PasswordResetService {
   constructor(repository, notificationService = null) {
     this.repository = repository;
     this.notifications = notificationService;
@@ -87,5 +81,5 @@ export class PasswordResetService {
     return { reset: true, userId: record.user_id };
   }
 }
-
-export default PasswordResetService;
+module.exports = PasswordResetService;
+module.exports.PasswordResetService = PasswordResetService;

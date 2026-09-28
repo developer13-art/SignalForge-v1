@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * SignalForge AI - Server Entry Point
  *
@@ -5,17 +7,25 @@
  * orchestrates the boot sequence, starts the HTTP and WebSocket
  * servers, and installs graceful shutdown handlers.
  *
- * The actual server application is composed in `app.js`. The HTTP
- * server lifecycle is managed in `server.js`.
+ * The .env file is loaded BEFORE any other module is required so that
+ * every config module sees a populated process.env.
  *
  * @module signalforge/server/index
  */
 
-import { createServer } from './server.js';
-import { logger } from './lib/logger.js';
-import { loadEnv } from './bootstrap/loadEnv.js';
-import { validateEnv } from './bootstrap/validateEnv.js';
-import { installGracefulShutdown } from './bootstrap/gracefulShutdown.js';
+const path = require('node:path');
+
+// Load .env first, before any other module in the process requires
+// a config file. This must stay at the top of the file.
+require('dotenv').config({
+  path: path.resolve(__dirname, '..', '.env'),
+});
+
+const { createServer } = require('./server.js');
+const { logger } = require('./lib/logger.js');
+const { loadEnv } = require('./bootstrap/loadEnv.js');
+const { validateEnv } = require('./bootstrap/validateEnv.js');
+const { installGracefulShutdown } = require('./bootstrap/gracefulShutdown.js');
 
 async function main() {
   try {
@@ -59,6 +69,26 @@ process.on('unhandledRejection', (reason) => {
 });
 
 process.on('uncaughtException', (error) => {
+  const message = (error && error.message) || '';
+  const code = (error && error.code) || '';
+
+  const transientCodes = ['ECONNRESET', 'ETIMEDOUT', 'EPIPE', 'ECONNREFUSED', 'ENOTFOUND'];
+  const transientMessages = [
+    'Connection terminated unexpectedly',
+    'Connection terminated due to connection timeout',
+    'Client has encountered a connection error',
+    'Client was closed and is not queryable',
+  ];
+
+  const isTransient =
+    transientCodes.includes(code) ||
+    transientMessages.some((m) => message.includes(m));
+
+  if (isTransient) {
+    logger.warn({ err: error }, 'Transient connection error ignored');
+    return;
+  }
+
   logger.fatal({ err: error }, 'Uncaught exception');
   process.exit(1);
 });

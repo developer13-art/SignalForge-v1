@@ -5,8 +5,7 @@
  */
 
 const WINDOW_MS = 60000;
-
-export class RestApiRateLimitService {
+class RestApiRateLimitService {
   constructor(maxRequestsPerMinute = 60) {
     this.max = maxRequestsPerMinute;
     this.windowMs = WINDOW_MS;
@@ -45,5 +44,5 @@ export class RestApiRateLimitService {
     };
   }
 }
-
-export default RestApiRateLimitService;
+module.exports = RestApiRateLimitService;
+module.exports.RestApiRateLimitService = RestApiRateLimitService;

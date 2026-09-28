@@ -7,13 +7,12 @@
  *
  * @module server/modules/signal-sources/whatsapp/whatsapp-media.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { storageService } from '../../../lib/storage';
-import { whatsappCloudService } from './whatsapp-cloud.service';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { storageService } = require('../../../lib/storage');
+const { whatsappCloudService } = require('./whatsapp-cloud.service');
 
 const GRAPH_BASE = 'https://graph.facebook.com/v20.0';
 const MAX_MEDIA_BYTES = 25 * 1024 * 1024;
@@ -72,8 +71,7 @@ function extractMediaInfo(message) {
 
   return null;
 }
-
-export async function handleWhatsAppMediaMessage({ userId, phoneNumberId, message, envelope }) {
+async function handleWhatsAppMediaMessage({ userId, phoneNumberId, message, envelope }) {
   if (!userId || !phoneNumberId || !message) {
     throw new AppError(
       'userId, phoneNumberId, and message are required',
@@ -192,9 +190,11 @@ export async function handleWhatsAppMediaMessage({ userId, phoneNumberId, messag
 
   return { handled: true, media: descriptor };
 }
-
-export const whatsappMediaService = {
+const whatsappMediaService = {
   handleWhatsAppMediaMessage,
   SUPPORTED_MEDIA_TYPES,
   MAX_MEDIA_BYTES,
 };
+module.exports.whatsappMediaService = whatsappMediaService;
+
+module.exports.handleWhatsAppMediaMessage = handleWhatsAppMediaMessage;

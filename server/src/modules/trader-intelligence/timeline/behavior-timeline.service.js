@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/trader-intelligence/timeline/service
  */
-
-import { BehaviorTimelineRepository } from './repository.js';
-import { emitTimelineUpdated } from '../intelligence.events.js';
-
-export class BehaviorTimelineService {
+const { BehaviorTimelineRepository } = require('./repository.js');
+const { emitTimelineUpdated } = require('../intelligence.events.js');
+class BehaviorTimelineService {
   constructor(repository = null) {
     this.repository = repository || new BehaviorTimelineRepository();
   }
@@ -72,5 +70,5 @@ export class BehaviorTimelineService {
     return input;
   }
 }
-
-export default BehaviorTimelineService;
+module.exports = BehaviorTimelineService;
+module.exports.BehaviorTimelineService = BehaviorTimelineService;

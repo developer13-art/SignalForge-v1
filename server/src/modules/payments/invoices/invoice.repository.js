@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/payments/invoices/repository
  */
-
-import { PaymentRepository } from '../payment.repository.js';
-
-export class InvoiceRepository {
+const { PaymentRepository } = require('../payment.repository.js');
+class InvoiceRepository {
   constructor(db = null) {
     this.paymentRepository = new PaymentRepository(db);
   }
@@ -31,5 +29,5 @@ export class InvoiceRepository {
     return this.paymentRepository.listInvoices(userId, filters, pagination);
   }
 }
-
-export default InvoiceRepository;
+module.exports = InvoiceRepository;
+module.exports.InvoiceRepository = InvoiceRepository;

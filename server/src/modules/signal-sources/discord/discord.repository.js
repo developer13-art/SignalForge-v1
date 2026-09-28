@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/discord/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class DiscordRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class DiscordRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -96,5 +94,5 @@ export class DiscordRepository {
     await this.db.query(`DELETE FROM discord_connections WHERE id = $1`, [connectionId]);
   }
 }
-
-export default DiscordRepository;
+module.exports = DiscordRepository;
+module.exports.DiscordRepository = DiscordRepository;

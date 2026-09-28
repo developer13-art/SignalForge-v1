@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/management-instructions/move-sl-breakeven
  */
-
-import { MANAGEMENT_INSTRUCTION_TYPES } from '../matching.constants.js';
-
-export class MoveSlBreakEvenHandler {
+const { MANAGEMENT_INSTRUCTION_TYPES } = require('../matching.constants.js');
+class MoveSlBreakEvenHandler {
   constructor() {
     this.instructionType = MANAGEMENT_INSTRUCTION_TYPES.MOVE_SL_BREAKEVEN;
   }
@@ -45,5 +43,5 @@ export class MoveSlBreakEvenHandler {
     };
   }
 }
-
-export default MoveSlBreakEvenHandler;
+module.exports = MoveSlBreakEvenHandler;
+module.exports.MoveSlBreakEvenHandler = MoveSlBreakEvenHandler;

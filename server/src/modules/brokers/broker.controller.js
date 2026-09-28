@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/brokers/controller
  */
-
-import { BrokerService } from './broker.service.js';
-import { AccountController } from './accounts/account.controller.js';
-import { validateCreateBrokerPayload, validateUpdateBrokerPayload } from './broker.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class BrokerController {
+const { BrokerService } = require('./broker.service.js');
+const { AccountController } = require('./accounts/account.controller.js');
+const { validateCreateBrokerPayload, validateUpdateBrokerPayload } = require('./broker.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class BrokerController {
   constructor(service = null) {
     this.service = service || new BrokerService();
     this.accountController = new AccountController(this.service.accounts);
@@ -118,5 +116,5 @@ export class BrokerController {
     }
   };
 }
-
-export default BrokerController;
+module.exports = BrokerController;
+module.exports.BrokerController = BrokerController;

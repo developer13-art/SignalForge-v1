@@ -3,47 +3,24 @@
  *
  * @module signalforge/server/modules/trader-intelligence/service
  */
-
-import { IntelligenceRepository } from './intelligence.repository.js';
-import { ConsistencyService } from './analysis/consistency.js';
-import { DisciplineService } from './analysis/discipline.js';
-import { HoldingTimeService } from './analysis/holding-time.js';
-import { MartingaleDetectorService } from './analysis/martingale-detector.js';
-import { GridDetectorService } from './analysis/grid-detector.js';
-import { NewsExposureService } from './analysis/news-exposure.js';
-import { RecoveryTradingService } from './analysis/recovery-trading.js';
-import { AverageRrService } from './analysis/average-rr.js';
-import { StyleClassifierService } from './classification/style-classifier.js';
-import { RiskClassifierService } from './classification/risk-classifier.js';
-import { BehaviorClassifierService } from './classification/behavior-classifier.js';
-import { BehaviorTimelineService } from './timeline/service.js';
-import {
-  ANALYSIS_WINDOWS,
-  MAX_ANALYSIS_LIMIT,
-  DEFAULT_ANALYSIS_LIMIT,
-  MIN_TRADES_FOR_CLASSIFICATION,
-} from './intelligence.constants.js';
-import {
-  TraderIntelligenceNotFoundError,
-  InsufficientTradesError,
-  InvalidAnalysisRequestError,
-} from './intelligence.errors.js';
-import {
-  emitAnalysisStarted,
-  emitAnalysisCompleted,
-  emitAnalysisFailed,
-  emitStyleClassified,
-  emitRiskClassified,
-  emitBehaviorClassified,
-  emitMartingaleDetected,
-  emitGridDetected,
-  emitRecoveryTradingDetected,
-  emitNewsOverexposureDetected,
-  emitDisciplineAlert,
-} from './intelligence.events.js';
-import { getLogger } from '../../bootstrap/initLogger.js';
-
-export class TraderIntelligenceService {
+const { IntelligenceRepository } = require('./intelligence.repository.js');
+const { ConsistencyService } = require('./analysis/consistency.js');
+const { DisciplineService } = require('./analysis/discipline.js');
+const { HoldingTimeService } = require('./analysis/holding-time.js');
+const { MartingaleDetectorService } = require('./analysis/martingale-detector.js');
+const { GridDetectorService } = require('./analysis/grid-detector.js');
+const { NewsExposureService } = require('./analysis/news-exposure.js');
+const { RecoveryTradingService } = require('./analysis/recovery-trading.js');
+const { AverageRrService } = require('./analysis/average-rr.js');
+const { StyleClassifierService } = require('./classification/style-classifier.js');
+const { RiskClassifierService } = require('./classification/risk-classifier.js');
+const { BehaviorClassifierService } = require('./classification/behavior-classifier.js');
+const { BehaviorTimelineService } = require('./timeline/service.js');
+const { ANALYSIS_WINDOWS, MAX_ANALYSIS_LIMIT, DEFAULT_ANALYSIS_LIMIT, MIN_TRADES_FOR_CLASSIFICATION } = require('./intelligence.constants.js');
+const { TraderIntelligenceNotFoundError, InsufficientTradesError, InvalidAnalysisRequestError } = require('./intelligence.errors.js');
+const { emitAnalysisStarted, emitAnalysisCompleted, emitAnalysisFailed, emitStyleClassified, emitRiskClassified, emitBehaviorClassified, emitMartingaleDetected, emitGridDetected, emitRecoveryTradingDetected, emitNewsOverexposureDetected, emitDisciplineAlert } = require('./intelligence.events.js');
+const { getLogger } = require('../../bootstrap/initLogger.js');
+class TraderIntelligenceService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new IntelligenceRepository();
     this.consistency = dependencies.consistency || new ConsistencyService();
@@ -249,6 +226,5 @@ export class TraderIntelligenceService {
   }
 }
 
-export { InvalidAnalysisRequestError };
-
-export default TraderIntelligenceService;
+module.exports = TraderIntelligenceService;
+module.exports.TraderIntelligenceService = TraderIntelligenceService;

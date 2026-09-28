@@ -3,20 +3,13 @@
  *
  * @module signalforge/server/modules/payments/providers/paystack
  */
-
-import crypto from 'node:crypto';
-
-import { PaymentProviderInterface } from './payment-provider.interface.js';
-import paystackConfig from '../../../config/paystack.config.js';
-import {
-  PaymentProviderError,
-  PaymentProviderNotConfiguredError,
-  WebhookVerificationError,
-} from '../payment.errors.js';
+const crypto = require('node:crypto');
+const { PaymentProviderInterface } = require('./payment-provider.interface.js');
+const paystackConfig = require('../../../config/paystack.config.js');
+const { PaymentProviderError, PaymentProviderNotConfiguredError, WebhookVerificationError } = require('../payment.errors.js');
 
 const TIMEOUT_MS = 30000;
-
-export class PaystackProvider extends PaymentProviderInterface {
+class PaystackProvider extends PaymentProviderInterface {
   constructor(config = null) {
     super('PAYSTACK');
     this.config = config || paystackConfig;
@@ -184,5 +177,5 @@ export class PaystackProvider extends PaymentProviderInterface {
     };
   }
 }
-
-export default PaystackProvider;
+module.exports = PaystackProvider;
+module.exports.PaystackProvider = PaystackProvider;

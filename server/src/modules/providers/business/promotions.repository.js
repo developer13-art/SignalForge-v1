@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/providers/business/promotions-repository
  */
-
-import { ProviderRepository } from '../provider.repository.js';
-
-export class ProviderPromotionsRepository {
+const { ProviderRepository } = require('../provider.repository.js');
+class ProviderPromotionsRepository {
   constructor(db = null) {
     this.providerRepository = new ProviderRepository(db);
   }
@@ -31,5 +29,5 @@ export class ProviderPromotionsRepository {
     return this.providerRepository.deletePromotion(promotionId);
   }
 }
-
-export default ProviderPromotionsRepository;
+module.exports = ProviderPromotionsRepository;
+module.exports.ProviderPromotionsRepository = ProviderPromotionsRepository;

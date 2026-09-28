@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/copy-trading/sync/provider-stop-sync
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { TradeStateRepository } from '../../trade-state/trade-state.repository.js';
-import { CopyTradingRepository } from '../copy-trading.repository.js';
-import { emitProviderStopSync, emitCopyFailed } from '../copy-trading.events.js';
-
-export class ProviderStopSyncService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { TradeStateRepository } = require('../../trade-state/trade-state.repository.js');
+const { CopyTradingRepository } = require('../copy-trading.repository.js');
+const { emitProviderStopSync, emitCopyFailed } = require('../copy-trading.events.js');
+class ProviderStopSyncService {
   constructor(dependencies = {}) {
     this.tradeRepository = dependencies.tradeRepository || new TradeStateRepository();
     this.copyRepository = dependencies.copyRepository || new CopyTradingRepository();
@@ -58,5 +56,5 @@ export class ProviderStopSyncService {
     return { synced, failed, providerTradeId };
   }
 }
-
-export default ProviderStopSyncService;
+module.exports = ProviderStopSyncService;
+module.exports.ProviderStopSyncService = ProviderStopSyncService;

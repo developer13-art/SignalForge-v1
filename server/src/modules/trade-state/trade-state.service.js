@@ -3,30 +3,18 @@
  *
  * @module signalforge/server/modules/trade-state/service
  */
-
-import crypto from 'node:crypto';
-
-import { TradeStateRepository } from './trade-state.repository.js';
-import { LifecycleService } from './lifecycle/lifecycle.service.js';
-import { StateTransitions } from './lifecycle/state-transitions.js';
-import { TransitionValidatorService } from './lifecycle/transition-validator.service.js';
-import { ActorAttributionService } from './lifecycle/actor-attribution.service.js';
-import { TradeEventService } from './events/trade-event.service.js';
-import { TradeEventStreamService } from './events/trade-event-stream.service.js';
-import {
-  TRADE_STATES,
-  TRADE_ACTORS,
-  isTerminalState,
-} from './trade-state.constants.js';
-import { TradeNotFoundError } from './trade-state.errors.js';
-import {
-  emitTradeCreated,
-  emitTradeUpdated,
-  emitTradeClosed,
-  emitTradeArchived,
-} from './trade-state.events.js';
-
-export class TradeStateService {
+const crypto = require('node:crypto');
+const { TradeStateRepository } = require('./trade-state.repository.js');
+const { LifecycleService } = require('./lifecycle/lifecycle.service.js');
+const { StateTransitions } = require('./lifecycle/state-transitions.js');
+const { TransitionValidatorService } = require('./lifecycle/transition-validator.service.js');
+const { ActorAttributionService } = require('./lifecycle/actor-attribution.service.js');
+const { TradeEventService } = require('./events/trade-event.service.js');
+const { TradeEventStreamService } = require('./events/trade-event-stream.service.js');
+const { TRADE_STATES, TRADE_ACTORS, isTerminalState } = require('./trade-state.constants.js');
+const { TradeNotFoundError } = require('./trade-state.errors.js');
+const { emitTradeCreated, emitTradeUpdated, emitTradeClosed, emitTradeArchived } = require('./trade-state.events.js');
+class TradeStateService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TradeStateRepository();
     this.transitions = dependencies.transitions || new StateTransitions();
@@ -302,5 +290,5 @@ export class TradeStateService {
     return input;
   }
 }
-
-export default TradeStateService;
+module.exports = TradeStateService;
+module.exports.TradeStateService = TradeStateService;

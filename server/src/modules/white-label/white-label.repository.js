@@ -5,11 +5,9 @@
  *
  * @module server/modules/white-label/white-label.repository
  */
-
-import { db } from '../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertProject({
+const { db } = require('../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertProject({
   ownerUserId,
   slug,
   name,
@@ -26,24 +24,21 @@ export async function insertProject({
   );
   return rows[0];
 }
-
-export async function findById({ projectId }) {
+async function findById({ projectId }) {
   const { rows } = await db.query(
     `SELECT * FROM white_label_projects WHERE id = $1 LIMIT 1`,
     [projectId],
   );
   return rows[0] || null;
 }
-
-export async function findBySlug({ slug }) {
+async function findBySlug({ slug }) {
   const { rows } = await db.query(
     `SELECT * FROM white_label_projects WHERE slug = $1 LIMIT 1`,
     [slug],
   );
   return rows[0] || null;
 }
-
-export async function listByOwner({ ownerUserId }) {
+async function listByOwner({ ownerUserId }) {
   const { rows } = await db.query(
     `SELECT * FROM white_label_projects
       WHERE owner_user_id = $1
@@ -52,8 +47,7 @@ export async function listByOwner({ ownerUserId }) {
   );
   return rows;
 }
-
-export async function updateStatus({ projectId, status }) {
+async function updateStatus({ projectId, status }) {
   const { rowCount } = await db.query(
     `UPDATE white_label_projects
         SET status = $1, updated_at = $2
@@ -62,8 +56,7 @@ export async function updateStatus({ projectId, status }) {
   );
   return rowCount > 0;
 }
-
-export async function updateProject({ projectId, name, brandName, brandDomain }) {
+async function updateProject({ projectId, name, brandName, brandDomain }) {
   const { rowCount } = await db.query(
     `UPDATE white_label_projects
         SET name = COALESCE($1, name),
@@ -75,23 +68,20 @@ export async function updateProject({ projectId, name, brandName, brandDomain })
   );
   return rowCount > 0;
 }
-
-export async function deleteProject({ projectId }) {
+async function deleteProject({ projectId }) {
   const { rowCount } = await db.query(
     `DELETE FROM white_label_projects WHERE id = $1`,
     [projectId],
   );
   return rowCount > 0;
 }
-
-export async function listAll() {
+async function listAll() {
   const { rows } = await db.query(
     `SELECT * FROM white_label_projects ORDER BY created_at DESC`,
   );
   return rows;
 }
-
-export const whiteLabelRepository = {
+const whiteLabelRepository = {
   insertProject,
   findById,
   findBySlug,
@@ -101,3 +91,20 @@ export const whiteLabelRepository = {
   deleteProject,
   listAll,
 };
+module.exports.whiteLabelRepository = whiteLabelRepository;
+
+module.exports.insertProject = insertProject;
+
+module.exports.findById = findById;
+
+module.exports.findBySlug = findBySlug;
+
+module.exports.listByOwner = listByOwner;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.updateProject = updateProject;
+
+module.exports.deleteProject = deleteProject;
+
+module.exports.listAll = listAll;

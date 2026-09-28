@@ -8,27 +8,14 @@
  *
  * @module signalforge/server/modules/signal-collection/worker
  */
-
-import { getLogger } from '../../bootstrap/initLogger.js';
-import { CollectionQueueService } from './collection-queue.service.js';
-import { CollectionDispatcherService } from './collection-dispatcher.service.js';
-import {
-  DEFAULT_BATCH_SIZE,
-  DEFAULT_POLL_INTERVAL_MS,
-  DEFAULT_ITEM_TIMEOUT_MS,
-} from './collection.constants.js';
-import {
-  emitItemProcessing,
-  emitItemProcessed,
-  emitItemFailed,
-  emitItemDeadLettered,
-  emitBatchStarted,
-  emitBatchCompleted,
-} from './collection.events.js';
-import { COLLECTION_EVENTS } from './collection.constants.js';
-import { getEventBus } from '../../bootstrap/initEventBus.js';
-
-export class CollectionWorker {
+const { getLogger } = require('../../bootstrap/initLogger.js');
+const { CollectionQueueService } = require('./collection-queue.service.js');
+const { CollectionDispatcherService } = require('./collection-dispatcher.service.js');
+const { DEFAULT_BATCH_SIZE, DEFAULT_POLL_INTERVAL_MS, DEFAULT_ITEM_TIMEOUT_MS } = require('./collection.constants.js');
+const { emitItemProcessing, emitItemProcessed, emitItemFailed, emitItemDeadLettered, emitBatchStarted, emitBatchCompleted } = require('./collection.events.js');
+const { COLLECTION_EVENTS } = require('./collection.constants.js');
+const { getEventBus } = require('../../bootstrap/initEventBus.js');
+class CollectionWorker {
   constructor(dependencies = {}) {
     this.queue = dependencies.queue || new CollectionQueueService();
     this.dispatcher = dependencies.dispatcher || new CollectionDispatcherService();
@@ -161,6 +148,5 @@ export class CollectionWorker {
   }
 }
 
-export { COLLECTION_EVENTS };
-
-export default CollectionWorker;
+module.exports = CollectionWorker;
+module.exports.CollectionWorker = CollectionWorker;

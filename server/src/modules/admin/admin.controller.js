@@ -5,13 +5,11 @@
  *
  * @module server/modules/admin/admin.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { successResponse } from '../../lib/response/success.response';
-import { adminService } from './admin.service';
-
-export async function getPlatformOverview(req, res) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { successResponse } = require('../../lib/response/success.response');
+const { adminService } = require('./admin.service');
+async function getPlatformOverview(req, res) {
   const adminId = req.user && req.user.id;
   const { since } = req.query;
 
@@ -23,8 +21,7 @@ export async function getPlatformOverview(req, res) {
 
   return successResponse(res, { overview });
 }
-
-export async function listAdminActions(req, res) {
+async function listAdminActions(req, res) {
   const adminId = req.user && req.user.id;
   const { limit } = req.query;
 
@@ -38,8 +35,7 @@ export async function listAdminActions(req, res) {
 
   return successResponse(res, { actions });
 }
-
-export async function getSystemHealth(req, res) {
+async function getSystemHealth(req, res) {
   const adminId = req.user && req.user.id;
 
   if (!adminId) {
@@ -50,9 +46,15 @@ export async function getSystemHealth(req, res) {
 
   return successResponse(res, { health });
 }
-
-export const adminController = {
+const adminController = {
   getPlatformOverview,
   listAdminActions,
   getSystemHealth,
 };
+module.exports.adminController = adminController;
+
+module.exports.getPlatformOverview = getPlatformOverview;
+
+module.exports.listAdminActions = listAdminActions;
+
+module.exports.getSystemHealth = getSystemHealth;

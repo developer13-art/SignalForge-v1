@@ -7,23 +7,17 @@
  *
  * @module signalforge/server/modules/kyc/verification/service
  */
-
-import { VerificationRepository } from './verification.repository.js';
-import { LivenessService } from './liveness.service.js';
-import { NameMatchService } from './name-match.service.js';
-import { DobMatchService } from './dob-match.service.js';
-import { RiskScoreService } from './risk-score.service.js';
-import { KYC_PROVIDERS, VERIFICATION_RESULTS } from '../kyc.constants.js';
-import { KycProviderNotConfiguredError } from '../kyc.errors.js';
-import {
-  emitVerificationStarted,
-  emitVerificationCompleted,
-  emitVerificationFailed,
-} from '../kyc.events.js';
-import { ApplicationRepository } from '../application/application.repository.js';
-import { KycRepository } from '../kyc.repository.js';
-
-export class VerificationService {
+const { VerificationRepository } = require('./verification.repository.js');
+const { LivenessService } = require('./liveness.service.js');
+const { NameMatchService } = require('./name-match.service.js');
+const { DobMatchService } = require('./dob-match.service.js');
+const { RiskScoreService } = require('./risk-score.service.js');
+const { KYC_PROVIDERS, VERIFICATION_RESULTS } = require('../kyc.constants.js');
+const { KycProviderNotConfiguredError } = require('../kyc.errors.js');
+const { emitVerificationStarted, emitVerificationCompleted, emitVerificationFailed } = require('../kyc.events.js');
+const { ApplicationRepository } = require('../application/application.repository.js');
+const { KycRepository } = require('../kyc.repository.js');
+class VerificationService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new VerificationRepository();
     this.applicationRepository = dependencies.applicationRepository || new ApplicationRepository();
@@ -147,5 +141,5 @@ export class VerificationService {
     return this.repository.list(applicationId);
   }
 }
-
-export default VerificationService;
+module.exports = VerificationService;
+module.exports.VerificationService = VerificationService;

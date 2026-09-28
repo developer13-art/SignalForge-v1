@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/email/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class EmailRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class EmailRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -85,5 +83,5 @@ export class EmailRepository {
     await this.db.query(`DELETE FROM email_connections WHERE id = $1`, [connectionId]);
   }
 }
-
-export default EmailRepository;
+module.exports = EmailRepository;
+module.exports.EmailRepository = EmailRepository;

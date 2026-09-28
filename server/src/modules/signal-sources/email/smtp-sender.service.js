@@ -7,11 +7,10 @@
  *
  * @module server/modules/signal-sources/email/smtp-sender.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { config } from '../../../config';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { config } = require('../../../config');
 
 function assertSmtpConfig() {
   if (!config.mail || !config.mail.host) {
@@ -31,8 +30,7 @@ function buildFromAddress() {
   const name = config.mail.fromName || 'SignalForge';
   return `${name} <${address}>`;
 }
-
-export async function sendEmail({ to, subject, text, html, replyTo, cc, bcc }) {
+async function sendEmail({ to, subject, text, html, replyTo, cc, bcc }) {
   assertSmtpConfig();
 
   if (!to) {
@@ -94,8 +92,7 @@ export async function sendEmail({ to, subject, text, html, replyTo, cc, bcc }) {
     }
   }
 }
-
-export async function sendVerificationEmail({ to, code, expiresInMinutes = 15 }) {
+async function sendVerificationEmail({ to, code, expiresInMinutes = 15 }) {
   const subject = 'Verify your SignalForge account';
   const text = `Your verification code is ${code}. It expires in ${expiresInMinutes} minutes.`;
   const html = `
@@ -109,8 +106,7 @@ export async function sendVerificationEmail({ to, code, expiresInMinutes = 15 })
   `;
   return sendEmail({ to, subject, text, html });
 }
-
-export async function sendPasswordResetEmail({ to, code, expiresInMinutes = 15 }) {
+async function sendPasswordResetEmail({ to, code, expiresInMinutes = 15 }) {
   const subject = 'Reset your SignalForge password';
   const text = `Your password reset code is ${code}. It expires in ${expiresInMinutes} minutes.`;
   const html = `
@@ -124,14 +120,21 @@ export async function sendPasswordResetEmail({ to, code, expiresInMinutes = 15 }
   `;
   return sendEmail({ to, subject, text, html });
 }
-
-export async function sendSystemEmail({ to, subject, text, html, replyTo }) {
+async function sendSystemEmail({ to, subject, text, html, replyTo }) {
   return sendEmail({ to, subject, text, html, replyTo });
 }
-
-export const smtpSenderService = {
+const smtpSenderService = {
   sendEmail,
   sendVerificationEmail,
   sendPasswordResetEmail,
   sendSystemEmail,
 };
+module.exports.smtpSenderService = smtpSenderService;
+
+module.exports.sendEmail = sendEmail;
+
+module.exports.sendVerificationEmail = sendVerificationEmail;
+
+module.exports.sendPasswordResetEmail = sendPasswordResetEmail;
+
+module.exports.sendSystemEmail = sendSystemEmail;

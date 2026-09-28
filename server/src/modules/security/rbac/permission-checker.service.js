@@ -8,10 +8,9 @@
  *
  * @module server/modules/security/rbac/permission-checker.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { db } from '../../../database';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { db } = require('../../../database');
 
 const CACHE_TTL_MS = 60 * 1000;
 const CACHE = new Map();
@@ -34,8 +33,7 @@ function writeCache(userId, value) {
     expiresAt: Date.now() + CACHE_TTL_MS,
   });
 }
-
-export async function resolvePermissions({ userId }) {
+async function resolvePermissions({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -91,8 +89,7 @@ export async function resolvePermissions({ userId }) {
 
   return result;
 }
-
-export async function hasPermission({ userId, permission }) {
+async function hasPermission({ userId, permission }) {
   if (!permission) {
     throw new AppError('permission is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -101,8 +98,7 @@ export async function hasPermission({ userId, permission }) {
 
   return resolved.permissions.includes('*') || resolved.permissions.includes(permission);
 }
-
-export async function hasAnyPermission({ userId, permissions }) {
+async function hasAnyPermission({ userId, permissions }) {
   if (!Array.isArray(permissions) || permissions.length === 0) {
     throw new AppError('permissions must be a non-empty array', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -115,8 +111,7 @@ export async function hasAnyPermission({ userId, permissions }) {
 
   return permissions.some((p) => resolved.permissions.includes(p));
 }
-
-export async function hasAllPermissions({ userId, permissions }) {
+async function hasAllPermissions({ userId, permissions }) {
   if (!Array.isArray(permissions) || permissions.length === 0) {
     throw new AppError('permissions must be a non-empty array', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -129,8 +124,7 @@ export async function hasAllPermissions({ userId, permissions }) {
 
   return permissions.every((p) => resolved.permissions.includes(p));
 }
-
-export async function hasRole({ userId, roleName }) {
+async function hasRole({ userId, roleName }) {
   if (!roleName) {
     throw new AppError('roleName is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -139,16 +133,14 @@ export async function hasRole({ userId, roleName }) {
 
   return resolved.roles.includes(roleName);
 }
-
-export function invalidateCache(userId) {
+function invalidateCache(userId) {
   if (userId) {
     CACHE.delete(userId);
   } else {
     CACHE.clear();
   }
 }
-
-export const permissionCheckerService = {
+const permissionCheckerService = {
   resolvePermissions,
   hasPermission,
   hasAnyPermission,
@@ -156,3 +148,15 @@ export const permissionCheckerService = {
   hasRole,
   invalidateCache,
 };
+module.exports.permissionCheckerService = permissionCheckerService;
+module.exports.invalidateCache = invalidateCache;
+
+module.exports.resolvePermissions = resolvePermissions;
+
+module.exports.hasPermission = hasPermission;
+
+module.exports.hasAnyPermission = hasAnyPermission;
+
+module.exports.hasAllPermissions = hasAllPermissions;
+
+module.exports.hasRole = hasRole;

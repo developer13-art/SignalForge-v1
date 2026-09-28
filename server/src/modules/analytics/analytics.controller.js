@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/analytics/controller
  */
-
-import { AnalyticsService } from './analytics.service.js';
-import { ReportController } from './reports/report.controller.js';
-import { METRIC_TYPES } from './analytics.constants.js';
-
-export class AnalyticsController {
+const { AnalyticsService } = require('./analytics.service.js');
+const { ReportController } = require('./reports/report.controller.js');
+const { METRIC_TYPES } = require('./analytics.constants.js');
+class AnalyticsController {
   constructor(service = null) {
     this.service = service || new AnalyticsService();
     this.reportController = new ReportController(this.service.reports);
@@ -190,5 +188,5 @@ export class AnalyticsController {
     return this.reportController.deleteReport(req, res, next);
   };
 }
-
-export default AnalyticsController;
+module.exports = AnalyticsController;
+module.exports.AnalyticsController = AnalyticsController;

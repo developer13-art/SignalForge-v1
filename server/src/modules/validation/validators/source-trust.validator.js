@@ -3,14 +3,8 @@
  *
  * @module signalforge/server/modules/validation/validators/source-trust
  */
-
-import {
-  VALIDATION_RESULTS,
-  VALIDATION_CHECK_NAMES,
-  DEFAULT_MIN_SOURCE_TRUST,
-} from '../validation.constants.js';
-
-export class SourceTrustCheck {
+const { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES, DEFAULT_MIN_SOURCE_TRUST } = require('../validation.constants.js');
+class SourceTrustCheck {
   constructor() {
     this.name = VALIDATION_CHECK_NAMES.SOURCE_TRUST;
   }
@@ -41,5 +35,5 @@ export class SourceTrustCheck {
     return { name: this.name, result: VALIDATION_RESULTS.PASSED };
   }
 }
-
-export default SourceTrustCheck;
+module.exports = SourceTrustCheck;
+module.exports.SourceTrustCheck = SourceTrustCheck;

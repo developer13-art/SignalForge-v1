@@ -3,26 +3,11 @@
  *
  * @module signalforge/server/modules/auth/controller
  */
-
-import { AuthService } from './auth.service.js';
-import {
-  validateRegisterPayload,
-  validateLoginPayload,
-  validatePasswordResetRequestPayload,
-  validatePasswordResetPayload,
-  validatePasswordChangePayload,
-  validateEmailVerificationPayload,
-  validatePhoneVerificationPayload,
-  validatePhoneVerifyRequestPayload,
-  validateTwoFactorSetupPayload,
-  validateTwoFactorVerifyPayload,
-  validateTwoFactorDisablePayload,
-  validateRefreshTokenPayload,
-} from './auth.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-import jwtConfig from '../../config/jwt.config.js';
-
-export class AuthController {
+const { AuthService } = require('./auth.service.js');
+const { validateRegisterPayload, validateLoginPayload, validatePasswordResetRequestPayload, validatePasswordResetPayload, validatePasswordChangePayload, validateEmailVerificationPayload, validatePhoneVerificationPayload, validatePhoneVerifyRequestPayload, validateTwoFactorSetupPayload, validateTwoFactorVerifyPayload, validateTwoFactorDisablePayload, validateRefreshTokenPayload } = require('./auth.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+const jwtConfig = require('../../config/jwt.config.js');
+class AuthController {
   constructor(service = null) {
     this.service = service || new AuthService();
   }
@@ -399,5 +384,5 @@ export class AuthController {
     }
   };
 }
-
-export default AuthController;
+module.exports = AuthController;
+module.exports.AuthController = AuthController;

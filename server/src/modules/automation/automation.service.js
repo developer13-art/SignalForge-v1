@@ -3,26 +3,15 @@
  *
  * @module signalforge/server/modules/automation/service
  */
-
-import { AutomationRepository } from './automation.repository.js';
-import { RulesEngineService } from './engine/rules-engine.service.js';
-import { ConditionEvaluatorService } from './engine/condition-evaluator.service.js';
-import { ActionExecutorService } from './engine/action-executor.service.js';
-import { RulePriorityService } from './engine/rule-priority.service.js';
-import {
-  AutomationRuleNotFoundError,
-  AutomationRuleLimitExceededError,
-} from './automation.errors.js';
-import { MAX_RULES_PER_USER } from './automation.constants.js';
-import {
-  emitRuleCreated,
-  emitRuleUpdated,
-  emitRuleDeleted,
-  emitRuleEnabled,
-  emitRuleDisabled,
-} from './automation.events.js';
-
-export class AutomationService {
+const { AutomationRepository } = require('./automation.repository.js');
+const { RulesEngineService } = require('./engine/rules-engine.service.js');
+const { ConditionEvaluatorService } = require('./engine/condition-evaluator.service.js');
+const { ActionExecutorService } = require('./engine/action-executor.service.js');
+const { RulePriorityService } = require('./engine/rule-priority.service.js');
+const { AutomationRuleNotFoundError, AutomationRuleLimitExceededError } = require('./automation.errors.js');
+const { MAX_RULES_PER_USER } = require('./automation.constants.js');
+const { emitRuleCreated, emitRuleUpdated, emitRuleDeleted, emitRuleEnabled, emitRuleDisabled } = require('./automation.events.js');
+class AutomationService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new AutomationRepository();
     this.conditionEvaluator =
@@ -185,5 +174,5 @@ export class AutomationService {
     return input;
   }
 }
-
-export default AutomationService;
+module.exports = AutomationService;
+module.exports.AutomationService = AutomationService;

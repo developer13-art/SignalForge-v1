@@ -3,21 +3,15 @@
  *
  * @module signalforge/server/modules/trades/operations/manual-open
  */
-
-import crypto from 'node:crypto';
-
-import { TradeRepository } from '../trade.repository.js';
-import { TradeTimelineService } from '../timeline/trade-timeline.service.js';
-import { AccountRepository } from '../../brokers/accounts/account.repository.js';
-import {
-  emitManualOpen,
-  emitTradeCreated,
-} from '../trade.events.js';
-import { BrokerAccountNotFoundError } from '../../brokers/broker.errors.js';
-import { normalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
-import { TRADE_STATUSES, TRADE_ACTORS } from '../trade.constants.js';
-
-export class ManualOpenService {
+const crypto = require('node:crypto');
+const { TradeRepository } = require('../trade.repository.js');
+const { TradeTimelineService } = require('../timeline/trade-timeline.service.js');
+const { AccountRepository } = require('../../brokers/accounts/account.repository.js');
+const { emitManualOpen, emitTradeCreated } = require('../trade.events.js');
+const { BrokerAccountNotFoundError } = require('../../brokers/broker.errors.js');
+const { normalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
+const { TRADE_STATUSES, TRADE_ACTORS } = require('../trade.constants.js');
+class ManualOpenService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TradeRepository();
     this.timeline = dependencies.timeline || new TradeTimelineService();
@@ -127,5 +121,5 @@ export class ManualOpenService {
     return { trade: finalTrade, execution: executionResult };
   }
 }
-
-export default ManualOpenService;
+module.exports = ManualOpenService;
+module.exports.ManualOpenService = ManualOpenService;

@@ -7,8 +7,7 @@
  *
  * @module server/lib/errors/app-error
  */
-
-export class AppError extends Error {
+class AppError extends Error {
   constructor(message, code = 'INTERNAL_ERROR', statusCode = 500, details = null) {
     super(message);
     this.name = 'AppError';
@@ -29,5 +28,5 @@ export class AppError extends Error {
     };
   }
 }
-
-export default AppError;
+module.exports = AppError;
+module.exports.AppError = AppError;

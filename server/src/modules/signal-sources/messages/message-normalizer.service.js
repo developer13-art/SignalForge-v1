@@ -6,10 +6,8 @@
  *
  * @module signalforge/server/modules/signal-sources/messages/normalizer
  */
-
-import { MAX_MESSAGE_TEXT_LENGTH, MESSAGE_SOURCES } from '../source.constants.js';
-
-export class MessageNormalizerService {
+const { MAX_MESSAGE_TEXT_LENGTH, MESSAGE_SOURCES } = require('../source.constants.js');
+class MessageNormalizerService {
   sanitizeText(text) {
     if (typeof text !== 'string') {
       return '';
@@ -68,5 +66,5 @@ export class MessageNormalizerService {
     };
   }
 }
-
-export default MessageNormalizerService;
+module.exports = MessageNormalizerService;
+module.exports.MessageNormalizerService = MessageNormalizerService;

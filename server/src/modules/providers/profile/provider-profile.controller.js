@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/providers/profile/controller
  */
-
-import { ProviderProfileService } from './service.js';
-
-export class ProviderProfileController {
+const { ProviderProfileService } = require('./service.js');
+class ProviderProfileController {
   constructor(service = null) {
     this.service = service || new ProviderProfileService();
   }
@@ -90,5 +88,5 @@ export class ProviderProfileController {
     }
   };
 }
-
-export default ProviderProfileController;
+module.exports = ProviderProfileController;
+module.exports.ProviderProfileController = ProviderProfileController;

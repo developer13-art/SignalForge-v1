@@ -3,21 +3,17 @@
  *
  * @module signalforge/server/modules/referrals/service
  */
-
-import { ReferralRepository } from './referral.repository.js';
-import { ReferralCodeService } from './codes/service.js';
-import { ReferralRelationshipService } from './relationships/service.js';
-import { ReferralRewardService } from './rewards/service.js';
-import { ReferralWalletService } from './wallets/service.js';
-import { ReferralLedgerService } from './ledger/service.js';
-import { ReferralSettlementService } from './settlement/service.js';
-import { FraudDetectionService } from './fraud/detection.js';
-import { ReviewQueueService } from './fraud/review-queue.service.js';
-import {
-  REFERRAL_RELATIONSHIP_STATUSES,
-} from './referral.constants.js';
-
-export class ReferralService {
+const { ReferralRepository } = require('./referral.repository.js');
+const { ReferralCodeService } = require('./codes/service.js');
+const { ReferralRelationshipService } = require('./relationships/service.js');
+const { ReferralRewardService } = require('./rewards/service.js');
+const { ReferralWalletService } = require('./wallets/service.js');
+const { ReferralLedgerService } = require('./ledger/service.js');
+const { ReferralSettlementService } = require('./settlement/service.js');
+const { FraudDetectionService } = require('./fraud/detection.js');
+const { ReviewQueueService } = require('./fraud/review-queue.service.js');
+const { REFERRAL_RELATIONSHIP_STATUSES } = require('./referral.constants.js');
+class ReferralService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ReferralRepository();
 
@@ -172,5 +168,5 @@ export class ReferralService {
     return this.fraud.runChecks(payload);
   }
 }
-
-export default ReferralService;
+module.exports = ReferralService;
+module.exports.ReferralService = ReferralService;

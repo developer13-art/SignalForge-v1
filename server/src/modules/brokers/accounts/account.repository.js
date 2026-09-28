@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/brokers/accounts/repository
  */
-
-import { BrokerRepository } from '../broker.repository.js';
-
-export class AccountRepository {
+const { BrokerRepository } = require('../broker.repository.js');
+class AccountRepository {
   constructor(db = null) {
     this.brokerRepository = new BrokerRepository(db);
   }
@@ -67,5 +65,5 @@ export class AccountRepository {
     return this.brokerRepository.listConnectionLogs(accountId, pagination);
   }
 }
-
-export default AccountRepository;
+module.exports = AccountRepository;
+module.exports.AccountRepository = AccountRepository;

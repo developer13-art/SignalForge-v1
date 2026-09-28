@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/referrals/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class ReferralRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class ReferralRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -874,5 +872,5 @@ export class ReferralRepository {
     return { flags: result.rows, limit, offset };
   }
 }
-
-export default ReferralRepository;
+module.exports = ReferralRepository;
+module.exports.ReferralRepository = ReferralRepository;

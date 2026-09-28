@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/referrals/ledger/repository
  */
-
-import { ReferralRepository } from '../referral.repository.js';
-
-export class ReferralLedgerRepository {
+const { ReferralRepository } = require('../referral.repository.js');
+class ReferralLedgerRepository {
   constructor(db = null) {
     this.referralRepository = new ReferralRepository(db);
   }
@@ -27,5 +25,5 @@ export class ReferralLedgerRepository {
     return this.referralRepository.computeWalletBalance(walletId);
   }
 }
-
-export default ReferralLedgerRepository;
+module.exports = ReferralLedgerRepository;
+module.exports.ReferralLedgerRepository = ReferralLedgerRepository;

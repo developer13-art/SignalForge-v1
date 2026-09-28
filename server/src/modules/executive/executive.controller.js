@@ -5,11 +5,10 @@
  *
  * @module server/modules/executive/executive.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { successResponse } from '../../lib/response/success.response';
-import { executiveService } from './executive.service';
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { successResponse } = require('../../lib/response/success.response');
+const { executiveService } = require('./executive.service');
 
 function requireExecutive(req) {
   const userId = req.user && req.user.id;
@@ -18,8 +17,7 @@ function requireExecutive(req) {
   }
   return userId;
 }
-
-export async function getDashboard(req, res) {
+async function getDashboard(req, res) {
   requireExecutive(req);
 
   const { from, to } = req.query;
@@ -27,8 +25,7 @@ export async function getDashboard(req, res) {
 
   return successResponse(res, { dashboard });
 }
-
-export async function getRevenueBreakdown(req, res) {
+async function getRevenueBreakdown(req, res) {
   requireExecutive(req);
 
   const { from, to } = req.query;
@@ -36,8 +33,7 @@ export async function getRevenueBreakdown(req, res) {
 
   return successResponse(res, { revenue });
 }
-
-export async function getGrowthBreakdown(req, res) {
+async function getGrowthBreakdown(req, res) {
   requireExecutive(req);
 
   const { from, to, granularity } = req.query;
@@ -45,8 +41,7 @@ export async function getGrowthBreakdown(req, res) {
 
   return successResponse(res, { growth });
 }
-
-export async function getRetention(req, res) {
+async function getRetention(req, res) {
   requireExecutive(req);
 
   const { from, to } = req.query;
@@ -54,8 +49,7 @@ export async function getRetention(req, res) {
 
   return successResponse(res, { retention });
 }
-
-export async function getConversion(req, res) {
+async function getConversion(req, res) {
   requireExecutive(req);
 
   const { from, to } = req.query;
@@ -63,8 +57,7 @@ export async function getConversion(req, res) {
 
   return successResponse(res, { conversion });
 }
-
-export async function getFinancialReport(req, res) {
+async function getFinancialReport(req, res) {
   requireExecutive(req);
 
   const { from, to, granularity } = req.query;
@@ -72,8 +65,7 @@ export async function getFinancialReport(req, res) {
 
   return successResponse(res, { report });
 }
-
-export const executiveController = {
+const executiveController = {
   getDashboard,
   getRevenueBreakdown,
   getGrowthBreakdown,
@@ -81,3 +73,16 @@ export const executiveController = {
   getConversion,
   getFinancialReport,
 };
+module.exports.executiveController = executiveController;
+
+module.exports.getDashboard = getDashboard;
+
+module.exports.getRevenueBreakdown = getRevenueBreakdown;
+
+module.exports.getGrowthBreakdown = getGrowthBreakdown;
+
+module.exports.getRetention = getRetention;
+
+module.exports.getConversion = getConversion;
+
+module.exports.getFinancialReport = getFinancialReport;

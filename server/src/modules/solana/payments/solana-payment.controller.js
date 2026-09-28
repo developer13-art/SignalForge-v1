@@ -3,18 +3,13 @@
  *
  * @module server/modules/solana/payments/solana-payment.controller
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { successResponse } from '../../../lib/response/success.response';
-import { paginatedResponse } from '../../../lib/response/paginated.response';
-import { solanaPaymentService } from './solana-payment.service';
-import { paymentConfirmationService } from './payment-confirmation.service';
-import {
-  validateCreatePaymentPayload,
-  validateAttachSignaturePayload,
-  validateRefundPayload,
-} from './solana-payment.validator';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { successResponse } = require('../../../lib/response/success.response');
+const { paginatedResponse } = require('../../../lib/response/paginated.response');
+const { solanaPaymentService } = require('./solana-payment.service');
+const { paymentConfirmationService } = require('./payment-confirmation.service');
+const { validateCreatePaymentPayload, validateAttachSignaturePayload, validateRefundPayload } = require('./solana-payment.validator');
 
 function requireUser(req) {
   const userId = req.user && req.user.id;
@@ -32,8 +27,7 @@ function requireAdmin(req) {
   }
   return userId;
 }
-
-export async function createPayment(req, res) {
+async function createPayment(req, res) {
   const userId = requireUser(req);
 
   const payload = validateCreatePaymentPayload(req.body || {});
@@ -45,8 +39,7 @@ export async function createPayment(req, res) {
 
   return successResponse(res, { payment }, 201);
 }
-
-export async function attachSignature(req, res) {
+async function attachSignature(req, res) {
   requireUser(req);
 
   const payload = validateAttachSignaturePayload(req.body || {});
@@ -59,8 +52,7 @@ export async function attachSignature(req, res) {
 
   return successResponse(res, { payment });
 }
-
-export async function getPayment(req, res) {
+async function getPayment(req, res) {
   requireUser(req);
 
   const payment = await solanaPaymentService.getPayment({
@@ -69,8 +61,7 @@ export async function getPayment(req, res) {
 
   return successResponse(res, { payment });
 }
-
-export async function listPayments(req, res) {
+async function listPayments(req, res) {
   const userId = requireUser(req);
 
   const { page, limit, status, purpose, token } = req.query;
@@ -83,8 +74,7 @@ export async function listPayments(req, res) {
 
   return paginatedResponse(res, { items: result.items, meta: result.meta });
 }
-
-export async function markConfirmed(req, res) {
+async function markConfirmed(req, res) {
   requireAdmin(req);
 
   const { txSignature, slot, blockTime, confirmations } = req.body || {};
@@ -99,8 +89,7 @@ export async function markConfirmed(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function markFailed(req, res) {
+async function markFailed(req, res) {
   requireAdmin(req);
 
   const { reason } = req.body || {};
@@ -112,8 +101,7 @@ export async function markFailed(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function refundPayment(req, res) {
+async function refundPayment(req, res) {
   requireAdmin(req);
 
   const payload = validateRefundPayload(req.body || {});
@@ -126,8 +114,7 @@ export async function refundPayment(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function verifyPayment(req, res) {
+async function verifyPayment(req, res) {
   requireAdmin(req);
 
   const { paymentVerificationService } = await import('./payment-verification.service');
@@ -138,8 +125,7 @@ export async function verifyPayment(req, res) {
 
   return successResponse(res, { verification: result });
 }
-
-export async function confirmPayment(req, res) {
+async function confirmPayment(req, res) {
   requireAdmin(req);
 
   const result = await paymentConfirmationService.confirmPayment({
@@ -148,8 +134,7 @@ export async function confirmPayment(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function sweepPending(req, res) {
+async function sweepPending(req, res) {
   requireAdmin(req);
 
   const result = await paymentConfirmationService.confirmPendingPayments({
@@ -158,8 +143,7 @@ export async function sweepPending(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function sweepExpired(req, res) {
+async function sweepExpired(req, res) {
   requireAdmin(req);
 
   const result = await solanaPaymentService.sweepExpiredPayments({
@@ -168,16 +152,14 @@ export async function sweepExpired(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function getStatusBreakdown(req, res) {
+async function getStatusBreakdown(req, res) {
   requireAdmin(req);
 
   const result = await solanaPaymentService.getStatusBreakdown();
 
   return successResponse(res, result);
 }
-
-export const solanaPaymentController = {
+const solanaPaymentController = {
   createPayment,
   attachSignature,
   getPayment,
@@ -191,3 +173,28 @@ export const solanaPaymentController = {
   sweepExpired,
   getStatusBreakdown,
 };
+module.exports.solanaPaymentController = solanaPaymentController;
+
+module.exports.createPayment = createPayment;
+
+module.exports.attachSignature = attachSignature;
+
+module.exports.getPayment = getPayment;
+
+module.exports.listPayments = listPayments;
+
+module.exports.markConfirmed = markConfirmed;
+
+module.exports.markFailed = markFailed;
+
+module.exports.refundPayment = refundPayment;
+
+module.exports.verifyPayment = verifyPayment;
+
+module.exports.confirmPayment = confirmPayment;
+
+module.exports.sweepPending = sweepPending;
+
+module.exports.sweepExpired = sweepExpired;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

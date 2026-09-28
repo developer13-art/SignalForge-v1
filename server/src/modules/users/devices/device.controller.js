@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/users/devices/controller
  */
-
-import { DeviceService } from './device.service.js';
-
-export class DeviceController {
+const { DeviceService } = require('./device.service.js');
+class DeviceController {
   constructor(service = null) {
     this.service = service || new DeviceService();
   }
@@ -29,5 +27,5 @@ export class DeviceController {
     }
   };
 }
-
-export default DeviceController;
+module.exports = DeviceController;
+module.exports.DeviceController = DeviceController;

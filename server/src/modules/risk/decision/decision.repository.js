@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/risk/decision/repository
  */
-
-import { RiskRepository } from '../risk.repository.js';
-
-export class DecisionRepository {
+const { RiskRepository } = require('../risk.repository.js');
+class DecisionRepository {
   constructor(db = null) {
     this.riskRepository = new RiskRepository(db);
   }
@@ -39,5 +37,5 @@ export class DecisionRepository {
     return this.riskRepository.listRiskEvents(filters, pagination);
   }
 }
-
-export default DecisionRepository;
+module.exports = DecisionRepository;
+module.exports.DecisionRepository = DecisionRepository;

@@ -7,16 +7,14 @@
  *
  * @module server/modules/white-label/pricing/custom-pricing.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
 
 const DEFAULT_CURRENCY = 'USD';
-
-export async function getPricing({ projectId }) {
+async function getPricing({ projectId }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -43,8 +41,7 @@ export async function getPricing({ projectId }) {
     currency: row.currency,
   };
 }
-
-export async function updatePricing({ projectId, payload }) {
+async function updatePricing({ projectId, payload }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -73,16 +70,21 @@ export async function updatePricing({ projectId, payload }) {
 
   return getPricing({ projectId });
 }
-
-export async function deletePricing({ projectId }) {
+async function deletePricing({ projectId }) {
   if (!projectId) {
     return;
   }
   await db.query(`DELETE FROM white_label_pricing WHERE project_id = $1`, [projectId]);
 }
-
-export const customPricingService = {
+const customPricingService = {
   getPricing,
   updatePricing,
   deletePricing,
 };
+module.exports.customPricingService = customPricingService;
+
+module.exports.getPricing = getPricing;
+
+module.exports.updatePricing = updatePricing;
+
+module.exports.deletePricing = deletePricing;

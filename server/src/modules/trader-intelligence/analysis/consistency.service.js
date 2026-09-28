@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/trader-intelligence/analysis/consistency
  */
-
-export class ConsistencyService {
+class ConsistencyService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return { score: 0, samples: 0 };
@@ -67,5 +66,5 @@ export class ConsistencyService {
     return 'INCONSISTENT';
   }
 }
-
-export default ConsistencyService;
+module.exports = ConsistencyService;
+module.exports.ConsistencyService = ConsistencyService;

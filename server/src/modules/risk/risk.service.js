@@ -3,22 +3,20 @@
  *
  * @module signalforge/server/modules/risk/service
  */
-
-import { RiskRepository } from './risk.repository.js';
-import { DecisionService } from './decision/decision.service.js';
-import { DecisionRepository } from './decision/decision.repository.js';
-import { RiskProfileService } from './profile/risk-profile.service.js';
-import { PositionSizeService } from './calculator/position-size.service.js';
-import { LotSizeCalculatorService } from './calculator/lot-size-calculator.service.js';
-import { ExposureCalculatorService } from './calculator/exposure-calculator.service.js';
-import { PipValueService } from './calculator/pip-value.service.js';
-import { SymbolSpecService } from './market-data/symbol-spec.service.js';
-import { SpreadService } from './market-data/spread.service.js';
-import { SessionService } from './market-data/session.service.js';
-import { NewsCalendarService } from './news/news-calendar.service.js';
-import { NewsFilterService } from './news/news-filter.service.js';
-
-export class RiskService {
+const { RiskRepository } = require('./risk.repository.js');
+const { DecisionService } = require('./decision/decision.service.js');
+const { DecisionRepository } = require('./decision/decision.repository.js');
+const { RiskProfileService } = require('./profile/risk-profile.service.js');
+const { PositionSizeService } = require('./calculator/position-size.service.js');
+const { LotSizeCalculatorService } = require('./calculator/lot-size-calculator.service.js');
+const { ExposureCalculatorService } = require('./calculator/exposure-calculator.service.js');
+const { PipValueService } = require('./calculator/pip-value.service.js');
+const { SymbolSpecService } = require('./market-data/symbol-spec.service.js');
+const { SpreadService } = require('./market-data/spread.service.js');
+const { SessionService } = require('./market-data/session.service.js');
+const { NewsCalendarService } = require('./news/news-calendar.service.js');
+const { NewsFilterService } = require('./news/news-filter.service.js');
+class RiskService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new RiskRepository();
     this.profileService = dependencies.profileService || new RiskProfileService();
@@ -104,5 +102,5 @@ export class RiskService {
     this.newsCalendar.setEvents(events);
   }
 }
-
-export default RiskService;
+module.exports = RiskService;
+module.exports.RiskService = RiskService;

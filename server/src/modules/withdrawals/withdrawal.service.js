@@ -3,21 +3,12 @@
  *
  * @module signalforge/server/modules/withdrawals/service
  */
-
-import { WithdrawalRepository } from './withdrawal.repository.js';
-import { WithdrawalRequestService } from './requests/withdrawal-request.service.js';
-import { WithdrawalMethodFactory } from './methods/method.factory.js';
-import {
-  WithdrawalNotFoundError,
-  WithdrawalAccountNotFoundError,
-} from './withdrawal.errors.js';
-import {
-  emitWithdrawalMethodAdded,
-  emitWithdrawalMethodRemoved,
-  emitWithdrawalMethodVerified,
-} from './withdrawal.events.js';
-
-export class WithdrawalService {
+const { WithdrawalRepository } = require('./withdrawal.repository.js');
+const { WithdrawalRequestService } = require('./requests/withdrawal-request.service.js');
+const { WithdrawalMethodFactory } = require('./methods/method.factory.js');
+const { WithdrawalNotFoundError, WithdrawalAccountNotFoundError } = require('./withdrawal.errors.js');
+const { emitWithdrawalMethodAdded, emitWithdrawalMethodRemoved, emitWithdrawalMethodVerified } = require('./withdrawal.events.js');
+class WithdrawalService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new WithdrawalRepository();
     this.requests =
@@ -176,5 +167,5 @@ export class WithdrawalService {
     return input;
   }
 }
-
-export default WithdrawalService;
+module.exports = WithdrawalService;
+module.exports.WithdrawalService = WithdrawalService;

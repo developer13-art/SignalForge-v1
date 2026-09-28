@@ -3,9 +3,8 @@
  *
  * @module signalforge/server/modules/subscriptions/usage/limits
  */
-
-import { USAGE_METRICS, PLAN_FEATURES } from '../subscription.constants.js';
-import { PlanFeatureService } from '../plans/feature.js';
+const { USAGE_METRICS, PLAN_FEATURES } = require('../subscription.constants.js');
+const { PlanFeatureService } = require('../plans/feature.js');
 
 const METRIC_TO_FEATURE = Object.freeze({
   [USAGE_METRICS.SIGNAL_SOURCES]: PLAN_FEATURES.SIGNAL_SOURCES,
@@ -16,8 +15,7 @@ const METRIC_TO_FEATURE = Object.freeze({
   [USAGE_METRICS.REPORTS_GENERATED]: PLAN_FEATURES.ANALYTICS_DEPTH,
   [USAGE_METRICS.API_REQUESTS]: PLAN_FEATURES.API_ACCESS,
 });
-
-export class UsageLimitsService {
+class UsageLimitsService {
   constructor(features = null) {
     this.features = features || new PlanFeatureService();
   }
@@ -75,5 +73,5 @@ export class UsageLimitsService {
     return limit;
   }
 }
-
-export default UsageLimitsService;
+module.exports = UsageLimitsService;
+module.exports.UsageLimitsService = UsageLimitsService;

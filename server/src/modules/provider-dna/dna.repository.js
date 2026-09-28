@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/provider-dna/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class DnaRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class DnaRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -310,5 +308,5 @@ export class DnaRepository {
     return result.rowCount;
   }
 }
-
-export default DnaRepository;
+module.exports = DnaRepository;
+module.exports.DnaRepository = DnaRepository;

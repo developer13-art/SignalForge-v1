@@ -7,14 +7,13 @@
  *
  * @module server/modules/provider-dna/learning/feedback-loop.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { publishEvent } from '../../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { publishEvent } = require('../../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
 
 const FEEDBACK_TYPES = Object.freeze({
   PARSE_SUCCESS: 'PARSE_SUCCESS',
@@ -27,8 +26,7 @@ const FEEDBACK_TYPES = Object.freeze({
 });
 
 const LEARNING_THRESHOLD = 5;
-
-export async function recordFeedback({
+async function recordFeedback({
   providerId,
   signalId,
   messageId,
@@ -114,8 +112,7 @@ async function handleUserCorrection({ providerId, signalId, messageId, details, 
 
   return { handled: true };
 }
-
-export async function aggregateProviderFeedback({ providerId, windowDays = 30 }) {
+async function aggregateProviderFeedback({ providerId, windowDays = 30 }) {
   if (!providerId) {
     throw new AppError('providerId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -148,8 +145,7 @@ export async function aggregateProviderFeedback({ providerId, windowDays = 30 })
     totalFeedback: rows.reduce((acc, r) => acc + r.count, 0),
   };
 }
-
-export async function triggerLearningIfNeeded({ providerId }) {
+async function triggerLearningIfNeeded({ providerId }) {
   if (!providerId) {
     throw new AppError('providerId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -179,8 +175,7 @@ export async function triggerLearningIfNeeded({ providerId }) {
 
   return { triggered: false, reason: 'ACCURACY_ACCEPTABLE', aggregate };
 }
-
-export async function listRecentFeedback({ providerId, limit = 50 }) {
+async function listRecentFeedback({ providerId, limit = 50 }) {
   if (!providerId) {
     throw new AppError('providerId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -203,8 +198,7 @@ export async function listRecentFeedback({ providerId, limit = 50 }) {
     createdAt: row.created_at,
   }));
 }
-
-export const providerDnaFeedbackLoopService = {
+const providerDnaFeedbackLoopService = {
   recordFeedback,
   aggregateProviderFeedback,
   triggerLearningIfNeeded,
@@ -212,3 +206,12 @@ export const providerDnaFeedbackLoopService = {
   FEEDBACK_TYPES,
   LEARNING_THRESHOLD,
 };
+module.exports.providerDnaFeedbackLoopService = providerDnaFeedbackLoopService;
+
+module.exports.recordFeedback = recordFeedback;
+
+module.exports.aggregateProviderFeedback = aggregateProviderFeedback;
+
+module.exports.triggerLearningIfNeeded = triggerLearningIfNeeded;
+
+module.exports.listRecentFeedback = listRecentFeedback;

@@ -6,22 +6,16 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/listener
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { TelegramRepository } from './telegram.repository.js';
-import { TelegramSessionStoreService } from './telegram-session-store.service.js';
-import { TelegramClientFactory } from './telegram-client.factory.js';
-import { MessageService } from '../messages/message.service.js';
-import { MessageNormalizerService } from '../messages/message-normalizer.service.js';
-import { TelegramAdapter } from '../adapters/telegram.adapter.js';
-import {
-  SESSION_HEALTH_CHECK_INTERVAL_MS,
-  RECONNECT_BASE_DELAY_MS,
-  MAX_RECONNECT_ATTEMPTS,
-} from './telegram.constants.js';
-import { emitMessageReceived, emitMessageEdited, emitMessageDeleted } from '../source.events.js';
-
-export class TelegramListenerService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { TelegramRepository } = require('./telegram.repository.js');
+const { TelegramSessionStoreService } = require('./telegram-session-store.service.js');
+const { TelegramClientFactory } = require('./telegram-client.factory.js');
+const { MessageService } = require('../messages/message.service.js');
+const { MessageNormalizerService } = require('../messages/message-normalizer.service.js');
+const { TelegramAdapter } = require('../adapters/telegram.adapter.js');
+const { SESSION_HEALTH_CHECK_INTERVAL_MS, RECONNECT_BASE_DELAY_MS, MAX_RECONNECT_ATTEMPTS } = require('./telegram.constants.js');
+const { emitMessageReceived, emitMessageEdited, emitMessageDeleted } = require('../source.events.js');
+class TelegramListenerService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TelegramRepository();
     this.sessionStore = dependencies.sessionStore || new TelegramSessionStoreService(this.repository);
@@ -164,5 +158,5 @@ export class TelegramListenerService {
     }
   }
 }
-
-export default TelegramListenerService;
+module.exports = TelegramListenerService;
+module.exports.TelegramListenerService = TelegramListenerService;

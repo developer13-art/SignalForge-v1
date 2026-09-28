@@ -8,18 +8,15 @@
  *
  * @module signalforge/server/bootstrap/initWebSocket
  */
-
-import { Server as SocketIOServer } from 'socket.io';
-import jwt from 'jsonwebtoken';
-
-import webSocketConfig from '../config/websocket.config.js';
-import jwtConfig from '../config/jwt.config.js';
-import { getLogger } from './initLogger.js';
-import { getEventBus } from './initEventBus.js';
+const { Server: SocketIOServer } = require('socket.io');
+const jwt = require('jsonwebtoken');
+const webSocketConfig = require('../config/websocket.config.js');
+const jwtConfig = require('../config/jwt.config.js');
+const { getLogger } = require('./initLogger.js');
+const { getEventBus } = require('./initEventBus.js');
 
 let wsState = null;
-
-export async function initWebSocket(httpServer, dependencies = {}) {
+async function initWebSocket(httpServer, dependencies = {}) {
   const logger = getLogger('websocket');
 
   if (!webSocketConfig.enabled) {
@@ -216,9 +213,10 @@ export async function initWebSocket(httpServer, dependencies = {}) {
 
   return wsState;
 }
-
-export function getWebSocket() {
+function getWebSocket() {
   return wsState;
 }
+module.exports = initWebSocket;
+module.exports.getWebSocket = getWebSocket;
 
-export default initWebSocket;
+module.exports.initWebSocket = initWebSocket;

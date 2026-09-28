@@ -6,12 +6,10 @@
  *
  * @module signalforge/server/modules/execution/gateway/mt5-bridge
  */
-
-import { ExecutionGatewayInterface } from './execution-gateway.interface.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-import { GatewayNotConfiguredError } from '../execution.errors.js';
-
-export class Mt5BridgeGateway extends ExecutionGatewayInterface {
+const { ExecutionGatewayInterface } = require('./execution-gateway.interface.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+const { GatewayNotConfiguredError } = require('../execution.errors.js');
+class Mt5BridgeGateway extends ExecutionGatewayInterface {
   constructor() {
     super(GATEWAY_TYPES.MT5_BRIDGE);
   }
@@ -56,5 +54,5 @@ export class Mt5BridgeGateway extends ExecutionGatewayInterface {
     this.assertAvailable();
   }
 }
-
-export default Mt5BridgeGateway;
+module.exports = Mt5BridgeGateway;
+module.exports.Mt5BridgeGateway = Mt5BridgeGateway;

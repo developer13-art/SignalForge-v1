@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-state/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class TradeStateRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class TradeStateRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -370,5 +368,5 @@ export class TradeStateRepository {
     return result.rows;
   }
 }
-
-export default TradeStateRepository;
+module.exports = TradeStateRepository;
+module.exports.TradeStateRepository = TradeStateRepository;

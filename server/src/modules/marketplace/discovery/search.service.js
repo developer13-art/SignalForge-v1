@@ -3,18 +3,11 @@
  *
  * @module signalforge/server/modules/marketplace/discovery/search
  */
-
-import { ListingRepository } from '../listings/repository.js';
-import { RankingService } from './ranking.js';
-import {
-  LISTING_STATUSES,
-  LISTING_VISIBILITY,
-  RANKING_STRATEGIES,
-  DEFAULT_SEARCH_LIMIT,
-} from '../marketplace.constants.js';
-import { emitSearchPerformed } from '../marketplace.events.js';
-
-export class SearchService {
+const { ListingRepository } = require('../listings/repository.js');
+const { RankingService } = require('./ranking.js');
+const { LISTING_STATUSES, LISTING_VISIBILITY, RANKING_STRATEGIES, DEFAULT_SEARCH_LIMIT } = require('../marketplace.constants.js');
+const { emitSearchPerformed } = require('../marketplace.events.js');
+class SearchService {
   constructor(repository = null, ranking = null) {
     this.repository = repository || new ListingRepository();
     this.ranking = ranking || new RankingService();
@@ -54,5 +47,5 @@ export class SearchService {
     };
   }
 }
-
-export default SearchService;
+module.exports = SearchService;
+module.exports.SearchService = SearchService;

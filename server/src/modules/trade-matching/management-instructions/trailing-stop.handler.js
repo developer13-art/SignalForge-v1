@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/management-instructions/trailing-stop
  */
-
-import { MANAGEMENT_INSTRUCTION_TYPES } from '../matching.constants.js';
-
-export class TrailingStopHandler {
+const { MANAGEMENT_INSTRUCTION_TYPES } = require('../matching.constants.js');
+class TrailingStopHandler {
   constructor() {
     this.instructionType = MANAGEMENT_INSTRUCTION_TYPES.TRAILING_STOP;
   }
@@ -38,5 +36,5 @@ export class TrailingStopHandler {
     };
   }
 }
-
-export default TrailingStopHandler;
+module.exports = TrailingStopHandler;
+module.exports.TrailingStopHandler = TrailingStopHandler;

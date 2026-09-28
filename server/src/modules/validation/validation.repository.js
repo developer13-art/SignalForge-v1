@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/validation/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class ValidationRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class ValidationRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -223,5 +221,5 @@ export class ValidationRepository {
     return result.rows;
   }
 }
-
-export default ValidationRepository;
+module.exports = ValidationRepository;
+module.exports.ValidationRepository = ValidationRepository;

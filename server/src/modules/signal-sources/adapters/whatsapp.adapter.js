@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/signal-sources/adapters/whatsapp
  */
-
-import { BaseAdapter } from './base.adapter.js';
-import { SOURCE_TYPES } from '../source.constants.js';
-
-export class WhatsAppAdapter extends BaseAdapter {
+const { BaseAdapter } = require('./base.adapter.js');
+const { SOURCE_TYPES } = require('../source.constants.js');
+class WhatsAppAdapter extends BaseAdapter {
   constructor(config = {}) {
     super(config);
     this.name = SOURCE_TYPES.WHATSAPP;
@@ -52,5 +50,5 @@ export class WhatsAppAdapter extends BaseAdapter {
     };
   }
 }
-
-export default WhatsAppAdapter;
+module.exports = WhatsAppAdapter;
+module.exports.WhatsAppAdapter = WhatsAppAdapter;

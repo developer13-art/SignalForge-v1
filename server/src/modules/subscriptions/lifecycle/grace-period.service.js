@@ -3,19 +3,11 @@
  *
  * @module signalforge/server/modules/subscriptions/lifecycle/grace-period
  */
-
-import { SubscriptionRepository } from '../subscription.repository.js';
-import {
-  SUBSCRIPTION_STATUSES,
-  SUBSCRIPTION_GRACE_PERIOD_DAYS,
-} from '../subscription.constants.js';
-import {
-  emitSubscriptionGracePeriod,
-  emitSubscriptionExpired,
-} from '../subscription.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class GracePeriodService {
+const { SubscriptionRepository } = require('../subscription.repository.js');
+const { SUBSCRIPTION_STATUSES, SUBSCRIPTION_GRACE_PERIOD_DAYS } = require('../subscription.constants.js');
+const { emitSubscriptionGracePeriod, emitSubscriptionExpired } = require('../subscription.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class GracePeriodService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new SubscriptionRepository();
     this.logger = getLogger('subscription-grace');
@@ -66,5 +58,5 @@ export class GracePeriodService {
     return results;
   }
 }
-
-export default GracePeriodService;
+module.exports = GracePeriodService;
+module.exports.GracePeriodService = GracePeriodService;

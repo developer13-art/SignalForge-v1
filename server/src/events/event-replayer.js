@@ -6,12 +6,10 @@
  *
  * @module server/events/event-replayer
  */
-
-import { eventStore } from './event-store';
-import { eventBus } from './event-bus';
-import { logger } from '../lib/logger';
-
-export async function replayEvents({
+const { eventStore } = require('./event-store');
+const { eventBus } = require('./event-bus');
+const { logger } = require('../lib/logger');
+async function replayEvents({
   filters = {},
   pagination = {},
   skipPublish = false,
@@ -71,8 +69,7 @@ export async function replayEvents({
     results: replayed,
   };
 }
-
-export async function replayByCorrelation({ correlationId }) {
+async function replayByCorrelation({ correlationId }) {
   if (!correlationId) {
     throw new Error('correlationId is required');
   }
@@ -82,8 +79,12 @@ export async function replayByCorrelation({ correlationId }) {
     pagination: { limit: 1000, offset: 0 },
   });
 }
-
-export const eventReplayer = {
+const eventReplayer = {
   replayEvents,
   replayByCorrelation,
 };
+module.exports.eventReplayer = eventReplayer;
+
+module.exports.replayEvents = replayEvents;
+
+module.exports.replayByCorrelation = replayByCorrelation;

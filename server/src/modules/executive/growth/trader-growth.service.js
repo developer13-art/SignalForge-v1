@@ -6,8 +6,7 @@
  *
  * @module server/modules/executive/growth/trader-growth.service
  */
-
-import { db } from '../../../database';
+const { db } = require('../../../database');
 
 const VALID_GRANULARITIES = Object.freeze(['day', 'week', 'month']);
 
@@ -21,8 +20,7 @@ function normalizeRange({ from, to }) {
   const fromDate = from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   return { from: fromDate, to: toDate };
 }
-
-export async function getGrowth({ from, to, granularity }) {
+async function getGrowth({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
   const dateTrunc = g === 'month' ? 'month' : g === 'week' ? 'week' : 'day';
@@ -80,8 +78,7 @@ export async function getGrowth({ from, to, granularity }) {
     series,
   };
 }
-
-export async function getTopFollowedTraders({ limit = 10 }) {
+async function getTopFollowedTraders({ limit = 10 }) {
   const { rows } = await db.query(
     `SELECT tp.id, tp.display_name, COUNT(tf.id)::int AS follower_count
        FROM trader_profiles tp
@@ -98,8 +95,12 @@ export async function getTopFollowedTraders({ limit = 10 }) {
     followerCount: row.follower_count,
   }));
 }
-
-export const traderGrowthService = {
+const traderGrowthService = {
   getGrowth,
   getTopFollowedTraders,
 };
+module.exports.traderGrowthService = traderGrowthService;
+
+module.exports.getGrowth = getGrowth;
+
+module.exports.getTopFollowedTraders = getTopFollowedTraders;

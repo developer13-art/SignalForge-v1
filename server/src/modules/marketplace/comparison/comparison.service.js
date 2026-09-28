@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/marketplace/comparison/comparison
  */
-
-import { ListingRepository } from '../listings/repository.js';
-import { ProviderRepository } from '../../providers/provider.repository.js';
-import { ComparisonFailedError } from '../marketplace.errors.js';
-
-export class ComparisonService {
+const { ListingRepository } = require('../listings/repository.js');
+const { ProviderRepository } = require('../../providers/provider.repository.js');
+const { ComparisonFailedError } = require('../marketplace.errors.js');
+class ComparisonService {
   constructor(listingRepository = null, providerRepository = null) {
     this.listings = listingRepository || new ListingRepository();
     this.providers = providerRepository || new ProviderRepository();
@@ -88,5 +86,5 @@ export class ComparisonService {
     };
   }
 }
-
-export default ComparisonService;
+module.exports = ComparisonService;
+module.exports.ComparisonService = ComparisonService;

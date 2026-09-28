@@ -3,19 +3,12 @@
  *
  * @module signalforge/server/modules/rbac/role-service
  */
-
-import { RoleRepository } from './role.repository.js';
-import { PermissionRepository } from './permission.repository.js';
-import {
-  RoleNotFoundError,
-  RoleAlreadyExistsError,
-  ProtectedRoleError,
-  RoleInUseError,
-} from './rbac.errors.js';
-import { SYSTEM_PROTECTED_ROLES, RBAC_EVENTS } from './rbac.constants.js';
-import { getEventBus } from '../../bootstrap/initEventBus.js';
-
-export class RoleService {
+const { RoleRepository } = require('./role.repository.js');
+const { PermissionRepository } = require('./permission.repository.js');
+const { RoleNotFoundError, RoleAlreadyExistsError, ProtectedRoleError, RoleInUseError } = require('./rbac.errors.js');
+const { SYSTEM_PROTECTED_ROLES, RBAC_EVENTS } = require('./rbac.constants.js');
+const { getEventBus } = require('../../bootstrap/initEventBus.js');
+class RoleService {
   constructor(repository = null, permissionRepository = null) {
     this.repository = repository || new RoleRepository();
     this.permissionRepository = permissionRepository || new PermissionRepository();
@@ -210,5 +203,5 @@ export class RoleService {
     return this.permissionRepository.listForRole(roleId);
   }
 }
-
-export default RoleService;
+module.exports = RoleService;
+module.exports.RoleService = RoleService;

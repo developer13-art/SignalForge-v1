@@ -3,12 +3,11 @@
  *
  * @module server/modules/settings/settings.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { successResponse } from '../../lib/response/success.response';
-import { settingsService } from './settings.service';
-import { validateSettingKey, validateSettingPayload } from './settings.validator';
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { successResponse } = require('../../lib/response/success.response');
+const { settingsService } = require('./settings.service');
+const { validateSettingKey, validateSettingPayload } = require('./settings.validator');
 
 function requireAdmin(req) {
   const userId = req.user && req.user.id;
@@ -17,22 +16,19 @@ function requireAdmin(req) {
   }
   return userId;
 }
-
-export async function listSettings(req, res) {
+async function listSettings(req, res) {
   requireAdmin(req);
 
   const settings = await settingsService.listSettings({ category: req.query.category });
 
   return successResponse(res, { settings });
 }
-
-export async function listPublicSettings(req, res) {
+async function listPublicSettings(req, res) {
   const settings = await settingsService.listPublicSettings();
 
   return successResponse(res, { settings });
 }
-
-export async function getSetting(req, res) {
+async function getSetting(req, res) {
   requireAdmin(req);
 
   const key = validateSettingKey(req.params.key);
@@ -41,8 +37,7 @@ export async function getSetting(req, res) {
 
   return successResponse(res, { key, value });
 }
-
-export async function setSetting(req, res) {
+async function setSetting(req, res) {
   const actorId = requireAdmin(req);
 
   const key = validateSettingKey(req.params.key);
@@ -60,8 +55,7 @@ export async function setSetting(req, res) {
 
   return successResponse(res, { setting });
 }
-
-export async function deleteSetting(req, res) {
+async function deleteSetting(req, res) {
   const actorId = requireAdmin(req);
 
   const key = validateSettingKey(req.params.key);
@@ -70,8 +64,7 @@ export async function deleteSetting(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function getBulkSettings(req, res) {
+async function getBulkSettings(req, res) {
   requireAdmin(req);
 
   const { keys } = req.body || {};
@@ -80,8 +73,7 @@ export async function getBulkSettings(req, res) {
 
   return successResponse(res, { settings });
 }
-
-export async function getSettingsByCategories(req, res) {
+async function getSettingsByCategories(req, res) {
   requireAdmin(req);
 
   const { categories } = req.body || {};
@@ -90,8 +82,7 @@ export async function getSettingsByCategories(req, res) {
 
   return successResponse(res, { settings });
 }
-
-export const settingsController = {
+const settingsController = {
   listSettings,
   listPublicSettings,
   getSetting,
@@ -100,3 +91,18 @@ export const settingsController = {
   getBulkSettings,
   getSettingsByCategories,
 };
+module.exports.settingsController = settingsController;
+
+module.exports.listSettings = listSettings;
+
+module.exports.listPublicSettings = listPublicSettings;
+
+module.exports.getSetting = getSetting;
+
+module.exports.setSetting = setSetting;
+
+module.exports.deleteSetting = deleteSetting;
+
+module.exports.getBulkSettings = getBulkSettings;
+
+module.exports.getSettingsByCategories = getSettingsByCategories;

@@ -5,12 +5,10 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/session-store
  */
-
-import { TelegramRepository } from './telegram.repository.js';
-import { TelegramSessionEncryptionService } from './telegram-session-encryption.service.js';
-import { TELEGRAM_SESSION_STATUSES } from './telegram.constants.js';
-
-export class TelegramSessionStoreService {
+const { TelegramRepository } = require('./telegram.repository.js');
+const { TelegramSessionEncryptionService } = require('./telegram-session-encryption.service.js');
+const { TELEGRAM_SESSION_STATUSES } = require('./telegram.constants.js');
+class TelegramSessionStoreService {
   constructor(repository = null, encryption = null) {
     this.repository = repository || new TelegramRepository();
     this.encryption = encryption || new TelegramSessionEncryptionService();
@@ -62,5 +60,5 @@ export class TelegramSessionStoreService {
     };
   }
 }
-
-export default TelegramSessionStoreService;
+module.exports = TelegramSessionStoreService;
+module.exports.TelegramSessionStoreService = TelegramSessionStoreService;

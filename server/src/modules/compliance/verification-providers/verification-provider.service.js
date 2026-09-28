@@ -7,12 +7,11 @@
  *
  * @module server/modules/compliance/verification-providers/verification-provider.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { VERIFICATION_PROVIDER_TYPE_VALUES } from '../compliance.constants';
-import * as repository from './verification-provider.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { VERIFICATION_PROVIDER_TYPE_VALUES } = require('../compliance.constants');
+const repository = require('./verification-provider.repository');
 
 function sanitizeConfig(config) {
   if (!config || typeof config !== 'object') {
@@ -30,8 +29,7 @@ function sanitizeConfig(config) {
 
   return sanitized;
 }
-
-export async function createProvider({ code, label, type, config, active, priority }) {
+async function createProvider({ code, label, type, config, active, priority }) {
   if (!code || !label || !type) {
     throw new AppError('code, label, and type are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -69,8 +67,7 @@ export async function createProvider({ code, label, type, config, active, priori
     priority: record.priority,
   };
 }
-
-export async function listProviders({ activeOnly = true } = {}) {
+async function listProviders({ activeOnly = true } = {}) {
   const rows = await repository.listAll({ activeOnly });
 
   return rows.map((row) => ({
@@ -83,8 +80,7 @@ export async function listProviders({ activeOnly = true } = {}) {
     priority: row.priority,
   }));
 }
-
-export async function getProviderById({ providerId }) {
+async function getProviderById({ providerId }) {
   if (!providerId) {
     throw new AppError('providerId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -105,8 +101,7 @@ export async function getProviderById({ providerId }) {
     priority: record.priority,
   };
 }
-
-export async function getActiveProviderByType({ type }) {
+async function getActiveProviderByType({ type }) {
   if (!type) {
     throw new AppError('type is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -128,8 +123,7 @@ export async function getActiveProviderByType({ type }) {
     priority: record.priority,
   };
 }
-
-export async function updateProvider({ providerId, label, type, config, active, priority }) {
+async function updateProvider({ providerId, label, type, config, active, priority }) {
   if (!providerId) {
     throw new AppError('providerId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -160,8 +154,7 @@ export async function updateProvider({ providerId, label, type, config, active, 
     priority: record.priority,
   };
 }
-
-export async function deleteProvider({ providerId }) {
+async function deleteProvider({ providerId }) {
   if (!providerId) {
     throw new AppError('providerId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -176,8 +169,7 @@ export async function deleteProvider({ providerId }) {
 
   return { deleted: true };
 }
-
-export const verificationProviderService = {
+const verificationProviderService = {
   createProvider,
   listProviders,
   getProviderById,
@@ -185,3 +177,16 @@ export const verificationProviderService = {
   updateProvider,
   deleteProvider,
 };
+module.exports.verificationProviderService = verificationProviderService;
+
+module.exports.createProvider = createProvider;
+
+module.exports.listProviders = listProviders;
+
+module.exports.getProviderById = getProviderById;
+
+module.exports.getActiveProviderByType = getActiveProviderByType;
+
+module.exports.updateProvider = updateProvider;
+
+module.exports.deleteProvider = deleteProvider;

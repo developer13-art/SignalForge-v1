@@ -7,12 +7,11 @@
  *
  * @module server/modules/security/threat-detection.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../database';
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../database');
 
 const BLOCK_DURATION_MS = 15 * 60 * 1000;
 
@@ -94,8 +93,7 @@ async function countRecentAuthFailures({ userId, windowMinutes = 15 }) {
 
   return rows[0]?.count || 0;
 }
-
-export async function evaluateRequest({ userId, ipAddress, userAgent, endpoint }) {
+async function evaluateRequest({ userId, ipAddress, userAgent, endpoint }) {
   if (isIpBlocked({ ipAddress })) {
     return {
       allowed: false,
@@ -146,8 +144,7 @@ export async function evaluateRequest({ userId, ipAddress, userAgent, endpoint }
 
   return { allowed: true, level: THREAT_LEVELS.NONE };
 }
-
-export async function recordThreat({
+async function recordThreat({
   userId,
   ipAddress,
   userAgent,
@@ -177,8 +174,7 @@ export async function recordThreat({
 
   return { threatId: rows[0].id };
 }
-
-export async function listRecentThreats({ limit = 100, level } = {}) {
+async function listRecentThreats({ limit = 100, level } = {}) {
   const params = [];
   let where = '';
 
@@ -208,8 +204,7 @@ export async function listRecentThreats({ limit = 100, level } = {}) {
     createdAt: row.created_at,
   }));
 }
-
-export async function resolveThreat({ threatId, resolvedBy, notes }) {
+async function resolveThreat({ threatId, resolvedBy, notes }) {
   if (!threatId || !resolvedBy) {
     throw new AppError('threatId and resolvedBy are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -227,8 +222,7 @@ export async function resolveThreat({ threatId, resolvedBy, notes }) {
 
   return { resolved: true };
 }
-
-export async function getThreatSummary({ windowDays = 7 } = {}) {
+async function getThreatSummary({ windowDays = 7 } = {}) {
   const since = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000).toISOString();
 
   const { rows } = await db.query(
@@ -260,20 +254,17 @@ export async function getThreatSummary({ windowDays = 7 } = {}) {
     bySeverity,
   };
 }
-
-export function listBlockedIps() {
+function listBlockedIps() {
   return Array.from(BLOCKED_IP_CACHE.entries()).map(([ipAddress, entry]) => ({
     ipAddress,
     reason: entry.reason,
     expiresAt: new Date(entry.expiresAt).toISOString(),
   }));
 }
-
-export function unblockIp({ ipAddress }) {
+function unblockIp({ ipAddress }) {
   return { unblocked: BLOCKED_IP_CACHE.delete(ipAddress) };
 }
-
-export const threatDetectionService = {
+const threatDetectionService = {
   evaluateRequest,
   recordThreat,
   listRecentThreats,
@@ -283,3 +274,16 @@ export const threatDetectionService = {
   unblockIp,
   THREAT_LEVELS,
 };
+module.exports.threatDetectionService = threatDetectionService;
+module.exports.listBlockedIps = listBlockedIps;
+module.exports.unblockIp = unblockIp;
+
+module.exports.evaluateRequest = evaluateRequest;
+
+module.exports.recordThreat = recordThreat;
+
+module.exports.listRecentThreats = listRecentThreats;
+
+module.exports.resolveThreat = resolveThreat;
+
+module.exports.getThreatSummary = getThreatSummary;

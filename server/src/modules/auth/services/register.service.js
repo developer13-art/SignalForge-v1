@@ -3,20 +3,14 @@
  *
  * @module signalforge/server/modules/auth/services/register
  */
-
-import { normalizeEmail } from '@signalforge/shared/validators/email.validator';
-import { normalizePhone } from '@signalforge/shared/validators/phone.validator';
-import { normalizeUsername } from '@signalforge/shared/validators/username.validator';
-
-import { LocalStrategy } from '../strategies/local.strategy.js';
-import {
-  EmailAlreadyRegisteredError,
-  UsernameAlreadyTakenError,
-} from '../auth.errors.js';
-import { DEFAULT_ROLE_ON_REGISTRATION } from '../auth.constants.js';
-import { emitUserRegistered } from '../auth.events.js';
-
-export class RegisterService {
+const { normalizeEmail } = require('@signalforge/shared/validators/email.validator');
+const { normalizePhone } = require('@signalforge/shared/validators/phone.validator');
+const { normalizeUsername } = require('@signalforge/shared/validators/username.validator');
+const { LocalStrategy } = require('../strategies/local.strategy.js');
+const { EmailAlreadyRegisteredError, UsernameAlreadyTakenError } = require('../auth.errors.js');
+const { DEFAULT_ROLE_ON_REGISTRATION } = require('../auth.constants.js');
+const { emitUserRegistered } = require('../auth.events.js');
+class RegisterService {
   constructor(repository, emailVerificationService = null) {
     this.repository = repository;
     this.localStrategy = new LocalStrategy(repository);
@@ -74,5 +68,5 @@ export class RegisterService {
     return user;
   }
 }
-
-export default RegisterService;
+module.exports = RegisterService;
+module.exports.RegisterService = RegisterService;

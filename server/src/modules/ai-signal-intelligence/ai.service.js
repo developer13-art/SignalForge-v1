@@ -3,21 +3,19 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/service
  */
-
-import { AiRepository } from './ai.repository.js';
-import { ParserService } from './parser/parser.service.js';
-import { NormalizerService } from './normalization/normalizer.service.js';
-import { ConfidenceService } from './confidence/confidence.service.js';
-import { LlmGatewayService } from './llm/llm-gateway.service.js';
-import { PromptManagerService } from './llm/prompt-manager.service.js';
-import { EmbeddingService } from './llm/embedding.service.js';
-import { PromptInjectionGuardService } from './safety/prompt-injection-guard.service.js';
-import { SafetyFilterService } from './safety/safety-filter.service.js';
-import { AiLogService } from './logs/ai-log.service.js';
-import { AiMetricsService } from './logs/ai-metrics.service.js';
-import { LlmProviderFactory } from './llm/provider.factory.js';
-
-export class AiService {
+const { AiRepository } = require('./ai.repository.js');
+const { ParserService } = require('./parser/parser.service.js');
+const { NormalizerService } = require('./normalization/normalizer.service.js');
+const { ConfidenceService } = require('./confidence/confidence.service.js');
+const { LlmGatewayService } = require('./llm/llm-gateway.service.js');
+const { PromptManagerService } = require('./llm/prompt-manager.service.js');
+const { EmbeddingService } = require('./llm/embedding.service.js');
+const { PromptInjectionGuardService } = require('./safety/prompt-injection-guard.service.js');
+const { SafetyFilterService } = require('./safety/safety-filter.service.js');
+const { AiLogService } = require('./logs/ai-log.service.js');
+const { AiMetricsService } = require('./logs/ai-metrics.service.js');
+const { LlmProviderFactory } = require('./llm/provider.factory.js');
+class AiService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new AiRepository();
 
@@ -108,5 +106,5 @@ export class AiService {
     return this.logs.sumCost(filters);
   }
 }
-
-export default AiService;
+module.exports = AiService;
+module.exports.AiService = AiService;

@@ -8,12 +8,10 @@
  *
  * @module server/events/event-publisher
  */
-
-import crypto from 'node:crypto';
-import { logger } from '../lib/logger';
-import { eventBus } from './event-bus';
-
-export async function publishEvent({
+const crypto = require('node:crypto');
+const { logger } = require('../lib/logger');
+const { eventBus } = require('./event-bus');
+async function publishEvent({
   eventType,
   source,
   actorId,
@@ -53,8 +51,7 @@ export async function publishEvent({
     throw err;
   }
 }
-
-export async function publishEventsBatch(events) {
+async function publishEventsBatch(events) {
   if (!Array.isArray(events) || events.length === 0) {
     return { published: 0, results: [] };
   }
@@ -75,8 +72,12 @@ export async function publishEventsBatch(events) {
     results,
   };
 }
-
-export const eventPublisher = {
+const eventPublisher = {
   publishEvent,
   publishEventsBatch,
 };
+module.exports.eventPublisher = eventPublisher;
+
+module.exports.publishEvent = publishEvent;
+
+module.exports.publishEventsBatch = publishEventsBatch;

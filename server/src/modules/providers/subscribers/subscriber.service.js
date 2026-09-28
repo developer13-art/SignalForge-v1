@@ -3,14 +3,9 @@
  *
  * @module signalforge/server/modules/providers/subscribers/service
  */
-
-import { ProviderSubscriberRepository } from './repository.js';
-import {
-  emitProviderSubscriberAdded,
-  emitProviderSubscriberRemoved,
-} from '../provider.events.js';
-
-export class ProviderSubscriberService {
+const { ProviderSubscriberRepository } = require('./repository.js');
+const { emitProviderSubscriberAdded, emitProviderSubscriberRemoved } = require('../provider.events.js');
+class ProviderSubscriberService {
   constructor(repository = null) {
     this.repository = repository || new ProviderSubscriberRepository();
   }
@@ -81,5 +76,5 @@ export class ProviderSubscriberService {
     };
   }
 }
-
-export default ProviderSubscriberService;
+module.exports = ProviderSubscriberService;
+module.exports.ProviderSubscriberService = ProviderSubscriberService;

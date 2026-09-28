@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/trade-matching/matchers/provider
  */
-
-export class ProviderMatcher {
+class ProviderMatcher {
   scoreTrade(trade, providerId) {
     if (!trade || !providerId) {
       return 0;
@@ -25,5 +24,5 @@ export class ProviderMatcher {
     });
   }
 }
-
-export default ProviderMatcher;
+module.exports = ProviderMatcher;
+module.exports.ProviderMatcher = ProviderMatcher;

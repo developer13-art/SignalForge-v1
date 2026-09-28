@@ -5,10 +5,8 @@
  *
  * @module server/modules/admin/signals/admin-signal.repository
  */
-
-import { db } from '../../../database';
-
-export async function listSignals({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+async function listSignals({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -63,16 +61,14 @@ export async function listSignals({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findSignalById({ signalId }) {
+async function findSignalById({ signalId }) {
   const { rows } = await db.query(
     `SELECT * FROM signals WHERE id = $1 LIMIT 1`,
     [signalId],
   );
   return rows[0] || null;
 }
-
-export async function listRejectedSignals({ limit = 50 }) {
+async function listRejectedSignals({ limit = 50 }) {
   const { rows } = await db.query(
     `SELECT s.id, s.provider_id, s.symbol, s.direction, s.status, s.rejection_reason, s.created_at
        FROM signals s
@@ -83,8 +79,7 @@ export async function listRejectedSignals({ limit = 50 }) {
   );
   return rows;
 }
-
-export async function listDuplicateSignals({ limit = 50 }) {
+async function listDuplicateSignals({ limit = 50 }) {
   const { rows } = await db.query(
     `SELECT s.id, s.provider_id, s.symbol, s.direction, s.status, s.created_at, s.fingerprint
        FROM signals s
@@ -95,8 +90,7 @@ export async function listDuplicateSignals({ limit = 50 }) {
   );
   return rows;
 }
-
-export async function countByStatus({ since }) {
+async function countByStatus({ since }) {
   const params = [];
   let where = '';
 
@@ -111,11 +105,21 @@ export async function countByStatus({ since }) {
   );
   return rows;
 }
-
-export const adminSignalRepository = {
+const adminSignalRepository = {
   listSignals,
   findSignalById,
   listRejectedSignals,
   listDuplicateSignals,
   countByStatus,
 };
+module.exports.adminSignalRepository = adminSignalRepository;
+
+module.exports.listSignals = listSignals;
+
+module.exports.findSignalById = findSignalById;
+
+module.exports.listRejectedSignals = listRejectedSignals;
+
+module.exports.listDuplicateSignals = listDuplicateSignals;
+
+module.exports.countByStatus = countByStatus;

@@ -8,9 +8,8 @@
  *
  * @module signalforge/server/modules/signal-standardization/canonical-form
  */
-
-import { STANDARD_SIGNAL_SCHEMA_VERSION } from './standardization.constants.js';
-import { CanonicalFormError } from './standardization.errors.js';
+const { STANDARD_SIGNAL_SCHEMA_VERSION } = require('./standardization.constants.js');
+const { CanonicalFormError } = require('./standardization.errors.js');
 
 function toNumberOrNull(value) {
   if (value === null || value === undefined) {
@@ -50,8 +49,7 @@ function toArrayOfNumbers(value) {
   }
   return result;
 }
-
-export class CanonicalFormService {
+class CanonicalFormService {
   build(signal) {
     if (!signal || typeof signal !== 'object') {
       throw new CanonicalFormError('Signal must be an object');
@@ -109,5 +107,5 @@ export class CanonicalFormService {
     return JSON.stringify(canonical, Object.keys(canonical).sort());
   }
 }
-
-export default CanonicalFormService;
+module.exports = CanonicalFormService;
+module.exports.CanonicalFormService = CanonicalFormService;

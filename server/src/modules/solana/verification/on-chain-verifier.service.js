@@ -7,13 +7,12 @@
  *
  * @module server/modules/solana/verification/on-chain-verifier.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { connectionService } from '../config/connection.service';
-import { programConfigService } from '../config/program-config.service';
-import { pdaService } from '../programs/pda.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { connectionService } = require('../config/connection.service');
+const { programConfigService } = require('../config/program-config.service');
+const { pdaService } = require('../programs/pda.service');
 
 async function loadWeb3() {
   try {
@@ -58,8 +57,7 @@ function compareHexHashes({ dbHash, chainHash }) {
   }
   return dbHash.toLowerCase() === chainHash.toLowerCase();
 }
-
-export async function verifyAttestation({ attestation }) {
+async function verifyAttestation({ attestation }) {
   if (!attestation || !attestation.attestation_hash) {
     throw new AppError('attestation with attestation_hash is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -105,8 +103,7 @@ export async function verifyAttestation({ attestation }) {
     dataLength: account.dataLength,
   };
 }
-
-export async function verifyProvenance({ provenance }) {
+async function verifyProvenance({ provenance }) {
   if (!provenance || !provenance.processing_hash) {
     throw new AppError('provenance with processing_hash is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -150,8 +147,7 @@ export async function verifyProvenance({ provenance }) {
     dataLength: account.dataLength,
   };
 }
-
-export async function verifyTransactionIncluded({ txSignature, expectedSlot }) {
+async function verifyTransactionIncluded({ txSignature, expectedSlot }) {
   if (!txSignature) {
     throw new AppError('txSignature is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -175,11 +171,17 @@ export async function verifyTransactionIncluded({ txSignature, expectedSlot }) {
     matchesExpectedSlot: expectedSlot ? tx.slot === expectedSlot : null,
   };
 }
-
-export const onChainVerifierService = {
+const onChainVerifierService = {
   fetchAccountData,
   verifyAttestation,
   verifyProvenance,
   verifyTransactionIncluded,
   compareHexHashes,
 };
+module.exports.onChainVerifierService = onChainVerifierService;
+
+module.exports.verifyAttestation = verifyAttestation;
+
+module.exports.verifyProvenance = verifyProvenance;
+
+module.exports.verifyTransactionIncluded = verifyTransactionIncluded;

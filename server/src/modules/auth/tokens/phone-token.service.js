@@ -3,13 +3,10 @@
  *
  * @module signalforge/server/modules/auth/tokens/phone-token
  */
-
-import crypto from 'node:crypto';
-
-import jwtConfig from '../../../config/jwt.config.js';
-import { OTP_CODE_LENGTH } from '../auth.constants.js';
-
-export class PhoneTokenService {
+const crypto = require('node:crypto');
+const jwtConfig = require('../../../config/jwt.config.js');
+const { OTP_CODE_LENGTH } = require('../auth.constants.js');
+class PhoneTokenService {
   generateOtp(length = OTP_CODE_LENGTH) {
     const min = Math.pow(10, length - 1);
     const max = Math.pow(10, length) - 1;
@@ -41,7 +38,6 @@ export class PhoneTokenService {
     );
   }
 }
-
-export const phoneTokenService = new PhoneTokenService();
-
-export default phoneTokenService;
+const phoneTokenService = new PhoneTokenService();
+module.exports = phoneTokenService;
+module.exports.phoneTokenService = phoneTokenService;

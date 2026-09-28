@@ -3,9 +3,8 @@
  *
  * @module signalforge/server/modules/trade-shadow/comparison
  */
-
-import { DIVERGENCE_TYPES, SHADOW_OUTCOMES } from './shadow.constants.js';
-import { TradeStateRepository } from '../trade-state/trade-state.repository.js';
+const { DIVERGENCE_TYPES, SHADOW_OUTCOMES } = require('./shadow.constants.js');
+const { TradeStateRepository } = require('../trade-state/trade-state.repository.js');
 
 const DEFAULT_THRESHOLD_PIPS = 5;
 
@@ -16,8 +15,7 @@ function toNumber(value) {
   const num = Number(value);
   return Number.isFinite(num) ? num : null;
 }
-
-export class ComparisonService {
+class ComparisonService {
   constructor(repository = null) {
     this.repository = repository || new TradeStateRepository();
   }
@@ -112,5 +110,5 @@ export class ComparisonService {
     return divergences;
   }
 }
-
-export default ComparisonService;
+module.exports = ComparisonService;
+module.exports.ComparisonService = ComparisonService;

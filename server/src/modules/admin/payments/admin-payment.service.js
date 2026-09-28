@@ -3,15 +3,13 @@
  *
  * @module server/modules/admin/payments/admin-payment.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-payment.repository';
-import { adminService } from '../admin.service';
-
-export async function listPayments({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-payment.repository');
+const { adminService } = require('../admin.service');
+async function listPayments({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listPayments({
@@ -37,8 +35,7 @@ export async function listPayments({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getPaymentDetails({ paymentId }) {
+async function getPaymentDetails({ paymentId }) {
   if (!paymentId) {
     throw new AppError('paymentId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -51,8 +48,7 @@ export async function getPaymentDetails({ paymentId }) {
 
   return payment;
 }
-
-export async function refundPayment({ paymentId, adminId, reason, refundAmount }) {
+async function refundPayment({ paymentId, adminId, reason, refundAmount }) {
   if (!paymentId || !adminId) {
     throw new AppError('paymentId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -93,8 +89,7 @@ export async function refundPayment({ paymentId, adminId, reason, refundAmount }
 
   return { refunded: true, amount };
 }
-
-export async function getStatusBreakdown({ since }) {
+async function getStatusBreakdown({ since }) {
   const rows = await repository.countByStatus({ since });
 
   const breakdown = {};
@@ -110,8 +105,7 @@ export async function getStatusBreakdown({ since }) {
 
   return { breakdown, totalAmount };
 }
-
-export async function getRevenueByProvider({ since }) {
+async function getRevenueByProvider({ since }) {
   const rows = await repository.sumRevenueByProvider({ since });
 
   return rows.map((row) => ({
@@ -120,11 +114,21 @@ export async function getRevenueByProvider({ since }) {
     count: row.count,
   }));
 }
-
-export const adminPaymentService = {
+const adminPaymentService = {
   listPayments,
   getPaymentDetails,
   refundPayment,
   getStatusBreakdown,
   getRevenueByProvider,
 };
+module.exports.adminPaymentService = adminPaymentService;
+
+module.exports.listPayments = listPayments;
+
+module.exports.getPaymentDetails = getPaymentDetails;
+
+module.exports.refundPayment = refundPayment;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;
+
+module.exports.getRevenueByProvider = getRevenueByProvider;

@@ -6,16 +6,14 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/auth
  */
-
-import { TelegramOtpService } from './telegram-otp.service.js';
-import { TelegramClientFactory } from '../telegram-client.factory.js';
-import { TelegramSessionStoreService } from '../telegram-session-store.service.js';
-import { TelegramRepository } from '../telegram.repository.js';
-import { TELEGRAM_LOGIN_STATES } from '../telegram.constants.js';
-import { getLogger } from '../../../../bootstrap/initLogger.js';
-import { SourceConnectionError, SourceNotConfiguredError } from '../../source.errors.js';
-
-export class TelegramAuthService {
+const { TelegramOtpService } = require('./telegram-otp.service.js');
+const { TelegramClientFactory } = require('../telegram-client.factory.js');
+const { TelegramSessionStoreService } = require('../telegram-session-store.service.js');
+const { TelegramRepository } = require('../telegram.repository.js');
+const { TELEGRAM_LOGIN_STATES } = require('../telegram.constants.js');
+const { getLogger } = require('../../../../bootstrap/initLogger.js');
+const { SourceConnectionError, SourceNotConfiguredError } = require('../../source.errors.js');
+class TelegramAuthService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TelegramRepository();
     this.sessionStore = dependencies.sessionStore || new TelegramSessionStoreService(this.repository);
@@ -145,5 +143,5 @@ export class TelegramAuthService {
     return { loggedOut: true };
   }
 }
-
-export default TelegramAuthService;
+module.exports = TelegramAuthService;
+module.exports.TelegramAuthService = TelegramAuthService;

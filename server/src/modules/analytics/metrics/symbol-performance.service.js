@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/metrics/symbol-performance
  */
-
-import { WinRateService } from './win-rate.service.js';
-
-export class SymbolPerformanceService {
+const { WinRateService } = require('./win-rate.service.js');
+class SymbolPerformanceService {
   constructor(winRate = null) {
     this.winRate = winRate || new WinRateService();
   }
@@ -56,5 +54,5 @@ export class SymbolPerformanceService {
     };
   }
 }
-
-export default SymbolPerformanceService;
+module.exports = SymbolPerformanceService;
+module.exports.SymbolPerformanceService = SymbolPerformanceService;

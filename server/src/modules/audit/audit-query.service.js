@@ -7,11 +7,10 @@
  *
  * @module server/modules/audit/audit-query.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './audit.repository';
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./audit.repository');
 
 function normalizeEntry(row) {
   return {
@@ -30,8 +29,7 @@ function normalizeEntry(row) {
     createdAt: row.created_at,
   };
 }
-
-export async function listEntries({ filters = {}, pagination = {} }) {
+async function listEntries({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.list({
@@ -44,8 +42,7 @@ export async function listEntries({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getEntry({ auditId }) {
+async function getEntry({ auditId }) {
   if (!auditId) {
     throw new AppError('auditId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -58,8 +55,7 @@ export async function getEntry({ auditId }) {
 
   return normalizeEntry(row);
 }
-
-export async function listByResource({ resourceType, resourceId, limit = 200 }) {
+async function listByResource({ resourceType, resourceId, limit = 200 }) {
   if (!resourceType || !resourceId) {
     throw new AppError('resourceType and resourceId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -68,8 +64,7 @@ export async function listByResource({ resourceType, resourceId, limit = 200 }) 
 
   return rows.map(normalizeEntry);
 }
-
-export async function listByCorrelation({ correlationId, limit = 500 }) {
+async function listByCorrelation({ correlationId, limit = 500 }) {
   if (!correlationId) {
     throw new AppError('correlationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -78,8 +73,7 @@ export async function listByCorrelation({ correlationId, limit = 500 }) {
 
   return rows.map(normalizeEntry);
 }
-
-export async function getActionSummary({ from, to }) {
+async function getActionSummary({ from, to }) {
   const rows = await repository.countByAction({ filters: { from, to } });
 
   const summary = {};
@@ -91,8 +85,7 @@ export async function getActionSummary({ from, to }) {
 
   return { total, actions: summary };
 }
-
-export async function getSeveritySummary({ from, to }) {
+async function getSeveritySummary({ from, to }) {
   const rows = await repository.countBySeverity({ filters: { from, to } });
 
   const summary = {};
@@ -104,8 +97,7 @@ export async function getSeveritySummary({ from, to }) {
 
   return { total, severities: summary };
 }
-
-export async function getActorActivitySummary({ actorId, from, to }) {
+async function getActorActivitySummary({ actorId, from, to }) {
   if (!actorId) {
     throw new AppError('actorId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -131,8 +123,7 @@ export async function getActorActivitySummary({ actorId, from, to }) {
     byResource,
   };
 }
-
-export async function getRecentHighSeverityEntries({ limit = 50 }) {
+async function getRecentHighSeverityEntries({ limit = 50 }) {
   const { items } = await repository.list({
     filters: {},
     pagination: { limit, offset: 0 },
@@ -142,8 +133,7 @@ export async function getRecentHighSeverityEntries({ limit = 50 }) {
     .filter((row) => row.severity === 'CRITICAL' || row.severity === 'WARNING')
     .map(normalizeEntry);
 }
-
-export const auditQueryService = {
+const auditQueryService = {
   listEntries,
   getEntry,
   listByResource,
@@ -153,3 +143,20 @@ export const auditQueryService = {
   getActorActivitySummary,
   getRecentHighSeverityEntries,
 };
+module.exports.auditQueryService = auditQueryService;
+
+module.exports.listEntries = listEntries;
+
+module.exports.getEntry = getEntry;
+
+module.exports.listByResource = listByResource;
+
+module.exports.listByCorrelation = listByCorrelation;
+
+module.exports.getActionSummary = getActionSummary;
+
+module.exports.getSeveritySummary = getSeveritySummary;
+
+module.exports.getActorActivitySummary = getActorActivitySummary;
+
+module.exports.getRecentHighSeverityEntries = getRecentHighSeverityEntries;

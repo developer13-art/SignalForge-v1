@@ -7,14 +7,12 @@
  *
  * @module server/modules/compliance/review/reject.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-
-export async function rejectKyc({ applicationId, reviewerId, reason }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+async function rejectKyc({ applicationId, reviewerId, reason }) {
   if (!applicationId || !reviewerId || !reason) {
     throw new AppError(
       'applicationId, reviewerId, and reason are required',
@@ -69,7 +67,9 @@ export async function rejectKyc({ applicationId, reviewerId, reason }) {
     throw new AppError('Failed to reject KYC application', ERROR_CODES.INTERNAL_ERROR, 500);
   }
 }
-
-export const rejectService = {
+const rejectService = {
   rejectKyc,
 };
+module.exports.rejectService = rejectService;
+
+module.exports.rejectKyc = rejectKyc;

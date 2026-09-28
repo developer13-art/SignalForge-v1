@@ -7,12 +7,10 @@
  *
  * @module signalforge/server/bootstrap/initEventBus
  */
-
-import { EventEmitter } from 'node:events';
-import { randomUUID } from 'node:crypto';
-
-import { getLogger } from './initLogger.js';
-import databaseConfig from '../config/database.config.js';
+const { EventEmitter } = require('node:events');
+const { randomUUID } = require('node:crypto');
+const { getLogger } = require('./initLogger.js');
+const databaseConfig = require('../config/database.config.js');
 
 const CHANNEL_NAME = 'signalforge_events';
 const MAX_LISTENERS = 500;
@@ -29,8 +27,7 @@ function isEnvelope(value) {
     typeof value.payload === 'object'
   );
 }
-
-export async function initEventBus(dependencies = {}) {
+async function initEventBus(dependencies = {}) {
   const logger = getLogger('event-bus');
 
   if (busState) {
@@ -164,12 +161,13 @@ export async function initEventBus(dependencies = {}) {
 
   return busState;
 }
-
-export function getEventBus() {
+function getEventBus() {
   if (!busState) {
     throw new Error('Event bus has not been initialized');
   }
   return busState;
 }
+module.exports = initEventBus;
+module.exports.getEventBus = getEventBus;
 
-export default initEventBus;
+module.exports.initEventBus = initEventBus;

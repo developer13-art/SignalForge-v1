@@ -6,10 +6,8 @@
  *
  * @module server/modules/executive/revenue/referral-cost.service
  */
-
-import { db } from '../../../database';
-
-export async function getCost({ from, to, granularity = 'day' }) {
+const { db } = require('../../../database');
+async function getCost({ from, to, granularity = 'day' }) {
   const fromDate = from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const toDate = to || new Date().toISOString();
 
@@ -46,7 +44,9 @@ export async function getCost({ from, to, granularity = 'day' }) {
     })),
   };
 }
-
-export const referralCostService = {
+const referralCostService = {
   getCost,
 };
+module.exports.referralCostService = referralCostService;
+
+module.exports.getCost = getCost;

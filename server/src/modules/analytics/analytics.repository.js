@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class AnalyticsRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class AnalyticsRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -505,5 +503,5 @@ export class AnalyticsRepository {
     };
   }
 }
-
-export default AnalyticsRepository;
+module.exports = AnalyticsRepository;
+module.exports.AnalyticsRepository = AnalyticsRepository;

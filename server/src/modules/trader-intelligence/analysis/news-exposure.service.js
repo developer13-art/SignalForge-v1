@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/trader-intelligence/analysis/news-exposure
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { NEWS_EXPOSURE_THRESHOLDS } from '../intelligence.constants.js';
-
-export class NewsExposureService {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { NEWS_EXPOSURE_THRESHOLDS } = require('../intelligence.constants.js');
+class NewsExposureService {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -45,5 +43,5 @@ export class NewsExposureService {
     };
   }
 }
-
-export default NewsExposureService;
+module.exports = NewsExposureService;
+module.exports.NewsExposureService = NewsExposureService;

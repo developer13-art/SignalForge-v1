@@ -6,10 +6,9 @@
  *
  * @module server/modules/replay/provider-message-replay/provider-message-replay.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { replayRepository } from '../replay.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { replayRepository } = require('../replay.repository');
 
 function parseEnvelope(envelope) {
   if (!envelope) {
@@ -24,8 +23,7 @@ function parseEnvelope(envelope) {
   }
   return envelope;
 }
-
-export async function buildProviderMessageReplay({ providerId, sourceId, externalMessageId, userId }) {
+async function buildProviderMessageReplay({ providerId, sourceId, externalMessageId, userId }) {
   if (!providerId || !externalMessageId) {
     throw new AppError('providerId and externalMessageId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -75,7 +73,9 @@ export async function buildProviderMessageReplay({ providerId, sourceId, externa
     signalTimeline,
   };
 }
-
-export const providerMessageReplayService = {
+const providerMessageReplayService = {
   buildProviderMessageReplay,
 };
+module.exports.providerMessageReplayService = providerMessageReplayService;
+
+module.exports.buildProviderMessageReplay = buildProviderMessageReplay;

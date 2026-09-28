@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/referrals/fraud/reversal
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { FRAUD_FLAG_TYPES, FRAUD_FLAG_SEVERITIES } from '../referral.constants.js';
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { FRAUD_FLAG_TYPES, FRAUD_FLAG_SEVERITIES } = require('../referral.constants.js');
 
 const REVERSAL_RATIO_THRESHOLD = 0.3;
 const MIN_TRADES_TO_CHECK = 10;
-
-export class ReversalCheck {
+class ReversalCheck {
   constructor(db = null) {
     this.db = db || getDatabase();
     this.name = FRAUD_FLAG_TYPES.REVERSAL_PATTERN;
@@ -60,5 +58,5 @@ export class ReversalCheck {
     };
   }
 }
-
-export default ReversalCheck;
+module.exports = ReversalCheck;
+module.exports.ReversalCheck = ReversalCheck;

@@ -5,19 +5,16 @@
  *
  * @module server/modules/notifications/preferences/preference.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function findByUserId({ userId }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function findByUserId({ userId }) {
   const { rows } = await db.query(
     `SELECT * FROM notification_preferences WHERE user_id = $1 LIMIT 1`,
     [userId],
   );
   return rows[0] || null;
 }
-
-export async function upsertPreferences({
+async function upsertPreferences({
   userId,
   channels,
   mutedCategories,
@@ -49,17 +46,22 @@ export async function upsertPreferences({
   );
   return rows[0];
 }
-
-export async function deleteByUserId({ userId }) {
+async function deleteByUserId({ userId }) {
   const { rowCount } = await db.query(
     `DELETE FROM notification_preferences WHERE user_id = $1`,
     [userId],
   );
   return rowCount > 0;
 }
-
-export const preferenceRepository = {
+const preferenceRepository = {
   findByUserId,
   upsertPreferences,
   deleteByUserId,
 };
+module.exports.preferenceRepository = preferenceRepository;
+
+module.exports.findByUserId = findByUserId;
+
+module.exports.upsertPreferences = upsertPreferences;
+
+module.exports.deleteByUserId = deleteByUserId;

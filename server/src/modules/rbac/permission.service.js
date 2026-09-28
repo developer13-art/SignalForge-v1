@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/rbac/permission-service
  */
-
-import { PermissionRepository } from './permission.repository.js';
-import { PermissionNotFoundError, PermissionAlreadyExistsError, ProtectedPermissionError } from './rbac.errors.js';
-import { PROTECTED_PERMISSIONS, RBAC_EVENTS } from './rbac.constants.js';
-import { getEventBus } from '../../bootstrap/initEventBus.js';
-import { PERMISSION_DEFINITIONS } from './permission-registry.js';
-
-export class PermissionService {
+const { PermissionRepository } = require('./permission.repository.js');
+const { PermissionNotFoundError, PermissionAlreadyExistsError, ProtectedPermissionError } = require('./rbac.errors.js');
+const { PROTECTED_PERMISSIONS, RBAC_EVENTS } = require('./rbac.constants.js');
+const { getEventBus } = require('../../bootstrap/initEventBus.js');
+const { PERMISSION_DEFINITIONS } = require('./permission-registry.js');
+class PermissionService {
   constructor(repository = null) {
     this.repository = repository || new PermissionRepository();
   }
@@ -121,5 +119,5 @@ export class PermissionService {
     return results;
   }
 }
-
-export default PermissionService;
+module.exports = PermissionService;
+module.exports.PermissionService = PermissionService;

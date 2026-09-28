@@ -3,11 +3,9 @@
  *
  * @module server/modules/admin/subscriptions/admin-subscription.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function listSubscriptions({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function listSubscriptions({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -62,16 +60,14 @@ export async function listSubscriptions({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findSubscriptionById({ subscriptionId }) {
+async function findSubscriptionById({ subscriptionId }) {
   const { rows } = await db.query(
     `SELECT * FROM subscriptions WHERE id = $1 LIMIT 1`,
     [subscriptionId],
   );
   return rows[0] || null;
 }
-
-export async function updateSubscriptionStatus({ subscriptionId, status }) {
+async function updateSubscriptionStatus({ subscriptionId, status }) {
   const { rowCount } = await db.query(
     `UPDATE subscriptions
         SET status = $1,
@@ -82,8 +78,7 @@ export async function updateSubscriptionStatus({ subscriptionId, status }) {
   );
   return rowCount > 0;
 }
-
-export async function extendSubscriptionPeriod({ subscriptionId, newEndDate }) {
+async function extendSubscriptionPeriod({ subscriptionId, newEndDate }) {
   const { rowCount } = await db.query(
     `UPDATE subscriptions
         SET current_period_end = $1,
@@ -94,18 +89,27 @@ export async function extendSubscriptionPeriod({ subscriptionId, newEndDate }) {
   );
   return rowCount > 0;
 }
-
-export async function countByStatus() {
+async function countByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count FROM subscriptions GROUP BY status`,
   );
   return rows;
 }
-
-export const adminSubscriptionRepository = {
+const adminSubscriptionRepository = {
   listSubscriptions,
   findSubscriptionById,
   updateSubscriptionStatus,
   extendSubscriptionPeriod,
   countByStatus,
 };
+module.exports.adminSubscriptionRepository = adminSubscriptionRepository;
+
+module.exports.listSubscriptions = listSubscriptions;
+
+module.exports.findSubscriptionById = findSubscriptionById;
+
+module.exports.updateSubscriptionStatus = updateSubscriptionStatus;
+
+module.exports.extendSubscriptionPeriod = extendSubscriptionPeriod;
+
+module.exports.countByStatus = countByStatus;

@@ -3,18 +3,12 @@
  *
  * @module signalforge/server/modules/risk/profile/service
  */
-
-import { RiskProfileRepository } from './risk-profile.repository.js';
-import { RiskRepository } from '../risk.repository.js';
-import { RISK_PROFILE_DEFAULTS } from '../risk.constants.js';
-import { RiskProfileNotFoundError } from '../risk.errors.js';
-import {
-  emitRiskProfileCreated,
-  emitRiskProfileUpdated,
-  emitRiskEmergencyStop,
-} from '../risk.events.js';
-
-export class RiskProfileService {
+const { RiskProfileRepository } = require('./risk-profile.repository.js');
+const { RiskRepository } = require('../risk.repository.js');
+const { RISK_PROFILE_DEFAULTS } = require('../risk.constants.js');
+const { RiskProfileNotFoundError } = require('../risk.errors.js');
+const { emitRiskProfileCreated, emitRiskProfileUpdated, emitRiskEmergencyStop } = require('../risk.events.js');
+class RiskProfileService {
   constructor(repository = null, riskRepository = null) {
     this.repository = repository || new RiskProfileRepository();
     this.riskRepository = riskRepository || new RiskRepository();
@@ -125,5 +119,5 @@ export class RiskProfileService {
     };
   }
 }
-
-export default RiskProfileService;
+module.exports = RiskProfileService;
+module.exports.RiskProfileService = RiskProfileService;

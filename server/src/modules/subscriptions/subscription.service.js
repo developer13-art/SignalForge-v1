@@ -3,24 +3,16 @@
  *
  * @module signalforge/server/modules/subscriptions/service
  */
-
-import { SubscriptionRepository } from './subscription.repository.js';
-import { PlanService } from './plans/service.js';
-import { LifecycleService } from './lifecycle/lifecycle.service.js';
-import { UsageService } from './usage/usage.service.js';
-import { UpgradeService } from './upgrade/upgrade.service.js';
-import { DowngradeService } from './upgrade/downgrade.service.js';
-import {
-  SUBSCRIPTION_STATUSES,
-  SUBSCRIPTION_TRIAL_DAYS,
-} from './subscription.constants.js';
-import {
-  SubscriptionNotFoundError,
-  SubscriptionAlreadyExistsError,
-} from './subscription.errors.js';
-import { emitSubscriptionCreated } from './subscription.events.js';
-
-export class SubscriptionService {
+const { SubscriptionRepository } = require('./subscription.repository.js');
+const { PlanService } = require('./plans/service.js');
+const { LifecycleService } = require('./lifecycle/lifecycle.service.js');
+const { UsageService } = require('./usage/usage.service.js');
+const { UpgradeService } = require('./upgrade/upgrade.service.js');
+const { DowngradeService } = require('./upgrade/downgrade.service.js');
+const { SUBSCRIPTION_STATUSES, SUBSCRIPTION_TRIAL_DAYS } = require('./subscription.constants.js');
+const { SubscriptionNotFoundError, SubscriptionAlreadyExistsError } = require('./subscription.errors.js');
+const { emitSubscriptionCreated } = require('./subscription.events.js');
+class SubscriptionService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new SubscriptionRepository();
     this.plans = dependencies.plans || new PlanService();
@@ -208,5 +200,5 @@ export class SubscriptionService {
     return input;
   }
 }
-
-export default SubscriptionService;
+module.exports = SubscriptionService;
+module.exports.SubscriptionService = SubscriptionService;

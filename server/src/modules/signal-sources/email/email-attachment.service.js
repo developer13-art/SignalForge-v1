@@ -7,12 +7,11 @@
  *
  * @module server/modules/signal-sources/email/email-attachment.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { storageService } from '../../../lib/storage';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { storageService } = require('../../../lib/storage');
 
 const MAX_ATTACHMENT_BYTES = 25 * 1024 * 1024;
 const MAX_ATTACHMENTS_PER_MESSAGE = 20;
@@ -40,8 +39,7 @@ function buildStorageKey({ userId, mailbox, messageId, fileName, index }) {
   const safeName = (fileName || `attachment-${index}`).replace(/[^\w.\-]+/g, '_').slice(0, 64);
   return `email/${userId}/${mailbox}/${messageId}/${timestamp}-${random}-${safeName}`;
 }
-
-export async function handleEmailAttachments({ userId, mailbox, messageId, attachments }) {
+async function handleEmailAttachments({ userId, mailbox, messageId, attachments }) {
   if (!userId || !mailbox || !messageId) {
     throw new AppError('userId, mailbox, and messageId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -142,9 +140,11 @@ export async function handleEmailAttachments({ userId, mailbox, messageId, attac
 
   return { attachments: results };
 }
-
-export const emailAttachmentService = {
+const emailAttachmentService = {
   handleEmailAttachments,
   ALLOWED_MIME_TYPES,
   MAX_ATTACHMENT_BYTES,
 };
+module.exports.emailAttachmentService = emailAttachmentService;
+
+module.exports.handleEmailAttachments = handleEmailAttachments;

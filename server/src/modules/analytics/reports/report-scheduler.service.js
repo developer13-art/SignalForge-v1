@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/reports/report-scheduler
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class ReportSchedulerService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class ReportSchedulerService {
   constructor() {
     this.schedules = new Map();
     this.intervalHandle = null;
@@ -71,5 +69,5 @@ export class ReportSchedulerService {
     }
   }
 }
-
-export default ReportSchedulerService;
+module.exports = ReportSchedulerService;
+module.exports.ReportSchedulerService = ReportSchedulerService;

@@ -6,18 +6,17 @@
  *
  * @module server/modules/white-label/white-label.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../database';
-import { brandingService } from './branding/branding.service';
-import { domainService } from './domains/domain.service';
-import { themeService } from './themes/theme.service';
-import { customPricingService } from './pricing/custom-pricing.service';
-import { wlAnalyticsService } from './analytics/wl-analytics.service';
+const crypto = require('node:crypto');
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../database');
+const { brandingService } = require('./branding/branding.service');
+const { domainService } = require('./domains/domain.service');
+const { themeService } = require('./themes/theme.service');
+const { customPricingService } = require('./pricing/custom-pricing.service');
+const { wlAnalyticsService } = require('./analytics/wl-analytics.service');
 
 function generateSlug(name) {
   if (!name) {
@@ -30,8 +29,7 @@ function generateSlug(name) {
     .replace(/\s+/g, '-')
     .substring(0, 60) || `wl-${crypto.randomBytes(4).toString('hex')}`;
 }
-
-export async function listProjects({ userId }) {
+async function listProjects({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -55,8 +53,7 @@ export async function listProjects({ userId }) {
     updatedAt: row.updated_at,
   }));
 }
-
-export async function getProject({ userId, projectId }) {
+async function getProject({ userId, projectId }) {
   if (!userId || !projectId) {
     throw new AppError('userId and projectId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -92,8 +89,7 @@ export async function getProject({ userId, projectId }) {
     pricing,
   };
 }
-
-export async function createProject({ userId, name, brandName, brandDomain }) {
+async function createProject({ userId, name, brandName, brandDomain }) {
   if (!userId || !name) {
     throw new AppError('userId and name are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -125,43 +121,35 @@ export async function createProject({ userId, name, brandName, brandDomain }) {
     createdAt: row.created_at,
   };
 }
-
-export async function updateBranding({ userId, projectId, payload }) {
+async function updateBranding({ userId, projectId, payload }) {
   await assertOwnership({ userId, projectId });
   return brandingService.updateBranding({ projectId, payload });
 }
-
-export async function updateTheme({ userId, projectId, payload }) {
+async function updateTheme({ userId, projectId, payload }) {
   await assertOwnership({ userId, projectId });
   return themeService.updateTheme({ projectId, payload });
 }
-
-export async function addDomain({ userId, projectId, domain }) {
+async function addDomain({ userId, projectId, domain }) {
   await assertOwnership({ userId, projectId });
   return domainService.addDomain({ projectId, domain });
 }
-
-export async function verifyDomain({ userId, projectId, domainId }) {
+async function verifyDomain({ userId, projectId, domainId }) {
   await assertOwnership({ userId, projectId });
   return domainService.verifyDomain({ projectId, domainId });
 }
-
-export async function removeDomain({ userId, projectId, domainId }) {
+async function removeDomain({ userId, projectId, domainId }) {
   await assertOwnership({ userId, projectId });
   return domainService.removeDomain({ projectId, domainId });
 }
-
-export async function updateCustomPricing({ userId, projectId, payload }) {
+async function updateCustomPricing({ userId, projectId, payload }) {
   await assertOwnership({ userId, projectId });
   return customPricingService.updatePricing({ projectId, payload });
 }
-
-export async function getAnalytics({ userId, projectId, from, to }) {
+async function getAnalytics({ userId, projectId, from, to }) {
   await assertOwnership({ userId, projectId });
   return wlAnalyticsService.getAnalytics({ projectId, from, to });
 }
-
-export async function deleteProject({ userId, projectId }) {
+async function deleteProject({ userId, projectId }) {
   await assertOwnership({ userId, projectId });
 
   await db.query(`DELETE FROM white_label_projects WHERE id = $1 AND owner_user_id = $2`, [projectId, userId]);
@@ -174,8 +162,7 @@ export async function deleteProject({ userId, projectId }) {
 
   return { deleted: true };
 }
-
-export async function assertOwnership({ userId, projectId }) {
+async function assertOwnership({ userId, projectId }) {
   if (!userId || !projectId) {
     throw new AppError('userId and projectId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -189,8 +176,7 @@ export async function assertOwnership({ userId, projectId }) {
     throw new AppError('White label project not found', ERROR_CODES.NOT_FOUND, 404);
   }
 }
-
-export const whiteLabelService = {
+const whiteLabelService = {
   listProjects,
   getProject,
   createProject,
@@ -204,3 +190,28 @@ export const whiteLabelService = {
   deleteProject,
   assertOwnership,
 };
+module.exports.whiteLabelService = whiteLabelService;
+
+module.exports.listProjects = listProjects;
+
+module.exports.getProject = getProject;
+
+module.exports.createProject = createProject;
+
+module.exports.updateBranding = updateBranding;
+
+module.exports.updateTheme = updateTheme;
+
+module.exports.addDomain = addDomain;
+
+module.exports.verifyDomain = verifyDomain;
+
+module.exports.removeDomain = removeDomain;
+
+module.exports.updateCustomPricing = updateCustomPricing;
+
+module.exports.getAnalytics = getAnalytics;
+
+module.exports.deleteProject = deleteProject;
+
+module.exports.assertOwnership = assertOwnership;

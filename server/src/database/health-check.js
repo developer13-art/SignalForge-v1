@@ -7,11 +7,9 @@
  *
  * @module server/database/health-check
  */
-
-import { getPool } from './connection';
-import { logger } from '../lib/logger';
-
-export async function checkDatabaseHealth() {
+const { getPool } = require('./connection');
+const { logger } = require('../lib/logger');
+async function checkDatabaseHealth() {
   const pool = getPool();
 
   const start = Date.now();
@@ -40,8 +38,7 @@ export async function checkDatabaseHealth() {
     };
   }
 }
-
-export async function getConnectionStats() {
+async function getConnectionStats() {
   const pool = getPool();
 
   return {
@@ -52,17 +49,22 @@ export async function getConnectionStats() {
     minConnections: pool.options ? pool.options.min : null,
   };
 }
-
-export async function checkReadiness() {
+async function checkReadiness() {
   const health = await checkDatabaseHealth();
 
   const ready = health.healthy && health.pool.waitingCount < 50;
 
   return { ready, health };
 }
-
-export const healthCheck = {
+const healthCheck = {
   checkDatabaseHealth,
   getConnectionStats,
   checkReadiness,
 };
+module.exports.healthCheck = healthCheck;
+
+module.exports.checkDatabaseHealth = checkDatabaseHealth;
+
+module.exports.getConnectionStats = getConnectionStats;
+
+module.exports.checkReadiness = checkReadiness;

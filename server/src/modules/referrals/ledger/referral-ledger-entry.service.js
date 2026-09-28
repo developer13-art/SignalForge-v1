@@ -3,15 +3,10 @@
  *
  * @module signalforge/server/modules/referrals/ledger/entry-service
  */
-
-import { ReferralLedgerRepository } from './repository.js';
-import {
-  LEDGER_ENTRY_STATUSES,
-  REFERRAL_LEDGER_DIRECTIONS,
-} from '../referral.constants.js';
-import { emitLedgerEntryCreated } from '../referral.events.js';
-
-export class ReferralLedgerEntryService {
+const { ReferralLedgerRepository } = require('./repository.js');
+const { LEDGER_ENTRY_STATUSES, REFERRAL_LEDGER_DIRECTIONS } = require('../referral.constants.js');
+const { emitLedgerEntryCreated } = require('../referral.events.js');
+class ReferralLedgerEntryService {
   constructor(repository = null) {
     this.repository = repository || new ReferralLedgerRepository();
   }
@@ -77,5 +72,5 @@ export class ReferralLedgerEntryService {
     });
   }
 }
-
-export default ReferralLedgerEntryService;
+module.exports = ReferralLedgerEntryService;
+module.exports.ReferralLedgerEntryService = ReferralLedgerEntryService;

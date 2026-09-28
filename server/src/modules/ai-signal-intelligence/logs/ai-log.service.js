@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/logs/service
  */
-
-import { AiLogRepository } from './ai-log.repository.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class AiLogService {
+const { AiLogRepository } = require('./ai-log.repository.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class AiLogService {
   constructor(repository = null) {
     this.repository = repository || new AiLogRepository();
     this.logger = getLogger('ai-log');
@@ -30,5 +28,5 @@ export class AiLogService {
     return this.repository.sumCost(filters);
   }
 }
-
-export default AiLogService;
+module.exports = AiLogService;
+module.exports.AiLogService = AiLogService;

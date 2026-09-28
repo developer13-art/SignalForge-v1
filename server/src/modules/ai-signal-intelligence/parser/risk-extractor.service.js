@@ -14,8 +14,7 @@ const LOT_PATTERNS = Object.freeze([
   /(?:lot|size|volume)\s*[:\-]?\s*(\d{1,4}(?:\.\d{1,4})?)/i,
   /(\d{1,4}(?:\.\d{1,4})?)\s*(?:lot|lots)/i,
 ]);
-
-export class RiskExtractorService {
+class RiskExtractorService {
   extractRiskPercent(text) {
     if (typeof text !== 'string') {
       return null;
@@ -55,5 +54,5 @@ export class RiskExtractorService {
     };
   }
 }
-
-export default RiskExtractorService;
+module.exports = RiskExtractorService;
+module.exports.RiskExtractorService = RiskExtractorService;

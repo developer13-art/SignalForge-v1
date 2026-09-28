@@ -8,20 +8,15 @@
  *
  * @module server/modules/solana/indexer/program-event-processor.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { attestationRepository } from '../attestations/attestation.repository';
-import { provenanceRepository } from '../provenance/provenance.repository';
-import { solanaPaymentRepository } from '../payments/solana-payment.repository';
-import {
-  emitAttestationAnchored,
-  emitProvenanceAnchored,
-  emitPaymentConfirmed,
-} from '../solana.events';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { attestationRepository } = require('../attestations/attestation.repository');
+const { provenanceRepository } = require('../provenance/provenance.repository');
+const { solanaPaymentRepository } = require('../payments/solana-payment.repository');
+const { emitAttestationAnchored, emitProvenanceAnchored, emitPaymentConfirmed } = require('../solana.events');
 
 const EVENT_TYPES = Object.freeze({
   ATTESTATION_CREATED: 'AttestationCreated',
@@ -152,8 +147,7 @@ async function handlePaymentConfirmed({ programId, txSignature, slot, payload })
 
   return { handled: true, paymentId };
 }
-
-export async function processEvent({ programId, eventType, txSignature, slot, payload }) {
+async function processEvent({ programId, eventType, txSignature, slot, payload }) {
   if (!programId || !eventType || !txSignature) {
     throw new AppError(
       'programId, eventType, and txSignature are required',
@@ -183,8 +177,10 @@ export async function processEvent({ programId, eventType, txSignature, slot, pa
       return { handled: false, reason: 'UNSUPPORTED_EVENT_TYPE' };
   }
 }
-
-export const programEventProcessorService = {
+const programEventProcessorService = {
   processEvent,
   EVENT_TYPES,
 };
+module.exports.programEventProcessorService = programEventProcessorService;
+
+module.exports.processEvent = processEvent;

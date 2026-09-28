@@ -5,11 +5,9 @@
  *
  * @module signalforge/server/modules/auth/strategies/jwt
  */
-
-import { accessTokenService } from '../tokens/access-token.service.js';
-import { InvalidTokenError, TokenExpiredError } from '../auth.errors.js';
-
-export class JwtStrategy {
+const { accessTokenService } = require('../tokens/access-token.service.js');
+const { InvalidTokenError, TokenExpiredError } = require('../auth.errors.js');
+class JwtStrategy {
   constructor(repository) {
     this.repository = repository;
   }
@@ -39,5 +37,5 @@ export class JwtStrategy {
     return { user, payload };
   }
 }
-
-export default JwtStrategy;
+module.exports = JwtStrategy;
+module.exports.JwtStrategy = JwtStrategy;

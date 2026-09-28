@@ -8,20 +8,18 @@
  *
  * @module server/modules/ib/links/ib-link.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import * as repository from './ib-link.repository';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const repository = require('./ib-link.repository');
 
 function generateLinkCode() {
   return crypto.randomBytes(8).toString('hex');
 }
-
-export async function createLink({ userId, brokerId, label, destination }) {
+async function createLink({ userId, brokerId, label, destination }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -64,8 +62,7 @@ export async function createLink({ userId, brokerId, label, destination }) {
     createdAt: record.created_at,
   };
 }
-
-export async function listLinks({ userId }) {
+async function listLinks({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -85,8 +82,7 @@ export async function listLinks({ userId }) {
     updatedAt: row.updated_at,
   }));
 }
-
-export async function deactivateLink({ userId, linkId }) {
+async function deactivateLink({ userId, linkId }) {
   if (!userId || !linkId) {
     throw new AppError('userId and linkId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -103,8 +99,7 @@ export async function deactivateLink({ userId, linkId }) {
 
   return { deactivated: true };
 }
-
-export async function recordClick({ code }) {
+async function recordClick({ code }) {
   if (!code) {
     throw new AppError('code is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -123,8 +118,7 @@ export async function recordClick({ code }) {
 
   return { recorded: true, linkId: link.id };
 }
-
-export async function recordConversion({ code }) {
+async function recordConversion({ code }) {
   if (!code) {
     throw new AppError('code is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -145,8 +139,7 @@ export async function recordConversion({ code }) {
 
   return { recorded: true, linkId: link.id };
 }
-
-export async function resolveByCode({ code }) {
+async function resolveByCode({ code }) {
   if (!code) {
     throw new AppError('code is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -167,24 +160,21 @@ export async function resolveByCode({ code }) {
     active: link.active,
   };
 }
-
-export async function listActiveLinksForUser({ userId }) {
+async function listActiveLinksForUser({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
   return repository.listActiveByUser({ userId });
 }
-
-export async function countLinks({ userId }) {
+async function countLinks({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
   return repository.countByUser({ userId });
 }
-
-export const ibLinkService = {
+const ibLinkService = {
   createLink,
   listLinks,
   deactivateLink,
@@ -194,3 +184,20 @@ export const ibLinkService = {
   listActiveLinksForUser,
   countLinks,
 };
+module.exports.ibLinkService = ibLinkService;
+
+module.exports.createLink = createLink;
+
+module.exports.listLinks = listLinks;
+
+module.exports.deactivateLink = deactivateLink;
+
+module.exports.recordClick = recordClick;
+
+module.exports.recordConversion = recordConversion;
+
+module.exports.resolveByCode = resolveByCode;
+
+module.exports.listActiveLinksForUser = listActiveLinksForUser;
+
+module.exports.countLinks = countLinks;

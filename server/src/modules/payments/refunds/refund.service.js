@@ -3,31 +3,13 @@
  *
  * @module signalforge/server/modules/payments/refunds/service
  */
-
-import { RefundRepository } from './repository.js';
-import { PaymentRepository } from '../payment.repository.js';
-import { PaymentProviderFactory } from '../providers/provider.factory.js';
-import {
-  PAYMENT_STATUSES,
-  REFUND_STATUSES,
-  DEFAULT_REFUND_WINDOW_DAYS,
-} from '../payment.constants.js';
-import {
-  PaymentNotFoundError,
-  RefundNotFoundError,
-  RefundWindowExpiredError,
-  InsufficientRefundableAmountError,
-  RefundFailedError,
-} from '../payment.errors.js';
-import {
-  emitRefundInitiated,
-  emitRefundCompleted,
-  emitRefundFailed,
-  emitPaymentRefunded,
-  emitPaymentPartiallyRefunded,
-} from '../payment.events.js';
-
-export class RefundService {
+const { RefundRepository } = require('./repository.js');
+const { PaymentRepository } = require('../payment.repository.js');
+const { PaymentProviderFactory } = require('../providers/provider.factory.js');
+const { PAYMENT_STATUSES, REFUND_STATUSES, DEFAULT_REFUND_WINDOW_DAYS } = require('../payment.constants.js');
+const { PaymentNotFoundError, RefundNotFoundError, RefundWindowExpiredError, InsufficientRefundableAmountError, RefundFailedError } = require('../payment.errors.js');
+const { emitRefundInitiated, emitRefundCompleted, emitRefundFailed, emitPaymentRefunded, emitPaymentPartiallyRefunded } = require('../payment.events.js');
+class RefundService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new RefundRepository();
     this.paymentRepository = dependencies.paymentRepository || new PaymentRepository();
@@ -164,5 +146,5 @@ export class RefundService {
     };
   }
 }
-
-export default RefundService;
+module.exports = RefundService;
+module.exports.RefundService = RefundService;

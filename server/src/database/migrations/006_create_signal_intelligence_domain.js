@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/006_create_signal_intelligence_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS signals (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -196,8 +195,7 @@ export async function up(client) {
       ON provider_dna_feedback (provider_id, created_at DESC);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS provider_dna_feedback CASCADE`);
   await client.query(`DROP TABLE IF EXISTS provider_dna_rules CASCADE`);
   await client.query(`DROP TABLE IF EXISTS provider_dna CASCADE`);
@@ -208,3 +206,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS signal_parses CASCADE`);
   await client.query(`DROP TABLE IF EXISTS signals CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

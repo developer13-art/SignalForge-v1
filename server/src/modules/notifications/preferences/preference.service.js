@@ -7,13 +7,12 @@
  *
  * @module server/modules/notifications/preferences/preference.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { DEFAULT_ENABLED_CHANNELS } from '@signalforge/shared/constants/notification-channels';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { DEFAULT_ENABLED_CHANNELS } = require('@signalforge/shared/constants/notification-channels');
 
 const DEFAULT_PREFERENCES = Object.freeze({
   channels: [...DEFAULT_ENABLED_CHANNELS],
@@ -22,8 +21,7 @@ const DEFAULT_PREFERENCES = Object.freeze({
   quietHoursEnd: null,
   timezone: 'UTC',
 });
-
-export async function getPreferences({ userId }) {
+async function getPreferences({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -52,8 +50,7 @@ export async function getPreferences({ userId }) {
     timezone: row.timezone || 'UTC',
   };
 }
-
-export async function updatePreferences({ userId, payload }) {
+async function updatePreferences({ userId, payload }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -98,8 +95,7 @@ export async function updatePreferences({ userId, payload }) {
     timezone,
   };
 }
-
-export async function resetPreferences({ userId }) {
+async function resetPreferences({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -108,10 +104,16 @@ export async function resetPreferences({ userId }) {
 
   return { ...DEFAULT_PREFERENCES };
 }
-
-export const preferenceService = {
+const preferenceService = {
   getPreferences,
   updatePreferences,
   resetPreferences,
   DEFAULT_PREFERENCES,
 };
+module.exports.preferenceService = preferenceService;
+
+module.exports.getPreferences = getPreferences;
+
+module.exports.updatePreferences = updatePreferences;
+
+module.exports.resetPreferences = resetPreferences;

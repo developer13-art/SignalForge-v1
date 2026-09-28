@@ -3,15 +3,13 @@
  *
  * @module server/modules/admin/withdrawals/admin-withdrawal.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-withdrawal.repository';
-import { adminService } from '../admin.service';
-
-export async function listWithdrawals({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-withdrawal.repository');
+const { adminService } = require('../admin.service');
+async function listWithdrawals({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listWithdrawals({
@@ -36,8 +34,7 @@ export async function listWithdrawals({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getWithdrawalDetails({ withdrawalId }) {
+async function getWithdrawalDetails({ withdrawalId }) {
   if (!withdrawalId) {
     throw new AppError('withdrawalId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -50,8 +47,7 @@ export async function getWithdrawalDetails({ withdrawalId }) {
 
   return withdrawal;
 }
-
-export async function approveWithdrawal({ withdrawalId, adminId }) {
+async function approveWithdrawal({ withdrawalId, adminId }) {
   if (!withdrawalId || !adminId) {
     throw new AppError('withdrawalId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -84,8 +80,7 @@ export async function approveWithdrawal({ withdrawalId, adminId }) {
 
   return { approved: true };
 }
-
-export async function rejectWithdrawal({ withdrawalId, adminId, reason }) {
+async function rejectWithdrawal({ withdrawalId, adminId, reason }) {
   if (!withdrawalId || !adminId) {
     throw new AppError('withdrawalId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -115,8 +110,7 @@ export async function rejectWithdrawal({ withdrawalId, adminId, reason }) {
 
   return { rejected: true };
 }
-
-export async function markCompleted({ withdrawalId, adminId }) {
+async function markCompleted({ withdrawalId, adminId }) {
   if (!withdrawalId || !adminId) {
     throw new AppError('withdrawalId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -139,8 +133,7 @@ export async function markCompleted({ withdrawalId, adminId }) {
 
   return { completed: true };
 }
-
-export async function getStatusBreakdown() {
+async function getStatusBreakdown() {
   const rows = await repository.countByStatus();
 
   const breakdown = {};
@@ -156,8 +149,7 @@ export async function getStatusBreakdown() {
 
   return { breakdown, totalAmount };
 }
-
-export const adminWithdrawalService = {
+const adminWithdrawalService = {
   listWithdrawals,
   getWithdrawalDetails,
   approveWithdrawal,
@@ -165,3 +157,16 @@ export const adminWithdrawalService = {
   markCompleted,
   getStatusBreakdown,
 };
+module.exports.adminWithdrawalService = adminWithdrawalService;
+
+module.exports.listWithdrawals = listWithdrawals;
+
+module.exports.getWithdrawalDetails = getWithdrawalDetails;
+
+module.exports.approveWithdrawal = approveWithdrawal;
+
+module.exports.rejectWithdrawal = rejectWithdrawal;
+
+module.exports.markCompleted = markCompleted;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

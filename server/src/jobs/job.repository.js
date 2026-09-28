@@ -7,11 +7,9 @@
  *
  * @module server/jobs/job.repository
  */
-
-import { db } from '../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertJob({
+const { db } = require('../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertJob({
   jobType,
   payload,
   status = 'PENDING',
@@ -35,16 +33,14 @@ export async function insertJob({
   );
   return rows[0];
 }
-
-export async function findById({ jobId }) {
+async function findById({ jobId }) {
   const { rows } = await db.query(
     `SELECT * FROM jobs WHERE id = $1 LIMIT 1`,
     [jobId],
   );
   return rows[0] || null;
 }
-
-export async function lockNextJob({ workerId }) {
+async function lockNextJob({ workerId }) {
   const { rows } = await db.query(
     `UPDATE jobs
         SET status = 'RUNNING',
@@ -67,8 +63,7 @@ export async function lockNextJob({ workerId }) {
   );
   return rows[0] || null;
 }
-
-export async function completeJob({ jobId }) {
+async function completeJob({ jobId }) {
   const { rowCount } = await db.query(
     `UPDATE jobs
         SET status = 'COMPLETED',
@@ -82,8 +77,7 @@ export async function completeJob({ jobId }) {
   );
   return rowCount > 0;
 }
-
-export async function failJob({ jobId, error, retry = true }) {
+async function failJob({ jobId, error, retry = true }) {
   const { rows } = await db.query(
     `SELECT attempts, max_attempts FROM jobs WHERE id = $1 LIMIT 1`,
     [jobId],
@@ -128,8 +122,7 @@ export async function failJob({ jobId, error, retry = true }) {
 
   return { updated: true, deadLetter: true };
 }
-
-export async function cancelJob({ jobId }) {
+async function cancelJob({ jobId }) {
   const { rowCount } = await db.query(
     `UPDATE jobs
         SET status = 'CANCELLED',
@@ -141,8 +134,7 @@ export async function cancelJob({ jobId }) {
   );
   return rowCount > 0;
 }
-
-export async function listJobs({ filters = {}, pagination = {} }) {
+async function listJobs({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -189,15 +181,13 @@ export async function listJobs({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function countByStatus() {
+async function countByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count FROM jobs GROUP BY status`,
   );
   return rows;
 }
-
-export async function countByJobType({ since }) {
+async function countByJobType({ since }) {
   const params = [];
   let where = '';
 
@@ -215,8 +205,7 @@ export async function countByJobType({ since }) {
   );
   return rows;
 }
-
-export async function purgeOldJobs({ olderThanHours = 168 }) {
+async function purgeOldJobs({ olderThanHours = 168 }) {
   const { rowCount } = await db.query(
     `DELETE FROM jobs
       WHERE status IN ('COMPLETED', 'DEAD_LETTER', 'CANCELLED')
@@ -225,8 +214,7 @@ export async function purgeOldJobs({ olderThanHours = 168 }) {
   );
   return rowCount;
 }
-
-export async function recoverStuckJobs({ stuckMinutes = 10 }) {
+async function recoverStuckJobs({ stuckMinutes = 10 }) {
   const { rowCount } = await db.query(
     `UPDATE jobs
         SET status = 'RETRYING',
@@ -239,8 +227,7 @@ export async function recoverStuckJobs({ stuckMinutes = 10 }) {
   );
   return rowCount;
 }
-
-export const jobRepository = {
+const jobRepository = {
   insertJob,
   findById,
   lockNextJob,
@@ -253,3 +240,26 @@ export const jobRepository = {
   purgeOldJobs,
   recoverStuckJobs,
 };
+module.exports.jobRepository = jobRepository;
+
+module.exports.insertJob = insertJob;
+
+module.exports.findById = findById;
+
+module.exports.lockNextJob = lockNextJob;
+
+module.exports.completeJob = completeJob;
+
+module.exports.failJob = failJob;
+
+module.exports.cancelJob = cancelJob;
+
+module.exports.listJobs = listJobs;
+
+module.exports.countByStatus = countByStatus;
+
+module.exports.countByJobType = countByJobType;
+
+module.exports.purgeOldJobs = purgeOldJobs;
+
+module.exports.recoverStuckJobs = recoverStuckJobs;

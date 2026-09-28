@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/performance/metrics/repository
  */
-
-import { PerformanceRepository } from '../performance.repository.js';
-
-export class MetricRepository {
+const { PerformanceRepository } = require('../performance.repository.js');
+class MetricRepository {
   constructor(db = null) {
     this.performanceRepository = new PerformanceRepository(db);
   }
@@ -19,5 +17,5 @@ export class MetricRepository {
     return this.performanceRepository.listMetrics(periodId);
   }
 }
-
-export default MetricRepository;
+module.exports = MetricRepository;
+module.exports.MetricRepository = MetricRepository;

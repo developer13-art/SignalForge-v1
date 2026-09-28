@@ -6,27 +6,25 @@
  *
  * @module server/modules/executive/executive.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import * as repository from './executive.repository';
-import { subscriptionRevenueService } from './revenue/subscription-revenue.service';
-import { marketplaceRevenueService } from './revenue/marketplace-revenue.service';
-import { providerRevenueService } from './revenue/provider-revenue.service';
-import { affiliateRevenueService } from './revenue/affiliate-revenue.service';
-import { ibRevenueService } from './revenue/ib-revenue.service';
-import { referralCostService } from './revenue/referral-cost.service';
-import { paymentFeesService } from './revenue/payment-fees.service';
-import { netRevenueService } from './revenue/net-revenue.service';
-import { userGrowthService } from './growth/user-growth.service';
-import { providerGrowthService } from './growth/provider-growth.service';
-import { traderGrowthService } from './growth/trader-growth.service';
-import { volumeGrowthService } from './growth/volume-growth.service';
-import { retentionService } from './analytics/retention.service';
-import { conversionService } from './analytics/conversion.service';
-import { financialReportService } from './analytics/financial-report.service';
-
-export async function getExecutiveDashboard({ from, to }) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const repository = require('./executive.repository');
+const { subscriptionRevenueService } = require('./revenue/subscription-revenue.service');
+const { marketplaceRevenueService } = require('./revenue/marketplace-revenue.service');
+const { providerRevenueService } = require('./revenue/provider-revenue.service');
+const { affiliateRevenueService } = require('./revenue/affiliate-revenue.service');
+const { ibRevenueService } = require('./revenue/ib-revenue.service');
+const { referralCostService } = require('./revenue/referral-cost.service');
+const { paymentFeesService } = require('./revenue/payment-fees.service');
+const { netRevenueService } = require('./revenue/net-revenue.service');
+const { userGrowthService } = require('./growth/user-growth.service');
+const { providerGrowthService } = require('./growth/provider-growth.service');
+const { traderGrowthService } = require('./growth/trader-growth.service');
+const { volumeGrowthService } = require('./growth/volume-growth.service');
+const { retentionService } = require('./analytics/retention.service');
+const { conversionService } = require('./analytics/conversion.service');
+const { financialReportService } = require('./analytics/financial-report.service');
+async function getExecutiveDashboard({ from, to }) {
   const totals = await repository.getPlatformTotals({ from, to });
 
   const [
@@ -64,8 +62,7 @@ export async function getExecutiveDashboard({ from, to }) {
     },
   };
 }
-
-export async function getRevenueBreakdown({ from, to }) {
+async function getRevenueBreakdown({ from, to }) {
   const [subscriptionRevenue, marketplaceRevenue, providerRevenue, affiliateRevenue, ibRevenueAmount, referralCost, paymentFees, netRevenue] =
     await Promise.all([
       subscriptionRevenueService.getRevenue({ from, to }),
@@ -89,8 +86,7 @@ export async function getRevenueBreakdown({ from, to }) {
     net: netRevenue,
   };
 }
-
-export async function getGrowthBreakdown({ from, to, granularity }) {
+async function getGrowthBreakdown({ from, to, granularity }) {
   const [users, providers, traders, volume] = await Promise.all([
     userGrowthService.getGrowth({ from, to, granularity }),
     providerGrowthService.getGrowth({ from, to, granularity }),
@@ -100,20 +96,16 @@ export async function getGrowthBreakdown({ from, to, granularity }) {
 
   return { users, providers, traders, volume };
 }
-
-export async function getRetentionMetrics({ from, to }) {
+async function getRetentionMetrics({ from, to }) {
   return retentionService.getRetention({ from, to });
 }
-
-export async function getConversionMetrics({ from, to }) {
+async function getConversionMetrics({ from, to }) {
   return conversionService.getConversion({ from, to });
 }
-
-export async function getFinancialReport({ from, to, granularity }) {
+async function getFinancialReport({ from, to, granularity }) {
   return financialReportService.generateReport({ from, to, granularity });
 }
-
-export const executiveService = {
+const executiveService = {
   getExecutiveDashboard,
   getRevenueBreakdown,
   getGrowthBreakdown,
@@ -121,3 +113,16 @@ export const executiveService = {
   getConversionMetrics,
   getFinancialReport,
 };
+module.exports.executiveService = executiveService;
+
+module.exports.getExecutiveDashboard = getExecutiveDashboard;
+
+module.exports.getRevenueBreakdown = getRevenueBreakdown;
+
+module.exports.getGrowthBreakdown = getGrowthBreakdown;
+
+module.exports.getRetentionMetrics = getRetentionMetrics;
+
+module.exports.getConversionMetrics = getConversionMetrics;
+
+module.exports.getFinancialReport = getFinancialReport;

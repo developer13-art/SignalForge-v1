@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trader-intelligence/timeline/repository
  */
-
-import { IntelligenceRepository } from '../intelligence.repository.js';
-
-export class BehaviorTimelineRepository {
+const { IntelligenceRepository } = require('../intelligence.repository.js');
+class BehaviorTimelineRepository {
   constructor(db = null) {
     this.intelligenceRepository = new IntelligenceRepository(db);
   }
@@ -23,5 +21,5 @@ export class BehaviorTimelineRepository {
     return this.intelligenceRepository.deleteTimeline(userId);
   }
 }
-
-export default BehaviorTimelineRepository;
+module.exports = BehaviorTimelineRepository;
+module.exports.BehaviorTimelineRepository = BehaviorTimelineRepository;

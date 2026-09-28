@@ -3,14 +3,8 @@
  *
  * @module signalforge/server/modules/validation/validators/expiry
  */
-
-import {
-  VALIDATION_RESULTS,
-  VALIDATION_CHECK_NAMES,
-  DEFAULT_MAX_SIGNAL_AGE_MINUTES,
-} from '../validation.constants.js';
-
-export class ExpiryCheck {
+const { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES, DEFAULT_MAX_SIGNAL_AGE_MINUTES } = require('../validation.constants.js');
+class ExpiryCheck {
   constructor() {
     this.name = VALIDATION_CHECK_NAMES.EXPIRY;
   }
@@ -67,5 +61,5 @@ export class ExpiryCheck {
     return { name: this.name, result: VALIDATION_RESULTS.PASSED };
   }
 }
-
-export default ExpiryCheck;
+module.exports = ExpiryCheck;
+module.exports.ExpiryCheck = ExpiryCheck;

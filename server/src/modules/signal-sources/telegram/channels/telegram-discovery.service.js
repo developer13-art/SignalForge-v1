@@ -7,18 +7,16 @@
  *
  * @module server/modules/signal-sources/telegram/channels/telegram-discovery.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { telegramChannelService } from './telegram-channel.service';
-import { telegramSessionService } from '../session/telegram-session.service';
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { telegramChannelService } = require('./telegram-channel.service');
+const { telegramSessionService } = require('../session/telegram-session.service');
 
 const DISCOVERY_MIN_INTERVAL_MS = 5 * 60 * 1000;
 
 const lastDiscoveryAt = new Map();
-
-export async function refreshDiscoveredChannels({ userId, force = false }) {
+async function refreshDiscoveredChannels({ userId, force = false }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -50,8 +48,7 @@ export async function refreshDiscoveredChannels({ userId, force = false }) {
     );
   }
 }
-
-export async function refreshAllUsers() {
+async function refreshAllUsers() {
   const sessions = await telegramSessionService.listActiveSessions();
 
   const results = [];
@@ -68,17 +65,21 @@ export async function refreshAllUsers() {
 
   return results;
 }
-
-export function resetDiscoveryRateLimit({ userId }) {
+function resetDiscoveryRateLimit({ userId }) {
   if (userId) {
     lastDiscoveryAt.delete(userId);
   } else {
     lastDiscoveryAt.clear();
   }
 }
-
-export const telegramDiscoveryService = {
+const telegramDiscoveryService = {
   refreshDiscoveredChannels,
   refreshAllUsers,
   resetDiscoveryRateLimit,
 };
+module.exports.telegramDiscoveryService = telegramDiscoveryService;
+module.exports.resetDiscoveryRateLimit = resetDiscoveryRateLimit;
+
+module.exports.refreshDiscoveredChannels = refreshDiscoveredChannels;
+
+module.exports.refreshAllUsers = refreshAllUsers;

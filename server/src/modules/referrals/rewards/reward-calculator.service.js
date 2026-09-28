@@ -3,13 +3,8 @@
  *
  * @module signalforge/server/modules/referrals/rewards/calculator
  */
-
-import {
-  DEFAULT_REFERRAL_REWARD_RATE,
-  DEFAULT_REFERRAL_MAX_REWARD_PER_REFERRED,
-} from '../referral.constants.js';
-
-export class RewardCalculatorService {
+const { DEFAULT_REFERRAL_REWARD_RATE, DEFAULT_REFERRAL_MAX_REWARD_PER_REFERRED } = require('../referral.constants.js');
+class RewardCalculatorService {
   calculate({
     eligibleNetProfit,
     rewardRate = DEFAULT_REFERRAL_REWARD_RATE,
@@ -55,5 +50,5 @@ export class RewardCalculatorService {
     };
   }
 }
-
-export default RewardCalculatorService;
+module.exports = RewardCalculatorService;
+module.exports.RewardCalculatorService = RewardCalculatorService;

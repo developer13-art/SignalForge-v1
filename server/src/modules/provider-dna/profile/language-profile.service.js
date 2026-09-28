@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/provider-dna/profile/language-profile
  */
-
-import { RuleRepository } from '../rules/rule.repository.js';
-import { DNA_RULE_TYPES } from '../dna.constants.js';
-
-export class LanguageProfileService {
+const { RuleRepository } = require('../rules/rule.repository.js');
+const { DNA_RULE_TYPES } = require('../dna.constants.js');
+class LanguageProfileService {
   constructor(repository = null) {
     this.repository = repository || new RuleRepository();
   }
@@ -43,5 +41,5 @@ export class LanguageProfileService {
     return primary;
   }
 }
-
-export default LanguageProfileService;
+module.exports = LanguageProfileService;
+module.exports.LanguageProfileService = LanguageProfileService;

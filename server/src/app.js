@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * SignalForge AI - Express Application
  *
@@ -9,30 +11,30 @@
  * @module signalforge/server/app
  */
 
-import express from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import compression from 'compression';
-import cookieParser from 'cookie-parser';
+const express = require('express');
 
-import { logger } from './lib/logger.js';
-import { requestIdMiddleware } from './middleware/request-id.middleware.js';
-import { requestLoggerMiddleware } from './middleware/request-logger.middleware.js';
-import { responseTimeMiddleware } from './middleware/response-time.middleware.js';
-import { corsMiddleware } from './middleware/cors.middleware.js';
-import { helmetMiddleware } from './middleware/helmet.middleware.js';
-import { compressionMiddleware } from './middleware/compression.middleware.js';
-import { rateLimitMiddleware } from './middleware/rate-limit.middleware.js';
-import { bodyParserMiddleware } from './middleware/body-parser.middleware.js';
-import { cookieParserMiddleware } from './middleware/cookie-parser.middleware.js';
-import { sessionMiddleware } from './middleware/session.middleware.js';
-import { tenantResolverMiddleware } from './middleware/tenant-resolver.middleware.js';
-import { whiteLabelResolverMiddleware } from './middleware/white-label-resolver.middleware.js';
-import { registerRoutes } from './bootstrap/registerRoutes.js';
-import { notFoundMiddleware } from './middleware/not-found.middleware.js';
-import { errorHandlerMiddleware } from './middleware/error-handler.middleware.js';
+const { logger } = require('./lib/logger.js');
+const { requestIdMiddleware } = require('./middleware/request-id.middleware.js');
+const { requestLoggerMiddleware } = require('./middleware/request-logger.middleware.js');
+const { responseTimeMiddleware } = require('./middleware/response-time.middleware.js');
+const corsMiddleware = require('./middleware/cors.middleware.js');
+const helmetMiddleware = require('./middleware/helmet.middleware.js');
+const { compressionMiddleware } = require('./middleware/compression.middleware.js');
+const { rateLimitMiddleware } = require('./middleware/rate-limit.middleware.js');
+const { bodyParserMiddleware } = require('./middleware/body-parser.middleware.js');
+const { cookieParserMiddleware } = require('./middleware/cookie-parser.middleware.js');
+const { sessionMiddleware } = require('./middleware/session.middleware.js');
+const {
+  tenantResolverMiddleware,
+} = require('./middleware/tenant-resolver.middleware.js');
+const {
+  whiteLabelResolverMiddleware,
+} = require('./middleware/white-label-resolver.middleware.js');
+const registerRoutes = require('./bootstrap/registerRoutes.js');
+const { notFoundMiddleware } = require('./middleware/not-found.middleware.js');
+const { errorHandlerMiddleware } = require('./middleware/error-handler.middleware.js');
 
-export function createApp() {
+function createApp() {
   const app = express();
 
   app.disable('x-powered-by');
@@ -66,3 +68,7 @@ export function createApp() {
 
   return app;
 }
+
+module.exports = {
+  createApp,
+};

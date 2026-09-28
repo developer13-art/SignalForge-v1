@@ -3,16 +3,14 @@
  *
  * @module signalforge/server/modules/withdrawals/methods/bank-transfer
  */
-
-import { WithdrawalMethodInterface } from './withdrawal-method.interface.js';
-import { WITHDRAWAL_METHOD_TYPES } from '../withdrawal.constants.js';
-import { WithdrawalProcessingError } from '../withdrawal.errors.js';
+const { WithdrawalMethodInterface } = require('./withdrawal-method.interface.js');
+const { WITHDRAWAL_METHOD_TYPES } = require('../withdrawal.constants.js');
+const { WithdrawalProcessingError } = require('../withdrawal.errors.js');
 
 const FEE_PERCENT = 0.5;
 const MIN_FEE = 0.5;
 const MAX_FEE = 25;
-
-export class BankTransferMethod extends WithdrawalMethodInterface {
+class BankTransferMethod extends WithdrawalMethodInterface {
   constructor() {
     super('BANK_TRANSFER');
   }
@@ -78,5 +76,5 @@ export class BankTransferMethod extends WithdrawalMethodInterface {
     };
   }
 }
-
-export default BankTransferMethod;
+module.exports = BankTransferMethod;
+module.exports.BankTransferMethod = BankTransferMethod;

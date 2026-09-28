@@ -3,21 +3,19 @@
  *
  * @module signalforge/server/modules/execution/service
  */
-
-import { ExecutionRepository } from './execution.repository.js';
-import { ExecutionRequestService } from './request/execution-request.service.js';
-import { ExecutionRequestRepository } from './request/execution-request.repository.js';
-import { ExecutionRequestValidatorService } from './request/execution-request-validator.service.js';
-import { ExecutionLogService } from './logs/execution-log.service.js';
-import { ExecutionLogRepository } from './logs/execution-log.repository.js';
-import { RetryService } from './retry/retry.service.js';
-import { DeadLetterService } from './retry/dead-letter.service.js';
-import { BackoffService } from './retry/backoff.service.js';
-import { FailureNotificationService } from './retry/failure-notification.service.js';
-import { GatewayFactory } from './gateway/gateway.factory.js';
-import { GATEWAY_TYPES } from './execution.constants.js';
-
-export class ExecutionService {
+const { ExecutionRepository } = require('./execution.repository.js');
+const { ExecutionRequestService } = require('./request/execution-request.service.js');
+const { ExecutionRequestRepository } = require('./request/execution-request.repository.js');
+const { ExecutionRequestValidatorService } = require('./request/execution-request-validator.service.js');
+const { ExecutionLogService } = require('./logs/execution-log.service.js');
+const { ExecutionLogRepository } = require('./logs/execution-log.repository.js');
+const { RetryService } = require('./retry/retry.service.js');
+const { DeadLetterService } = require('./retry/dead-letter.service.js');
+const { BackoffService } = require('./retry/backoff.service.js');
+const { FailureNotificationService } = require('./retry/failure-notification.service.js');
+const { GatewayFactory } = require('./gateway/gateway.factory.js');
+const { GATEWAY_TYPES } = require('./execution.constants.js');
+class ExecutionService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ExecutionRepository();
     this.requestRepository =
@@ -111,5 +109,5 @@ export class ExecutionService {
     return { gateway: gatewayType, available };
   }
 }
-
-export default ExecutionService;
+module.exports = ExecutionService;
+module.exports.ExecutionService = ExecutionService;

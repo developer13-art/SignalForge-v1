@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/automation/rule-types/profit-lock
  */
-
-import { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } from '../automation.constants.js';
-
-export class ProfitLockRule {
+const { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } = require('../automation.constants.js');
+class ProfitLockRule {
   static supports(condition) {
     return [
       AUTOMATION_CONDITION_TYPES.PROFIT_GREATER_THAN,
@@ -18,5 +16,5 @@ export class ProfitLockRule {
     return [AUTOMATION_ACTION_TYPES.LOCK_PROFIT];
   }
 }
-
-export default ProfitLockRule;
+module.exports = ProfitLockRule;
+module.exports.ProfitLockRule = ProfitLockRule;

@@ -6,15 +6,13 @@
  *
  * @module server/modules/white-label/themes/theme.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { DEFAULT_THEME } from '../white-label.constants';
-
-export async function initializeTheme({ projectId }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { DEFAULT_THEME } = require('../white-label.constants');
+async function initializeTheme({ projectId }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -37,8 +35,7 @@ export async function initializeTheme({ projectId }) {
 
   logger.info({ projectId }, 'White label theme initialized');
 }
-
-export async function getTheme({ projectId }) {
+async function getTheme({ projectId }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -65,8 +62,7 @@ export async function getTheme({ projectId }) {
     customCss: row.custom_css,
   };
 }
-
-export async function updateTheme({ projectId, payload }) {
+async function updateTheme({ projectId, payload }) {
   if (!projectId) {
     throw new AppError('projectId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -107,17 +103,24 @@ export async function updateTheme({ projectId, payload }) {
 
   return getTheme({ projectId });
 }
-
-export async function deleteTheme({ projectId }) {
+async function deleteTheme({ projectId }) {
   if (!projectId) {
     return;
   }
   await db.query(`DELETE FROM white_label_themes WHERE project_id = $1`, [projectId]);
 }
-
-export const themeService = {
+const themeService = {
   initializeTheme,
   getTheme,
   updateTheme,
   deleteTheme,
 };
+module.exports.themeService = themeService;
+
+module.exports.initializeTheme = initializeTheme;
+
+module.exports.getTheme = getTheme;
+
+module.exports.updateTheme = updateTheme;
+
+module.exports.deleteTheme = deleteTheme;

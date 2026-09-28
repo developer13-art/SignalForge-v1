@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/copy-trading/scaling/percentage
  */
-
-import { DEFAULT_MIN_LOT_SIZE, DEFAULT_MAX_LOT_SIZE, DEFAULT_LOT_STEP } from '../copy-trading.constants.js';
-import { ScalingCalculationError } from '../copy-trading.errors.js';
-
-export class PercentageScalingService {
+const { DEFAULT_MIN_LOT_SIZE, DEFAULT_MAX_LOT_SIZE, DEFAULT_LOT_STEP } = require('../copy-trading.constants.js');
+const { ScalingCalculationError } = require('../copy-trading.errors.js');
+class PercentageScalingService {
   calculate(subscription, providerTrade, options = {}) {
     const percentage = Number(subscription.percentage);
     if (!Number.isFinite(percentage) || percentage <= 0) {
@@ -42,5 +40,5 @@ export class PercentageScalingService {
     };
   }
 }
-
-export default PercentageScalingService;
+module.exports = PercentageScalingService;
+module.exports.PercentageScalingService = PercentageScalingService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-matching/management-instructions/close-some
  */
-
-import { MANAGEMENT_INSTRUCTION_TYPES } from '../matching.constants.js';
-
-export class CloseSomeHandler {
+const { MANAGEMENT_INSTRUCTION_TYPES } = require('../matching.constants.js');
+class CloseSomeHandler {
   constructor() {
     this.instructionType = MANAGEMENT_INSTRUCTION_TYPES.CLOSE_SOME;
   }
@@ -38,5 +36,5 @@ export class CloseSomeHandler {
     };
   }
 }
-
-export default CloseSomeHandler;
+module.exports = CloseSomeHandler;
+module.exports.CloseSomeHandler = CloseSomeHandler;

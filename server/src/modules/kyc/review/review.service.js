@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/kyc/review/service
  */
-
-import { ApproveService } from './approve.service.js';
-import { RejectService } from './reject.service.js';
-import { ResubmitService } from './resubmit.service.js';
-import { ReviewRepository } from './review.repository.js';
-
-export class ReviewService {
+const { ApproveService } = require('./approve.service.js');
+const { RejectService } = require('./reject.service.js');
+const { ResubmitService } = require('./resubmit.service.js');
+const { ReviewRepository } = require('./review.repository.js');
+class ReviewService {
   constructor(repository = null) {
     this.repository = repository || new ReviewRepository();
     this.approveService = new ApproveService(this.repository);
@@ -33,5 +31,5 @@ export class ReviewService {
     return this.repository.listAuditLogs(applicationId);
   }
 }
-
-export default ReviewService;
+module.exports = ReviewService;
+module.exports.ReviewService = ReviewService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/risk/news/news-calendar
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class NewsCalendarService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class NewsCalendarService {
   constructor() {
     this.logger = getLogger('news-calendar');
     this.events = [];
@@ -66,5 +64,5 @@ export class NewsCalendarService {
     });
   }
 }
-
-export default NewsCalendarService;
+module.exports = NewsCalendarService;
+module.exports.NewsCalendarService = NewsCalendarService;

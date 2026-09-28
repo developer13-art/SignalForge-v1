@@ -8,19 +8,18 @@
  *
  * @module server/modules/solana/payments/solana-payment.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import { SOLANA_TOKENS } from '../solana.constants';
-import { programConfigService } from '../config/program-config.service';
-import { networkService } from '../config/network.service';
-import { solanaPaymentRepository } from './solana-payment.repository';
-import { solPaymentService } from './sol-payment.service';
-import { splTokenPaymentService } from './spl-token-payment.service';
-import { emitPaymentConfirmed } from '../solana.events';
+const crypto = require('node:crypto');
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const { SOLANA_TOKENS } = require('../solana.constants');
+const { programConfigService } = require('../config/program-config.service');
+const { networkService } = require('../config/network.service');
+const { solanaPaymentRepository } = require('./solana-payment.repository');
+const { solPaymentService } = require('./sol-payment.service');
+const { splTokenPaymentService } = require('./spl-token-payment.service');
+const { emitPaymentConfirmed } = require('../solana.events');
 
 function mapPayment(row) {
   return {
@@ -57,8 +56,7 @@ function mapPayment(row) {
 function generateReference() {
   return `sf_${crypto.randomBytes(12).toString('base64url')}`;
 }
-
-export async function createPayment({
+async function createPayment({
   userId,
   subscriptionId,
   purpose,
@@ -149,8 +147,7 @@ function buildInstructions({ token, amount, recipientWallet, tokenMint, memo, re
     },
   ];
 }
-
-export async function attachSignature({ paymentId, txSignature, senderWallet }) {
+async function attachSignature({ paymentId, txSignature, senderWallet }) {
   if (!paymentId || !txSignature) {
     throw new AppError('paymentId and txSignature are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -185,8 +182,7 @@ export async function attachSignature({ paymentId, txSignature, senderWallet }) 
 
   return getPayment({ paymentId });
 }
-
-export async function getPayment({ paymentId }) {
+async function getPayment({ paymentId }) {
   if (!paymentId) {
     throw new AppError('paymentId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -199,8 +195,7 @@ export async function getPayment({ paymentId }) {
 
   return mapPayment(record);
 }
-
-export async function listPayments({ userId, filters = {}, pagination = {} }) {
+async function listPayments({ userId, filters = {}, pagination = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -218,8 +213,7 @@ export async function listPayments({ userId, filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function markConfirmed({
+async function markConfirmed({
   paymentId,
   txSignature,
   slot,
@@ -257,8 +251,7 @@ export async function markConfirmed({
 
   return { confirmed: true };
 }
-
-export async function markFailed({ paymentId, reason }) {
+async function markFailed({ paymentId, reason }) {
   if (!paymentId) {
     throw new AppError('paymentId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -271,8 +264,7 @@ export async function markFailed({ paymentId, reason }) {
 
   return { failed: updated };
 }
-
-export async function markExpired({ paymentId }) {
+async function markExpired({ paymentId }) {
   if (!paymentId) {
     throw new AppError('paymentId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -284,8 +276,7 @@ export async function markExpired({ paymentId }) {
 
   return { expired: updated };
 }
-
-export async function refundPayment({ paymentId, refundTxSignature, reason }) {
+async function refundPayment({ paymentId, refundTxSignature, reason }) {
   if (!paymentId) {
     throw new AppError('paymentId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -310,8 +301,7 @@ export async function refundPayment({ paymentId, refundTxSignature, reason }) {
 
   return { refunded };
 }
-
-export async function getStatusBreakdown() {
+async function getStatusBreakdown() {
   const rows = await solanaPaymentRepository.countByStatus();
 
   const breakdown = {};
@@ -327,8 +317,7 @@ export async function getStatusBreakdown() {
 
   return { breakdown, totalUsd };
 }
-
-export async function sweepExpiredPayments({ limit = 200 }) {
+async function sweepExpiredPayments({ limit = 200 }) {
   const expired = await solanaPaymentRepository.findExpired({ limit });
 
   const results = [];
@@ -340,8 +329,7 @@ export async function sweepExpiredPayments({ limit = 200 }) {
 
   return { processed: results.length, results };
 }
-
-export const solanaPaymentService = {
+const solanaPaymentService = {
   createPayment,
   attachSignature,
   getPayment,
@@ -353,3 +341,24 @@ export const solanaPaymentService = {
   getStatusBreakdown,
   sweepExpiredPayments,
 };
+module.exports.solanaPaymentService = solanaPaymentService;
+
+module.exports.createPayment = createPayment;
+
+module.exports.attachSignature = attachSignature;
+
+module.exports.getPayment = getPayment;
+
+module.exports.listPayments = listPayments;
+
+module.exports.markConfirmed = markConfirmed;
+
+module.exports.markFailed = markFailed;
+
+module.exports.markExpired = markExpired;
+
+module.exports.refundPayment = refundPayment;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;
+
+module.exports.sweepExpiredPayments = sweepExpiredPayments;

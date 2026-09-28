@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/validation/validators/completeness
  */
-
-import { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES } from '../validation.constants.js';
+const { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES } = require('../validation.constants.js');
 
 const REQUIRED_FIELDS = [
   'signalId',
@@ -18,8 +17,7 @@ const REQUIRED_FIELDS = [
   'confidence',
   'timestamp',
 ];
-
-export class CompletenessCheck {
+class CompletenessCheck {
   constructor() {
     this.name = VALIDATION_CHECK_NAMES.COMPLETENESS;
   }
@@ -60,5 +58,5 @@ export class CompletenessCheck {
     return { name: this.name, result: VALIDATION_RESULTS.PASSED };
   }
 }
-
-export default CompletenessCheck;
+module.exports = CompletenessCheck;
+module.exports.CompletenessCheck = CompletenessCheck;

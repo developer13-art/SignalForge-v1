@@ -6,11 +6,9 @@
  *
  * @module signalforge/server/modules/auth/strategies/refresh
  */
-
-import { refreshTokenService } from '../tokens/refresh-token.service.js';
-import { InvalidTokenError, SessionRevokedError, SessionNotFoundError } from '../auth.errors.js';
-
-export class RefreshStrategy {
+const { refreshTokenService } = require('../tokens/refresh-token.service.js');
+const { InvalidTokenError, SessionRevokedError, SessionNotFoundError } = require('../auth.errors.js');
+class RefreshStrategy {
   constructor(repository) {
     this.repository = repository;
   }
@@ -43,5 +41,5 @@ export class RefreshStrategy {
     return { user, session };
   }
 }
-
-export default RefreshStrategy;
+module.exports = RefreshStrategy;
+module.exports.RefreshStrategy = RefreshStrategy;

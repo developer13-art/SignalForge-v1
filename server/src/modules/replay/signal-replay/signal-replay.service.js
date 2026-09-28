@@ -7,11 +7,10 @@
  *
  * @module server/modules/replay/signal-replay/signal-replay.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { replayRepository } from '../replay.repository';
-import { timelineBuilderService } from './timeline-builder.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { replayRepository } = require('../replay.repository');
+const { timelineBuilderService } = require('./timeline-builder.service');
 
 function mapSignalEvent(row) {
   return {
@@ -87,8 +86,7 @@ function mapExecutionLog(row, tradeId) {
     },
   };
 }
-
-export async function buildSignalReplay({ signalId, userId, includeAi = true, includeRisk = true, includeExecution = true }) {
+async function buildSignalReplay({ signalId, userId, includeAi = true, includeRisk = true, includeExecution = true }) {
   if (!signalId) {
     throw new AppError('signalId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -151,7 +149,9 @@ export async function buildSignalReplay({ signalId, userId, includeAi = true, in
     relatedTradeIds: tradeIds,
   };
 }
-
-export const signalReplayService = {
+const signalReplayService = {
   buildSignalReplay,
 };
+module.exports.signalReplayService = signalReplayService;
+
+module.exports.buildSignalReplay = buildSignalReplay;

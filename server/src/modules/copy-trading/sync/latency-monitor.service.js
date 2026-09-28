@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/copy-trading/sync/latency-monitor
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { emitLatencyAlert } from '../copy-trading.events.js';
-import { DEFAULT_LATENCY_ALERT_MS } from '../copy-trading.constants.js';
-
-export class LatencyMonitorService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { emitLatencyAlert } = require('../copy-trading.events.js');
+const { DEFAULT_LATENCY_ALERT_MS } = require('../copy-trading.constants.js');
+class LatencyMonitorService {
   constructor(options = {}) {
     this.defaultThreshold = options.threshold || DEFAULT_LATENCY_ALERT_MS;
     this.logger = getLogger('copy-trading-latency');
@@ -54,5 +52,5 @@ export class LatencyMonitorService {
     this.records = [];
   }
 }
-
-export default LatencyMonitorService;
+module.exports = LatencyMonitorService;
+module.exports.LatencyMonitorService = LatencyMonitorService;

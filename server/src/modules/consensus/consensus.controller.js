@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/consensus/controller
  */
-
-import { ConsensusService } from './consensus.service.js';
-
-export class ConsensusController {
+const { ConsensusService } = require('./consensus.service.js');
+class ConsensusController {
   constructor(service = null) {
     this.service = service || new ConsensusService();
   }
@@ -69,5 +67,5 @@ export class ConsensusController {
     }
   };
 }
-
-export default ConsensusController;
+module.exports = ConsensusController;
+module.exports.ConsensusController = ConsensusController;

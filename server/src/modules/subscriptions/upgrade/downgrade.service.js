@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/subscriptions/upgrade/downgrade
  */
-
-import { SubscriptionRepository } from '../subscription.repository.js';
-import { PlanService } from '../plans/service.js';
-import { ActivationService } from '../lifecycle/activation.service.js';
-import { DowngradeFailedError } from '../subscription.errors.js';
-import { emitSubscriptionDowngraded } from '../subscription.events.js';
-
-export class DowngradeService {
+const { SubscriptionRepository } = require('../subscription.repository.js');
+const { PlanService } = require('../plans/service.js');
+const { ActivationService } = require('../lifecycle/activation.service.js');
+const { DowngradeFailedError } = require('../subscription.errors.js');
+const { emitSubscriptionDowngraded } = require('../subscription.events.js');
+class DowngradeService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new SubscriptionRepository();
     this.plans = dependencies.plans || new PlanService();
@@ -72,5 +70,5 @@ export class DowngradeService {
     };
   }
 }
-
-export default DowngradeService;
+module.exports = DowngradeService;
+module.exports.DowngradeService = DowngradeService;

@@ -3,30 +3,12 @@
  *
  * @module signalforge/server/modules/marketplace/listings/service
  */
-
-import { ListingRepository } from './repository.js';
-import { ProviderRepository } from '../../providers/provider.repository.js';
-import {
-  LISTING_STATUSES,
-  LISTING_VISIBILITY,
-} from '../marketplace.constants.js';
-import {
-  ListingNotFoundError,
-  ListingAlreadyExistsError,
-  ListingNotOwnedError,
-  ListingNotEditableError,
-} from '../marketplace.errors.js';
-import {
-  emitListingCreated,
-  emitListingUpdated,
-  emitListingDeleted,
-  emitListingPublished,
-  emitListingUnpublished,
-  emitListingFeatured,
-  emitListingUnfeatured,
-} from '../marketplace.events.js';
-
-export class ListingService {
+const { ListingRepository } = require('./repository.js');
+const { ProviderRepository } = require('../../providers/provider.repository.js');
+const { LISTING_STATUSES, LISTING_VISIBILITY } = require('../marketplace.constants.js');
+const { ListingNotFoundError, ListingAlreadyExistsError, ListingNotOwnedError, ListingNotEditableError } = require('../marketplace.errors.js');
+const { emitListingCreated, emitListingUpdated, emitListingDeleted, emitListingPublished, emitListingUnpublished, emitListingFeatured, emitListingUnfeatured } = require('../marketplace.events.js');
+class ListingService {
   constructor(repository = null, providerRepository = null) {
     this.repository = repository || new ListingRepository();
     this.providerRepository = providerRepository || new ProviderRepository();
@@ -298,5 +280,5 @@ export class ListingService {
     return input;
   }
 }
-
-export default ListingService;
+module.exports = ListingService;
+module.exports.ListingService = ListingService;

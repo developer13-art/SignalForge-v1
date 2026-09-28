@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/brokers/logs/service
  */
-
-import { ConnectionLogRepository } from './connection-log.repository.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class ConnectionLogService {
+const { ConnectionLogRepository } = require('./connection-log.repository.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class ConnectionLogService {
   constructor(repository = null) {
     this.repository = repository || new ConnectionLogRepository();
     this.logger = getLogger('broker-connection-log');
@@ -26,5 +24,5 @@ export class ConnectionLogService {
     return this.repository.list(accountId, pagination);
   }
 }
-
-export default ConnectionLogService;
+module.exports = ConnectionLogService;
+module.exports.ConnectionLogService = ConnectionLogService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/errors
  */
-
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class AiParsingError extends Error {
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class AiParsingError extends Error {
   constructor(message = 'AI parsing failed', details = {}) {
     super(message);
     this.name = 'AiParsingError';
@@ -14,8 +12,7 @@ export class AiParsingError extends Error {
     this.details = details;
   }
 }
-
-export class AiParsingTimeoutError extends Error {
+class AiParsingTimeoutError extends Error {
   constructor(message = 'AI parsing timed out', details = {}) {
     super(message);
     this.name = 'AiParsingTimeoutError';
@@ -23,22 +20,19 @@ export class AiParsingTimeoutError extends Error {
     this.details = details;
   }
 }
-
-export class AiParsingInvalidResponseError extends ValidationError {
+class AiParsingInvalidResponseError extends ValidationError {
   constructor(message = 'AI returned an invalid response', details = {}) {
     super(message, { code: 'AI_INVALID_RESPONSE', details });
     this.name = 'AiParsingInvalidResponseError';
   }
 }
-
-export class AiLowConfidenceError extends ValidationError {
+class AiLowConfidenceError extends ValidationError {
   constructor(message = 'AI parsing confidence is below the required threshold', details = {}) {
     super(message, { code: 'AI_LOW_CONFIDENCE', details });
     this.name = 'AiLowConfidenceError';
   }
 }
-
-export class LlmProviderError extends Error {
+class LlmProviderError extends Error {
   constructor(message = 'LLM provider error', details = {}) {
     super(message);
     this.name = 'LlmProviderError';
@@ -46,8 +40,7 @@ export class LlmProviderError extends Error {
     this.details = details;
   }
 }
-
-export class LlmProviderNotConfiguredError extends Error {
+class LlmProviderNotConfiguredError extends Error {
   constructor(message = 'LLM provider is not configured', details = {}) {
     super(message);
     this.name = 'LlmProviderNotConfiguredError';
@@ -55,8 +48,7 @@ export class LlmProviderNotConfiguredError extends Error {
     this.details = details;
   }
 }
-
-export class LlmRateLimitError extends Error {
+class LlmRateLimitError extends Error {
   constructor(message = 'LLM rate limit exceeded', details = {}) {
     super(message);
     this.name = 'LlmRateLimitError';
@@ -64,8 +56,7 @@ export class LlmRateLimitError extends Error {
     this.details = details;
   }
 }
-
-export class LlmTimeoutError extends Error {
+class LlmTimeoutError extends Error {
   constructor(message = 'LLM request timed out', details = {}) {
     super(message);
     this.name = 'LlmTimeoutError';
@@ -73,24 +64,32 @@ export class LlmTimeoutError extends Error {
     this.details = details;
   }
 }
-
-export class PromptInjectionError extends ValidationError {
+class PromptInjectionError extends ValidationError {
   constructor(message = 'Potential prompt injection detected', details = {}) {
     super(message, { code: 'PROMPT_INJECTION_DETECTED', details });
     this.name = 'PromptInjectionError';
   }
 }
-
-export class SafetyFilterError extends ValidationError {
+class SafetyFilterError extends ValidationError {
   constructor(message = 'Content blocked by safety filter', details = {}) {
     super(message, { code: 'SAFETY_FILTER_TRIGGERED', details });
     this.name = 'SafetyFilterError';
   }
 }
-
-export class NormalizationError extends ValidationError {
+class NormalizationError extends ValidationError {
   constructor(message = 'Normalization failed', details = {}) {
     super(message, { code: 'NORMALIZATION_FAILED', details });
     this.name = 'NormalizationError';
   }
 }
+module.exports.AiParsingError = AiParsingError;
+module.exports.AiParsingTimeoutError = AiParsingTimeoutError;
+module.exports.AiParsingInvalidResponseError = AiParsingInvalidResponseError;
+module.exports.AiLowConfidenceError = AiLowConfidenceError;
+module.exports.LlmProviderError = LlmProviderError;
+module.exports.LlmProviderNotConfiguredError = LlmProviderNotConfiguredError;
+module.exports.LlmRateLimitError = LlmRateLimitError;
+module.exports.LlmTimeoutError = LlmTimeoutError;
+module.exports.PromptInjectionError = PromptInjectionError;
+module.exports.SafetyFilterError = SafetyFilterError;
+module.exports.NormalizationError = NormalizationError;

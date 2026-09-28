@@ -3,16 +3,10 @@
  *
  * @module signalforge/server/modules/brokers/accounts/controller
  */
-
-import { AccountService } from './account.service.js';
-import {
-  validateCreateAccountPayload,
-  validateUpdateAccountPayload,
-  validateCredentialsUpdatePayload,
-} from './account.validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class AccountController {
+const { AccountService } = require('./account.service.js');
+const { validateCreateAccountPayload, validateUpdateAccountPayload, validateCredentialsUpdatePayload } = require('./account.validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class AccountController {
   constructor(service = null) {
     this.service = service || new AccountService();
   }
@@ -157,5 +151,5 @@ export class AccountController {
     }
   };
 }
-
-export default AccountController;
+module.exports = AccountController;
+module.exports.AccountController = AccountController;

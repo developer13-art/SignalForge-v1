@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/signal-sources/adapters/email
  */
-
-import { BaseAdapter } from './base.adapter.js';
-import { SOURCE_TYPES } from '../source.constants.js';
-
-export class EmailAdapter extends BaseAdapter {
+const { BaseAdapter } = require('./base.adapter.js');
+const { SOURCE_TYPES } = require('../source.constants.js');
+class EmailAdapter extends BaseAdapter {
   constructor(config = {}) {
     super(config);
     this.name = SOURCE_TYPES.EMAIL;
@@ -49,5 +47,5 @@ export class EmailAdapter extends BaseAdapter {
     };
   }
 }
-
-export default EmailAdapter;
+module.exports = EmailAdapter;
+module.exports.EmailAdapter = EmailAdapter;

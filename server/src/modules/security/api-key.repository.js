@@ -3,11 +3,9 @@
  *
  * @module server/modules/security/api-key.repository
  */
-
-import { db } from '../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertApiKey({
+const { db } = require('../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertApiKey({
   userId,
   name,
   prefix,
@@ -32,24 +30,21 @@ export async function insertApiKey({
   );
   return rows[0];
 }
-
-export async function findByPrefix({ prefix }) {
+async function findByPrefix({ prefix }) {
   const { rows } = await db.query(
     `SELECT * FROM api_keys WHERE key_prefix = $1 AND active = TRUE LIMIT 1`,
     [prefix],
   );
   return rows[0] || null;
 }
-
-export async function findById({ apiKeyId }) {
+async function findById({ apiKeyId }) {
   const { rows } = await db.query(
     `SELECT * FROM api_keys WHERE id = $1 LIMIT 1`,
     [apiKeyId],
   );
   return rows[0] || null;
 }
-
-export async function listByUser({ userId }) {
+async function listByUser({ userId }) {
   const { rows } = await db.query(
     `SELECT id, name, key_prefix, permissions, active, expires_at, last_used_at, created_at
        FROM api_keys
@@ -59,8 +54,7 @@ export async function listByUser({ userId }) {
   );
   return rows;
 }
-
-export async function touchLastUsed({ apiKeyId }) {
+async function touchLastUsed({ apiKeyId }) {
   await db.query(
     `UPDATE api_keys
         SET last_used_at = $1, updated_at = $1
@@ -68,8 +62,7 @@ export async function touchLastUsed({ apiKeyId }) {
     [nowIso(), apiKeyId],
   );
 }
-
-export async function revokeApiKey({ apiKeyId }) {
+async function revokeApiKey({ apiKeyId }) {
   const { rowCount } = await db.query(
     `UPDATE api_keys
         SET active = FALSE, revoked_at = $1, updated_at = $1
@@ -78,16 +71,14 @@ export async function revokeApiKey({ apiKeyId }) {
   );
   return rowCount > 0;
 }
-
-export async function deleteApiKey({ apiKeyId, userId }) {
+async function deleteApiKey({ apiKeyId, userId }) {
   const { rowCount } = await db.query(
     `DELETE FROM api_keys WHERE id = $1 AND user_id = $2`,
     [apiKeyId, userId],
   );
   return rowCount > 0;
 }
-
-export const apiKeyRepository = {
+const apiKeyRepository = {
   insertApiKey,
   findByPrefix,
   findById,
@@ -96,3 +87,18 @@ export const apiKeyRepository = {
   revokeApiKey,
   deleteApiKey,
 };
+module.exports.apiKeyRepository = apiKeyRepository;
+
+module.exports.insertApiKey = insertApiKey;
+
+module.exports.findByPrefix = findByPrefix;
+
+module.exports.findById = findById;
+
+module.exports.listByUser = listByUser;
+
+module.exports.touchLastUsed = touchLastUsed;
+
+module.exports.revokeApiKey = revokeApiKey;
+
+module.exports.deleteApiKey = deleteApiKey;

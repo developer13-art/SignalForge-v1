@@ -7,12 +7,10 @@
  *
  * @module server/realtime/websocket-auth
  */
-
-import { verifyAccessToken } from '../utils/jwt.util';
-import { logger } from '../lib/logger';
-import { db } from '../database';
-
-export async function authenticateWebSocket({ token }) {
+const { verifyAccessToken } = require('../utils/jwt.util');
+const { logger } = require('../lib/logger');
+const { db } = require('../database');
+async function authenticateWebSocket({ token }) {
   if (!token || typeof token !== 'string') {
     return { authenticated: false, reason: 'MISSING_TOKEN' };
   }
@@ -64,7 +62,9 @@ export async function authenticateWebSocket({ token }) {
     },
   };
 }
-
-export const websocketAuth = {
+const websocketAuth = {
   authenticateWebSocket,
 };
+module.exports.websocketAuth = websocketAuth;
+
+module.exports.authenticateWebSocket = authenticateWebSocket;

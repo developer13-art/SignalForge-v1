@@ -6,14 +6,12 @@
  *
  * @module server/modules/signal-sources/whatsapp/whatsapp.events
  */
-
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { publishEvent } from '../../../events/event-publisher';
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { publishEvent } = require('../../../events/event-publisher');
 
 const SOURCE = 'whatsapp.events';
-
-export async function emitWhatsAppSessionInitiated({ userId, phoneNumberId }) {
+async function emitWhatsAppSessionInitiated({ userId, phoneNumberId }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_INITIATED,
     source: SOURCE,
@@ -26,8 +24,7 @@ export async function emitWhatsAppSessionInitiated({ userId, phoneNumberId }) {
     },
   });
 }
-
-export async function emitWhatsAppSessionConnected({ userId, phoneNumberId, businessAccountId }) {
+async function emitWhatsAppSessionConnected({ userId, phoneNumberId, businessAccountId }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_CONNECTED,
     source: SOURCE,
@@ -41,8 +38,7 @@ export async function emitWhatsAppSessionConnected({ userId, phoneNumberId, busi
     },
   });
 }
-
-export async function emitWhatsAppSessionRevoked({ userId, reason }) {
+async function emitWhatsAppSessionRevoked({ userId, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_REVOKED,
     source: SOURCE,
@@ -55,8 +51,7 @@ export async function emitWhatsAppSessionRevoked({ userId, reason }) {
     },
   });
 }
-
-export async function emitWhatsAppGroupsDiscovered({ userId, groupCount }) {
+async function emitWhatsAppGroupsDiscovered({ userId, groupCount }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNELS_DISCOVERED,
     source: SOURCE,
@@ -69,8 +64,7 @@ export async function emitWhatsAppGroupsDiscovered({ userId, groupCount }) {
     },
   });
 }
-
-export async function emitWhatsAppGroupOptIn({ userId, groupId, groupName }) {
+async function emitWhatsAppGroupOptIn({ userId, groupId, groupName }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNEL_OPT_IN,
     source: SOURCE,
@@ -84,8 +78,7 @@ export async function emitWhatsAppGroupOptIn({ userId, groupId, groupName }) {
     },
   });
 }
-
-export async function emitWhatsAppGroupOptOut({ userId, groupId }) {
+async function emitWhatsAppGroupOptOut({ userId, groupId }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNEL_OPT_OUT,
     source: SOURCE,
@@ -98,8 +91,7 @@ export async function emitWhatsAppGroupOptOut({ userId, groupId }) {
     },
   });
 }
-
-export async function emitWhatsAppWebhookReceived({ userId, messageId, groupId }) {
+async function emitWhatsAppWebhookReceived({ userId, messageId, groupId }) {
   return publishEvent({
     eventType: EVENT_TYPES.MESSAGE_RECEIVED,
     source: SOURCE,
@@ -113,8 +105,7 @@ export async function emitWhatsAppWebhookReceived({ userId, messageId, groupId }
     },
   });
 }
-
-export async function emitWhatsAppWebhookRejected({ userId, reason }) {
+async function emitWhatsAppWebhookRejected({ userId, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_WEBHOOK_REJECTED,
     source: SOURCE,
@@ -127,8 +118,7 @@ export async function emitWhatsAppWebhookRejected({ userId, reason }) {
     },
   });
 }
-
-export async function emitWhatsAppHealthCheck({ userId, healthy, details }) {
+async function emitWhatsAppHealthCheck({ userId, healthy, details }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_HEALTH_CHECK,
     source: SOURCE,
@@ -142,8 +132,7 @@ export async function emitWhatsAppHealthCheck({ userId, healthy, details }) {
     },
   });
 }
-
-export const WHATSAPP_EVENT_NAMES = Object.freeze({
+const WHATSAPP_EVENT_NAMES = Object.freeze({
   SESSION_INITIATED: EVENT_TYPES.SOURCE_SESSION_INITIATED,
   SESSION_CONNECTED: EVENT_TYPES.SOURCE_SESSION_CONNECTED,
   SESSION_REVOKED: EVENT_TYPES.SOURCE_SESSION_REVOKED,
@@ -154,3 +143,22 @@ export const WHATSAPP_EVENT_NAMES = Object.freeze({
   WEBHOOK_REJECTED: EVENT_TYPES.SOURCE_WEBHOOK_REJECTED,
   HEALTH_CHECK: EVENT_TYPES.SOURCE_HEALTH_CHECK,
 });
+module.exports.WHATSAPP_EVENT_NAMES = WHATSAPP_EVENT_NAMES;
+
+module.exports.emitWhatsAppSessionInitiated = emitWhatsAppSessionInitiated;
+
+module.exports.emitWhatsAppSessionConnected = emitWhatsAppSessionConnected;
+
+module.exports.emitWhatsAppSessionRevoked = emitWhatsAppSessionRevoked;
+
+module.exports.emitWhatsAppGroupsDiscovered = emitWhatsAppGroupsDiscovered;
+
+module.exports.emitWhatsAppGroupOptIn = emitWhatsAppGroupOptIn;
+
+module.exports.emitWhatsAppGroupOptOut = emitWhatsAppGroupOptOut;
+
+module.exports.emitWhatsAppWebhookReceived = emitWhatsAppWebhookReceived;
+
+module.exports.emitWhatsAppWebhookRejected = emitWhatsAppWebhookRejected;
+
+module.exports.emitWhatsAppHealthCheck = emitWhatsAppHealthCheck;

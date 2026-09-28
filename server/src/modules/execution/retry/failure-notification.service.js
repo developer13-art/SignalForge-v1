@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/execution/retry/failure-notification
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class FailureNotificationService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class FailureNotificationService {
   constructor(notificationService = null) {
     this.notificationService = notificationService;
     this.logger = getLogger('execution-failure-notification');
@@ -35,5 +33,5 @@ export class FailureNotificationService {
     }
   }
 }
-
-export default FailureNotificationService;
+module.exports = FailureNotificationService;
+module.exports.FailureNotificationService = FailureNotificationService;

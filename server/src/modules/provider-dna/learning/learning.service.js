@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/provider-dna/learning/service
  */
-
-import { LearningPathService } from './learning-path.service.js';
-import { FastPathService } from './fast-path.service.js';
-import { ReinforcementService } from './reinforcement.service.js';
-import { DnaRepository } from '../dna.repository.js';
-import { DNA_PATHS } from '../dna.constants.js';
-
-export class LearningService {
+const { LearningPathService } = require('./learning-path.service.js');
+const { FastPathService } = require('./fast-path.service.js');
+const { ReinforcementService } = require('./reinforcement.service.js');
+const { DnaRepository } = require('../dna.repository.js');
+const { DNA_PATHS } = require('../dna.constants.js');
+class LearningService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new DnaRepository();
     this.learningPath = dependencies.learningPath || new LearningPathService({
@@ -61,5 +59,5 @@ export class LearningService {
     return { path: DNA_PATHS.LEARNING_PATH, reason: fastResult.reason };
   }
 }
-
-export default LearningService;
+module.exports = LearningService;
+module.exports.LearningService = LearningService;

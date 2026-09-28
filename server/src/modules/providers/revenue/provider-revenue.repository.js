@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/providers/revenue/repository
  */
-
-import { ProviderRepository } from '../provider.repository.js';
-
-export class ProviderRevenueRepository {
+const { ProviderRepository } = require('../provider.repository.js');
+class ProviderRevenueRepository {
   constructor(db = null) {
     this.providerRepository = new ProviderRepository(db);
   }
@@ -23,5 +21,5 @@ export class ProviderRevenueRepository {
     return this.providerRepository.sumRevenue(providerId, filters);
   }
 }
-
-export default ProviderRevenueRepository;
+module.exports = ProviderRevenueRepository;
+module.exports.ProviderRevenueRepository = ProviderRevenueRepository;

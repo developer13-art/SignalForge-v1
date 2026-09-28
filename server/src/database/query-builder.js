@@ -7,10 +7,8 @@
  *
  * @module server/database/query-builder
  */
-
-import { getPool } from './connection';
-
-export class QueryBuilder {
+const { getPool } = require('./connection');
+class QueryBuilder {
   constructor(table) {
     if (!table) {
       throw new Error('table is required');
@@ -138,18 +136,18 @@ export class QueryBuilder {
     return connection.query(text, params);
   }
 }
-
-export function createBuilder(table) {
+function createBuilder(table) {
   return new QueryBuilder(table);
 }
-
-export function query(text, params = []) {
+function query(text, params = []) {
   const pool = getPool();
   return pool.query(text, params);
 }
-
-export const queryBuilder = {
+const queryBuilder = {
   QueryBuilder,
   createBuilder,
   query,
 };
+module.exports.queryBuilder = queryBuilder;
+module.exports.createBuilder = createBuilder;
+module.exports.query = query;

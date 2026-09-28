@@ -6,23 +6,17 @@
  *
  * @module signalforge/server/modules/users/profile/avatar
  */
-
-import path from 'node:path';
-import crypto from 'node:crypto';
-
-import storageConfig from '../../../config/storage.config.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { UserRepository } from '../user.repository.js';
-import { emitAvatarUpdated, emitAvatarRemoved } from '../user.events.js';
-import {
-  InvalidAvatarError,
-  AvatarTooLargeError,
-} from '../user.errors.js';
+const path = require('node:path');
+const crypto = require('node:crypto');
+const storageConfig = require('../../../config/storage.config.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { UserRepository } = require('../user.repository.js');
+const { emitAvatarUpdated, emitAvatarRemoved } = require('../user.events.js');
+const { InvalidAvatarError, AvatarTooLargeError } = require('../user.errors.js');
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const MAX_SIZE_BYTES = 5 * 1024 * 1024;
-
-export class AvatarService {
+class AvatarService {
   constructor(userRepository = null, storageClient = null) {
     this.userRepository = userRepository || new UserRepository();
     this.storage = storageClient || null;
@@ -113,5 +107,5 @@ export class AvatarService {
     return this.storage.getSignedUrl(user.avatar_url, storageConfig.signedUrl.ttlSeconds);
   }
 }
-
-export default AvatarService;
+module.exports = AvatarService;
+module.exports.AvatarService = AvatarService;

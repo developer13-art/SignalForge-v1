@@ -3,19 +3,17 @@
  *
  * @module signalforge/server/modules/kyc/service
  */
-
-import { ApplicationService } from './application/application.service.js';
-import { DocumentService } from './documents/document.service.js';
-import { VerificationService } from './verification/verification.service.js';
-import { ReviewService } from './review/review.service.js';
-import { ReverificationService } from './reverification/reverification.service.js';
-import { ExpiryCheckService } from './reverification/expiry-check.service.js';
-import { KycAuditService } from './audit/kyc-audit.service.js';
-import { ProviderWebhookService } from './provider/provider-webhook.service.js';
-import { ProviderFactory } from './provider/provider.factory.js';
-import { KycRepository } from './kyc.repository.js';
-
-export class KycService {
+const { ApplicationService } = require('./application/application.service.js');
+const { DocumentService } = require('./documents/document.service.js');
+const { VerificationService } = require('./verification/verification.service.js');
+const { ReviewService } = require('./review/review.service.js');
+const { ReverificationService } = require('./reverification/reverification.service.js');
+const { ExpiryCheckService } = require('./reverification/expiry-check.service.js');
+const { KycAuditService } = require('./audit/kyc-audit.service.js');
+const { ProviderWebhookService } = require('./provider/provider-webhook.service.js');
+const { ProviderFactory } = require('./provider/provider.factory.js');
+const { KycRepository } = require('./kyc.repository.js');
+class KycService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new KycRepository();
 
@@ -136,5 +134,5 @@ export class KycService {
     return this.webhookService.handle(providerName, payload);
   }
 }
-
-export default KycService;
+module.exports = KycService;
+module.exports.KycService = KycService;

@@ -6,15 +6,13 @@
  *
  * @module server/modules/compliance/kyc-queue/kyc-queue.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './kyc-queue.repository';
-import { complianceService } from '../compliance.service';
-
-export async function listQueue({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./kyc-queue.repository');
+const { complianceService } = require('../compliance.service');
+async function listQueue({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listQueueItems({
@@ -39,8 +37,7 @@ export async function listQueue({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function assignToReviewer({ applicationId, reviewerId, actorId }) {
+async function assignToReviewer({ applicationId, reviewerId, actorId }) {
   if (!applicationId || !reviewerId || !actorId) {
     throw new AppError(
       'applicationId, reviewerId, and actorId are required',
@@ -67,8 +64,7 @@ export async function assignToReviewer({ applicationId, reviewerId, actorId }) {
 
   return { assigned: true };
 }
-
-export async function releaseFromReviewer({ applicationId, actorId }) {
+async function releaseFromReviewer({ applicationId, actorId }) {
   if (!applicationId || !actorId) {
     throw new AppError('applicationId and actorId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -90,8 +86,7 @@ export async function releaseFromReviewer({ applicationId, actorId }) {
 
   return { released: true };
 }
-
-export async function getQueueStats() {
+async function getQueueStats() {
   const rows = await repository.countQueueByStatus();
 
   const stats = {};
@@ -101,8 +96,7 @@ export async function getQueueStats() {
 
   return stats;
 }
-
-export async function listAssignedToMe({ reviewerId, limit = 50 }) {
+async function listAssignedToMe({ reviewerId, limit = 50 }) {
   if (!reviewerId) {
     throw new AppError('reviewerId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -117,11 +111,21 @@ export async function listAssignedToMe({ reviewerId, limit = 50 }) {
     slaDueAt: row.sla_due_at,
   }));
 }
-
-export const kycQueueService = {
+const kycQueueService = {
   listQueue,
   assignToReviewer,
   releaseFromReviewer,
   getQueueStats,
   listAssignedToMe,
 };
+module.exports.kycQueueService = kycQueueService;
+
+module.exports.listQueue = listQueue;
+
+module.exports.assignToReviewer = assignToReviewer;
+
+module.exports.releaseFromReviewer = releaseFromReviewer;
+
+module.exports.getQueueStats = getQueueStats;
+
+module.exports.listAssignedToMe = listAssignedToMe;

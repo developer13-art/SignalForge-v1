@@ -3,19 +3,11 @@
  *
  * @module signalforge/server/modules/wallets/ledger/entry-service
  */
-
-import { LedgerEntryRepository } from './ledger-entry.repository.js';
-import { LedgerEntryNotFoundError, LedgerEntryAlreadyReversedError } from '../wallet.errors.js';
-import {
-  LEDGER_ENTRY_DIRECTIONS,
-  LEDGER_ENTRY_STATUSES,
-} from '../wallet.constants.js';
-import {
-  emitLedgerEntryCreated,
-  emitLedgerReversed,
-} from '../wallet.events.js';
-
-export class LedgerEntryService {
+const { LedgerEntryRepository } = require('./ledger-entry.repository.js');
+const { LedgerEntryNotFoundError, LedgerEntryAlreadyReversedError } = require('../wallet.errors.js');
+const { LEDGER_ENTRY_DIRECTIONS, LEDGER_ENTRY_STATUSES } = require('../wallet.constants.js');
+const { emitLedgerEntryCreated, emitLedgerReversed } = require('../wallet.events.js');
+class LedgerEntryService {
   constructor(repository = null) {
     this.repository = repository || new LedgerEntryRepository();
   }
@@ -161,5 +153,5 @@ export class LedgerEntryService {
     return input;
   }
 }
-
-export default LedgerEntryService;
+module.exports = LedgerEntryService;
+module.exports.LedgerEntryService = LedgerEntryService;

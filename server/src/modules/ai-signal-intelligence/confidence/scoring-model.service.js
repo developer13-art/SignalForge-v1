@@ -15,8 +15,7 @@ const WEIGHTS = Object.freeze({
   stopLossPresent: 0.1,
   takeProfitPresent: 0.1,
 });
-
-export class ScoringModelService {
+class ScoringModelService {
   score(fields, parserConfidence = 0.5) {
     const factors = {};
     let totalWeight = 0;
@@ -57,5 +56,5 @@ export class ScoringModelService {
     };
   }
 }
-
-export default ScoringModelService;
+module.exports = ScoringModelService;
+module.exports.ScoringModelService = ScoringModelService;

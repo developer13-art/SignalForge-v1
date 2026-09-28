@@ -5,10 +5,8 @@
  *
  * @module server/modules/compliance/reports/compliance-report.repository
  */
-
-import { db } from '../../../database';
-
-export async function kycStatusSeries({ from, to, granularity = 'day' }) {
+const { db } = require('../../../database');
+async function kycStatusSeries({ from, to, granularity = 'day' }) {
   const dateTrunc = granularity === 'month' ? 'month' : granularity === 'week' ? 'week' : 'day';
 
   const { rows } = await db.query(
@@ -32,8 +30,7 @@ export async function kycStatusSeries({ from, to, granularity = 'day' }) {
     underReview: row.under_review,
   }));
 }
-
-export async function approvalRateSummary({ from, to }) {
+async function approvalRateSummary({ from, to }) {
   const { rows } = await db.query(
     `SELECT
        COUNT(*)::int AS total,
@@ -61,8 +58,7 @@ export async function approvalRateSummary({ from, to }) {
     avgReviewMinutes: Number(row.avg_review_minutes || 0),
   };
 }
-
-export async function riskFlagSummary({ from, to }) {
+async function riskFlagSummary({ from, to }) {
   const { rows } = await db.query(
     `SELECT flag_type, severity, COUNT(*)::int AS count
        FROM kyc_risk_flags
@@ -78,8 +74,7 @@ export async function riskFlagSummary({ from, to }) {
     count: row.count,
   }));
 }
-
-export async function reviewerPerformanceSummary({ from, to }) {
+async function reviewerPerformanceSummary({ from, to }) {
   const { rows } = await db.query(
     `SELECT reviewer_id,
             COUNT(*)::int AS reviewed_count,
@@ -101,8 +96,7 @@ export async function reviewerPerformanceSummary({ from, to }) {
     avgReviewMinutes: Number(row.avg_review_minutes || 0),
   }));
 }
-
-export async function documentTypeUsageSummary({ from, to }) {
+async function documentTypeUsageSummary({ from, to }) {
   const { rows } = await db.query(
     `SELECT document_type, COUNT(*)::int AS count
        FROM kyc_documents
@@ -117,11 +111,21 @@ export async function documentTypeUsageSummary({ from, to }) {
     count: row.count,
   }));
 }
-
-export const complianceReportRepository = {
+const complianceReportRepository = {
   kycStatusSeries,
   approvalRateSummary,
   riskFlagSummary,
   reviewerPerformanceSummary,
   documentTypeUsageSummary,
 };
+module.exports.complianceReportRepository = complianceReportRepository;
+
+module.exports.kycStatusSeries = kycStatusSeries;
+
+module.exports.approvalRateSummary = approvalRateSummary;
+
+module.exports.riskFlagSummary = riskFlagSummary;
+
+module.exports.reviewerPerformanceSummary = reviewerPerformanceSummary;
+
+module.exports.documentTypeUsageSummary = documentTypeUsageSummary;

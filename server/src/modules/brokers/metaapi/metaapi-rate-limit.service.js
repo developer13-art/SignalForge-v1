@@ -3,15 +3,10 @@
  *
  * @module signalforge/server/modules/brokers/metaapi/rate-limit
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { emitRateLimitHit } from '../broker.events.js';
-import {
-  DEFAULT_RATE_LIMIT_WINDOW_MS,
-  DEFAULT_RATE_LIMIT_MAX,
-} from '../broker.constants.js';
-
-export class MetaApiRateLimitService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { emitRateLimitHit } = require('../broker.events.js');
+const { DEFAULT_RATE_LIMIT_WINDOW_MS, DEFAULT_RATE_LIMIT_MAX } = require('../broker.constants.js');
+class MetaApiRateLimitService {
   constructor(options = {}) {
     this.windowMs = options.windowMs || DEFAULT_RATE_LIMIT_WINDOW_MS;
     this.max = options.max || DEFAULT_RATE_LIMIT_MAX;
@@ -54,5 +49,5 @@ export class MetaApiRateLimitService {
     return { count: bucket.count, remaining: Math.max(0, this.max - bucket.count) };
   }
 }
-
-export default MetaApiRateLimitService;
+module.exports = MetaApiRateLimitService;
+module.exports.MetaApiRateLimitService = MetaApiRateLimitService;

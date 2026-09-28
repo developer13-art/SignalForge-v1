@@ -3,21 +3,13 @@
  *
  * @module signalforge/server/modules/trades/operations/manual-close
  */
-
-import { TradeRepository } from '../trade.repository.js';
-import { TradeTimelineService } from '../timeline/trade-timeline.service.js';
-import {
-  emitManualClose,
-  emitTradeClosed,
-} from '../trade.events.js';
-import {
-  TradeNotFoundError,
-  TradeAlreadyClosedError,
-} from '../trade.errors.js';
-import { isClosedStatus } from '../trade.constants.js';
-import { TRADE_STATUSES, TRADE_ACTORS } from '../trade.constants.js';
-
-export class ManualCloseService {
+const { TradeRepository } = require('../trade.repository.js');
+const { TradeTimelineService } = require('../timeline/trade-timeline.service.js');
+const { emitManualClose, emitTradeClosed } = require('../trade.events.js');
+const { TradeNotFoundError, TradeAlreadyClosedError } = require('../trade.errors.js');
+const { isClosedStatus } = require('../trade.constants.js');
+const { TRADE_STATUSES, TRADE_ACTORS } = require('../trade.constants.js');
+class ManualCloseService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TradeRepository();
     this.timeline = dependencies.timeline || new TradeTimelineService();
@@ -104,5 +96,5 @@ export class ManualCloseService {
     return { trade: updated, partial: isPartial, percentage };
   }
 }
-
-export default ManualCloseService;
+module.exports = ManualCloseService;
+module.exports.ManualCloseService = ManualCloseService;

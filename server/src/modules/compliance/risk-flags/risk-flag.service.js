@@ -7,18 +7,13 @@
  *
  * @module server/modules/compliance/risk-flags/risk-flag.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import {
-  RISK_FLAG_TYPE_VALUES,
-  RISK_FLAG_SEVERITY_VALUES,
-} from '../compliance.constants';
-import * as repository from './risk-flag.repository';
-
-export async function createRiskFlag({
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const { RISK_FLAG_TYPE_VALUES, RISK_FLAG_SEVERITY_VALUES } = require('../compliance.constants');
+const repository = require('./risk-flag.repository');
+async function createRiskFlag({
   applicationId,
   userId,
   flagType,
@@ -63,8 +58,7 @@ export async function createRiskFlag({
     createdAt: record.created_at,
   };
 }
-
-export async function getFlagById({ flagId }) {
+async function getFlagById({ flagId }) {
   if (!flagId) {
     throw new AppError('flagId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -88,8 +82,7 @@ export async function getFlagById({ flagId }) {
     createdAt: record.created_at,
   };
 }
-
-export async function listFlagsForApplication({ applicationId }) {
+async function listFlagsForApplication({ applicationId }) {
   if (!applicationId) {
     throw new AppError('applicationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -105,8 +98,7 @@ export async function listFlagsForApplication({ applicationId }) {
     createdAt: row.created_at,
   }));
 }
-
-export async function listOpenFlags({ filters = {}, pagination = {} }) {
+async function listOpenFlags({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listOpen({
@@ -127,8 +119,7 @@ export async function listOpenFlags({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function resolveFlag({ flagId, resolvedBy, resolutionNotes }) {
+async function resolveFlag({ flagId, resolvedBy, resolutionNotes }) {
   if (!flagId || !resolvedBy) {
     throw new AppError('flagId and resolvedBy are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -143,8 +134,7 @@ export async function resolveFlag({ flagId, resolvedBy, resolutionNotes }) {
 
   return { resolved: true };
 }
-
-export async function getSeverityBreakdown() {
+async function getSeverityBreakdown() {
   const rows = await repository.countBySeverity();
 
   const breakdown = {};
@@ -154,8 +144,7 @@ export async function getSeverityBreakdown() {
 
   return breakdown;
 }
-
-export const riskFlagService = {
+const riskFlagService = {
   createRiskFlag,
   getFlagById,
   listFlagsForApplication,
@@ -163,3 +152,16 @@ export const riskFlagService = {
   resolveFlag,
   getSeverityBreakdown,
 };
+module.exports.riskFlagService = riskFlagService;
+
+module.exports.createRiskFlag = createRiskFlag;
+
+module.exports.getFlagById = getFlagById;
+
+module.exports.listFlagsForApplication = listFlagsForApplication;
+
+module.exports.listOpenFlags = listOpenFlags;
+
+module.exports.resolveFlag = resolveFlag;
+
+module.exports.getSeverityBreakdown = getSeverityBreakdown;

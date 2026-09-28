@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/metrics/equity-curve
  */
-
-import { DEFAULT_EQUITY_CURVE_POINTS } from '../analytics.constants.js';
-
-export class EquityCurveService {
+const { DEFAULT_EQUITY_CURVE_POINTS } = require('../analytics.constants.js');
+class EquityCurveService {
   constructor(repository = null) {
     this.repository = repository;
   }
@@ -66,5 +64,5 @@ export class EquityCurveService {
     return sampled;
   }
 }
-
-export default EquityCurveService;
+module.exports = EquityCurveService;
+module.exports.EquityCurveService = EquityCurveService;

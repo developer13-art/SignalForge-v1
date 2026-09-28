@@ -3,14 +3,9 @@
  *
  * @module signalforge/server/modules/referrals/fraud/review-queue
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import {
-  emitFraudReviewAssigned,
-  emitFraudReviewResolved,
-} from '../referral.events.js';
-
-export class ReviewQueueService {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { emitFraudReviewAssigned, emitFraudReviewResolved } = require('../referral.events.js');
+class ReviewQueueService {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -87,5 +82,5 @@ export class ReviewQueueService {
     return result.rows[0];
   }
 }
-
-export default ReviewQueueService;
+module.exports = ReviewQueueService;
+module.exports.ReviewQueueService = ReviewQueueService;

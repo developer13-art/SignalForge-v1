@@ -3,20 +3,18 @@
  *
  * @module signalforge/server/modules/signal-classification/classifiers/registry
  */
-
-import { RuleBasedClassifier } from './rule-based.classifier.js';
-import { AiClassifier } from './ai.classifier.js';
-import { HybridClassifier } from './hybrid.classifier.js';
-import { CLASSIFIER_KINDS } from '../classification.constants.js';
-import { ClassifierNotRegisteredError } from '../classification.errors.js';
+const { RuleBasedClassifier } = require('./rule-based.classifier.js');
+const { AiClassifier } = require('./ai.classifier.js');
+const { HybridClassifier } = require('./hybrid.classifier.js');
+const { CLASSIFIER_KINDS } = require('../classification.constants.js');
+const { ClassifierNotRegisteredError } = require('../classification.errors.js');
 
 const registry = new Map();
 
 registry.set(CLASSIFIER_KINDS.RULE_BASED, () => new RuleBasedClassifier());
 registry.set(CLASSIFIER_KINDS.AI, (options) => new AiClassifier(options?.llmGateway));
 registry.set(CLASSIFIER_KINDS.HYBRID, (options) => new HybridClassifier(options?.llmGateway, options));
-
-export class ClassifierRegistry {
+class ClassifierRegistry {
   static register(kind, factory) {
     if (typeof factory !== 'function') {
       throw new Error('Classifier factory must be a function');
@@ -40,5 +38,5 @@ export class ClassifierRegistry {
     return registry.has(kind);
   }
 }
-
-export default ClassifierRegistry;
+module.exports = ClassifierRegistry;
+module.exports.ClassifierRegistry = ClassifierRegistry;

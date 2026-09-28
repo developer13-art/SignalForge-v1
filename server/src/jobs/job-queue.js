@@ -7,9 +7,8 @@
  *
  * @module server/jobs/job-queue
  */
-
-import { logger } from '../lib/logger';
-import { jobRepository } from './job.repository';
+const { logger } = require('../lib/logger');
+const { jobRepository } = require('./job.repository');
 
 const DEFAULT_PRIORITIES = Object.freeze({
   SIGNAL_PIPELINE: 80,
@@ -20,8 +19,7 @@ const DEFAULT_PRIORITIES = Object.freeze({
   CLEANUP: 10,
   NOTIFICATION: 50,
 });
-
-export async function enqueueJob({
+async function enqueueJob({
   jobType,
   payload,
   priority,
@@ -49,8 +47,7 @@ export async function enqueueJob({
     scheduledAt: record.scheduled_at,
   };
 }
-
-export async function enqueueJobBatch(jobs) {
+async function enqueueJobBatch(jobs) {
   if (!Array.isArray(jobs) || jobs.length === 0) {
     return { enqueued: 0, jobIds: [] };
   }
@@ -68,15 +65,20 @@ export async function enqueueJobBatch(jobs) {
 
   return { enqueued: jobIds.length, jobIds };
 }
-
-export async function enqueueWithPriority({ jobType, payload, category, maxAttempts }) {
+async function enqueueWithPriority({ jobType, payload, category, maxAttempts }) {
   const priority = DEFAULT_PRIORITIES[category] ?? DEFAULT_PRIORITIES.SIGNAL_PIPELINE;
   return enqueueJob({ jobType, payload, priority, maxAttempts });
 }
-
-export const jobQueue = {
+const jobQueue = {
   enqueueJob,
   enqueueJobBatch,
   enqueueWithPriority,
   DEFAULT_PRIORITIES,
 };
+module.exports.jobQueue = jobQueue;
+
+module.exports.enqueueJob = enqueueJob;
+
+module.exports.enqueueJobBatch = enqueueJobBatch;
+
+module.exports.enqueueWithPriority = enqueueWithPriority;

@@ -8,18 +8,16 @@
  *
  * @module server/modules/solana/payments/payment-confirmation.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { connectionService } from '../config/connection.service';
-import { solanaPaymentRepository } from './solana-payment.repository';
-import { paymentVerificationService } from './payment-verification.service';
-import { solanaPaymentService } from './solana-payment.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { connectionService } = require('../config/connection.service');
+const { solanaPaymentRepository } = require('./solana-payment.repository');
+const { paymentVerificationService } = require('./payment-verification.service');
+const { solanaPaymentService } = require('./solana-payment.service');
 
 const MAX_CONFIRMATION_ATTEMPTS = 5;
-
-export async function confirmPayment({ paymentId }) {
+async function confirmPayment({ paymentId }) {
   if (!paymentId) {
     throw new AppError('paymentId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -79,8 +77,7 @@ export async function confirmPayment({ paymentId }) {
 
   return { confirmed: true, slot, blockTime, confirmations };
 }
-
-export async function confirmPendingPayments({ limit = 100 }) {
+async function confirmPendingPayments({ limit = 100 }) {
   const pending = await solanaPaymentRepository.findPendingForVerification({ limit });
 
   const results = [];
@@ -97,9 +94,13 @@ export async function confirmPendingPayments({ limit = 100 }) {
 
   return { processed: results.length, results };
 }
-
-export const paymentConfirmationService = {
+const paymentConfirmationService = {
   confirmPayment,
   confirmPendingPayments,
   MAX_CONFIRMATION_ATTEMPTS,
 };
+module.exports.paymentConfirmationService = paymentConfirmationService;
+
+module.exports.confirmPayment = confirmPayment;
+
+module.exports.confirmPendingPayments = confirmPendingPayments;

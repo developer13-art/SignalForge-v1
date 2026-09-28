@@ -150,7 +150,7 @@ const Steps = forwardRef(function Steps(
             </div>
 
             {orientation === 'horizontal' ? (
-              <div className={[orientationConfig.body, 'ml-3']].filter(Boolean).join(' ')}>
+              <div className={[orientationConfig.body, 'ml-3'].filter(Boolean).join(' ')}>
                 <span className={[sizeConfig.label, statusConfig.label].filter(Boolean).join(' ')}>
                   {step.label}
                 </span>

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/email/controller
  */
-
-import { EmailService } from './email.service.js';
-
-export class EmailController {
+const { EmailService } = require('./email.service.js');
+class EmailController {
   constructor(service = null) {
     this.service = service || new EmailService();
   }
@@ -47,5 +45,5 @@ export class EmailController {
     }
   };
 }
-
-export default EmailController;
+module.exports = EmailController;
+module.exports.EmailController = EmailController;

@@ -6,12 +6,10 @@
  *
  * @module signalforge/server/modules/kyc/documents/duplicate-detection
  */
-
-import { DocumentRepository } from './document.repository.js';
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { KycDuplicateDocumentError } from '../kyc.errors.js';
-
-export class DuplicateDetectionService {
+const { DocumentRepository } = require('./document.repository.js');
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { KycDuplicateDocumentError } = require('../kyc.errors.js');
+class DuplicateDetectionService {
   constructor(repository = null) {
     this.repository = repository || new DocumentRepository();
   }
@@ -59,5 +57,5 @@ export class DuplicateDetectionService {
     return { duplicate: false };
   }
 }
-
-export default DuplicateDetectionService;
+module.exports = DuplicateDetectionService;
+module.exports.DuplicateDetectionService = DuplicateDetectionService;

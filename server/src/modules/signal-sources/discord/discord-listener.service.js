@@ -6,16 +6,14 @@
  *
  * @module signalforge/server/modules/signal-sources/discord/listener
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { DiscordRepository } from './discord.repository.js';
-import { DiscordAdapter } from '../adapters/discord.adapter.js';
-import { MessageService } from '../messages/message.service.js';
-import { MessageNormalizerService } from '../messages/message-normalizer.service.js';
-import discordConfig from '../../../config/discord.config.js';
-import { emitMessageReceived } from '../source.events.js';
-
-export class DiscordListenerService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { DiscordRepository } = require('./discord.repository.js');
+const { DiscordAdapter } = require('../adapters/discord.adapter.js');
+const { MessageService } = require('../messages/message.service.js');
+const { MessageNormalizerService } = require('../messages/message-normalizer.service.js');
+const discordConfig = require('../../../config/discord.config.js');
+const { emitMessageReceived } = require('../source.events.js');
+class DiscordListenerService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new DiscordRepository();
     this.messageService = dependencies.messageService || new MessageService();
@@ -83,5 +81,5 @@ export class DiscordListenerService {
     }
   }
 }
-
-export default DiscordListenerService;
+module.exports = DiscordListenerService;
+module.exports.DiscordListenerService = DiscordListenerService;

@@ -7,11 +7,9 @@
  *
  * @module server/database/repositories/base.repository
  */
-
-import { getPool } from '../connection';
-import { withTransaction } from '../transaction';
-
-export class BaseRepository {
+const { getPool } = require('../connection');
+const { withTransaction } = require('../transaction');
+class BaseRepository {
   constructor(table) {
     if (!table) {
       throw new Error('table is required');
@@ -111,5 +109,5 @@ export class BaseRepository {
     return withTransaction(async (client) => fn(client, this));
   }
 }
-
-export default BaseRepository;
+module.exports = BaseRepository;
+module.exports.BaseRepository = BaseRepository;

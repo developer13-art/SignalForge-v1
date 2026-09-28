@@ -6,11 +6,9 @@
  *
  * @module server/modules/signal-sources/telegram/channels/telegram-channel.repository
  */
-
-import { db } from '../../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function upsertDiscoveredChannels({ userId, channels, discoveredAt }) {
+const { db } = require('../../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function upsertDiscoveredChannels({ userId, channels, discoveredAt }) {
   if (!channels || channels.length === 0) {
     return;
   }
@@ -56,8 +54,7 @@ export async function upsertDiscoveredChannels({ userId, channels, discoveredAt 
     client.release();
   }
 }
-
-export async function listMonitoredChannels({ userId }) {
+async function listMonitoredChannels({ userId }) {
   const { rows } = await db.query(
     `SELECT channel_id, title, type, monitored, opted_in_at
        FROM telegram_channels
@@ -67,8 +64,7 @@ export async function listMonitoredChannels({ userId }) {
   );
   return rows;
 }
-
-export async function listDiscoveredChannels({ userId }) {
+async function listDiscoveredChannels({ userId }) {
   const { rows } = await db.query(
     `SELECT channel_id, title, type, username, participants_count,
             monitored, discovered_at, opted_in_at
@@ -79,8 +75,7 @@ export async function listDiscoveredChannels({ userId }) {
   );
   return rows;
 }
-
-export async function markChannelMonitored({ userId, channelId, monitored, optedInAt }) {
+async function markChannelMonitored({ userId, channelId, monitored, optedInAt }) {
   const { rows } = await db.query(
     `UPDATE telegram_channels
         SET monitored = $1,
@@ -92,12 +87,10 @@ export async function markChannelMonitored({ userId, channelId, monitored, opted
   );
   return rows[0] || null;
 }
-
-export async function deleteChannelsForUser({ userId }) {
+async function deleteChannelsForUser({ userId }) {
   await db.query(`DELETE FROM telegram_channels WHERE user_id = $1`, [userId]);
 }
-
-export async function countMonitoredChannels({ userId }) {
+async function countMonitoredChannels({ userId }) {
   const { rows } = await db.query(
     `SELECT COUNT(*)::int AS count
        FROM telegram_channels
@@ -106,3 +99,9 @@ export async function countMonitoredChannels({ userId }) {
   );
   return rows[0]?.count ?? 0;
 }
+module.exports.upsertDiscoveredChannels = upsertDiscoveredChannels;
+module.exports.listMonitoredChannels = listMonitoredChannels;
+module.exports.listDiscoveredChannels = listDiscoveredChannels;
+module.exports.markChannelMonitored = markChannelMonitored;
+module.exports.deleteChannelsForUser = deleteChannelsForUser;
+module.exports.countMonitoredChannels = countMonitoredChannels;

@@ -7,16 +7,15 @@
  *
  * @module server/modules/settings/settings.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../database';
-import { publishEvent } from '../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { SETTING_CATEGORY_VALUES, isReservedKey } from './settings.constants';
-import * as repository from './settings.repository';
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../database');
+const { publishEvent } = require('../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { SETTING_CATEGORY_VALUES, isReservedKey } = require('./settings.constants');
+const repository = require('./settings.repository');
 
 const CACHE_TTL_MS = 60 * 1000;
 const CACHE = new Map();
@@ -67,16 +66,14 @@ function readCache(key) {
 function writeCache(key, value) {
   CACHE.set(key, { value, expiresAt: Date.now() + CACHE_TTL_MS });
 }
-
-export function invalidateCache(key) {
+function invalidateCache(key) {
   if (key) {
     CACHE.delete(key);
   } else {
     CACHE.clear();
   }
 }
-
-export async function getSetting({ key, defaultValue = null }) {
+async function getSetting({ key, defaultValue = null }) {
   if (!key) {
     throw new AppError('key is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -98,8 +95,7 @@ export async function getSetting({ key, defaultValue = null }) {
 
   return value;
 }
-
-export async function setSetting({
+async function setSetting({
   key,
   value,
   valueType,
@@ -164,8 +160,7 @@ export async function setSetting({
     updatedAt: record.updated_at,
   };
 }
-
-export async function listSettings({ category } = {}) {
+async function listSettings({ category } = {}) {
   const rows = category ? await repository.listByCategory({ category }) : await repository.listAll();
 
   return rows.map((row) => ({
@@ -178,8 +173,7 @@ export async function listSettings({ category } = {}) {
     updatedAt: row.updated_at,
   }));
 }
-
-export async function listPublicSettings() {
+async function listPublicSettings() {
   const rows = await repository.listPublic();
 
   return rows.map((row) => ({
@@ -188,8 +182,7 @@ export async function listPublicSettings() {
     valueType: row.value_type,
   }));
 }
-
-export async function deleteSetting({ key, actorId }) {
+async function deleteSetting({ key, actorId }) {
   if (!key) {
     throw new AppError('key is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -210,8 +203,7 @@ export async function deleteSetting({ key, actorId }) {
 
   return { deleted: true };
 }
-
-export async function getSettingsByCategories({ categories }) {
+async function getSettingsByCategories({ categories }) {
   if (!Array.isArray(categories) || categories.length === 0) {
     throw new AppError('categories must be a non-empty array', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -241,8 +233,7 @@ export async function getSettingsByCategories({ categories }) {
 
   return grouped;
 }
-
-export async function getBulkSettings({ keys }) {
+async function getBulkSettings({ keys }) {
   if (!Array.isArray(keys) || keys.length === 0) {
     throw new AppError('keys must be a non-empty array', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -261,8 +252,7 @@ export async function getBulkSettings({ keys }) {
 
   return result;
 }
-
-export const settingsService = {
+const settingsService = {
   getSetting,
   setSetting,
   listSettings,
@@ -272,3 +262,19 @@ export const settingsService = {
   getBulkSettings,
   invalidateCache,
 };
+module.exports.settingsService = settingsService;
+module.exports.invalidateCache = invalidateCache;
+
+module.exports.getSetting = getSetting;
+
+module.exports.setSetting = setSetting;
+
+module.exports.listSettings = listSettings;
+
+module.exports.listPublicSettings = listPublicSettings;
+
+module.exports.deleteSetting = deleteSetting;
+
+module.exports.getSettingsByCategories = getSettingsByCategories;
+
+module.exports.getBulkSettings = getBulkSettings;

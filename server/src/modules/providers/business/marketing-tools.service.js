@@ -21,8 +21,7 @@ const TEMPLATES = Object.freeze({
     body: 'This month, {providerName} generated {netProfit} across {tradeCount} trades with a {winRate} win rate.',
   },
 });
-
-export class MarketingToolsService {
+class MarketingToolsService {
   listTemplates() {
     return Object.values(TEMPLATES).map((t) => ({
       key: t.key,
@@ -53,5 +52,5 @@ export class MarketingToolsService {
     return `${base}/providers/${provider.slug}`;
   }
 }
-
-export default MarketingToolsService;
+module.exports = MarketingToolsService;
+module.exports.MarketingToolsService = MarketingToolsService;

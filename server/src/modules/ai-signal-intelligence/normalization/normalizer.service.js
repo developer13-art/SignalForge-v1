@@ -6,16 +6,14 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/normalization/service
  */
-
-import { SymbolNormalizerService } from './symbol-normalizer.service.js';
-import { DirectionNormalizerService } from './direction-normalizer.service.js';
-import { PriceNormalizerService } from './price-normalizer.service.js';
-import { TimeframeNormalizerService } from './timeframe-normalizer.service.js';
-import { TimestampNormalizerService } from './timestamp-normalizer.service.js';
-import { NormalizationError } from '../ai.errors.js';
-import { emitNormalizationCompleted } from '../ai.events.js';
-
-export class NormalizerService {
+const { SymbolNormalizerService } = require('./symbol-normalizer.service.js');
+const { DirectionNormalizerService } = require('./direction-normalizer.service.js');
+const { PriceNormalizerService } = require('./price-normalizer.service.js');
+const { TimeframeNormalizerService } = require('./timeframe-normalizer.service.js');
+const { TimestampNormalizerService } = require('./timestamp-normalizer.service.js');
+const { NormalizationError } = require('../ai.errors.js');
+const { emitNormalizationCompleted } = require('../ai.events.js');
+class NormalizerService {
   constructor(dependencies = {}) {
     this.symbol = dependencies.symbol || new SymbolNormalizerService();
     this.direction = dependencies.direction || new DirectionNormalizerService();
@@ -55,5 +53,5 @@ export class NormalizerService {
     return normalized;
   }
 }
-
-export default NormalizerService;
+module.exports = NormalizerService;
+module.exports.NormalizerService = NormalizerService;

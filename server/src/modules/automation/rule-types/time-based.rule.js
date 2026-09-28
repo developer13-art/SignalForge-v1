@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/automation/rule-types/time-based
  */
-
-import { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } from '../automation.constants.js';
-
-export class TimeBasedRule {
+const { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } = require('../automation.constants.js');
+class TimeBasedRule {
   static supports(condition) {
     return [
       AUTOMATION_CONDITION_TYPES.TIME_AFTER,
@@ -20,5 +18,5 @@ export class TimeBasedRule {
     return [AUTOMATION_ACTION_TYPES.CLOSE_POSITION];
   }
 }
-
-export default TimeBasedRule;
+module.exports = TimeBasedRule;
+module.exports.TimeBasedRule = TimeBasedRule;

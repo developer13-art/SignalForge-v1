@@ -3,15 +3,13 @@
  *
  * @module server/modules/admin/marketplace/admin-marketplace.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-marketplace.repository';
-import { adminService } from '../admin.service';
-
-export async function listListings({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-marketplace.repository');
+const { adminService } = require('../admin.service');
+async function listListings({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listListings({
@@ -35,8 +33,7 @@ export async function listListings({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function suspendListing({ listingId, adminId, reason }) {
+async function suspendListing({ listingId, adminId, reason }) {
   if (!listingId || !adminId) {
     throw new AppError('listingId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -59,8 +56,7 @@ export async function suspendListing({ listingId, adminId, reason }) {
 
   return { suspended: true };
 }
-
-export async function removeListing({ listingId, adminId, reason }) {
+async function removeListing({ listingId, adminId, reason }) {
   if (!listingId || !adminId) {
     throw new AppError('listingId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -81,8 +77,7 @@ export async function removeListing({ listingId, adminId, reason }) {
 
   return { removed: true };
 }
-
-export async function listReviews({ filters = {}, pagination = {} }) {
+async function listReviews({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listReviews({
@@ -104,8 +99,7 @@ export async function listReviews({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function approveReview({ reviewId, adminId }) {
+async function approveReview({ reviewId, adminId }) {
   if (!reviewId || !adminId) {
     throw new AppError('reviewId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -118,8 +112,7 @@ export async function approveReview({ reviewId, adminId }) {
 
   return { approved: true };
 }
-
-export async function rejectReview({ reviewId, adminId, reason }) {
+async function rejectReview({ reviewId, adminId, reason }) {
   if (!reviewId || !adminId) {
     throw new AppError('reviewId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -140,8 +133,7 @@ export async function rejectReview({ reviewId, adminId, reason }) {
 
   return { rejected: true };
 }
-
-export async function removeReview({ reviewId, adminId, reason }) {
+async function removeReview({ reviewId, adminId, reason }) {
   if (!reviewId || !adminId) {
     throw new AppError('reviewId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -162,8 +154,7 @@ export async function removeReview({ reviewId, adminId, reason }) {
 
   return { removed: true };
 }
-
-export const adminMarketplaceService = {
+const adminMarketplaceService = {
   listListings,
   suspendListing,
   removeListing,
@@ -172,3 +163,18 @@ export const adminMarketplaceService = {
   rejectReview,
   removeReview,
 };
+module.exports.adminMarketplaceService = adminMarketplaceService;
+
+module.exports.listListings = listListings;
+
+module.exports.suspendListing = suspendListing;
+
+module.exports.removeListing = removeListing;
+
+module.exports.listReviews = listReviews;
+
+module.exports.approveReview = approveReview;
+
+module.exports.rejectReview = rejectReview;
+
+module.exports.removeReview = removeReview;

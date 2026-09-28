@@ -3,15 +3,11 @@
  *
  * @module signalforge/server/modules/marketplace/reviews/moderation
  */
-
-import { ReviewRepository } from './repository.js';
-import { ReviewNotFoundError } from '../marketplace.errors.js';
-import {
-  REVIEW_STATUSES,
-} from '../marketplace.constants.js';
-import { emitReviewModerated } from '../marketplace.events.js';
-
-export class ModerationService {
+const { ReviewRepository } = require('./repository.js');
+const { ReviewNotFoundError } = require('../marketplace.errors.js');
+const { REVIEW_STATUSES } = require('../marketplace.constants.js');
+const { emitReviewModerated } = require('../marketplace.events.js');
+class ModerationService {
   constructor(repository = null) {
     this.repository = repository || new ReviewRepository();
   }
@@ -78,5 +74,5 @@ export class ModerationService {
     };
   }
 }
-
-export default ModerationService;
+module.exports = ModerationService;
+module.exports.ModerationService = ModerationService;

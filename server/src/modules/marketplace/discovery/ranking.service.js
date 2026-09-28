@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/marketplace/discovery/ranking
  */
-
-import { RANKING_STRATEGIES } from '../marketplace.constants.js';
+const { RANKING_STRATEGIES } = require('../marketplace.constants.js');
 
 const WEIGHTS = Object.freeze({
   reputation: 0.35,
@@ -14,8 +13,7 @@ const WEIGHTS = Object.freeze({
   consistency: 0.05,
   recency: 0.05,
 });
-
-export class RankingService {
+class RankingService {
   scoreListing(listing, strategy = RANKING_STRATEGIES.BALANCED) {
     const reputation = Number(listing.rating_average || 0) / 5;
     const subscribers = Math.min(1, Number(listing.subscriber_count || 0) / 1000);
@@ -73,5 +71,5 @@ export class RankingService {
       }));
   }
 }
-
-export default RankingService;
+module.exports = RankingService;
+module.exports.RankingService = RankingService;

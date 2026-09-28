@@ -7,8 +7,7 @@
  *
  * @module server/modules/executive/analytics/conversion.service
  */
-
-import { db } from '../../../database';
+const { db } = require('../../../database');
 
 function normalizeRange({ from, to }) {
   const toDate = to || new Date().toISOString();
@@ -22,8 +21,7 @@ function safeRate(numerator, denominator) {
   }
   return numerator / denominator;
 }
-
-export async function getConversion({ from, to }) {
+async function getConversion({ from, to }) {
   const range = normalizeRange({ from, to });
 
   const { rows: registrationRows } = await db.query(
@@ -101,8 +99,7 @@ export async function getConversion({ from, to }) {
     },
   };
 }
-
-export async function getSignupSourceBreakdown({ from, to }) {
+async function getSignupSourceBreakdown({ from, to }) {
   const range = normalizeRange({ from, to });
 
   const { rows } = await db.query(
@@ -119,8 +116,12 @@ export async function getSignupSourceBreakdown({ from, to }) {
     count: row.count,
   }));
 }
-
-export const conversionService = {
+const conversionService = {
   getConversion,
   getSignupSourceBreakdown,
 };
+module.exports.conversionService = conversionService;
+
+module.exports.getConversion = getConversion;
+
+module.exports.getSignupSourceBreakdown = getSignupSourceBreakdown;

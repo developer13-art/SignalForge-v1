@@ -3,16 +3,11 @@
  *
  * @module signalforge/server/modules/execution/retry/backoff
  */
-
-import {
-  DEFAULT_RETRY_DELAY_MS,
-  DEFAULT_MAX_RETRY_DELAY_MS,
-} from '../execution.constants.js';
+const { DEFAULT_RETRY_DELAY_MS, DEFAULT_MAX_RETRY_DELAY_MS } = require('../execution.constants.js');
 
 const DEFAULT_FACTOR = 2;
 const DEFAULT_JITTER_FACTOR = 0.25;
-
-export class BackoffService {
+class BackoffService {
   constructor(options = {}) {
     this.baseDelayMs = options.baseDelayMs || DEFAULT_RETRY_DELAY_MS;
     this.maxDelayMs = options.maxDelayMs || DEFAULT_MAX_RETRY_DELAY_MS;
@@ -34,5 +29,5 @@ export class BackoffService {
     return delay;
   }
 }
-
-export default BackoffService;
+module.exports = BackoffService;
+module.exports.BackoffService = BackoffService;

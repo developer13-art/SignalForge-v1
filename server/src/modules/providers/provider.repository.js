@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/providers/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class ProviderRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class ProviderRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -753,5 +751,5 @@ export class ProviderRepository {
     );
   }
 }
-
-export default ProviderRepository;
+module.exports = ProviderRepository;
+module.exports.ProviderRepository = ProviderRepository;

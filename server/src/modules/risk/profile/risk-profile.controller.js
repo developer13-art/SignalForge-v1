@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/risk/profile/controller
  */
-
-import { RiskProfileService } from './risk-profile.service.js';
-import { validateRiskProfilePayload, validateEmergencyStopPayload } from './risk-profile.validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class RiskProfileController {
+const { RiskProfileService } = require('./risk-profile.service.js');
+const { validateRiskProfilePayload, validateEmergencyStopPayload } = require('./risk-profile.validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class RiskProfileController {
   constructor(service = null) {
     this.service = service || new RiskProfileService();
   }
@@ -69,5 +67,5 @@ export class RiskProfileController {
     }
   };
 }
-
-export default RiskProfileController;
+module.exports = RiskProfileController;
+module.exports.RiskProfileController = RiskProfileController;

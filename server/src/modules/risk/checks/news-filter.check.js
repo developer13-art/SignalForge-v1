@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/risk/checks/news-filter
  */
-
-import { BaseCheck } from './base.check.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskNewsFilterBlocked } from '../risk.events.js';
-import { NewsFilterService } from '../news/news-filter.service.js';
-
-export class NewsFilterCheck extends BaseCheck {
+const { BaseCheck } = require('./base.check.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskNewsFilterBlocked } = require('../risk.events.js');
+const { NewsFilterService } = require('../news/news-filter.service.js');
+class NewsFilterCheck extends BaseCheck {
   constructor(newsFilterService = null) {
     super(RISK_CHECKS.NEWS_FILTER);
     this.newsFilter = newsFilterService || new NewsFilterService();
@@ -47,5 +45,5 @@ export class NewsFilterCheck extends BaseCheck {
     return this.pass();
   }
 }
-
-export default NewsFilterCheck;
+module.exports = NewsFilterCheck;
+module.exports.NewsFilterCheck = NewsFilterCheck;

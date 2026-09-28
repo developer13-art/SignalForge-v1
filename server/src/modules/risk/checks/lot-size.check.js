@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/risk/checks/lot-size
  */
-
-import { BaseCheck } from './base.check.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskLimitHit } from '../risk.events.js';
-
-export class LotSizeCheck extends BaseCheck {
+const { BaseCheck } = require('./base.check.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskLimitHit } = require('../risk.events.js');
+class LotSizeCheck extends BaseCheck {
   constructor() {
     super(RISK_CHECKS.LOT_SIZE);
   }
@@ -43,5 +41,5 @@ export class LotSizeCheck extends BaseCheck {
     });
   }
 }
-
-export default LotSizeCheck;
+module.exports = LotSizeCheck;
+module.exports.LotSizeCheck = LotSizeCheck;

@@ -6,16 +6,14 @@
  *
  * @module server/modules/solana/attestations/dna-attestation.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { attestationRepository } from './attestation.repository';
-import { attestationBuilderService } from './attestation-builder.service';
-import { programConfigService } from '../config/program-config.service';
-import { emitAttestationAnchored } from '../solana.events';
-
-export async function createDnaAttestation({
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { attestationRepository } = require('./attestation.repository');
+const { attestationBuilderService } = require('./attestation-builder.service');
+const { programConfigService } = require('../config/program-config.service');
+const { emitAttestationAnchored } = require('../solana.events');
+async function createDnaAttestation({
   providerId,
   dnaConfidence,
   dnaVersion,
@@ -54,8 +52,7 @@ export async function createDnaAttestation({
     createdAt: record.created_at,
   };
 }
-
-export async function markDnaAttestationAnchored({
+async function markDnaAttestationAnchored({
   attestationId,
   txSignature,
   slot,
@@ -85,8 +82,12 @@ export async function markDnaAttestationAnchored({
 
   return { anchored: true, txSignature };
 }
-
-export const dnaAttestationService = {
+const dnaAttestationService = {
   createDnaAttestation,
   markDnaAttestationAnchored,
 };
+module.exports.dnaAttestationService = dnaAttestationService;
+
+module.exports.createDnaAttestation = createDnaAttestation;
+
+module.exports.markDnaAttestationAnchored = markDnaAttestationAnchored;

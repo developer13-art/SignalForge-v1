@@ -3,21 +3,9 @@
  *
  * @module signalforge/server/modules/trade-state/lifecycle/state-transitions
  */
-
-import {
-  TRADE_STATES,
-  VALID_TRADE_TRANSITIONS,
-  isValidTradeState,
-  isValidTransition,
-  isTerminalState,
-} from '../trade-state.constants.js';
-import {
-  InvalidTradeStateError,
-  InvalidTradeTransitionError,
-  TradeTerminalStateError,
-} from '../trade-state.errors.js';
-
-export class StateTransitions {
+const { TRADE_STATES, VALID_TRADE_TRANSITIONS, isValidTradeState, isValidTransition, isTerminalState } = require('../trade-state.constants.js');
+const { InvalidTradeStateError, InvalidTradeTransitionError, TradeTerminalStateError } = require('../trade-state.errors.js');
+class StateTransitions {
   validateTransition(fromState, toState) {
     if (!isValidTradeState(fromState)) {
       throw new InvalidTradeStateError(`Unknown state: ${fromState}`, { state: fromState });
@@ -61,5 +49,5 @@ export class StateTransitions {
     ].includes(state);
   }
 }
-
-export default StateTransitions;
+module.exports = StateTransitions;
+module.exports.StateTransitions = StateTransitions;

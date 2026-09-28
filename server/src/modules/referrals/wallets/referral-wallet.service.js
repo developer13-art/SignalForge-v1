@@ -3,20 +3,11 @@
  *
  * @module signalforge/server/modules/referrals/wallets/service
  */
-
-import { ReferralWalletRepository } from './repository.js';
-import { ReferralWalletCalculatorService } from './calculator.js';
-import {
-  ReferralWalletNotFoundError,
-  InsufficientReferralBalanceError,
-} from '../referral.errors.js';
-import {
-  emitWalletCredited,
-  emitWalletDebited,
-  emitLedgerEntryCreated,
-} from '../referral.events.js';
-
-export class ReferralWalletService {
+const { ReferralWalletRepository } = require('./repository.js');
+const { ReferralWalletCalculatorService } = require('./calculator.js');
+const { ReferralWalletNotFoundError, InsufficientReferralBalanceError } = require('../referral.errors.js');
+const { emitWalletCredited, emitWalletDebited, emitLedgerEntryCreated } = require('../referral.events.js');
+class ReferralWalletService {
   constructor(repository = null, calculator = null) {
     this.repository = repository || new ReferralWalletRepository();
     this.calculator = calculator || new ReferralWalletCalculatorService();
@@ -186,6 +177,5 @@ export class ReferralWalletService {
   }
 }
 
-export { emitLedgerEntryCreated };
-
-export default ReferralWalletService;
+module.exports = ReferralWalletService;
+module.exports.ReferralWalletService = ReferralWalletService;

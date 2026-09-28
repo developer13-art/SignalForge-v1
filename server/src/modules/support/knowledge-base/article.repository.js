@@ -5,11 +5,9 @@
  *
  * @module server/modules/support/knowledge-base/article.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertArticle({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertArticle({
   slug,
   title,
   category,
@@ -38,24 +36,21 @@ export async function insertArticle({
   );
   return rows[0];
 }
-
-export async function findById({ articleId }) {
+async function findById({ articleId }) {
   const { rows } = await db.query(
     `SELECT * FROM knowledge_base_articles WHERE id = $1 LIMIT 1`,
     [articleId],
   );
   return rows[0] || null;
 }
-
-export async function findBySlug({ slug, locale = 'en' }) {
+async function findBySlug({ slug, locale = 'en' }) {
   const { rows } = await db.query(
     `SELECT * FROM knowledge_base_articles WHERE slug = $1 AND locale = $2 LIMIT 1`,
     [slug, locale],
   );
   return rows[0] || null;
 }
-
-export async function listPublished({ category, locale = 'en', pagination = {} }) {
+async function listPublished({ category, locale = 'en', pagination = {} }) {
   const conditions = ['published = TRUE', 'locale = $1'];
   const params = [locale];
 
@@ -88,8 +83,7 @@ export async function listPublished({ category, locale = 'en', pagination = {} }
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function searchArticles({ query, locale = 'en', limit = 20 }) {
+async function searchArticles({ query, locale = 'en', limit = 20 }) {
   const searchTerm = `%${String(query || '').toLowerCase()}%`;
   const { rows } = await db.query(
     `SELECT id, slug, title, category, published, locale
@@ -105,8 +99,7 @@ export async function searchArticles({ query, locale = 'en', limit = 20 }) {
   );
   return rows;
 }
-
-export async function updateArticle({
+async function updateArticle({
   articleId,
   title,
   body,
@@ -136,16 +129,14 @@ export async function updateArticle({
   );
   return rows[0] || null;
 }
-
-export async function deleteArticle({ articleId }) {
+async function deleteArticle({ articleId }) {
   const { rowCount } = await db.query(
     `DELETE FROM knowledge_base_articles WHERE id = $1`,
     [articleId],
   );
   return rowCount > 0;
 }
-
-export async function listCategories({ locale = 'en' }) {
+async function listCategories({ locale = 'en' }) {
   const { rows } = await db.query(
     `SELECT category, COUNT(*)::int AS count
        FROM knowledge_base_articles
@@ -156,8 +147,7 @@ export async function listCategories({ locale = 'en' }) {
   );
   return rows;
 }
-
-export const articleRepository = {
+const articleRepository = {
   insertArticle,
   findById,
   findBySlug,
@@ -167,3 +157,20 @@ export const articleRepository = {
   deleteArticle,
   listCategories,
 };
+module.exports.articleRepository = articleRepository;
+
+module.exports.insertArticle = insertArticle;
+
+module.exports.findById = findById;
+
+module.exports.findBySlug = findBySlug;
+
+module.exports.listPublished = listPublished;
+
+module.exports.searchArticles = searchArticles;
+
+module.exports.updateArticle = updateArticle;
+
+module.exports.deleteArticle = deleteArticle;
+
+module.exports.listCategories = listCategories;

@@ -6,14 +6,12 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/reconnect
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { TelegramRepository } from './telegram.repository.js';
-import { TelegramSessionStoreService } from './telegram-session-store.service.js';
-import { TelegramListenerService } from './telegram-listener.service.js';
-import { SESSION_HEALTH_CHECK_INTERVAL_MS } from './telegram.constants.js';
-
-export class TelegramReconnectService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { TelegramRepository } = require('./telegram.repository.js');
+const { TelegramSessionStoreService } = require('./telegram-session-store.service.js');
+const { TelegramListenerService } = require('./telegram-listener.service.js');
+const { SESSION_HEALTH_CHECK_INTERVAL_MS } = require('./telegram.constants.js');
+class TelegramReconnectService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TelegramRepository();
     this.sessionStore = dependencies.sessionStore || new TelegramSessionStoreService(this.repository);
@@ -58,5 +56,5 @@ export class TelegramReconnectService {
     await this.listenerService.stopAll();
   }
 }
-
-export default TelegramReconnectService;
+module.exports = TelegramReconnectService;
+module.exports.TelegramReconnectService = TelegramReconnectService;

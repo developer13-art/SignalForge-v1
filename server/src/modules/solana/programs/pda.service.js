@@ -7,11 +7,10 @@
  *
  * @module server/modules/solana/programs/pda.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { programConfigService } from '../config/program-config.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { programConfigService } = require('../config/program-config.service');
 
 async function loadWeb3() {
   try {
@@ -46,8 +45,7 @@ async function derivePda({ programId, seeds }) {
 
   return { pda: pda.toString(), bump };
 }
-
-export async function deriveAttestationPda({ subjectType, subjectId, attestationType }) {
+async function deriveAttestationPda({ subjectType, subjectId, attestationType }) {
   if (!subjectType || !subjectId || !attestationType) {
     throw new AppError(
       'subjectType, subjectId, and attestationType are required',
@@ -63,8 +61,7 @@ export async function deriveAttestationPda({ subjectType, subjectId, attestation
     seeds: ['attestation', subjectType, subjectId, attestationType],
   });
 }
-
-export async function deriveProvenancePda({ signalId, aiVersion }) {
+async function deriveProvenancePda({ signalId, aiVersion }) {
   if (!signalId || !aiVersion) {
     throw new AppError('signalId and aiVersion are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -76,8 +73,7 @@ export async function deriveProvenancePda({ signalId, aiVersion }) {
     seeds: ['provenance', signalId, aiVersion],
   });
 }
-
-export async function derivePaymentPda({ reference }) {
+async function derivePaymentPda({ reference }) {
   if (!reference) {
     throw new AppError('reference is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -89,8 +85,7 @@ export async function derivePaymentPda({ reference }) {
     seeds: ['payment', reference],
   });
 }
-
-export async function deriveAuthorityPda({ programKey }) {
+async function deriveAuthorityPda({ programKey }) {
   const programId = programConfigService.getProgramId({ key: programKey });
 
   return derivePda({
@@ -98,8 +93,7 @@ export async function deriveAuthorityPda({ programKey }) {
     seeds: ['authority'],
   });
 }
-
-export async function deriveTreasuryPda({ programKey = 'payment' } = {}) {
+async function deriveTreasuryPda({ programKey = 'payment' } = {}) {
   const programId = programConfigService.getProgramId({ key: programKey });
 
   return derivePda({
@@ -107,8 +101,7 @@ export async function deriveTreasuryPda({ programKey = 'payment' } = {}) {
     seeds: ['treasury'],
   });
 }
-
-export async function tryDerive({ fn, args }) {
+async function tryDerive({ fn, args }) {
   try {
     return await fn(args);
   } catch (err) {
@@ -116,8 +109,7 @@ export async function tryDerive({ fn, args }) {
     return null;
   }
 }
-
-export const pdaService = {
+const pdaService = {
   deriveAttestationPda,
   deriveProvenancePda,
   derivePaymentPda,
@@ -125,3 +117,16 @@ export const pdaService = {
   deriveTreasuryPda,
   tryDerive,
 };
+module.exports.pdaService = pdaService;
+
+module.exports.deriveAttestationPda = deriveAttestationPda;
+
+module.exports.deriveProvenancePda = deriveProvenancePda;
+
+module.exports.derivePaymentPda = derivePaymentPda;
+
+module.exports.deriveAuthorityPda = deriveAuthorityPda;
+
+module.exports.deriveTreasuryPda = deriveTreasuryPda;
+
+module.exports.tryDerive = tryDerive;

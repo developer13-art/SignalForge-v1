@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/users/profile/service
  */
-
-import { ProfileRepository } from './profile.repository.js';
-import { ProfileNotFoundError } from '../user.errors.js';
-import { emitProfileUpdated } from '../user.events.js';
-
-export class ProfileService {
+const { ProfileRepository } = require('./profile.repository.js');
+const { ProfileNotFoundError } = require('../user.errors.js');
+const { emitProfileUpdated } = require('../user.events.js');
+class ProfileService {
   constructor(repository = null) {
     this.repository = repository || new ProfileRepository();
   }
@@ -47,5 +45,5 @@ export class ProfileService {
     return { deleted: true };
   }
 }
-
-export default ProfileService;
+module.exports = ProfileService;
+module.exports.ProfileService = ProfileService;

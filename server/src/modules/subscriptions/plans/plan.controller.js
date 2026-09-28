@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/subscriptions/plans/controller
  */
-
-import { PlanService } from './service.js';
-import { validateCreatePlan, validateUpdatePlan } from './validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class PlanController {
+const { PlanService } = require('./service.js');
+const { validateCreatePlan, validateUpdatePlan } = require('./validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class PlanController {
   constructor(service = null) {
     this.service = service || new PlanService();
   }
@@ -84,5 +82,5 @@ export class PlanController {
     }
   };
 }
-
-export default PlanController;
+module.exports = PlanController;
+module.exports.PlanController = PlanController;

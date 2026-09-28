@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/performance/equity/service
  */
-
-import { EquitySnapshotRepository } from './repository.js';
-import { emitEquitySnapshotCaptured } from '../performance.events.js';
-
-export class EquitySnapshotService {
+const { EquitySnapshotRepository } = require('./repository.js');
+const { emitEquitySnapshotCaptured } = require('../performance.events.js');
+class EquitySnapshotService {
   constructor(repository = null) {
     this.repository = repository || new EquitySnapshotRepository();
   }
@@ -85,5 +83,5 @@ export class EquitySnapshotService {
     };
   }
 }
-
-export default EquitySnapshotService;
+module.exports = EquitySnapshotService;
+module.exports.EquitySnapshotService = EquitySnapshotService;

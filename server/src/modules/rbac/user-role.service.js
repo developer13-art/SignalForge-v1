@@ -3,20 +3,13 @@
  *
  * @module signalforge/server/modules/rbac/user-role-service
  */
-
-import { UserRoleRepository } from './user-role.repository.js';
-import { RoleRepository } from './role.repository.js';
-import { PermissionRepository } from './permission.repository.js';
-import {
-  RoleNotFoundError,
-  UserRoleAlreadyAssignedError,
-  UserRoleNotAssignedError,
-  CannotRevokeLastAdminError,
-} from './rbac.errors.js';
-import { SYSTEM_PROTECTED_ROLES, RBAC_EVENTS } from './rbac.constants.js';
-import { getEventBus } from '../../bootstrap/initEventBus.js';
-
-export class UserRoleService {
+const { UserRoleRepository } = require('./user-role.repository.js');
+const { RoleRepository } = require('./role.repository.js');
+const { PermissionRepository } = require('./permission.repository.js');
+const { RoleNotFoundError, UserRoleAlreadyAssignedError, UserRoleNotAssignedError, CannotRevokeLastAdminError } = require('./rbac.errors.js');
+const { SYSTEM_PROTECTED_ROLES, RBAC_EVENTS } = require('./rbac.constants.js');
+const { getEventBus } = require('../../bootstrap/initEventBus.js');
+class UserRoleService {
   constructor(
     userRoleRepository = null,
     roleRepository = null,
@@ -165,5 +158,5 @@ export class UserRoleService {
     return permissions.includes(permissionName);
   }
 }
-
-export default UserRoleService;
+module.exports = UserRoleService;
+module.exports.UserRoleService = UserRoleService;

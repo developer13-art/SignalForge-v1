@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/003_create_kyc_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS kyc_document_types (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -171,8 +170,7 @@ export async function up(client) {
       ON compliance_audit_log (created_at DESC);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS compliance_audit_log CASCADE`);
   await client.query(`DROP TABLE IF EXISTS verification_providers CASCADE`);
   await client.query(`DROP TABLE IF EXISTS kyc_risk_flags CASCADE`);
@@ -182,3 +180,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS kyc_applications CASCADE`);
   await client.query(`DROP TABLE IF EXISTS kyc_document_types CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

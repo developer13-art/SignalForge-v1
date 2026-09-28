@@ -3,10 +3,9 @@
  *
  * @module server/utils/file.util
  */
-
-import fs from 'node:fs';
-import path from 'node:path';
-import crypto from 'node:crypto';
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
 
 const ALLOWED_EXTENSIONS = Object.freeze([
   '.jpg',
@@ -18,16 +17,14 @@ const ALLOWED_EXTENSIONS = Object.freeze([
   '.xlsx',
   '.docx',
 ]);
-
-export function isAllowedExtension(filename) {
+function isAllowedExtension(filename) {
   if (!filename || typeof filename !== 'string') {
     return false;
   }
   const ext = path.extname(filename).toLowerCase();
   return ALLOWED_EXTENSIONS.includes(ext);
 }
-
-export function sanitizeFilename(filename) {
+function sanitizeFilename(filename) {
   if (!filename || typeof filename !== 'string') {
     return null;
   }
@@ -36,30 +33,25 @@ export function sanitizeFilename(filename) {
     .replace(/_{2,}/g, '_')
     .substring(0, 255);
 }
-
-export function buildStorageKey({ folder, filename, extension }) {
+function buildStorageKey({ folder, filename, extension }) {
   const now = Date.now();
   const random = crypto.randomBytes(6).toString('hex');
   const safeExt = (extension || path.extname(filename || '')).replace(/^\./, '') || 'bin';
   const safeFolder = (folder || 'misc').replace(/[^\w/.-]+/g, '');
   return `${safeFolder}/${now}-${random}.${safeExt}`;
 }
-
-export async function ensureDirectory(dir) {
+async function ensureDirectory(dir) {
   await fs.promises.mkdir(dir, { recursive: true });
   return dir;
 }
-
-export async function writeFile({ filePath, content }) {
+async function writeFile({ filePath, content }) {
   await fs.promises.writeFile(filePath, content);
   return filePath;
 }
-
-export async function readFile({ filePath, encoding = 'utf8' }) {
+async function readFile({ filePath, encoding = 'utf8' }) {
   return fs.promises.readFile(filePath, encoding);
 }
-
-export async function deleteFile({ filePath }) {
+async function deleteFile({ filePath }) {
   try {
     await fs.promises.unlink(filePath);
     return true;
@@ -70,8 +62,7 @@ export async function deleteFile({ filePath }) {
     throw err;
   }
 }
-
-export function getFileSize({ filePath }) {
+function getFileSize({ filePath }) {
   try {
     const stat = fs.statSync(filePath);
     return stat.size;
@@ -79,8 +70,7 @@ export function getFileSize({ filePath }) {
     return null;
   }
 }
-
-export const fileUtil = {
+const fileUtil = {
   isAllowedExtension,
   sanitizeFilename,
   buildStorageKey,
@@ -91,3 +81,16 @@ export const fileUtil = {
   getFileSize,
   ALLOWED_EXTENSIONS,
 };
+module.exports.fileUtil = fileUtil;
+module.exports.isAllowedExtension = isAllowedExtension;
+module.exports.sanitizeFilename = sanitizeFilename;
+module.exports.buildStorageKey = buildStorageKey;
+module.exports.getFileSize = getFileSize;
+
+module.exports.ensureDirectory = ensureDirectory;
+
+module.exports.writeFile = writeFile;
+
+module.exports.readFile = readFile;
+
+module.exports.deleteFile = deleteFile;

@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/013_create_affiliate_ib_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS affiliate_partners (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -148,8 +147,7 @@ export async function up(client) {
       ON ib_revenue_entries (partner_user_id, status);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS ib_revenue_entries CASCADE`);
   await client.query(`DROP TABLE IF EXISTS ib_referrals CASCADE`);
   await client.query(`DROP TABLE IF EXISTS ib_links CASCADE`);
@@ -159,3 +157,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS affiliate_links CASCADE`);
   await client.query(`DROP TABLE IF EXISTS affiliate_partners CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

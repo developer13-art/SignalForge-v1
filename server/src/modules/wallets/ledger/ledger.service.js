@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/wallets/ledger/service
  */
-
-import { LedgerRepository } from './repository.js';
-import { LedgerEntryService } from './entry-service.js';
-import { LedgerIntegrityService } from './integrity.js';
-
-export class LedgerService {
+const { LedgerRepository } = require('./repository.js');
+const { LedgerEntryService } = require('./entry-service.js');
+const { LedgerIntegrityService } = require('./integrity.js');
+class LedgerService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new LedgerRepository();
     this.entries =
@@ -47,5 +45,5 @@ export class LedgerService {
     return this.integrity.checkAll(tolerance);
   }
 }
-
-export default LedgerService;
+module.exports = LedgerService;
+module.exports.LedgerService = LedgerService;

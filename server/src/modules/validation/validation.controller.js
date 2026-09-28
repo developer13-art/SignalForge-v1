@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/validation/controller
  */
-
-import { ValidationService } from './validation.service.js';
-
-export class ValidationController {
+const { ValidationService } = require('./validation.service.js');
+class ValidationController {
   constructor(service = null) {
     this.service = service || new ValidationService();
   }
@@ -76,5 +74,5 @@ export class ValidationController {
     }
   };
 }
-
-export default ValidationController;
+module.exports = ValidationController;
+module.exports.ValidationController = ValidationController;

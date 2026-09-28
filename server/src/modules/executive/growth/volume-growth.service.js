@@ -6,8 +6,7 @@
  *
  * @module server/modules/executive/growth/volume-growth.service
  */
-
-import { db } from '../../../database';
+const { db } = require('../../../database');
 
 const VALID_GRANULARITIES = Object.freeze(['day', 'week', 'month']);
 
@@ -21,8 +20,7 @@ function normalizeRange({ from, to }) {
   const fromDate = from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   return { from: fromDate, to: toDate };
 }
-
-export async function getGrowth({ from, to, granularity }) {
+async function getGrowth({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
   const dateTrunc = g === 'month' ? 'month' : g === 'week' ? 'week' : 'day';
@@ -88,8 +86,7 @@ export async function getGrowth({ from, to, granularity }) {
     series,
   };
 }
-
-export async function getDailyVolumeSeries({ days = 30 }) {
+async function getDailyVolumeSeries({ days = 30 }) {
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
   const { rows } = await db.query(
@@ -109,8 +106,12 @@ export async function getDailyVolumeSeries({ days = 30 }) {
     volume: Number(row.volume || 0),
   }));
 }
-
-export const volumeGrowthService = {
+const volumeGrowthService = {
   getGrowth,
   getDailyVolumeSeries,
 };
+module.exports.volumeGrowthService = volumeGrowthService;
+
+module.exports.getGrowth = getGrowth;
+
+module.exports.getDailyVolumeSeries = getDailyVolumeSeries;

@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/012_create_marketplace_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS marketplace_listings (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -113,8 +112,7 @@ export async function up(client) {
     );
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS trader_style_assignments CASCADE`);
   await client.query(`DROP TABLE IF EXISTS trading_styles CASCADE`);
   await client.query(`DROP TABLE IF EXISTS trader_behavior_metrics CASCADE`);
@@ -123,3 +121,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS marketplace_reviews CASCADE`);
   await client.query(`DROP TABLE IF EXISTS marketplace_listings CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

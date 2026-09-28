@@ -3,11 +3,9 @@
  *
  * @module server/modules/admin/referrals/admin-referral.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function listReferralRewards({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function listReferralRewards({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -64,16 +62,14 @@ export async function listReferralRewards({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findRewardById({ rewardId }) {
+async function findRewardById({ rewardId }) {
   const { rows } = await db.query(
     `SELECT * FROM referral_rewards WHERE id = $1 LIMIT 1`,
     [rewardId],
   );
   return rows[0] || null;
 }
-
-export async function updateRewardStatus({ rewardId, status, reason }) {
+async function updateRewardStatus({ rewardId, status, reason }) {
   const { rowCount } = await db.query(
     `UPDATE referral_rewards
         SET status = $1,
@@ -86,8 +82,7 @@ export async function updateRewardStatus({ rewardId, status, reason }) {
   );
   return rowCount > 0;
 }
-
-export async function listReferralRelationships({ filters = {}, pagination = {} }) {
+async function listReferralRelationships({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -125,8 +120,7 @@ export async function listReferralRelationships({ filters = {}, pagination = {} 
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function countRewardsByStatus() {
+async function countRewardsByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count, COALESCE(SUM(reward_amount), 0)::numeric AS total_amount
        FROM referral_rewards
@@ -134,11 +128,21 @@ export async function countRewardsByStatus() {
   );
   return rows;
 }
-
-export const adminReferralRepository = {
+const adminReferralRepository = {
   listReferralRewards,
   findRewardById,
   updateRewardStatus,
   listReferralRelationships,
   countRewardsByStatus,
 };
+module.exports.adminReferralRepository = adminReferralRepository;
+
+module.exports.listReferralRewards = listReferralRewards;
+
+module.exports.findRewardById = findRewardById;
+
+module.exports.updateRewardStatus = updateRewardStatus;
+
+module.exports.listReferralRelationships = listReferralRelationships;
+
+module.exports.countRewardsByStatus = countRewardsByStatus;

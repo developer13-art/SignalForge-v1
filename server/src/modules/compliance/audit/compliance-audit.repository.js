@@ -3,11 +3,9 @@
  *
  * @module server/modules/compliance/audit/compliance-audit.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertAuditEntry({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertAuditEntry({
   actorId,
   action,
   resourceType,
@@ -39,8 +37,7 @@ export async function insertAuditEntry({
   );
   return rows[0];
 }
-
-export async function listEntries({ filters = {}, pagination = {} }) {
+async function listEntries({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -97,8 +94,7 @@ export async function listEntries({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findByResource({ resourceType, resourceId }) {
+async function findByResource({ resourceType, resourceId }) {
   const { rows } = await db.query(
     `SELECT * FROM compliance_audit_log
       WHERE resource_type = $1 AND resource_id = $2
@@ -107,8 +103,7 @@ export async function findByResource({ resourceType, resourceId }) {
   );
   return rows;
 }
-
-export async function countActionsByActor({ actorId, since }) {
+async function countActionsByActor({ actorId, since }) {
   const params = [actorId];
   let where = `WHERE actor_id = $1`;
 
@@ -126,10 +121,18 @@ export async function countActionsByActor({ actorId, since }) {
   );
   return rows;
 }
-
-export const complianceAuditRepository = {
+const complianceAuditRepository = {
   insertAuditEntry,
   listEntries,
   findByResource,
   countActionsByActor,
 };
+module.exports.complianceAuditRepository = complianceAuditRepository;
+
+module.exports.insertAuditEntry = insertAuditEntry;
+
+module.exports.listEntries = listEntries;
+
+module.exports.findByResource = findByResource;
+
+module.exports.countActionsByActor = countActionsByActor;

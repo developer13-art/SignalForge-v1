@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-sources/rest-api/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class RestApiRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class RestApiRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -90,5 +88,5 @@ export class RestApiRepository {
     );
   }
 }
-
-export default RestApiRepository;
+module.exports = RestApiRepository;
+module.exports.RestApiRepository = RestApiRepository;

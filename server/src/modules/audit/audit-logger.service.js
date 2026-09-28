@@ -7,14 +7,13 @@
  *
  * @module server/modules/audit/audit-logger.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { AUDIT_SEVERITIES, AUDIT_ACTOR_TYPES, isValidAction, isValidActorType, isValidSeverity } from './audit.constants';
-import * as repository from './audit.repository';
-import { emitAuditLogCreated, emitSecurityAlert } from './audit.events';
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { AUDIT_SEVERITIES, AUDIT_ACTOR_TYPES, isValidAction, isValidActorType, isValidSeverity } = require('./audit.constants');
+const repository = require('./audit.repository');
+const { emitAuditLogCreated, emitSecurityAlert } = require('./audit.events');
 
 function enrichEntry({ entry, context }) {
   return {
@@ -25,8 +24,7 @@ function enrichEntry({ entry, context }) {
     correlationId: entry.correlationId || (context && context.correlationId) || null,
   };
 }
-
-export async function logAction(entry, context = {}) {
+async function logAction(entry, context = {}) {
   if (!entry || !entry.action) {
     throw new AppError('action is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -79,8 +77,7 @@ export async function logAction(entry, context = {}) {
     createdAt: record.created_at,
   };
 }
-
-export async function logBatch(entries, context = {}) {
+async function logBatch(entries, context = {}) {
   if (!Array.isArray(entries) || entries.length === 0) {
     return { logged: false, count: 0 };
   }
@@ -99,8 +96,7 @@ export async function logBatch(entries, context = {}) {
 
   return { logged: true, count: ids.length, auditIds: ids };
 }
-
-export async function logSystemAction({ action, resourceType, resourceId, details, severity, correlationId }) {
+async function logSystemAction({ action, resourceType, resourceId, details, severity, correlationId }) {
   return logAction(
     {
       action,
@@ -114,8 +110,7 @@ export async function logSystemAction({ action, resourceType, resourceId, detail
     {},
   );
 }
-
-export async function logUserAction({ userId, action, resourceType, resourceId, details, severity, context }) {
+async function logUserAction({ userId, action, resourceType, resourceId, details, severity, context }) {
   return logAction(
     {
       actorId: userId,
@@ -129,8 +124,7 @@ export async function logUserAction({ userId, action, resourceType, resourceId, 
     context || {},
   );
 }
-
-export async function logAdminAction({ adminId, action, resourceType, resourceId, details, reason, severity, context }) {
+async function logAdminAction({ adminId, action, resourceType, resourceId, details, reason, severity, context }) {
   return logAction(
     {
       actorId: adminId,
@@ -144,8 +138,7 @@ export async function logAdminAction({ adminId, action, resourceType, resourceId
     context || {},
   );
 }
-
-export async function logComplianceAction({ reviewerId, action, resourceType, resourceId, details, reason, context }) {
+async function logComplianceAction({ reviewerId, action, resourceType, resourceId, details, reason, context }) {
   return logAction(
     {
       actorId: reviewerId,
@@ -159,8 +152,7 @@ export async function logComplianceAction({ reviewerId, action, resourceType, re
     context || {},
   );
 }
-
-export const auditLoggerService = {
+const auditLoggerService = {
   logAction,
   logBatch,
   logSystemAction,
@@ -168,3 +160,16 @@ export const auditLoggerService = {
   logAdminAction,
   logComplianceAction,
 };
+module.exports.auditLoggerService = auditLoggerService;
+
+module.exports.logAction = logAction;
+
+module.exports.logBatch = logBatch;
+
+module.exports.logSystemAction = logSystemAction;
+
+module.exports.logUserAction = logUserAction;
+
+module.exports.logAdminAction = logAdminAction;
+
+module.exports.logComplianceAction = logComplianceAction;

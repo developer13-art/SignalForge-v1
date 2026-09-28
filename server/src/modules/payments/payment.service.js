@@ -3,24 +3,16 @@
  *
  * @module signalforge/server/modules/payments/service
  */
-
-import { PaymentRepository } from './payment.repository.js';
-import { PaymentIntentService } from './intents/payment-intent.service.js';
-import { InvoiceService } from './invoices/invoice.service.js';
-import { RefundService } from './refunds/refund.service.js';
-import { PaymentEventService } from './events/payment-event.service.js';
-import { WebhookVerificationService } from './webhooks/webhook-verification.service.js';
-import { PaymentProviderFactory } from './providers/provider.factory.js';
-import {
-  PAYMENT_STATUSES,
-  PAYMENT_PROVIDERS,
-} from './payment.constants.js';
-import {
-  PaymentNotFoundError,
-  PaymentProviderNotConfiguredError,
-} from './payment.errors.js';
-
-export class PaymentService {
+const { PaymentRepository } = require('./payment.repository.js');
+const { PaymentIntentService } = require('./intents/payment-intent.service.js');
+const { InvoiceService } = require('./invoices/invoice.service.js');
+const { RefundService } = require('./refunds/refund.service.js');
+const { PaymentEventService } = require('./events/payment-event.service.js');
+const { WebhookVerificationService } = require('./webhooks/webhook-verification.service.js');
+const { PaymentProviderFactory } = require('./providers/provider.factory.js');
+const { PAYMENT_STATUSES, PAYMENT_PROVIDERS } = require('./payment.constants.js');
+const { PaymentNotFoundError, PaymentProviderNotConfiguredError } = require('./payment.errors.js');
+class PaymentService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new PaymentRepository();
     this.intents =
@@ -193,5 +185,5 @@ export class PaymentService {
     return input;
   }
 }
-
-export default PaymentService;
+module.exports = PaymentService;
+module.exports.PaymentService = PaymentService;

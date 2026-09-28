@@ -3,15 +3,13 @@
  *
  * @module server/lib/errors/authorization-error
  */
-
-import { AppError } from './app-error';
-import { ERROR_CODES } from './error-codes';
-
-export class AuthorizationError extends AppError {
+const { AppError } = require('./app-error');
+const { ERROR_CODES } = require('./error-codes');
+class AuthorizationError extends AppError {
   constructor(message, details = null) {
     super(message, ERROR_CODES.AUTHORIZATION_FAILED, 403, details);
     this.name = 'AuthorizationError';
   }
 }
-
-export default AuthorizationError;
+module.exports = AuthorizationError;
+module.exports.AuthorizationError = AuthorizationError;

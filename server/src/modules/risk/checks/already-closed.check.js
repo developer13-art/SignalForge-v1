@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/risk/checks/already-closed
  */
-
-import { BaseCheck } from './base.check.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-
-export class AlreadyClosedCheck extends BaseCheck {
+const { BaseCheck } = require('./base.check.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+class AlreadyClosedCheck extends BaseCheck {
   constructor() {
     super(RISK_CHECKS.ALREADY_CLOSED);
   }
@@ -33,5 +31,5 @@ export class AlreadyClosedCheck extends BaseCheck {
     return this.pass();
   }
 }
-
-export default AlreadyClosedCheck;
+module.exports = AlreadyClosedCheck;
+module.exports.AlreadyClosedCheck = AlreadyClosedCheck;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/execution/request/repository
  */
-
-import { ExecutionRepository } from '../execution.repository.js';
-
-export class ExecutionRequestRepository {
+const { ExecutionRepository } = require('../execution.repository.js');
+class ExecutionRequestRepository {
   constructor(db = null) {
     this.executionRepository = new ExecutionRepository(db);
   }
@@ -43,5 +41,5 @@ export class ExecutionRequestRepository {
     return this.executionRepository.countByStatus(filters);
   }
 }
-
-export default ExecutionRequestRepository;  
+module.exports = ExecutionRequestRepository;  
+module.exports.ExecutionRequestRepository = ExecutionRequestRepository;

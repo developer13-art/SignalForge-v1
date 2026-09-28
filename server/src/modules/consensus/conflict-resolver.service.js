@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/consensus/conflict-resolver
  */
-
-import { CONSENSUS_DIRECTIONS } from './consensus.constants.js';
-
-export class ConflictResolverService {
+const { CONSENSUS_DIRECTIONS } = require('./consensus.constants.js');
+class ConflictResolverService {
   detect(members) {
     if (!Array.isArray(members) || members.length < 2) {
       return { conflicting: false };
@@ -71,5 +69,5 @@ export class ConflictResolverService {
     };
   }
 }
-
-export default ConflictResolverService;
+module.exports = ConflictResolverService;
+module.exports.ConflictResolverService = ConflictResolverService;

@@ -7,16 +7,15 @@
  *
  * @module server/modules/signal-sources/discord/discord-message-handler.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { buildSourceMessageKey } from '@signalforge/shared/utils/idempotency.util';
-import { buildMessageFingerprint } from '@signalforge/shared/utils/fingerprint.util';
-import { publishEvent } from '../../../events/event-publisher';
-import { messageRawStoreService } from '../messages/message-raw-store.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
+const { buildMessageFingerprint } = require('@signalforge/shared/utils/fingerprint.util');
+const { publishEvent } = require('../../../events/event-publisher');
+const { messageRawStoreService } = require('../messages/message-raw-store.service');
 
 function normalizeAttachments(attachments) {
   if (!Array.isArray(attachments) || attachments.length === 0) {
@@ -63,8 +62,7 @@ function normalizeEmbeds(embeds) {
     thumbnail: embed.thumbnail ? { url: embed.thumbnail.url || null } : null,
   }));
 }
-
-export async function handleDiscordMessage({ userId, message }) {
+async function handleDiscordMessage({ userId, message }) {
   if (!userId || !message) {
     throw new AppError('userId and message are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -136,8 +134,7 @@ export async function handleDiscordMessage({ userId, message }) {
 
   return { handled: true, storedMessageId: stored ? stored.id : null, messageId: envelope.externalMessageId };
 }
-
-export async function handleDiscordEditedMessage({ userId, message }) {
+async function handleDiscordEditedMessage({ userId, message }) {
   if (!userId || !message) {
     throw new AppError('userId and message are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -180,8 +177,7 @@ export async function handleDiscordEditedMessage({ userId, message }) {
 
   return { handled: true, storedMessageId: stored ? stored.id : null, messageId: envelope.externalMessageId };
 }
-
-export async function handleDiscordDeletedMessage({ userId, message }) {
+async function handleDiscordDeletedMessage({ userId, message }) {
   if (!userId || !message) {
     throw new AppError('userId and message are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -214,9 +210,15 @@ export async function handleDiscordDeletedMessage({ userId, message }) {
 
   return { handled: true, storedMessageId: stored ? stored.id : null, messageId: envelope.externalMessageId };
 }
-
-export const discordMessageHandlerService = {
+const discordMessageHandlerService = {
   handleDiscordMessage,
   handleDiscordEditedMessage,
   handleDiscordDeletedMessage,
 };
+module.exports.discordMessageHandlerService = discordMessageHandlerService;
+
+module.exports.handleDiscordMessage = handleDiscordMessage;
+
+module.exports.handleDiscordEditedMessage = handleDiscordEditedMessage;
+
+module.exports.handleDiscordDeletedMessage = handleDiscordDeletedMessage;

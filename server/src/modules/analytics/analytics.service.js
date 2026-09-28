@@ -3,31 +3,25 @@
  *
  * @module signalforge/server/modules/analytics/service
  */
-
-import { AnalyticsRepository } from './analytics.repository.js';
-import { AnalyticsFilterService } from './filters/analytics-filter.service.js';
-import { DateRangeService } from './filters/date-range.service.js';
-
-import { EquityCurveService } from './metrics/equity-curve.service.js';
-import { DrawdownService } from './metrics/drawdown.service.js';
-import { WinRateService } from './metrics/win-rate.service.js';
-import { ProfitFactorService } from './metrics/profit-factor.service.js';
-import { AverageRrService } from './metrics/average-rr.service.js';
-import { SharpeRatioService } from './metrics/sharpe-ratio.service.js';
-import { SortinoRatioService } from './metrics/sortino-ratio.service.js';
-import { ExecutionLatencyService } from './metrics/execution-latency.service.js';
-import { SymbolPerformanceService } from './metrics/symbol-performance.service.js';
-import { BehaviorAnalysisService } from './metrics/behavior-analysis.service.js';
-
-import { TradingCalendarService } from './calendar/trading-calendar.service.js';
-import { HeatmapService } from './calendar/heatmap.service.js';
-
-import { ReportService } from './reports/report.service.js';
-
-import { METRIC_TYPES } from './analytics.constants.js';
-import { emitMetricCalculated, emitMetricsBatchCalculated } from './analytics.events.js';
-
-export class AnalyticsService {
+const { AnalyticsRepository } = require('./analytics.repository.js');
+const { AnalyticsFilterService } = require('./filters/analytics-filter.service.js');
+const { DateRangeService } = require('./filters/date-range.service.js');
+const { EquityCurveService } = require('./metrics/equity-curve.service.js');
+const { DrawdownService } = require('./metrics/drawdown.service.js');
+const { WinRateService } = require('./metrics/win-rate.service.js');
+const { ProfitFactorService } = require('./metrics/profit-factor.service.js');
+const { AverageRrService } = require('./metrics/average-rr.service.js');
+const { SharpeRatioService } = require('./metrics/sharpe-ratio.service.js');
+const { SortinoRatioService } = require('./metrics/sortino-ratio.service.js');
+const { ExecutionLatencyService } = require('./metrics/execution-latency.service.js');
+const { SymbolPerformanceService } = require('./metrics/symbol-performance.service.js');
+const { BehaviorAnalysisService } = require('./metrics/behavior-analysis.service.js');
+const { TradingCalendarService } = require('./calendar/trading-calendar.service.js');
+const { HeatmapService } = require('./calendar/heatmap.service.js');
+const { ReportService } = require('./reports/report.service.js');
+const { METRIC_TYPES } = require('./analytics.constants.js');
+const { emitMetricCalculated, emitMetricsBatchCalculated } = require('./analytics.events.js');
+class AnalyticsService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new AnalyticsRepository();
     this.filters = dependencies.filters || new AnalyticsFilterService();
@@ -256,5 +250,5 @@ export class AnalyticsService {
     return this.reports.deleteReport(userId, reportId);
   }
 }
-
-export default AnalyticsService;
+module.exports = AnalyticsService;
+module.exports.AnalyticsService = AnalyticsService;

@@ -3,16 +3,14 @@
  *
  * @module signalforge/server/modules/execution/retry/service
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { ExecutionRepository } from '../execution.repository.js';
-import { BackoffService } from './backoff.service.js';
-import { DeadLetterService } from './dead-letter.service.js';
-import { FailureNotificationService } from './failure-notification.service.js';
-import { GatewayError, isRetryableGatewayError } from '../execution.constants.js';
-import { emitRequestRetried } from '../execution.events.js';
-
-export class RetryService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { ExecutionRepository } = require('../execution.repository.js');
+const { BackoffService } = require('./backoff.service.js');
+const { DeadLetterService } = require('./dead-letter.service.js');
+const { FailureNotificationService } = require('./failure-notification.service.js');
+const { GatewayError, isRetryableGatewayError } = require('../execution.constants.js');
+const { emitRequestRetried } = require('../execution.events.js');
+class RetryService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ExecutionRepository();
     this.backoff = dependencies.backoff || new BackoffService();
@@ -58,5 +56,5 @@ export class RetryService {
     }
   }
 }
-
-export default RetryService;
+module.exports = RetryService;
+module.exports.RetryService = RetryService;

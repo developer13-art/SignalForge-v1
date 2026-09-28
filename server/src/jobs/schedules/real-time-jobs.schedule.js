@@ -3,10 +3,8 @@
  *
  * @module server/jobs/schedules/real-time-jobs.schedule
  */
-
-import { logger } from '../../lib/logger';
-
-export async function runScheduledJobs({ enqueueJob }) {
+const { logger } = require('../../lib/logger');
+async function runScheduledJobs({ enqueueJob }) {
   const jobs = [
     { jobType: 'INDEX_SOLANA_EVENTS', payload: {} },
     { jobType: 'VERIFY_SOLANA_PAYMENT', payload: {} },
@@ -25,3 +23,4 @@ export async function runScheduledJobs({ enqueueJob }) {
 
   return { executed: true, enqueued: results.length };
 }
+module.exports.runScheduledJobs = runScheduledJobs;

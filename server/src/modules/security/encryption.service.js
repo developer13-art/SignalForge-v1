@@ -7,18 +7,10 @@
  *
  * @module server/modules/security/encryption.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { config } from '../../config';
-import {
-  encryptPacked,
-  decryptPacked,
-  encryptObject,
-  decryptObject,
-  packEncrypted,
-  unpackEncrypted,
-} from '@signalforge/shared/utils/crypto.util';
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { config } = require('../../config');
+const { encryptPacked, decryptPacked, encryptObject, decryptObject, packEncrypted, unpackEncrypted } = require('@signalforge/shared/utils/crypto.util');
 
 function getKey(overrideKey) {
   const key = overrideKey || (config.security && config.security.encryptionKey);
@@ -29,38 +21,33 @@ function getKey(overrideKey) {
 
   return key;
 }
-
-export function encryptString({ plaintext, key }) {
+function encryptString({ plaintext, key }) {
   if (typeof plaintext !== 'string') {
     throw new AppError('plaintext must be a string', ERROR_CODES.VALIDATION_FAILED, 400);
   }
   return encryptPacked(plaintext, getKey(key));
 }
-
-export function decryptString({ packed, key }) {
+function decryptString({ packed, key }) {
   if (typeof packed !== 'string') {
     throw new AppError('packed value must be a string', ERROR_CODES.VALIDATION_FAILED, 400);
   }
   return decryptPacked(packed, getKey(key));
 }
-
-export function encryptJson({ object, key }) {
+function encryptJson({ object, key }) {
   if (object === null || object === undefined) {
     throw new AppError('object is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
   const encrypted = encryptObject(object, getKey(key));
   return packEncrypted(encrypted);
 }
-
-export function decryptJson({ packed, key }) {
+function decryptJson({ packed, key }) {
   if (typeof packed !== 'string') {
     throw new AppError('packed value must be a string', ERROR_CODES.VALIDATION_FAILED, 400);
   }
   const encrypted = unpackEncrypted(packed);
   return decryptObject(encrypted, getKey(key));
 }
-
-export async function rotateKey({ currentKey, newKey }) {
+async function rotateKey({ currentKey, newKey }) {
   if (!newKey) {
     throw new AppError('newKey is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -80,11 +67,17 @@ function fingerprintKey(key) {
   const str = typeof key === 'string' ? key : Buffer.isBuffer(key) ? key.toString('hex') : String(key);
   return str.substring(0, 8);
 }
-
-export const encryptionService = {
+const encryptionService = {
   encryptString,
   decryptString,
   encryptJson,
   decryptJson,
   rotateKey,
 };
+module.exports.encryptionService = encryptionService;
+module.exports.encryptString = encryptString;
+module.exports.decryptString = decryptString;
+module.exports.encryptJson = encryptJson;
+module.exports.decryptJson = decryptJson;
+
+module.exports.rotateKey = rotateKey;

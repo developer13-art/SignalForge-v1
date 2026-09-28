@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/performance/metrics/trading-costs
  */
-
-export class TradingCostsService {
+class TradingCostsService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return { total: 0, commission: 0, swap: 0, count: 0 };
@@ -42,5 +41,5 @@ export class TradingCostsService {
     };
   }
 }
-
-export default TradingCostsService;
+module.exports = TradingCostsService;
+module.exports.TradingCostsService = TradingCostsService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/referrals/relationships/repository
  */
-
-import { ReferralRepository } from '../referral.repository.js';
-
-export class ReferralRelationshipRepository {
+const { ReferralRepository } = require('../referral.repository.js');
+class ReferralRelationshipRepository {
   constructor(db = null) {
     this.referralRepository = new ReferralRepository(db);
   }
@@ -35,5 +33,5 @@ export class ReferralRelationshipRepository {
     return this.referralRepository.updateRelationship(relationshipId, data);
   }
 }
-
-export default ReferralRelationshipRepository;
+module.exports = ReferralRelationshipRepository;
+module.exports.ReferralRelationshipRepository = ReferralRelationshipRepository;

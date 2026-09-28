@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/payments/events/repository
  */
-
-import { PaymentRepository } from '../payment.repository.js';
-
-export class PaymentEventRepository {
+const { PaymentRepository } = require('../payment.repository.js');
+class PaymentEventRepository {
   constructor(db = null) {
     this.paymentRepository = new PaymentRepository(db);
   }
@@ -31,5 +29,5 @@ export class PaymentEventRepository {
     return this.paymentRepository.listWebhookEvents(filters, pagination);
   }
 }
-
-export default PaymentEventRepository;
+module.exports = PaymentEventRepository;
+module.exports.PaymentEventRepository = PaymentEventRepository;

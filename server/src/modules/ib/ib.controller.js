@@ -6,15 +6,13 @@
  *
  * @module server/modules/ib/ib.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { successResponse } from '../../lib/response/success.response';
-import { paginatedResponse } from '../../lib/response/paginated.response';
-import { ibService } from './ib.service';
-
-export async function getDashboard(req, res) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { successResponse } = require('../../lib/response/success.response');
+const { paginatedResponse } = require('../../lib/response/paginated.response');
+const { ibService } = require('./ib.service');
+async function getDashboard(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -25,8 +23,7 @@ export async function getDashboard(req, res) {
 
   return successResponse(res, { dashboard });
 }
-
-export async function listLinks(req, res) {
+async function listLinks(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -37,8 +34,7 @@ export async function listLinks(req, res) {
 
   return successResponse(res, { links });
 }
-
-export async function createLink(req, res) {
+async function createLink(req, res) {
   const userId = req.user && req.user.id;
   const { brokerId, label, destination } = req.body || {};
 
@@ -52,8 +48,7 @@ export async function createLink(req, res) {
 
   return successResponse(res, { link }, 201);
 }
-
-export async function deactivateLink(req, res) {
+async function deactivateLink(req, res) {
   const userId = req.user && req.user.id;
   const { linkId } = req.params;
 
@@ -65,8 +60,7 @@ export async function deactivateLink(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function listReferrals(req, res) {
+async function listReferrals(req, res) {
   const userId = req.user && req.user.id;
   const { page, limit, status } = req.query;
 
@@ -85,8 +79,7 @@ export async function listReferrals(req, res) {
     meta: result.meta,
   });
 }
-
-export async function getRevenue(req, res) {
+async function getRevenue(req, res) {
   const userId = req.user && req.user.id;
   const { from, to } = req.query;
 
@@ -98,8 +91,7 @@ export async function getRevenue(req, res) {
 
   return successResponse(res, { revenue });
 }
-
-export async function listRevenueEntries(req, res) {
+async function listRevenueEntries(req, res) {
   const userId = req.user && req.user.id;
   const { page, limit, from, to } = req.query;
 
@@ -118,8 +110,7 @@ export async function listRevenueEntries(req, res) {
     meta: result.meta,
   });
 }
-
-export const ibController = {
+const ibController = {
   getDashboard,
   listLinks,
   createLink,
@@ -128,3 +119,18 @@ export const ibController = {
   getRevenue,
   listRevenueEntries,
 };
+module.exports.ibController = ibController;
+
+module.exports.getDashboard = getDashboard;
+
+module.exports.listLinks = listLinks;
+
+module.exports.createLink = createLink;
+
+module.exports.deactivateLink = deactivateLink;
+
+module.exports.listReferrals = listReferrals;
+
+module.exports.getRevenue = getRevenue;
+
+module.exports.listRevenueEntries = listRevenueEntries;

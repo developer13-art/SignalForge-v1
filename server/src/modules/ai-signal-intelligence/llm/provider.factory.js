@@ -3,13 +3,12 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/factory
  */
-
-import { OpenAiProvider } from './openai.provider.js';
-import { AnthropicProvider } from './anthropic.provider.js';
-import { GoogleProvider } from './google.provider.js';
-import { LocalProvider } from './local.provider.js';
-import { LLM_PROVIDERS } from '../ai.constants.js';
-import { LlmProviderNotConfiguredError } from '../ai.errors.js';
+const { OpenAiProvider } = require('./openai.provider.js');
+const { AnthropicProvider } = require('./anthropic.provider.js');
+const { GoogleProvider } = require('./google.provider.js');
+const { LocalProvider } = require('./local.provider.js');
+const { LLM_PROVIDERS } = require('../ai.constants.js');
+const { LlmProviderNotConfiguredError } = require('../ai.errors.js');
 
 const registry = new Map([
   [LLM_PROVIDERS.OPENAI, () => new OpenAiProvider()],
@@ -17,8 +16,7 @@ const registry = new Map([
   [LLM_PROVIDERS.GOOGLE, () => new GoogleProvider()],
   [LLM_PROVIDERS.LOCAL, () => new LocalProvider()],
 ]);
-
-export class LlmProviderFactory {
+class LlmProviderFactory {
   static register(name, factory) {
     if (typeof factory !== 'function') {
       throw new Error('Provider factory must be a function');
@@ -51,5 +49,5 @@ export class LlmProviderFactory {
     return provider.isConfigured() ? provider : null;
   }
 }
-
-export default LlmProviderFactory;
+module.exports = LlmProviderFactory;
+module.exports.LlmProviderFactory = LlmProviderFactory;

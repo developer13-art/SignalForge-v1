@@ -7,17 +7,11 @@
  *
  * @module signalforge/server/modules/signal-classification/classifiers/hybrid
  */
-
-import { BaseClassifier } from './base.classifier.js';
-import { RuleBasedClassifier } from './rule-based.classifier.js';
-import { AiClassifier } from './ai.classifier.js';
-import {
-  CLASSIFIER_KINDS,
-  DEFAULT_RULE_BASED_THRESHOLD,
-  DEFAULT_AI_THRESHOLD,
-} from '../classification.constants.js';
-
-export class HybridClassifier extends BaseClassifier {
+const { BaseClassifier } = require('./base.classifier.js');
+const { RuleBasedClassifier } = require('./rule-based.classifier.js');
+const { AiClassifier } = require('./ai.classifier.js');
+const { CLASSIFIER_KINDS, DEFAULT_RULE_BASED_THRESHOLD, DEFAULT_AI_THRESHOLD } = require('../classification.constants.js');
+class HybridClassifier extends BaseClassifier {
   constructor(llmGateway = null, options = {}) {
     super(CLASSIFIER_KINDS.HYBRID, '1.0.0');
     this.ruleBased = options.ruleBased || new RuleBasedClassifier();
@@ -71,5 +65,5 @@ export class HybridClassifier extends BaseClassifier {
     return finalResult;
   }
 }
-
-export default HybridClassifier;
+module.exports = HybridClassifier;
+module.exports.HybridClassifier = HybridClassifier;

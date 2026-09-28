@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/prompt-manager
  */
-
-import { PromptVersioningService } from './prompt-versioning.service.js';
-
-export class PromptManagerService {
+const { PromptVersioningService } = require('./prompt-versioning.service.js');
+class PromptManagerService {
   constructor(versioning = null) {
     this.versioning = versioning || new PromptVersioningService();
     this.cache = new Map();
@@ -43,5 +41,5 @@ export class PromptManagerService {
     this.cache.clear();
   }
 }
-
-export default PromptManagerService;
+module.exports = PromptManagerService;
+module.exports.PromptManagerService = PromptManagerService;

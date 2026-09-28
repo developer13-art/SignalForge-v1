@@ -7,19 +7,16 @@
  *
  * @module server/modules/admin/system/system-settings.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function findByKey({ key }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function findByKey({ key }) {
   const { rows } = await db.query(
     `SELECT * FROM system_settings WHERE key = $1 LIMIT 1`,
     [key],
   );
   return rows[0] || null;
 }
-
-export async function listAll({ category } = {}) {
+async function listAll({ category } = {}) {
   const params = [];
   let where = '';
 
@@ -34,8 +31,7 @@ export async function listAll({ category } = {}) {
   );
   return rows;
 }
-
-export async function upsertSetting({
+async function upsertSetting({
   key,
   value,
   valueType,
@@ -70,31 +66,27 @@ export async function upsertSetting({
   );
   return rows[0];
 }
-
-export async function deleteSetting({ key }) {
+async function deleteSetting({ key }) {
   const { rowCount } = await db.query(
     `DELETE FROM system_settings WHERE key = $1`,
     [key],
   );
   return rowCount > 0;
 }
-
-export async function listPublicSettings() {
+async function listPublicSettings() {
   const { rows } = await db.query(
     `SELECT key, value, value_type FROM system_settings WHERE is_public = TRUE ORDER BY key ASC`,
   );
   return rows;
 }
-
-export async function listByCategory({ category }) {
+async function listByCategory({ category }) {
   const { rows } = await db.query(
     `SELECT * FROM system_settings WHERE category = $1 ORDER BY key ASC`,
     [category],
   );
   return rows;
 }
-
-export const systemSettingsRepository = {
+const systemSettingsRepository = {
   findByKey,
   listAll,
   upsertSetting,
@@ -102,3 +94,16 @@ export const systemSettingsRepository = {
   listPublicSettings,
   listByCategory,
 };
+module.exports.systemSettingsRepository = systemSettingsRepository;
+
+module.exports.findByKey = findByKey;
+
+module.exports.listAll = listAll;
+
+module.exports.upsertSetting = upsertSetting;
+
+module.exports.deleteSetting = deleteSetting;
+
+module.exports.listPublicSettings = listPublicSettings;
+
+module.exports.listByCategory = listByCategory;

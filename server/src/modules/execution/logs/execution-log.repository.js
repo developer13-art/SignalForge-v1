@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/execution/logs/repository
  */
-
-import { ExecutionRepository } from '../execution.repository.js';
-
-export class ExecutionLogRepository {
+const { ExecutionRepository } = require('../execution.repository.js');
+class ExecutionLogRepository {
   constructor(db = null) {
     this.executionRepository = new ExecutionRepository(db);
   }
@@ -27,5 +25,5 @@ export class ExecutionLogRepository {
     return this.executionRepository.countBySymbol(filters, limit);
   }
 }
-
-export default ExecutionLogRepository;
+module.exports = ExecutionLogRepository;
+module.exports.ExecutionLogRepository = ExecutionLogRepository;

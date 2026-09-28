@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trades/queries/closed-trades
  */
-
-import { TradeRepository } from '../trade.repository.js';
-
-export class ClosedTradesQuery {
+const { TradeRepository } = require('../trade.repository.js');
+class ClosedTradesQuery {
   constructor(repository = null) {
     this.repository = repository || new TradeRepository();
   }
@@ -42,5 +40,5 @@ export class ClosedTradesQuery {
     };
   }
 }
-
-export default ClosedTradesQuery;
+module.exports = ClosedTradesQuery;
+module.exports.ClosedTradesQuery = ClosedTradesQuery;

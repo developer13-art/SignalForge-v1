@@ -7,16 +7,14 @@
  *
  * @module server/modules/solana/attestations/certification-attestation.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { attestationRepository } from './attestation.repository';
-import { attestationBuilderService } from './attestation-builder.service';
-import { programConfigService } from '../config/program-config.service';
-import { emitAttestationAnchored } from '../solana.events';
-
-export async function createCertificationAttestation({
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { attestationRepository } = require('./attestation.repository');
+const { attestationBuilderService } = require('./attestation-builder.service');
+const { programConfigService } = require('../config/program-config.service');
+const { emitAttestationAnchored } = require('../solana.events');
+async function createCertificationAttestation({
   providerId,
   certificationStatus,
   certificationVersion,
@@ -65,8 +63,7 @@ export async function createCertificationAttestation({
     createdAt: record.created_at,
   };
 }
-
-export async function markCertificationAttestationAnchored({
+async function markCertificationAttestationAnchored({
   attestationId,
   txSignature,
   slot,
@@ -96,8 +93,12 @@ export async function markCertificationAttestationAnchored({
 
   return { anchored: true, txSignature };
 }
-
-export const certificationAttestationService = {
+const certificationAttestationService = {
   createCertificationAttestation,
   markCertificationAttestationAnchored,
 };
+module.exports.certificationAttestationService = certificationAttestationService;
+
+module.exports.createCertificationAttestation = createCertificationAttestation;
+
+module.exports.markCertificationAttestationAnchored = markCertificationAttestationAnchored;

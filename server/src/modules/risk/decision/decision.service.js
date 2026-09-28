@@ -5,25 +5,13 @@
  *
  * @module signalforge/server/modules/risk/decision/service
  */
-
-import { DecisionRepository } from './decision.repository.js';
-import { CheckRegistry } from '../checks/check.registry.js';
-import { RiskProfileService } from '../profile/risk-profile.service.js';
-import { PositionSizeService } from '../calculator/position-size.service.js';
-import {
-  RISK_DECISIONS,
-  getRiskCheckSeverity,
-} from '../risk.constants.js';
-import {
-  emitRiskCheckStarted,
-  emitRiskCheckCompleted,
-  emitRiskCheckFailed,
-  emitRiskApproved,
-  emitRiskRejected,
-  emitRiskRequiresReview,
-} from '../risk.events.js';
-
-export class DecisionService {
+const { DecisionRepository } = require('./decision.repository.js');
+const { CheckRegistry } = require('../checks/check.registry.js');
+const { RiskProfileService } = require('../profile/risk-profile.service.js');
+const { PositionSizeService } = require('../calculator/position-size.service.js');
+const { RISK_DECISIONS, getRiskCheckSeverity } = require('../risk.constants.js');
+const { emitRiskCheckStarted, emitRiskCheckCompleted, emitRiskCheckFailed, emitRiskApproved, emitRiskRejected, emitRiskRequiresReview } = require('../risk.events.js');
+class DecisionService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new DecisionRepository();
     this.profileService = dependencies.profileService || new RiskProfileService();
@@ -259,5 +247,5 @@ export class DecisionService {
     };
   }
 }
-
-export default DecisionService;
+module.exports = DecisionService;
+module.exports.DecisionService = DecisionService;

@@ -7,12 +7,11 @@
  *
  * @module server/modules/notifications/templates/template.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { TEMPLATE_CACHE_TTL_MS } from '../notification.constants';
-import * as repository from './template.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { TEMPLATE_CACHE_TTL_MS } = require('../notification.constants');
+const repository = require('./template.repository');
 
 const CACHE = new Map();
 
@@ -38,8 +37,7 @@ function writeCache(key, value) {
     expiresAt: Date.now() + TEMPLATE_CACHE_TTL_MS,
   });
 }
-
-export async function getTemplate({ templateKey, channel, locale = 'en' }) {
+async function getTemplate({ templateKey, channel, locale = 'en' }) {
   if (!templateKey || !channel) {
     throw new AppError('templateKey and channel are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -71,8 +69,7 @@ export async function getTemplate({ templateKey, channel, locale = 'en' }) {
 
   return value;
 }
-
-export async function listTemplates({ channel, locale = 'en' }) {
+async function listTemplates({ channel, locale = 'en' }) {
   const records = await repository.listActive({ channel, locale });
   return records.map((record) => ({
     templateKey: record.template_key,
@@ -82,8 +79,7 @@ export async function listTemplates({ channel, locale = 'en' }) {
     active: record.active,
   }));
 }
-
-export async function registerTemplate({
+async function registerTemplate({
   templateKey,
   channel,
   locale = 'en',
@@ -112,21 +108,28 @@ export async function registerTemplate({
     locale: record.locale,
   };
 }
-
-export async function deactivateTemplate({ templateKey, channel, locale = 'en' }) {
+async function deactivateTemplate({ templateKey, channel, locale = 'en' }) {
   const deactivated = await repository.deactivate({ templateKey, channel, locale });
   CACHE.delete(cacheKey(templateKey, channel, locale));
   return { deactivated };
 }
-
-export function invalidateCache() {
+function invalidateCache() {
   CACHE.clear();
 }
-
-export const templateService = {
+const templateService = {
   getTemplate,
   listTemplates,
   registerTemplate,
   deactivateTemplate,
   invalidateCache,
 };
+module.exports.templateService = templateService;
+module.exports.invalidateCache = invalidateCache;
+
+module.exports.getTemplate = getTemplate;
+
+module.exports.listTemplates = listTemplates;
+
+module.exports.registerTemplate = registerTemplate;
+
+module.exports.deactivateTemplate = deactivateTemplate;

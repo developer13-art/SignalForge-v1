@@ -3,26 +3,12 @@
  *
  * @module signalforge/server/modules/referrals/rewards/service
  */
-
-import { ReferralRewardRepository } from './repository.js';
-import { RewardCalculatorService } from './calculator.js';
-import {
-  REFERRAL_REWARD_STATUSES,
-  DEFAULT_REFERRAL_REWARD_RATE,
-} from '../referral.constants.js';
-import {
-  ReferralRewardNotFoundError,
-  RewardAlreadySettledError,
-} from '../referral.errors.js';
-import {
-  emitRewardCalculated,
-  emitRewardApproved,
-  emitRewardRejected,
-  emitRewardReversed,
-  emitRewardUnderReview,
-} from '../referral.events.js';
-
-export class ReferralRewardService {
+const { ReferralRewardRepository } = require('./repository.js');
+const { RewardCalculatorService } = require('./calculator.js');
+const { REFERRAL_REWARD_STATUSES, DEFAULT_REFERRAL_REWARD_RATE } = require('../referral.constants.js');
+const { ReferralRewardNotFoundError, RewardAlreadySettledError } = require('../referral.errors.js');
+const { emitRewardCalculated, emitRewardApproved, emitRewardRejected, emitRewardReversed, emitRewardUnderReview } = require('../referral.events.js');
+class ReferralRewardService {
   constructor(repository = null, calculator = null) {
     this.repository = repository || new ReferralRewardRepository();
     this.calculator = calculator || new RewardCalculatorService();
@@ -236,5 +222,5 @@ export class ReferralRewardService {
     return input;
   }
 }
-
-export default ReferralRewardService;
+module.exports = ReferralRewardService;
+module.exports.ReferralRewardService = ReferralRewardService;

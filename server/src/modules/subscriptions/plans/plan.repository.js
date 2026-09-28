@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/subscriptions/plans/repository
  */
-
-import { SubscriptionRepository } from '../subscription.repository.js';
-
-export class PlanRepository {
+const { SubscriptionRepository } = require('../subscription.repository.js');
+class PlanRepository {
   constructor(db = null) {
     this.subscriptionRepository = new SubscriptionRepository(db);
   }
@@ -35,5 +33,5 @@ export class PlanRepository {
     return this.subscriptionRepository.deletePlan(planId);
   }
 }
-
-export default PlanRepository;
+module.exports = PlanRepository;
+module.exports.PlanRepository = PlanRepository;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/calendar/repository
  */
-
-import { AnalyticsRepository } from '../analytics.repository.js';
-
-export class CalendarRepository {
+const { AnalyticsRepository } = require('../analytics.repository.js');
+class CalendarRepository {
   constructor(db = null) {
     this.analyticsRepository = new AnalyticsRepository(db);
   }
@@ -23,5 +21,5 @@ export class CalendarRepository {
     return this.analyticsRepository.aggregateTradesByProvider(userId, filters);
   }
 }
-
-export default CalendarRepository;
+module.exports = CalendarRepository;
+module.exports.CalendarRepository = CalendarRepository;

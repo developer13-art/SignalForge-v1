@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/referrals/codes/repository
  */
-
-import { ReferralRepository } from '../referral.repository.js';
-
-export class ReferralCodeRepository {
+const { ReferralRepository } = require('../referral.repository.js');
+class ReferralCodeRepository {
   constructor(db = null) {
     this.referralRepository = new ReferralRepository(db);
   }
@@ -35,5 +33,5 @@ export class ReferralCodeRepository {
     return this.referralRepository.incrementCodeUsage(codeId);
   }
 }
-
-export default ReferralCodeRepository;
+module.exports = ReferralCodeRepository;
+module.exports.ReferralCodeRepository = ReferralCodeRepository;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/reports/controller
  */
-
-import { ReportService } from './report.service.js';
-
-export class ReportController {
+const { ReportService } = require('./report.service.js');
+class ReportController {
   constructor(service = null) {
     this.service = service || new ReportService();
   }
@@ -71,5 +69,5 @@ export class ReportController {
     }
   };
 }
-
-export default ReportController;
+module.exports = ReportController;
+module.exports.ReportController = ReportController;

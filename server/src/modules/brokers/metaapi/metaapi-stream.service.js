@@ -6,17 +6,11 @@
  *
  * @module signalforge/server/modules/brokers/metaapi/stream
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { AccountRepository } from '../accounts/account.repository.js';
-import { MetaApiEventProcessorService } from './metaapi-event-processor.service.js';
-import {
-  emitStreamConnected,
-  emitStreamDisconnected,
-  emitStreamError,
-} from '../broker.events.js';
-
-export class MetaApiStreamService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { AccountRepository } = require('../accounts/account.repository.js');
+const { MetaApiEventProcessorService } = require('./metaapi-event-processor.service.js');
+const { emitStreamConnected, emitStreamDisconnected, emitStreamError } = require('../broker.events.js');
+class MetaApiStreamService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new AccountRepository();
     this.processor = dependencies.processor || new MetaApiEventProcessorService();
@@ -112,5 +106,5 @@ export class MetaApiStreamService {
     return Array.from(this.activeStreams.keys());
   }
 }
-
-export default MetaApiStreamService;
+module.exports = MetaApiStreamService;
+module.exports.MetaApiStreamService = MetaApiStreamService;

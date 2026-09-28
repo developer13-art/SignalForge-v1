@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/analytics/filters/date-range
  */
-
-import { DATE_RANGES } from '../analytics.constants.js';
+const { DATE_RANGES } = require('../analytics.constants.js');
 
 function startOfDay(date) {
   const d = new Date(date);
@@ -17,8 +16,7 @@ function endOfDay(date) {
   d.setUTCHours(23, 59, 59, 999);
   return d;
 }
-
-export class DateRangeService {
+class DateRangeService {
   resolve(range, options = {}) {
     const now = options.now ? new Date(options.now) : new Date();
     const today = startOfDay(now);
@@ -106,5 +104,5 @@ export class DateRangeService {
     return Math.max(1, Math.ceil(diffMs / (24 * 60 * 60 * 1000)));
   }
 }
-
-export default DateRangeService;
+module.exports = DateRangeService;
+module.exports.DateRangeService = DateRangeService;

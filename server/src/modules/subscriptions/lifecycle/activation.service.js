@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/subscriptions/lifecycle/activation
  */
-
-import { SUBSCRIPTION_STATUSES } from '../subscription.constants.js';
-import { emitSubscriptionActivated } from '../subscription.events.js';
-
-export class ActivationService {
+const { SUBSCRIPTION_STATUSES } = require('../subscription.constants.js');
+const { emitSubscriptionActivated } = require('../subscription.events.js');
+class ActivationService {
   constructor(repository = null) {
     this.repository = repository;
   }
@@ -44,5 +42,5 @@ export class ActivationService {
     return subscription.status === SUBSCRIPTION_STATUSES.ACTIVE;
   }
 }
-
-export default ActivationService;
+module.exports = ActivationService;
+module.exports.ActivationService = ActivationService;

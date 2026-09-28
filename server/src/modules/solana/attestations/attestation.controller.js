@@ -3,13 +3,12 @@
  *
  * @module server/modules/solana/attestations/attestation.controller
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { successResponse } from '../../../lib/response/success.response';
-import { paginatedResponse } from '../../../lib/response/paginated.response';
-import { attestationService } from './attestation.service';
-import { validateCreateAttestationPayload, validateRevokeAttestationPayload } from './attestation.validator';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { successResponse } = require('../../../lib/response/success.response');
+const { paginatedResponse } = require('../../../lib/response/paginated.response');
+const { attestationService } = require('./attestation.service');
+const { validateCreateAttestationPayload, validateRevokeAttestationPayload } = require('./attestation.validator');
 
 function requireUser(req) {
   const userId = req.user && req.user.id;
@@ -27,8 +26,7 @@ function requireAdmin(req) {
   }
   return userId;
 }
-
-export async function createAttestation(req, res) {
+async function createAttestation(req, res) {
   requireAdmin(req);
 
   const payload = validateCreateAttestationPayload(req.body || {});
@@ -37,8 +35,7 @@ export async function createAttestation(req, res) {
 
   return successResponse(res, { attestation }, 201);
 }
-
-export async function getAttestation(req, res) {
+async function getAttestation(req, res) {
   requireUser(req);
 
   const attestation = await attestationService.getAttestation({
@@ -47,8 +44,7 @@ export async function getAttestation(req, res) {
 
   return successResponse(res, { attestation });
 }
-
-export async function listAttestationsBySubject(req, res) {
+async function listAttestationsBySubject(req, res) {
   requireUser(req);
 
   const { subjectType, subjectId } = req.params;
@@ -62,8 +58,7 @@ export async function listAttestationsBySubject(req, res) {
 
   return paginatedResponse(res, { items: result.items, meta: result.meta });
 }
-
-export async function revokeAttestation(req, res) {
+async function revokeAttestation(req, res) {
   requireAdmin(req);
 
   const payload = validateRevokeAttestationPayload(req.body || {});
@@ -75,8 +70,7 @@ export async function revokeAttestation(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function listPending(req, res) {
+async function listPending(req, res) {
   requireAdmin(req);
 
   const attestations = await attestationService.listPendingAttestations({
@@ -85,16 +79,14 @@ export async function listPending(req, res) {
 
   return successResponse(res, { attestations });
 }
-
-export async function getStatusBreakdown(req, res) {
+async function getStatusBreakdown(req, res) {
   requireAdmin(req);
 
   const breakdown = await attestationService.getStatusBreakdown();
 
   return successResponse(res, { breakdown });
 }
-
-export async function markAnchored(req, res) {
+async function markAnchored(req, res) {
   requireAdmin(req);
 
   const { txSignature, slot, blockTime } = req.body || {};
@@ -108,8 +100,7 @@ export async function markAnchored(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function markFailed(req, res) {
+async function markFailed(req, res) {
   requireAdmin(req);
 
   const { reason } = req.body || {};
@@ -121,8 +112,7 @@ export async function markFailed(req, res) {
 
   return successResponse(res, result);
 }
-
-export const attestationController = {
+const attestationController = {
   createAttestation,
   getAttestation,
   listAttestationsBySubject,
@@ -132,3 +122,20 @@ export const attestationController = {
   markAnchored,
   markFailed,
 };
+module.exports.attestationController = attestationController;
+
+module.exports.createAttestation = createAttestation;
+
+module.exports.getAttestation = getAttestation;
+
+module.exports.listAttestationsBySubject = listAttestationsBySubject;
+
+module.exports.revokeAttestation = revokeAttestation;
+
+module.exports.listPending = listPending;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;
+
+module.exports.markAnchored = markAnchored;
+
+module.exports.markFailed = markFailed;

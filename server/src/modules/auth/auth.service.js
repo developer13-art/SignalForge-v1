@@ -3,23 +3,21 @@
  *
  * @module signalforge/server/modules/auth/service
  */
-
-import { AuthRepository } from './auth.repository.js';
-import { RegisterService } from './services/register.service.js';
-import { LoginService } from './services/login.service.js';
-import { LogoutService } from './services/logout.service.js';
-import { RefreshTokenService } from './services/refresh-token.service.js';
-import { PasswordResetService } from './services/password-reset.service.js';
-import { PasswordChangeService } from './services/password-change.service.js';
-import { EmailVerificationService } from './services/email-verification.service.js';
-import { PhoneVerificationService } from './services/phone-verification.service.js';
-import { TwoFactorService } from './services/two-factor.service.js';
-import { SessionService } from './services/session.service.js';
-import { DeviceService } from './services/device.service.js';
-import { AccountRecoveryService } from './services/account-recovery.service.js';
-import { SocialLoginService } from './services/social-login.service.js';
-
-export class AuthService {
+const { AuthRepository } = require('./auth.repository.js');
+const { RegisterService } = require('./services/register.service.js');
+const { LoginService } = require('./services/login.service.js');
+const { LogoutService } = require('./services/logout.service.js');
+const { RefreshTokenService } = require('./services/refresh-token.service.js');
+const { PasswordResetService } = require('./services/password-reset.service.js');
+const { PasswordChangeService } = require('./services/password-change.service.js');
+const { EmailVerificationService } = require('./services/email-verification.service.js');
+const { PhoneVerificationService } = require('./services/phone-verification.service.js');
+const { TwoFactorService } = require('./services/two-factor.service.js');
+const { SessionService } = require('./services/session.service.js');
+const { DeviceService } = require('./services/device.service.js');
+const { AccountRecoveryService } = require('./services/account-recovery.service.js');
+const { SocialLoginService } = require('./services/social-login.service.js');
+class AuthService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new AuthRepository();
 
@@ -158,5 +156,5 @@ export class AuthService {
     return this.socialLoginService.authenticate(provider, token, req);
   }
 }
-
-export default AuthService;
+module.exports = AuthService;
+module.exports.AuthService = AuthService;

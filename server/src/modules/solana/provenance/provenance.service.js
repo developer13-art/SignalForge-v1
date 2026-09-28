@@ -6,15 +6,14 @@
  *
  * @module server/modules/solana/provenance/provenance.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import { provenanceRepository } from './provenance.repository';
-import { signalHashService } from './signal-hash.service';
-import { provenanceAnchorService } from './provenance-anchor.service';
-import { programConfigService } from '../config/program-config.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const { provenanceRepository } = require('./provenance.repository');
+const { signalHashService } = require('./signal-hash.service');
+const { provenanceAnchorService } = require('./provenance-anchor.service');
+const { programConfigService } = require('../config/program-config.service');
 
 function mapProvenance(row) {
   return {
@@ -38,8 +37,7 @@ function mapProvenance(row) {
     createdAt: row.created_at,
   };
 }
-
-export async function createProvenance({
+async function createProvenance({
   signal,
   aiVersion,
   parserType,
@@ -96,8 +94,7 @@ export async function createProvenance({
 
   return mapProvenance(record);
 }
-
-export async function getProvenance({ provenanceId }) {
+async function getProvenance({ provenanceId }) {
   if (!provenanceId) {
     throw new AppError('provenanceId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -110,8 +107,7 @@ export async function getProvenance({ provenanceId }) {
 
   return mapProvenance(record);
 }
-
-export async function getProvenanceBySignal({ signalId }) {
+async function getProvenanceBySignal({ signalId }) {
   if (!signalId) {
     throw new AppError('signalId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -124,8 +120,7 @@ export async function getProvenanceBySignal({ signalId }) {
 
   return mapProvenance(record);
 }
-
-export async function listByProvider({ providerId, pagination = {} }) {
+async function listByProvider({ providerId, pagination = {} }) {
   if (!providerId) {
     throw new AppError('providerId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -142,13 +137,11 @@ export async function listByProvider({ providerId, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function listPending({ limit = 50 }) {
+async function listPending({ limit = 50 }) {
   const rows = await provenanceRepository.listPending({ limit });
   return rows.map(mapProvenance);
 }
-
-export async function getStatusBreakdown() {
+async function getStatusBreakdown() {
   const rows = await provenanceRepository.countByStatus();
 
   const breakdown = {};
@@ -158,8 +151,7 @@ export async function getStatusBreakdown() {
 
   return breakdown;
 }
-
-export function verifyProcessingHash({ signal, aiVersion, parserType, modelId, processingSteps, expectedHash }) {
+function verifyProcessingHash({ signal, aiVersion, parserType, modelId, processingSteps, expectedHash }) {
   return signalHashService.verifyProcessingHash({
     signal,
     aiVersion,
@@ -169,8 +161,7 @@ export function verifyProcessingHash({ signal, aiVersion, parserType, modelId, p
     expectedHash,
   });
 }
-
-export const provenanceService = {
+const provenanceService = {
   createProvenance,
   getProvenance,
   getProvenanceBySignal,
@@ -183,3 +174,17 @@ export const provenanceService = {
   confirmAnchor: provenanceAnchorService.confirmAnchor,
   failAnchor: provenanceAnchorService.failAnchor,
 };
+module.exports.provenanceService = provenanceService;
+module.exports.verifyProcessingHash = verifyProcessingHash;
+
+module.exports.createProvenance = createProvenance;
+
+module.exports.getProvenance = getProvenance;
+
+module.exports.getProvenanceBySignal = getProvenanceBySignal;
+
+module.exports.listByProvider = listByProvider;
+
+module.exports.listPending = listPending;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

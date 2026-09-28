@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/trader-intelligence/controller
  */
-
-import { TraderIntelligenceService } from './service.js';
-import { ANALYSIS_WINDOWS } from './intelligence.constants.js';
-
-export class TraderIntelligenceController {
+const { TraderIntelligenceService } = require('./service.js');
+const { ANALYSIS_WINDOWS } = require('./intelligence.constants.js');
+class TraderIntelligenceController {
   constructor(service = null) {
     this.service = service || new TraderIntelligenceService();
   }
@@ -221,5 +219,5 @@ export class TraderIntelligenceController {
     }
   };
 }
-
-export default TraderIntelligenceController;
+module.exports = TraderIntelligenceController;
+module.exports.TraderIntelligenceController = TraderIntelligenceController;

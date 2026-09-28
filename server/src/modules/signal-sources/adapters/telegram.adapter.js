@@ -6,11 +6,9 @@
  *
  * @module signalforge/server/modules/signal-sources/adapters/telegram
  */
-
-import { BaseAdapter } from './base.adapter.js';
-import { SOURCE_TYPES } from '../source.constants.js';
-
-export class TelegramAdapter extends BaseAdapter {
+const { BaseAdapter } = require('./base.adapter.js');
+const { SOURCE_TYPES } = require('../source.constants.js');
+class TelegramAdapter extends BaseAdapter {
   constructor(config = {}) {
     super(config);
     this.name = SOURCE_TYPES.TELEGRAM;
@@ -80,5 +78,5 @@ export class TelegramAdapter extends BaseAdapter {
     };
   }
 }
-
-export default TelegramAdapter;
+module.exports = TelegramAdapter;
+module.exports.TelegramAdapter = TelegramAdapter;

@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/provider-dna/testing/service
  */
-
-import { DnaTestRepository } from './dna-test.repository.js';
-import { FastPathService } from '../learning/fast-path.service.js';
-import { emitDnaTestCompleted } from '../dna.events.js';
-
-export class DnaTestService {
+const { DnaTestRepository } = require('./dna-test.repository.js');
+const { FastPathService } = require('../learning/fast-path.service.js');
+const { emitDnaTestCompleted } = require('../dna.events.js');
+class DnaTestService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new DnaTestRepository();
     this.fastPath = dependencies.fastPath || new FastPathService();
@@ -67,5 +65,5 @@ export class DnaTestService {
     };
   }
 }
-
-export default DnaTestService;
+module.exports = DnaTestService;
+module.exports.DnaTestService = DnaTestService;

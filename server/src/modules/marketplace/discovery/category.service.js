@@ -3,18 +3,10 @@
  *
  * @module signalforge/server/modules/marketplace/discovery/category
  */
-
-import { MarketplaceRepository } from '../marketplace.repository.js';
-import {
-  MARKETPLACE_CATEGORIES,
-  MARKETPLACE_CATEGORY_VALUES,
-} from '../marketplace.constants.js';
-import { CategoryNotFoundError } from '../marketplace.errors.js';
-import {
-  emitCategoryCreated,
-  emitCategoryUpdated,
-  emitCategoryDeleted,
-} from '../marketplace.events.js';
+const { MarketplaceRepository } = require('../marketplace.repository.js');
+const { MARKETPLACE_CATEGORIES, MARKETPLACE_CATEGORY_VALUES } = require('../marketplace.constants.js');
+const { CategoryNotFoundError } = require('../marketplace.errors.js');
+const { emitCategoryCreated, emitCategoryUpdated, emitCategoryDeleted } = require('../marketplace.events.js');
 
 const DEFAULT_LABELS = Object.freeze({
   [MARKETPLACE_CATEGORIES.FOREX]: 'Forex',
@@ -31,8 +23,7 @@ const DEFAULT_LABELS = Object.freeze({
   [MARKETPLACE_CATEGORIES.POSITION_TRADING]: 'Position Trading',
   [MARKETPLACE_CATEGORIES.ALGO_TRADING]: 'Algorithmic Trading',
 });
-
-export class CategoryService {
+class CategoryService {
   constructor(repository = null) {
     this.repository = repository || new MarketplaceRepository();
   }
@@ -118,5 +109,5 @@ export class CategoryService {
     };
   }
 }
-
-export default CategoryService;
+module.exports = CategoryService;
+module.exports.CategoryService = CategoryService;

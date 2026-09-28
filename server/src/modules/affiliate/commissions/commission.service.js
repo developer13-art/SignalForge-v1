@@ -7,14 +7,13 @@
  *
  * @module server/modules/affiliate/commissions/commission.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { publishEvent } from '../../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { publishEvent } = require('../../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
 
 const TIER_RATES = Object.freeze({
   STANDARD: 0.2,
@@ -27,8 +26,7 @@ const TIER_RATES = Object.freeze({
 function getRateForTier(tier) {
   return TIER_RATES[tier] || TIER_RATES.STANDARD;
 }
-
-export async function calculateCommission({
+async function calculateCommission({
   partnerUserId,
   referralId,
   baseAmount,
@@ -103,8 +101,7 @@ export async function calculateCommission({
     createdAt: commission.created_at,
   };
 }
-
-export async function approveCommission({ commissionId, reviewerId }) {
+async function approveCommission({ commissionId, reviewerId }) {
   if (!commissionId) {
     throw new AppError('commissionId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -126,8 +123,7 @@ export async function approveCommission({ commissionId, reviewerId }) {
 
   return { approved: true };
 }
-
-export async function rejectCommission({ commissionId, reviewerId, reason }) {
+async function rejectCommission({ commissionId, reviewerId, reason }) {
   if (!commissionId) {
     throw new AppError('commissionId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -149,8 +145,7 @@ export async function rejectCommission({ commissionId, reviewerId, reason }) {
 
   return { rejected: true };
 }
-
-export async function markCommissionPaid({ commissionId }) {
+async function markCommissionPaid({ commissionId }) {
   if (!commissionId) {
     throw new AppError('commissionId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -170,8 +165,7 @@ export async function markCommissionPaid({ commissionId }) {
 
   return { paid: true };
 }
-
-export async function getCommissionSummary({ partnerUserId }) {
+async function getCommissionSummary({ partnerUserId }) {
   if (!partnerUserId) {
     throw new AppError('partnerUserId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -198,8 +192,7 @@ export async function getCommissionSummary({ partnerUserId }) {
     totalCount: row.total_count,
   };
 }
-
-export async function listCommissions({ partnerUserId, filters = {}, pagination = {} }) {
+async function listCommissions({ partnerUserId, filters = {}, pagination = {} }) {
   if (!partnerUserId) {
     throw new AppError('partnerUserId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -245,8 +238,7 @@ export async function listCommissions({ partnerUserId, filters = {}, pagination 
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export const commissionService = {
+const commissionService = {
   calculateCommission,
   approveCommission,
   rejectCommission,
@@ -255,3 +247,16 @@ export const commissionService = {
   listCommissions,
   TIER_RATES,
 };
+module.exports.commissionService = commissionService;
+
+module.exports.calculateCommission = calculateCommission;
+
+module.exports.approveCommission = approveCommission;
+
+module.exports.rejectCommission = rejectCommission;
+
+module.exports.markCommissionPaid = markCommissionPaid;
+
+module.exports.getCommissionSummary = getCommissionSummary;
+
+module.exports.listCommissions = listCommissions;

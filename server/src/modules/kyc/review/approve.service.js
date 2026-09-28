@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/kyc/review/approve
  */
-
-import { ReviewRepository } from './review.repository.js';
-import { DEFAULT_KYC_EXPIRY_YEARS } from '../kyc.constants.js';
-import { KycReviewAlreadyDecidedError, KycApplicationNotFoundError } from '../kyc.errors.js';
-import { emitApplicationApproved, emitStatusChanged } from '../kyc.events.js';
-
-export class ApproveService {
+const { ReviewRepository } = require('./review.repository.js');
+const { DEFAULT_KYC_EXPIRY_YEARS } = require('../kyc.constants.js');
+const { KycReviewAlreadyDecidedError, KycApplicationNotFoundError } = require('../kyc.errors.js');
+const { emitApplicationApproved, emitStatusChanged } = require('../kyc.events.js');
+class ApproveService {
   constructor(repository = null) {
     this.repository = repository || new ReviewRepository();
   }
@@ -58,5 +56,5 @@ export class ApproveService {
     return { approved: true, expiresAt };
   }
 }
-
-export default ApproveService;
+module.exports = ApproveService;
+module.exports.ApproveService = ApproveService;

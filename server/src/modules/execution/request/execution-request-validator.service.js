@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/execution/request/validator
  */
-
-import { isValidDirection } from '@signalforge/shared/constants/order-directions';
-import { isValidSymbol } from '@signalforge/shared/validators/symbol.validator';
-import { isValidPrice } from '@signalforge/shared/validators/price.validator';
-import { isValidVolume } from '@signalforge/shared/validators/lot-size.validator';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class ExecutionRequestValidatorService {
+const { isValidDirection } = require('@signalforge/shared/constants/order-directions');
+const { isValidSymbol } = require('@signalforge/shared/validators/symbol.validator');
+const { isValidPrice } = require('@signalforge/shared/validators/price.validator');
+const { isValidVolume } = require('@signalforge/shared/validators/lot-size.validator');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class ExecutionRequestValidatorService {
   validate(request) {
     const errors = [];
 
@@ -95,5 +93,5 @@ export class ExecutionRequestValidatorService {
     return result;
   }
 }
-
-export default ExecutionRequestValidatorService;
+module.exports = ExecutionRequestValidatorService;
+module.exports.ExecutionRequestValidatorService = ExecutionRequestValidatorService;

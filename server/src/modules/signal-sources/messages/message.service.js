@@ -6,17 +6,14 @@
  *
  * @module signalforge/server/modules/signal-sources/messages/service
  */
-
-import crypto from 'node:crypto';
-
-import { MessageRepository } from './message.repository.js';
-import { buildSourceMessageKey } from '@signalforge/shared/utils/idempotency.util';
-import { SOURCE_EVENTS } from '../source.constants.js';
-import { getEventBus } from '../../../bootstrap/initEventBus.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { MessageNotFoundError } from '../source.errors.js';
-
-export class MessageService {
+const crypto = require('node:crypto');
+const { MessageRepository } = require('./message.repository.js');
+const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
+const { SOURCE_EVENTS } = require('../source.constants.js');
+const { getEventBus } = require('../../../bootstrap/initEventBus.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { MessageNotFoundError } = require('../source.errors.js');
+class MessageService {
   constructor(repository = null) {
     this.repository = repository || new MessageRepository();
     this.logger = getLogger('source-messages');
@@ -141,5 +138,5 @@ export class MessageService {
     };
   }
 }
-
-export default MessageService;
+module.exports = MessageService;
+module.exports.MessageService = MessageService;

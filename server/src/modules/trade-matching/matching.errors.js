@@ -3,33 +3,28 @@
  *
  * @module signalforge/server/modules/trade-matching/errors
  */
-
-import { NotFoundError } from '../../lib/errors/not-found-error.js';
-import { ConflictError } from '../../lib/errors/conflict-error.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class MatchNotFoundError extends NotFoundError {
+const { NotFoundError } = require('../../lib/errors/not-found-error.js');
+const { ConflictError } = require('../../lib/errors/conflict-error.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class MatchNotFoundError extends NotFoundError {
   constructor(message = 'No matching trade found', details = {}) {
     super(message, { code: 'MATCH_NOT_FOUND', details });
     this.name = 'MatchNotFoundError';
   }
 }
-
-export class AmbiguousMatchError extends ConflictError {
+class AmbiguousMatchError extends ConflictError {
   constructor(message = 'Multiple candidate trades matched', details = {}) {
     super(message, { code: 'MATCH_AMBIGUOUS', details });
     this.name = 'AmbiguousMatchError';
   }
 }
-
-export class ManagementInstructionInvalidError extends ValidationError {
+class ManagementInstructionInvalidError extends ValidationError {
   constructor(message = 'Management instruction is invalid', details = {}) {
     super(message, { code: 'MANAGEMENT_INSTRUCTION_INVALID', details });
     this.name = 'ManagementInstructionInvalidError';
   }
 }
-
-export class ManagementInstructionFailedError extends Error {
+class ManagementInstructionFailedError extends Error {
   constructor(message = 'Management instruction failed', details = {}) {
     super(message);
     this.name = 'ManagementInstructionFailedError';
@@ -37,8 +32,7 @@ export class ManagementInstructionFailedError extends Error {
     this.details = details;
   }
 }
-
-export class TradeMatchingError extends Error {
+class TradeMatchingError extends Error {
   constructor(message = 'Trade matching failed', details = {}) {
     super(message);
     this.name = 'TradeMatchingError';
@@ -46,3 +40,8 @@ export class TradeMatchingError extends Error {
     this.details = details;
   }
 }
+module.exports.MatchNotFoundError = MatchNotFoundError;
+module.exports.AmbiguousMatchError = AmbiguousMatchError;
+module.exports.ManagementInstructionInvalidError = ManagementInstructionInvalidError;
+module.exports.ManagementInstructionFailedError = ManagementInstructionFailedError;
+module.exports.TradeMatchingError = TradeMatchingError;

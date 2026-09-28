@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/prompt-versioning
  */
-
-import { PROMPT_TEMPLATES } from './prompt-templates.js';
-
-export class PromptVersioningService {
+const { PROMPT_TEMPLATES } = require('./prompt-templates.js');
+class PromptVersioningService {
   constructor() {
     this.overrides = new Map();
     this.history = new Map();
@@ -61,5 +59,5 @@ export class PromptVersioningService {
     return result;
   }
 }
-
-export default PromptVersioningService;
+module.exports = PromptVersioningService;
+module.exports.PromptVersioningService = PromptVersioningService;

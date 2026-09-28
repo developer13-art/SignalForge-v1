@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/traders/profile/controller
  */
-
-import { TraderProfileService } from './service.js';
-
-export class TraderProfileController {
+const { TraderProfileService } = require('./service.js');
+class TraderProfileController {
   constructor(service = null) {
     this.service = service || new TraderProfileService();
   }
@@ -91,5 +89,5 @@ export class TraderProfileController {
     }
   };
 }
-
-export default TraderProfileController;
+module.exports = TraderProfileController;
+module.exports.TraderProfileController = TraderProfileController;

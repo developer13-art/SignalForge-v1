@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/referrals/fraud/duplicate-account
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { FRAUD_FLAG_TYPES, FRAUD_FLAG_SEVERITIES } from '../referral.constants.js';
-
-export class DuplicateAccountCheck {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { FRAUD_FLAG_TYPES, FRAUD_FLAG_SEVERITIES } = require('../referral.constants.js');
+class DuplicateAccountCheck {
   constructor(db = null) {
     this.db = db || getDatabase();
     this.name = FRAUD_FLAG_TYPES.DUPLICATE_ACCOUNT;
@@ -70,5 +68,5 @@ export class DuplicateAccountCheck {
     };
   }
 }
-
-export default DuplicateAccountCheck;
+module.exports = DuplicateAccountCheck;
+module.exports.DuplicateAccountCheck = DuplicateAccountCheck;

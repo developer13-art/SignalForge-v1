@@ -6,13 +6,10 @@
  *
  * @module signalforge/server/modules/brokers/accounts/credential
  */
-
-import crypto from 'node:crypto';
-
-import securityConfig from '../../../config/security.config.js';
-import { BrokerCredentialError } from '../broker.errors.js';
-
-export class AccountCredentialService {
+const crypto = require('node:crypto');
+const securityConfig = require('../../../config/security.config.js');
+const { BrokerCredentialError } = require('../broker.errors.js');
+class AccountCredentialService {
   constructor(key = null) {
     this.key = key || securityConfig.encryption.key;
   }
@@ -107,5 +104,5 @@ export class AccountCredentialService {
     };
   }
 }
-
-export default AccountCredentialService;
+module.exports = AccountCredentialService;
+module.exports.AccountCredentialService = AccountCredentialService;

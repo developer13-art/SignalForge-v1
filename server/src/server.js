@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * SignalForge AI - HTTP and WebSocket Server
  *
@@ -10,47 +12,57 @@
  * @module signalforge/server/server
  */
 
-import http from 'node:http';
+const http = require('node:http');
 
-import { createApp } from './app.js';
-import { logger } from './lib/logger.js';
-import { initDatabase } from './bootstrap/initDatabase.js';
-import { initMigrations } from './bootstrap/initMigrations.js';
-import { initEventBus } from './bootstrap/initEventBus.js';
-import { initJobScheduler } from './bootstrap/initJobScheduler.js';
-import { initJobRunner } from './bootstrap/initJobRunner.js';
-import { initWebSocket } from './bootstrap/initWebSocket.js';
-import { initSolanaConnection } from './bootstrap/initSolanaConnection.js';
-import { initSolanaIndexer } from './bootstrap/initSolanaIndexer.js';
-import { initTelegramListeners } from './bootstrap/initTelegramListeners.js';
-import { initDiscordListeners } from './bootstrap/initDiscordListeners.js';
-import { initWhatsAppListeners } from './bootstrap/initWhatsAppListeners.js';
-import { initEmailListeners } from './bootstrap/initEmailListeners.js';
-import { initMetaApiStreams } from './bootstrap/initMetaApiStreams.js';
+const { createApp } = require('./app.js');
+const { logger } = require('./lib/logger.js');
+const { initDatabase } = require('./bootstrap/initDatabase.js');
+const { initMigrations } = require('./bootstrap/initMigrations.js');
+const { initEventBus } = require('./bootstrap/initEventBus.js');
+const { initJobScheduler } = require('./bootstrap/initJobScheduler.js');
+const { initJobRunner } = require('./bootstrap/initJobRunner.js');
+const { initWebSocket } = require('./bootstrap/initWebSocket.js');
+const { initSolanaConnection } = require('./bootstrap/initSolanaConnection.js');
+const { initSolanaIndexer } = require('./bootstrap/initSolanaIndexer.js');
+const { initTelegramListeners } = require('./bootstrap/initTelegramListeners.js');
+const { initDiscordListeners } = require('./bootstrap/initDiscordListeners.js');
+const { initWhatsAppListeners } = require('./bootstrap/initWhatsAppListeners.js');
+const { initEmailListeners } = require('./bootstrap/initEmailListeners.js');
+const { initMetaApiStreams } = require('./bootstrap/initMetaApiStreams.js');
 
-export async function createServer() {
+async function createServer() {
   const app = createApp();
   const httpServer = http.createServer(app);
 
   const subsystems = {};
 
   try {
+    // Database first: everything downstream depends on it.
     subsystems.database = await initDatabase();
-    subsystems.migrations = await initMigrations();
 
-    subsystems.eventBus = await initEventBus();
-    subsystems.jobScheduler = await initJobScheduler();
-    subsystems.jobRunner = await initJobRunner();
+    // Database-dependent subsystems.
+    subsystems.migrations = await initMigrations({ db: subsystems.database });
+    subsystems.eventBus = await initEventBus({ db: subsystems.database });
+    subsystems.jobScheduler = await initJobScheduler({ db: subsystems.database });
+    subsystems.jobRunner = await initJobRunner({ db: subsystems.database });
 
+    // Real-time and Solana subsystems.
     subsystems.webSocket = await initWebSocket(httpServer);
     subsystems.solanaConnection = await initSolanaConnection();
     subsystems.solanaIndexer = await initSolanaIndexer();
 
-    subsystems.telegramListeners = await initTelegramListeners();
-    subsystems.discordListeners = await initDiscordListeners();
-    subsystems.whatsAppListeners = await initWhatsAppListeners();
-    subsystems.emailListeners = await initEmailListeners();
-    subsystems.metaApiStreams = await initMetaApiStreams();
+    // External source listeners. Each listener initializer reads the
+    // database and the event bus from its dependency object.
+    const listenerDeps = {
+      db: subsystems.database,
+      eventBus: subsystems.eventBus,
+    };
+
+    subsystems.telegramListeners = await initTelegramListeners(listenerDeps);
+    subsystems.discordListeners = await initDiscordListeners(listenerDeps);
+    subsystems.whatsAppListeners = await initWhatsAppListeners(listenerDeps);
+    subsystems.emailListeners = await initEmailListeners(listenerDeps);
+    subsystems.metaApiStreams = await initMetaApiStreams(listenerDeps);
 
     logger.info('All subsystems initialized');
   } catch (error) {
@@ -112,3 +124,8 @@ async function safeClose(name, subsystem) {
     logger.error({ err: error, subsystem: name }, 'Failed to close subsystem');
   }
 }
+
+module.exports = {
+  createServer,
+  safeClose,
+};

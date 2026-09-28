@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/risk/checks/provider-disabled
  */
-
-import { BaseCheck } from './base.check.js';
-import { RISK_CHECKS } from '../risk.constants.js';
-import { emitRiskLimitHit } from '../risk.events.js';
-
-export class ProviderDisabledCheck extends BaseCheck {
+const { BaseCheck } = require('./base.check.js');
+const { RISK_CHECKS } = require('../risk.constants.js');
+const { emitRiskLimitHit } = require('../risk.events.js');
+class ProviderDisabledCheck extends BaseCheck {
   constructor() {
     super(RISK_CHECKS.PROVIDER_DISABLED);
   }
@@ -48,5 +46,5 @@ export class ProviderDisabledCheck extends BaseCheck {
     return this.pass();
   }
 }
-
-export default ProviderDisabledCheck;
+module.exports = ProviderDisabledCheck;
+module.exports.ProviderDisabledCheck = ProviderDisabledCheck;

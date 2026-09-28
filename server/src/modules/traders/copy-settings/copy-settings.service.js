@@ -3,11 +3,10 @@
  *
  * @module signalforge/server/modules/traders/copy-settings/service
  */
-
-import { CopySettingsRepository } from './repository.js';
-import { FollowerNotFoundError, InvalidCopySettingsError } from '../trader.errors.js';
-import { COPY_MODES } from '../trader.constants.js';
-import { emitCopySettingsUpdated } from '../trader.events.js';
+const { CopySettingsRepository } = require('./repository.js');
+const { FollowerNotFoundError, InvalidCopySettingsError } = require('../trader.errors.js');
+const { COPY_MODES } = require('../trader.constants.js');
+const { emitCopySettingsUpdated } = require('../trader.events.js');
 
 const DEFAULTS = Object.freeze({
   copyMode: COPY_MODES.PROPORTIONAL,
@@ -22,8 +21,7 @@ const DEFAULTS = Object.freeze({
   copyPartialClose: true,
   copyTrailingStop: true,
 });
-
-export class CopySettingsService {
+class CopySettingsService {
   constructor(repository = null) {
     this.repository = repository || new CopySettingsRepository();
   }
@@ -99,6 +97,5 @@ export class CopySettingsService {
   }
 }
 
-export { DEFAULTS as COPY_SETTINGS_DEFAULTS };
-
-export default CopySettingsService;
+module.exports = CopySettingsService;
+module.exports.CopySettingsService = CopySettingsService;

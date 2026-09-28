@@ -3,21 +3,17 @@
  *
  * @module signalforge/server/modules/performance/service
  */
-
-import { PerformanceRepository } from './performance.repository.js';
-import { PeriodService } from './periods/period.service.js';
-import { PeriodCalculatorService } from './periods/period-calculator.service.js';
-import { PeriodFreezeService } from './periods/period-freeze.service.js';
-import { PeriodCloserService } from './periods/period-closer.service.js';
-import { MetricService } from './metrics/metric.service.js';
-import { EquitySnapshotService } from './equity/equity-snapshot.service.js';
-import { EquityReconstructorService } from './equity/equity-reconstructor.service.js';
-import {
-  PerformancePeriodNotFoundError,
-} from './performance.errors.js';
-import { DEFAULT_FREEZE_GRACE_HOURS } from './performance.constants.js';
-
-export class PerformanceService {
+const { PerformanceRepository } = require('./performance.repository.js');
+const { PeriodService } = require('./periods/period.service.js');
+const { PeriodCalculatorService } = require('./periods/period-calculator.service.js');
+const { PeriodFreezeService } = require('./periods/period-freeze.service.js');
+const { PeriodCloserService } = require('./periods/period-closer.service.js');
+const { MetricService } = require('./metrics/metric.service.js');
+const { EquitySnapshotService } = require('./equity/equity-snapshot.service.js');
+const { EquityReconstructorService } = require('./equity/equity-reconstructor.service.js');
+const { PerformancePeriodNotFoundError } = require('./performance.errors.js');
+const { DEFAULT_FREEZE_GRACE_HOURS } = require('./performance.constants.js');
+class PerformanceService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new PerformanceRepository();
 
@@ -138,5 +134,5 @@ export class PerformanceService {
     return this.periods.serialize(period);
   }
 }
-
-export default PerformanceService;
+module.exports = PerformanceService;
+module.exports.PerformanceService = PerformanceService;

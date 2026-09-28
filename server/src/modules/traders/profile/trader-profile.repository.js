@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/traders/profile/repository
  */
-
-import { TraderRepository } from '../trader.repository.js';
-
-export class TraderProfileRepository {
+const { TraderRepository } = require('../trader.repository.js');
+class TraderProfileRepository {
   constructor(db = null) {
     this.traderRepository = new TraderRepository(db);
   }
@@ -31,5 +29,5 @@ export class TraderProfileRepository {
     return this.traderRepository.update(traderId, data);
   }
 }
-
-export default TraderProfileRepository;
+module.exports = TraderProfileRepository;
+module.exports.TraderProfileRepository = TraderProfileRepository;

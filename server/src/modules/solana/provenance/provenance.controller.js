@@ -3,12 +3,11 @@
  *
  * @module server/modules/solana/provenance/provenance.controller
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { successResponse } from '../../../lib/response/success.response';
-import { paginatedResponse } from '../../../lib/response/paginated.response';
-import { provenanceService } from './provenance.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { successResponse } = require('../../../lib/response/success.response');
+const { paginatedResponse } = require('../../../lib/response/paginated.response');
+const { provenanceService } = require('./provenance.service');
 
 function requireUser(req) {
   const userId = req.user && req.user.id;
@@ -26,8 +25,7 @@ function requireAdmin(req) {
   }
   return userId;
 }
-
-export async function getProvenanceBySignal(req, res) {
+async function getProvenanceBySignal(req, res) {
   requireUser(req);
 
   const provenance = await provenanceService.getProvenanceBySignal({
@@ -36,8 +34,7 @@ export async function getProvenanceBySignal(req, res) {
 
   return successResponse(res, { provenance });
 }
-
-export async function getProvenance(req, res) {
+async function getProvenance(req, res) {
   requireUser(req);
 
   const provenance = await provenanceService.getProvenance({
@@ -46,8 +43,7 @@ export async function getProvenance(req, res) {
 
   return successResponse(res, { provenance });
 }
-
-export async function listByProvider(req, res) {
+async function listByProvider(req, res) {
   requireUser(req);
 
   const { providerId } = req.params;
@@ -60,8 +56,7 @@ export async function listByProvider(req, res) {
 
   return paginatedResponse(res, { items: result.items, meta: result.meta });
 }
-
-export async function listPending(req, res) {
+async function listPending(req, res) {
   requireAdmin(req);
 
   const provenance = await provenanceService.listPending({
@@ -70,16 +65,14 @@ export async function listPending(req, res) {
 
   return successResponse(res, { provenance });
 }
-
-export async function getStatusBreakdown(req, res) {
+async function getStatusBreakdown(req, res) {
   requireAdmin(req);
 
   const breakdown = await provenanceService.getStatusBreakdown();
 
   return successResponse(res, { breakdown });
 }
-
-export async function confirmAnchor(req, res) {
+async function confirmAnchor(req, res) {
   requireAdmin(req);
 
   const { txSignature, slot, blockTime } = req.body || {};
@@ -93,8 +86,7 @@ export async function confirmAnchor(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function failAnchor(req, res) {
+async function failAnchor(req, res) {
   requireAdmin(req);
 
   const { reason } = req.body || {};
@@ -106,8 +98,7 @@ export async function failAnchor(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function verifyProcessingHash(req, res) {
+async function verifyProcessingHash(req, res) {
   requireUser(req);
 
   const { signal, aiVersion, parserType, modelId, processingSteps, expectedHash } = req.body || {};
@@ -123,8 +114,7 @@ export async function verifyProcessingHash(req, res) {
 
   return successResponse(res, { verification: result });
 }
-
-export const provenanceController = {
+const provenanceController = {
   getProvenanceBySignal,
   getProvenance,
   listByProvider,
@@ -134,3 +124,20 @@ export const provenanceController = {
   failAnchor,
   verifyProcessingHash,
 };
+module.exports.provenanceController = provenanceController;
+
+module.exports.getProvenanceBySignal = getProvenanceBySignal;
+
+module.exports.getProvenance = getProvenance;
+
+module.exports.listByProvider = listByProvider;
+
+module.exports.listPending = listPending;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;
+
+module.exports.confirmAnchor = confirmAnchor;
+
+module.exports.failAnchor = failAnchor;
+
+module.exports.verifyProcessingHash = verifyProcessingHash;

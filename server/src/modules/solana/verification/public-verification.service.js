@@ -8,14 +8,13 @@
  *
  * @module server/modules/solana/verification/public-verification.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { attestationRepository } from '../attestations/attestation.repository';
-import { provenanceRepository } from '../provenance/provenance.repository';
-import { networkService } from '../config/network.service';
-import { onChainVerifierService } from './on-chain-verifier.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { attestationRepository } = require('../attestations/attestation.repository');
+const { provenanceRepository } = require('../provenance/provenance.repository');
+const { networkService } = require('../config/network.service');
+const { onChainVerifierService } = require('./on-chain-verifier.service');
 
 function buildPublicAttestationRecord({ attestation }) {
   return {
@@ -48,8 +47,7 @@ function buildPublicProvenanceRecord({ provenance }) {
     createdAt: provenance.created_at,
   };
 }
-
-export async function verifyByAttestationId({ attestationId }) {
+async function verifyByAttestationId({ attestationId }) {
   if (!attestationId) {
     throw new AppError('attestationId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -75,8 +73,7 @@ export async function verifyByAttestationId({ attestationId }) {
     explorerUrl,
   };
 }
-
-export async function verifyByHash({ attestationHash }) {
+async function verifyByHash({ attestationHash }) {
   if (!attestationHash) {
     throw new AppError('attestationHash is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -102,8 +99,7 @@ export async function verifyByHash({ attestationHash }) {
     explorerUrl,
   };
 }
-
-export async function verifySignalBySignalId({ signalId }) {
+async function verifySignalBySignalId({ signalId }) {
   if (!signalId) {
     throw new AppError('signalId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -129,8 +125,7 @@ export async function verifySignalBySignalId({ signalId }) {
     explorerUrl,
   };
 }
-
-export async function verifyByProcessingHash({ processingHash }) {
+async function verifyByProcessingHash({ processingHash }) {
   if (!processingHash) {
     throw new AppError('processingHash is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -156,10 +151,18 @@ export async function verifyByProcessingHash({ processingHash }) {
     explorerUrl,
   };
 }
-
-export const publicVerificationService = {
+const publicVerificationService = {
   verifyByAttestationId,
   verifyByHash,
   verifySignalBySignalId,
   verifyByProcessingHash,
 };
+module.exports.publicVerificationService = publicVerificationService;
+
+module.exports.verifyByAttestationId = verifyByAttestationId;
+
+module.exports.verifyByHash = verifyByHash;
+
+module.exports.verifySignalBySignalId = verifySignalBySignalId;
+
+module.exports.verifyByProcessingHash = verifyByProcessingHash;

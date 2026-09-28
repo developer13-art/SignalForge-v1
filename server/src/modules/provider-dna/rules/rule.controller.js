@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/provider-dna/rules/controller
  */
-
-import { RuleService } from './rule.service.js';
-import { AbbreviationService } from './abbreviation.service.js';
-import { validateRuleCreatePayload, validateRuleUpdatePayload } from './rule-validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class RuleController {
+const { RuleService } = require('./rule.service.js');
+const { AbbreviationService } = require('./abbreviation.service.js');
+const { validateRuleCreatePayload, validateRuleUpdatePayload } = require('./rule-validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class RuleController {
   constructor(service = null, abbreviationService = null) {
     this.service = service || new RuleService();
     this.abbreviations = abbreviationService || new AbbreviationService();
@@ -115,5 +113,5 @@ export class RuleController {
     }
   };
 }
-
-export default RuleController;
+module.exports = RuleController;
+module.exports.RuleController = RuleController;

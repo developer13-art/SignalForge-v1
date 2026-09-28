@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/execution/gateway/interface
  */
-
-export class ExecutionGatewayInterface {
+class ExecutionGatewayInterface {
   constructor(name) {
     this.name = name;
   }
@@ -45,5 +44,5 @@ export class ExecutionGatewayInterface {
     throw new Error(`${this.name} must implement getAccountInfo()`);
   }
 }
-
-export default ExecutionGatewayInterface;
+module.exports = ExecutionGatewayInterface;
+module.exports.ExecutionGatewayInterface = ExecutionGatewayInterface;

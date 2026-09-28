@@ -1,0 +1,53 @@
+/**
+ * Admin Constants
+ *
+ * Shared constants used throughout the admin module.
+ *
+ * @module server/modules/admin/admin.constants
+ */
+
+export const ADMIN_ACTIONS = Object.freeze({
+  USER_SUSPEND: 'USER_SUSPEND',
+  USER_ACTIVATE: 'USER_ACTIVATE',
+  USER_DELETE: 'USER_DELETE',
+  USER_IMPERSONATE: 'USER_IMPERSONATE',
+  PROVIDER_APPROVE: 'PROVIDER_APPROVE',
+  PROVIDER_SUSPEND: 'PROVIDER_SUSPEND',
+  PROVIDER_CERTIFY: 'PROVIDER_CERTIFY',
+  TRADE_FORCE_CLOSE: 'TRADE_FORCE_CLOSE',
+  BROKER_DISCONNECT: 'BROKER_DISCONNECT',
+  KYC_APPROVE: 'KYC_APPROVE',
+  KYC_REJECT: 'KYC_REJECT',
+  PAYMENT_REFUND: 'PAYMENT_REFUND',
+  WITHDRAWAL_APPROVE: 'WITHDRAWAL_APPROVE',
+  WITHDRAWAL_REJECT: 'WITHDRAWAL_REJECT',
+  SUBSCRIPTION_EXTEND: 'SUBSCRIPTION_EXTEND',
+  SYSTEM_SETTING_UPDATE: 'SYSTEM_SETTING_UPDATE',
+  FEATURE_FLAG_TOGGLE: 'FEATURE_FLAG_TOGGLE',
+});
+
+export const ADMIN_ACTION_VALUES = Object.freeze(Object.values(ADMIN_ACTIONS));
+
+export const ADMIN_DEFAULT_PAGE_SIZE = 20;
+
+export const ADMIN_MAX_PAGE_SIZE = 200;
+
+export const ADMIN_LIVE_MONITOR_MAX_ROWS = 500;
+
+export const LIVE_MONITOR_REFRESH_MS = 5000;
+
+export const REPORT_EXPORT_FORMATS = Object.freeze({
+  CSV: 'CSV',
+  JSON: 'JSON',
+  XLSX: 'XLSX',
+});
+
+export const REPORT_EXPORT_FORMAT_VALUES = Object.freeze(Object.values(REPORT_EXPORT_FORMATS));
+
+export function isValidAdminAction(action) {
+  return ADMIN_ACTION_VALUES.includes(action);
+}
+
+export function isValidExportFormat(format) {
+  return REPORT_EXPORT_FORMAT_VALUES.includes(format);
+}

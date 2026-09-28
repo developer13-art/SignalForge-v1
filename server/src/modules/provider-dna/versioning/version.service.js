@@ -3,15 +3,13 @@
  *
  * @module signalforge/server/modules/provider-dna/versioning/service
  */
-
-import { VersionRepository } from './version.repository.js';
-import { VersionDiffService } from './version-diff.service.js';
-import { DnaRepository } from '../dna.repository.js';
-import { DnaVersionNotFoundError } from '../dna.errors.js';
-import { DNA_VERSION_RETENTION } from '../dna.constants.js';
-import { emitDnaVersionCreated } from '../dna.events.js';
-
-export class VersionService {
+const { VersionRepository } = require('./version.repository.js');
+const { VersionDiffService } = require('./version-diff.service.js');
+const { DnaRepository } = require('../dna.repository.js');
+const { DnaVersionNotFoundError } = require('../dna.errors.js');
+const { DNA_VERSION_RETENTION } = require('../dna.constants.js');
+const { emitDnaVersionCreated } = require('../dna.events.js');
+class VersionService {
   constructor(repository = null, dnaRepository = null) {
     this.repository = repository || new VersionRepository();
     this.dnaRepository = dnaRepository || new DnaRepository();
@@ -80,5 +78,5 @@ export class VersionService {
     return this.diffService.diff(snapshotA, snapshotB);
   }
 }
-
-export default VersionService;
+module.exports = VersionService;
+module.exports.VersionService = VersionService;

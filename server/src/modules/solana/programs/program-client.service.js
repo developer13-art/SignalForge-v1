@@ -8,12 +8,11 @@
  *
  * @module server/modules/solana/programs/program-client.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { connectionService } from '../config/connection.service';
-import { programConfigService } from '../config/program-config.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { connectionService } = require('../config/connection.service');
+const { programConfigService } = require('../config/program-config.service');
 
 async function loadWeb3() {
   try {
@@ -26,8 +25,7 @@ async function loadWeb3() {
     throw new AppError('Solana web3 library is not available', ERROR_CODES.CONFIGURATION_MISSING, 500);
   }
 }
-
-export async function getProgramContext({ programKey }) {
+async function getProgramContext({ programKey }) {
   if (!programKey) {
     throw new AppError('programKey is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -43,8 +41,7 @@ export async function getProgramContext({ programKey }) {
     programPublicKey: new web3.PublicKey(programId),
   };
 }
-
-export async function getProgramAccountInfo({ programKey, accountAddress }) {
+async function getProgramAccountInfo({ programKey, accountAddress }) {
   if (!accountAddress) {
     throw new AppError('accountAddress is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -68,8 +65,7 @@ export async function getProgramAccountInfo({ programKey, accountAddress }) {
     dataLength: info.data.length,
   };
 }
-
-export async function confirmTransaction({ txSignature, commitment = 'confirmed' }) {
+async function confirmTransaction({ txSignature, commitment = 'confirmed' }) {
   if (!txSignature) {
     throw new AppError('txSignature is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -89,8 +85,7 @@ export async function confirmTransaction({ txSignature, commitment = 'confirmed'
 
   return { confirmed: !result.value.err, error: result.value.err };
 }
-
-export async function getAccountBalance({ accountAddress }) {
+async function getAccountBalance({ accountAddress }) {
   if (!accountAddress) {
     throw new AppError('accountAddress is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -103,8 +98,7 @@ export async function getAccountBalance({ accountAddress }) {
 
   return { accountAddress, lamports, sol: lamports / 1_000_000_000 };
 }
-
-export async function buildInstruction({
+async function buildInstruction({
   programKey,
   keys,
   data,
@@ -132,11 +126,21 @@ export async function buildInstruction({
     data: Buffer.isBuffer(data) ? data : Buffer.from(data),
   });
 }
-
-export const programClientService = {
+const programClientService = {
   getProgramContext,
   getProgramAccountInfo,
   confirmTransaction,
   getAccountBalance,
   buildInstruction,
 };
+module.exports.programClientService = programClientService;
+
+module.exports.getProgramContext = getProgramContext;
+
+module.exports.getProgramAccountInfo = getProgramAccountInfo;
+
+module.exports.confirmTransaction = confirmTransaction;
+
+module.exports.getAccountBalance = getAccountBalance;
+
+module.exports.buildInstruction = buildInstruction;

@@ -3,9 +3,8 @@
  *
  * @module signalforge/server/modules/trade-state/lifecycle/actor-attribution
  */
-
-import { TRADE_ACTORS, isValidTradeActor } from '../trade-state.constants.js';
-import { InvalidTradeActorError } from '../trade-state.errors.js';
+const { TRADE_ACTORS, isValidTradeActor } = require('../trade-state.constants.js');
+const { InvalidTradeActorError } = require('../trade-state.errors.js');
 
 const EVENT_ACTOR_MAP = Object.freeze({
   SIGNAL_RECEIVED: TRADE_ACTORS.PROVIDER,
@@ -51,8 +50,7 @@ const EVENT_ACTOR_MAP = Object.freeze({
   SHADOW_COMPARISON: TRADE_ACTORS.SYSTEM,
   SOLANA_PROVENANCE_ANCHORED: TRADE_ACTORS.SYSTEM,
 });
-
-export class ActorAttributionService {
+class ActorAttributionService {
   deriveActor(eventType, explicitActor = null) {
     if (explicitActor) {
       if (!isValidTradeActor(explicitActor)) {
@@ -75,5 +73,5 @@ export class ActorAttributionService {
     return actor === TRADE_ACTORS.AUTO_RULE;
   }
 }
-
-export default ActorAttributionService;
+module.exports = ActorAttributionService;
+module.exports.ActorAttributionService = ActorAttributionService;

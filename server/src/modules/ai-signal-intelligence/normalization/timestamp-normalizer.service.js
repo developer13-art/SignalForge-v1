@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/normalization/timestamp
  */
-
-export class TimestampNormalizerService {
+class TimestampNormalizerService {
   normalize(input) {
     if (!input) {
       return new Date().toISOString();
@@ -32,5 +31,5 @@ export class TimestampNormalizerService {
     return new Date(parsed).getTime() < cutoff;
   }
 }
-
-export default TimestampNormalizerService;
+module.exports = TimestampNormalizerService;
+module.exports.TimestampNormalizerService = TimestampNormalizerService;

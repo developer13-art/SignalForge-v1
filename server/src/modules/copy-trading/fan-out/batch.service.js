@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/copy-trading/fan-out/batch
  */
-
-import { DEFAULT_BATCH_SIZE } from '../copy-trading.constants.js';
-
-export class BatchService {
+const { DEFAULT_BATCH_SIZE } = require('../copy-trading.constants.js');
+class BatchService {
   constructor(batchSize = DEFAULT_BATCH_SIZE) {
     this.batchSize = batchSize;
   }
@@ -34,5 +32,5 @@ export class BatchService {
     return Math.ceil(subscriberCount / size);
   }
 }
-
-export default BatchService;
+module.exports = BatchService;
+module.exports.BatchService = BatchService;

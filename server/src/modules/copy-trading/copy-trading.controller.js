@@ -3,16 +3,10 @@
  *
  * @module signalforge/server/modules/copy-trading/controller
  */
-
-import { CopyTradingService } from './copy-trading.service.js';
-import {
-  validateSubscriptionPayload,
-  validateSubscriptionUpdatePayload,
-  validateFanOutPayload,
-} from './copy-trading.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class CopyTradingController {
+const { CopyTradingService } = require('./copy-trading.service.js');
+const { validateSubscriptionPayload, validateSubscriptionUpdatePayload, validateFanOutPayload } = require('./copy-trading.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class CopyTradingController {
   constructor(service = null) {
     this.service = service || new CopyTradingService();
   }
@@ -184,5 +178,5 @@ export class CopyTradingController {
     }
   };
 }
-
-export default CopyTradingController;
+module.exports = CopyTradingController;
+module.exports.CopyTradingController = CopyTradingController;

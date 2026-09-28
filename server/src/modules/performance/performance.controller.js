@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/performance/controller
  */
-
-import { PerformanceService } from './performance.service.js';
-
-export class PerformanceController {
+const { PerformanceService } = require('./performance.service.js');
+class PerformanceController {
   constructor(service = null) {
     this.service = service || new PerformanceService();
   }
@@ -192,5 +190,5 @@ export class PerformanceController {
     }
   };
 }
-
-export default PerformanceController;
+module.exports = PerformanceController;
+module.exports.PerformanceController = PerformanceController;

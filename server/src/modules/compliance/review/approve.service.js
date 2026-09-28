@@ -7,14 +7,12 @@
  *
  * @module server/modules/compliance/review/approve.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-
-export async function approveKyc({ applicationId, reviewerId, notes }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+async function approveKyc({ applicationId, reviewerId, notes }) {
   if (!applicationId || !reviewerId) {
     throw new AppError('applicationId and reviewerId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -71,7 +69,9 @@ export async function approveKyc({ applicationId, reviewerId, notes }) {
     throw new AppError('Failed to approve KYC application', ERROR_CODES.INTERNAL_ERROR, 500);
   }
 }
-
-export const approveService = {
+const approveService = {
   approveKyc,
 };
+module.exports.approveService = approveService;
+
+module.exports.approveKyc = approveKyc;

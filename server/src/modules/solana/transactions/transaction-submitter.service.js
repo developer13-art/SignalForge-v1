@@ -7,15 +7,14 @@
  *
  * @module server/modules/solana/transactions/transaction-submitter.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { sleep } from '@signalforge/shared/utils/retry.util';
-import { calculateBackoff } from '@signalforge/shared/utils/backoff.util';
-import { connectionService } from '../config/connection.service';
-import { transactionRepository } from './transaction.repository';
-import { SOLANA_MAX_RETRIES, SOLANA_RETRY_DELAY_MS } from '../solana.constants';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { sleep } = require('@signalforge/shared/utils/retry.util');
+const { calculateBackoff } = require('@signalforge/shared/utils/backoff.util');
+const { connectionService } = require('../config/connection.service');
+const { transactionRepository } = require('./transaction.repository');
+const { SOLANA_MAX_RETRIES, SOLANA_RETRY_DELAY_MS } = require('../solana.constants');
 
 async function loadWeb3() {
   try {
@@ -47,8 +46,7 @@ async function submitOnce({ serializedTransaction, skipPreflight = false }) {
 
   return signature;
 }
-
-export async function submitTransaction({
+async function submitTransaction({
   serializedTransaction,
   purpose,
   referenceType,
@@ -100,8 +98,7 @@ export async function submitTransaction({
     error: lastError ? lastError.message : null,
   };
 }
-
-export async function recordFailure({ txSignature, reason }) {
+async function recordFailure({ txSignature, reason }) {
   if (!txSignature) {
     return { recorded: false };
   }
@@ -114,8 +111,12 @@ export async function recordFailure({ txSignature, reason }) {
 
   return { recorded: true };
 }
-
-export const transactionSubmitterService = {
+const transactionSubmitterService = {
   submitTransaction,
   recordFailure,
 };
+module.exports.transactionSubmitterService = transactionSubmitterService;
+
+module.exports.submitTransaction = submitTransaction;
+
+module.exports.recordFailure = recordFailure;

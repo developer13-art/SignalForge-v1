@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/validation/validators/price
  */
-
-import { isValidPrice } from '@signalforge/shared/validators/price.validator';
-import { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES } from '../validation.constants.js';
-
-export class PriceCheck {
+const { isValidPrice } = require('@signalforge/shared/validators/price.validator');
+const { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES } = require('../validation.constants.js');
+class PriceCheck {
   constructor() {
     this.name = VALIDATION_CHECK_NAMES.PRICE;
   }
@@ -97,5 +95,5 @@ export class PriceCheck {
     return { name: this.name, result: VALIDATION_RESULTS.PASSED };
   }
 }
-
-export default PriceCheck;
+module.exports = PriceCheck;
+module.exports.PriceCheck = PriceCheck;

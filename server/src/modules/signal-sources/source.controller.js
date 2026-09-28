@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/signal-sources/controller
  */
-
-import { SourceService } from './source.service.js';
-import { validateCreateSourcePayload, validateUpdateSourcePayload } from './source.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class SourceController {
+const { SourceService } = require('./source.service.js');
+const { validateCreateSourcePayload, validateUpdateSourcePayload } = require('./source.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class SourceController {
   constructor(service = null) {
     this.service = service || new SourceService();
   }
@@ -146,5 +144,5 @@ export class SourceController {
     }
   };
 }
-
-export default SourceController;
+module.exports = SourceController;
+module.exports.SourceController = SourceController;

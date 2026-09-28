@@ -7,15 +7,13 @@
  *
  * @module server/modules/solana/wallets/wallet-connect.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { walletRepository } from './wallet.repository';
-import { siwsService } from './siws.service';
-import { emitWalletConnected } from '../solana.events';
-
-export async function beginConnect({ walletAddress }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { walletRepository } = require('./wallet.repository');
+const { siwsService } = require('./siws.service');
+const { emitWalletConnected } = require('../solana.events');
+async function beginConnect({ walletAddress }) {
   if (!walletAddress) {
     throw new AppError('walletAddress is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -26,8 +24,7 @@ export async function beginConnect({ walletAddress }) {
 
   return result;
 }
-
-export async function completeConnect({
+async function completeConnect({
   userId,
   walletAddress,
   message,
@@ -94,8 +91,7 @@ export async function completeConnect({
     createdAt: record.created_at,
   };
 }
-
-export async function disconnectWallet({ userId, walletId, reason }) {
+async function disconnectWallet({ userId, walletId, reason }) {
   if (!userId || !walletId) {
     throw new AppError('userId and walletId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -119,9 +115,15 @@ export async function disconnectWallet({ userId, walletId, reason }) {
 
   return { disconnected: true };
 }
-
-export const walletConnectService = {
+const walletConnectService = {
   beginConnect,
   completeConnect,
   disconnectWallet,
 };
+module.exports.walletConnectService = walletConnectService;
+
+module.exports.beginConnect = beginConnect;
+
+module.exports.completeConnect = completeConnect;
+
+module.exports.disconnectWallet = disconnectWallet;

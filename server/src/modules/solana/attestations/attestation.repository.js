@@ -7,11 +7,9 @@
  *
  * @module server/modules/solana/attestations/attestation.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertAttestation({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertAttestation({
   subjectType,
   subjectId,
   attestationType,
@@ -43,24 +41,21 @@ export async function insertAttestation({
   );
   return rows[0];
 }
-
-export async function findById({ attestationId }) {
+async function findById({ attestationId }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_attestations WHERE id = $1 LIMIT 1`,
     [attestationId],
   );
   return rows[0] || null;
 }
-
-export async function findByHash({ attestationHash }) {
+async function findByHash({ attestationHash }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_attestations WHERE attestation_hash = $1 LIMIT 1`,
     [attestationHash],
   );
   return rows[0] || null;
 }
-
-export async function findBySubject({ subjectType, subjectId, attestationType }) {
+async function findBySubject({ subjectType, subjectId, attestationType }) {
   const conditions = ['subject_type = $1', 'subject_id = $2'];
   const params = [subjectType, subjectId];
 
@@ -77,8 +72,7 @@ export async function findBySubject({ subjectType, subjectId, attestationType })
   );
   return rows;
 }
-
-export async function updateStatus({
+async function updateStatus({
   attestationId,
   status,
   txSignature,
@@ -100,8 +94,7 @@ export async function updateStatus({
   );
   return rowCount > 0;
 }
-
-export async function revoke({ attestationId, reason }) {
+async function revoke({ attestationId, reason }) {
   const { rowCount } = await db.query(
     `UPDATE solana_attestations
         SET status = 'REVOKED',
@@ -113,8 +106,7 @@ export async function revoke({ attestationId, reason }) {
   );
   return rowCount > 0;
 }
-
-export async function listBySubjectPaged({ subjectType, subjectId, pagination = {} }) {
+async function listBySubjectPaged({ subjectType, subjectId, pagination = {} }) {
   const limit = pagination.limit || 20;
   const offset = pagination.offset || 0;
 
@@ -135,8 +127,7 @@ export async function listBySubjectPaged({ subjectType, subjectId, pagination = 
 
   return { items: rows, total: countResult.rows[0]?.total || 0 };
 }
-
-export async function listPending({ limit = 50 }) {
+async function listPending({ limit = 50 }) {
   const { rows } = await db.query(
     `SELECT * FROM solana_attestations
       WHERE status IN ('PENDING', 'SUBMITTED', 'FAILED')
@@ -146,15 +137,13 @@ export async function listPending({ limit = 50 }) {
   );
   return rows;
 }
-
-export async function countByStatus() {
+async function countByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count FROM solana_attestations GROUP BY status`,
   );
   return rows;
 }
-
-export const attestationRepository = {
+const attestationRepository = {
   insertAttestation,
   findById,
   findByHash,
@@ -165,3 +154,22 @@ export const attestationRepository = {
   listPending,
   countByStatus,
 };
+module.exports.attestationRepository = attestationRepository;
+
+module.exports.insertAttestation = insertAttestation;
+
+module.exports.findById = findById;
+
+module.exports.findByHash = findByHash;
+
+module.exports.findBySubject = findBySubject;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.revoke = revoke;
+
+module.exports.listBySubjectPaged = listBySubjectPaged;
+
+module.exports.listPending = listPending;
+
+module.exports.countByStatus = countByStatus;

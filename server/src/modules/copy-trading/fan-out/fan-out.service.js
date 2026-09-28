@@ -3,25 +3,16 @@
  *
  * @module signalforge/server/modules/copy-trading/fan-out/service
  */
-
-import { CopyTradingRepository } from '../copy-trading.repository.js';
-import { SubscriberResolverService } from './subscriber-resolver.service.js';
-import { PersonalizerService } from './personalizer.service.js';
-import { BatchService } from './batch.service.js';
-import { BatchSchedulerService } from './batch-scheduler.service.js';
-import { FanOutMetricsService } from './fan-out-metrics.service.js';
-import { DEFAULT_BATCH_SIZE, DEFAULT_LATENCY_ALERT_MS } from '../copy-trading.constants.js';
-import {
-  emitFanOutStarted,
-  emitFanOutBatchCreated,
-  emitFanOutBatchCompleted,
-  emitFanOutCompleted,
-  emitFanOutFailed,
-  emitLatencyAlert,
-} from '../copy-trading.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class FanOutService {
+const { CopyTradingRepository } = require('../copy-trading.repository.js');
+const { SubscriberResolverService } = require('./subscriber-resolver.service.js');
+const { PersonalizerService } = require('./personalizer.service.js');
+const { BatchService } = require('./batch.service.js');
+const { BatchSchedulerService } = require('./batch-scheduler.service.js');
+const { FanOutMetricsService } = require('./fan-out-metrics.service.js');
+const { DEFAULT_BATCH_SIZE, DEFAULT_LATENCY_ALERT_MS } = require('../copy-trading.constants.js');
+const { emitFanOutStarted, emitFanOutBatchCreated, emitFanOutBatchCompleted, emitFanOutCompleted, emitFanOutFailed, emitLatencyAlert } = require('../copy-trading.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class FanOutService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new CopyTradingRepository();
     this.resolver = dependencies.resolver || new SubscriberResolverService(this.repository);
@@ -218,5 +209,5 @@ export class FanOutService {
     return this.repository.countFanOutRecordsByStatus(signalId);
   }
 }
-
-export default FanOutService;
+module.exports = FanOutService;
+module.exports.FanOutService = FanOutService;

@@ -3,20 +3,15 @@
  *
  * @module signalforge/server/modules/referrals/fraud/detection
  */
-
-import { ReferralRepository } from '../referral.repository.js';
-import { SelfReferralCheck } from './self-referral.check.js';
-import { DuplicateAccountCheck } from './duplicate-account.check.js';
-import { AbnormalActivityCheck } from './abnormal-activity.check.js';
-import { FakeVolumeCheck } from './fake-volume.check.js';
-import { ReversalCheck } from './reversal.check.js';
-import {
-  DEFAULT_REFERRAL_FRAUD_SCORE_THRESHOLD,
-  DEFAULT_REVIEW_REQUIRED_SCORE,
-} from '../referral.constants.js';
-import { emitFraudFlagRaised } from '../referral.events.js';
-
-export class FraudDetectionService {
+const { ReferralRepository } = require('../referral.repository.js');
+const { SelfReferralCheck } = require('./self-referral.check.js');
+const { DuplicateAccountCheck } = require('./duplicate-account.check.js');
+const { AbnormalActivityCheck } = require('./abnormal-activity.check.js');
+const { FakeVolumeCheck } = require('./fake-volume.check.js');
+const { ReversalCheck } = require('./reversal.check.js');
+const { DEFAULT_REFERRAL_FRAUD_SCORE_THRESHOLD, DEFAULT_REVIEW_REQUIRED_SCORE } = require('../referral.constants.js');
+const { emitFraudFlagRaised } = require('../referral.events.js');
+class FraudDetectionService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ReferralRepository();
     this.checks = dependencies.checks || [
@@ -99,5 +94,5 @@ export class FraudDetectionService {
     return this.repository.listFraudFlags(filters, pagination);
   }
 }
-
-export default FraudDetectionService;
+module.exports = FraudDetectionService;
+module.exports.FraudDetectionService = FraudDetectionService;

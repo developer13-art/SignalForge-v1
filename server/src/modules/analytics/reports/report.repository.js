@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/analytics/reports/repository
  */
-
-import { AnalyticsRepository } from '../analytics.repository.js';
-
-export class ReportRepository {
+const { AnalyticsRepository } = require('../analytics.repository.js');
+class ReportRepository {
   constructor(db = null) {
     this.analyticsRepository = new AnalyticsRepository(db);
   }
@@ -35,5 +33,5 @@ export class ReportRepository {
     return this.analyticsRepository.deleteReport(reportId);
   }
 }
-
-export default ReportRepository;
+module.exports = ReportRepository;
+module.exports.ReportRepository = ReportRepository;

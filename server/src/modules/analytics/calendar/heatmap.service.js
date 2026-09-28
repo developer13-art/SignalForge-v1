@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/analytics/calendar/heatmap
  */
-
-import { CalendarRepository } from './calendar.repository.js';
-import { DEFAULT_HEATMAP_DAYS } from '../analytics.constants.js';
-
-export class HeatmapService {
+const { CalendarRepository } = require('./calendar.repository.js');
+const { DEFAULT_HEATMAP_DAYS } = require('../analytics.constants.js');
+class HeatmapService {
   constructor(repository = null) {
     this.repository = repository || new CalendarRepository();
   }
@@ -74,5 +72,5 @@ export class HeatmapService {
     );
   }
 }
-
-export default HeatmapService;
+module.exports = HeatmapService;
+module.exports.HeatmapService = HeatmapService;

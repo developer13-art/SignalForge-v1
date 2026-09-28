@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/wallets/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class WalletRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class WalletRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -386,5 +384,5 @@ export class WalletRepository {
     };
   }
 }
-
-export default WalletRepository;
+module.exports = WalletRepository;
+module.exports.WalletRepository = WalletRepository;

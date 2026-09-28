@@ -6,22 +6,17 @@
  *
  * @module server/modules/support/ticket.service
  */
-
-import crypto from 'node:crypto';
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import { db } from '../../database';
-import { publishEvent } from '../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import {
-  TICKET_STATUSES,
-  getResponseSlaMinutes,
-  getResolutionSlaMinutes,
-} from './ticket.constants';
-import * as repository from './ticket.repository';
+const crypto = require('node:crypto');
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const { db } = require('../../database');
+const { publishEvent } = require('../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { TICKET_STATUSES, getResponseSlaMinutes, getResolutionSlaMinutes } = require('./ticket.constants');
+const repository = require('./ticket.repository');
 
 function generateTicketNumber() {
   const timestamp = Date.now().toString(36).toUpperCase();
@@ -38,8 +33,7 @@ function computeSlaDeadlines({ priority }) {
     resolutionDueAt: new Date(Date.now() + resolutionMinutes * 60 * 1000).toISOString(),
   };
 }
-
-export async function createTicket({ userId, subject, message, priority, category, attachments, metadata }) {
+async function createTicket({ userId, subject, message, priority, category, attachments, metadata }) {
   if (!userId || !subject || !message) {
     throw new AppError('userId, subject, and message are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -99,8 +93,7 @@ export async function createTicket({ userId, subject, message, priority, categor
     createdAt: ticket.created_at,
   };
 }
-
-export async function getTicket({ ticketId, userId, isAgent = false, agentId = null }) {
+async function getTicket({ ticketId, userId, isAgent = false, agentId = null }) {
   if (!ticketId) {
     throw new AppError('ticketId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -145,8 +138,7 @@ export async function getTicket({ ticketId, userId, isAgent = false, agentId = n
     })),
   };
 }
-
-export async function addMessage({ ticketId, authorId, authorType, message, attachments, isAgent = false }) {
+async function addMessage({ ticketId, authorId, authorType, message, attachments, isAgent = false }) {
   if (!ticketId || !authorId || !message) {
     throw new AppError('ticketId, authorId, and message are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -218,8 +210,7 @@ export async function addMessage({ ticketId, authorId, authorType, message, atta
     createdAt: row.created_at,
   };
 }
-
-export async function updateStatus({ ticketId, status, reason, actorId }) {
+async function updateStatus({ ticketId, status, reason, actorId }) {
   if (!ticketId || !status) {
     throw new AppError('ticketId and status are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -240,8 +231,7 @@ export async function updateStatus({ ticketId, status, reason, actorId }) {
 
   return { updated: true, status };
 }
-
-export async function updatePriority({ ticketId, priority, actorId }) {
+async function updatePriority({ ticketId, priority, actorId }) {
   if (!ticketId || !priority) {
     throw new AppError('ticketId and priority are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -265,8 +255,7 @@ export async function updatePriority({ ticketId, priority, actorId }) {
 
   return { updated: true, priority, responseDueAt, resolutionDueAt };
 }
-
-export async function assignToAgent({ ticketId, agentId, actorId }) {
+async function assignToAgent({ ticketId, agentId, actorId }) {
   if (!ticketId || !agentId) {
     throw new AppError('ticketId and agentId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -281,8 +270,7 @@ export async function assignToAgent({ ticketId, agentId, actorId }) {
 
   return { assigned: true, agentId };
 }
-
-export async function listUserTickets({ userId, filters = {}, pagination = {} }) {
+async function listUserTickets({ userId, filters = {}, pagination = {} }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -309,8 +297,7 @@ export async function listUserTickets({ userId, filters = {}, pagination = {} })
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function listAgentTickets({ agentId, filters = {}, pagination = {} }) {
+async function listAgentTickets({ agentId, filters = {}, pagination = {} }) {
   if (!agentId) {
     throw new AppError('agentId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -339,8 +326,7 @@ export async function listAgentTickets({ agentId, filters = {}, pagination = {} 
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function listQueue({ filters = {}, pagination = {} }) {
+async function listQueue({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listByQueue({
@@ -365,8 +351,7 @@ export async function listQueue({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function listSlaBreaches({ limit = 100 }) {
+async function listSlaBreaches({ limit = 100 }) {
   const rows = await repository.listSlaBreaches({ limit });
 
   return rows.map((row) => ({
@@ -382,8 +367,7 @@ export async function listSlaBreaches({ limit = 100 }) {
     resolvedAt: row.resolved_at,
   }));
 }
-
-export async function getUserTicketStats({ userId }) {
+async function getUserTicketStats({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -397,8 +381,7 @@ export async function getUserTicketStats({ userId }) {
 
   return stats;
 }
-
-export async function getAgentTicketStats({ agentId }) {
+async function getAgentTicketStats({ agentId }) {
   if (!agentId) {
     throw new AppError('agentId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -412,8 +395,7 @@ export async function getAgentTicketStats({ agentId }) {
 
   return stats;
 }
-
-export async function getGlobalTicketStats() {
+async function getGlobalTicketStats() {
   const rows = await repository.countAllByStatus();
 
   const stats = {};
@@ -423,8 +405,7 @@ export async function getGlobalTicketStats() {
 
   return stats;
 }
-
-export const ticketService = {
+const ticketService = {
   createTicket,
   getTicket,
   addMessage,
@@ -439,3 +420,30 @@ export const ticketService = {
   getAgentTicketStats,
   getGlobalTicketStats,
 };
+module.exports.ticketService = ticketService;
+
+module.exports.createTicket = createTicket;
+
+module.exports.getTicket = getTicket;
+
+module.exports.addMessage = addMessage;
+
+module.exports.updateStatus = updateStatus;
+
+module.exports.updatePriority = updatePriority;
+
+module.exports.assignToAgent = assignToAgent;
+
+module.exports.listUserTickets = listUserTickets;
+
+module.exports.listAgentTickets = listAgentTickets;
+
+module.exports.listQueue = listQueue;
+
+module.exports.listSlaBreaches = listSlaBreaches;
+
+module.exports.getUserTicketStats = getUserTicketStats;
+
+module.exports.getAgentTicketStats = getAgentTicketStats;
+
+module.exports.getGlobalTicketStats = getGlobalTicketStats;

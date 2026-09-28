@@ -3,13 +3,8 @@
  *
  * @module signalforge/server/modules/consensus/agreement-calculator
  */
-
-import {
-  CONSENSUS_DIRECTIONS,
-  DEFAULT_HIGH_CONFIDENCE_THRESHOLD,
-} from './consensus.constants.js';
-
-export class AgreementCalculatorService {
+const { CONSENSUS_DIRECTIONS, DEFAULT_HIGH_CONFIDENCE_THRESHOLD } = require('./consensus.constants.js');
+class AgreementCalculatorService {
   compute(members) {
     if (!Array.isArray(members) || members.length === 0) {
       return {
@@ -80,5 +75,5 @@ export class AgreementCalculatorService {
     return 'NONE';
   }
 }
-
-export default AgreementCalculatorService;
+module.exports = AgreementCalculatorService;
+module.exports.AgreementCalculatorService = AgreementCalculatorService;

@@ -3,13 +3,10 @@
  *
  * @module signalforge/server/modules/signal-sources/email/service
  */
-
-import crypto from 'node:crypto';
-
-import { EmailRepository } from './email.repository.js';
-import securityConfig from '../../../config/security.config.js';
-
-export class EmailService {
+const crypto = require('node:crypto');
+const { EmailRepository } = require('./email.repository.js');
+const securityConfig = require('../../../config/security.config.js');
+class EmailService {
   constructor(repository = null) {
     this.repository = repository || new EmailRepository();
   }
@@ -65,5 +62,5 @@ export class EmailService {
     return { deleted: true };
   }
 }
-
-export default EmailService;
+module.exports = EmailService;
+module.exports.EmailService = EmailService;

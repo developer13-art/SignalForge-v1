@@ -3,42 +3,20 @@
  *
  * @module signalforge/server/modules/providers/certification/service
  */
-
-import { CertificationRepository } from './repository.js';
-import { ProviderRepository } from '../provider.repository.js';
-import { HistoricalImportService } from './historical-import.service.js';
-import { BacktestingService } from './backtesting.js';
-import { AccuracyCalculatorService } from './accuracy.js';
-import { ConsistencyScoreService } from './consistency.js';
-import { QualityScoreService } from './quality.js';
-import { RiskAssessmentService } from './risk.js';
-import { SandboxService } from './sandbox.js';
-import {
-  CERTIFICATION_STATUSES,
-  CERTIFICATION_TIERS,
-  DEFAULT_CERTIFICATION_MIN_ACCURACY,
-  DEFAULT_CERTIFICATION_MIN_CONSISTENCY,
-  DEFAULT_CERTIFICATION_MIN_QUALITY,
-  DEFAULT_CERTIFICATION_MAX_RISK,
-  DEFAULT_CERTIFICATION_VALIDITY_DAYS,
-} from '../provider.constants.js';
-import {
-  CertificationNotFoundError,
-  CertificationAlreadyRunningError,
-  CertificationFailedError,
-  ProviderNotFoundError,
-} from '../provider.errors.js';
-import {
-  emitCertificationStarted,
-  emitCertificationCompleted,
-  emitCertificationFailed,
-  emitCertificationRevoked,
-  emitProviderCertified,
-  emitProviderUncertified,
-} from '../provider.events.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class CertificationService {
+const { CertificationRepository } = require('./repository.js');
+const { ProviderRepository } = require('../provider.repository.js');
+const { HistoricalImportService } = require('./historical-import.service.js');
+const { BacktestingService } = require('./backtesting.js');
+const { AccuracyCalculatorService } = require('./accuracy.js');
+const { ConsistencyScoreService } = require('./consistency.js');
+const { QualityScoreService } = require('./quality.js');
+const { RiskAssessmentService } = require('./risk.js');
+const { SandboxService } = require('./sandbox.js');
+const { CERTIFICATION_STATUSES, CERTIFICATION_TIERS, DEFAULT_CERTIFICATION_MIN_ACCURACY, DEFAULT_CERTIFICATION_MIN_CONSISTENCY, DEFAULT_CERTIFICATION_MIN_QUALITY, DEFAULT_CERTIFICATION_MAX_RISK, DEFAULT_CERTIFICATION_VALIDITY_DAYS } = require('../provider.constants.js');
+const { CertificationNotFoundError, CertificationAlreadyRunningError, CertificationFailedError, ProviderNotFoundError } = require('../provider.errors.js');
+const { emitCertificationStarted, emitCertificationCompleted, emitCertificationFailed, emitCertificationRevoked, emitProviderCertified, emitProviderUncertified } = require('../provider.events.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class CertificationService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new CertificationRepository();
     this.providerRepository =
@@ -373,6 +351,5 @@ export class CertificationService {
   }
 }
 
-export { CertificationFailedError };
-
-export default CertificationService;
+module.exports = CertificationService;
+module.exports.CertificationService = CertificationService;

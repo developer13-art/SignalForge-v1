@@ -27,3 +27,4 @@ async function initSolanaConnection() {
 }
 
 module.exports = initSolanaConnection;
+module.exports.initSolanaConnection = initSolanaConnection;

@@ -6,8 +6,7 @@
  *
  * @module server/database/migrations/002_create_rbac_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS roles (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -61,11 +60,12 @@ export async function up(client) {
     CREATE INDEX IF NOT EXISTS idx_user_permissions_user ON user_permissions (user_id);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS user_permissions CASCADE`);
   await client.query(`DROP TABLE IF EXISTS role_permissions CASCADE`);
   await client.query(`DROP TABLE IF EXISTS user_roles CASCADE`);
   await client.query(`DROP TABLE IF EXISTS permissions CASCADE`);
   await client.query(`DROP TABLE IF EXISTS roles CASCADE`);
 }   
+module.exports.up = up;
+module.exports.down = down;

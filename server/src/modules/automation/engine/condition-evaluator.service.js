@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/automation/engine/condition-evaluator
  */
-
-import { AUTOMATION_CONDITION_TYPES } from '../automation.constants.js';
-import { UnsupportedConditionError } from '../automation.errors.js';
-
-export class ConditionEvaluatorService {
+const { AUTOMATION_CONDITION_TYPES } = require('../automation.constants.js');
+const { UnsupportedConditionError } = require('../automation.errors.js');
+class ConditionEvaluatorService {
   async evaluate(condition, context) {
     if (!condition || typeof condition !== 'object') {
       return { matched: false, reason: 'INVALID_CONDITION' };
@@ -122,5 +120,5 @@ export class ConditionEvaluatorService {
     return { matched: actualDate.getTime() < expectedDate.getTime(), reason: 'BEFORE' };
   }
 }
-
-export default ConditionEvaluatorService;
+module.exports = ConditionEvaluatorService;
+module.exports.ConditionEvaluatorService = ConditionEvaluatorService;

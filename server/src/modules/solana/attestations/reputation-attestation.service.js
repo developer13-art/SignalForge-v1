@@ -6,16 +6,14 @@
  *
  * @module server/modules/solana/attestations/reputation-attestation.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { attestationRepository } from './attestation.repository';
-import { attestationBuilderService } from './attestation-builder.service';
-import { programConfigService } from '../config/program-config.service';
-import { emitAttestationAnchored } from '../solana.events';
-
-export async function createReputationAttestation({
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { attestationRepository } = require('./attestation.repository');
+const { attestationBuilderService } = require('./attestation-builder.service');
+const { programConfigService } = require('../config/program-config.service');
+const { emitAttestationAnchored } = require('../solana.events');
+async function createReputationAttestation({
   providerId,
   consistencyScore,
   performanceScore,
@@ -54,8 +52,7 @@ export async function createReputationAttestation({
     createdAt: record.created_at,
   };
 }
-
-export async function markReputationAttestationAnchored({
+async function markReputationAttestationAnchored({
   attestationId,
   txSignature,
   slot,
@@ -85,8 +82,12 @@ export async function markReputationAttestationAnchored({
 
   return { anchored: true, txSignature };
 }
-
-export const reputationAttestationService = {
+const reputationAttestationService = {
   createReputationAttestation,
   markReputationAttestationAnchored,
 };
+module.exports.reputationAttestationService = reputationAttestationService;
+
+module.exports.createReputationAttestation = createReputationAttestation;
+
+module.exports.markReputationAttestationAnchored = markReputationAttestationAnchored;

@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/providers/certification/backtesting
  */
-
-import { AccuracyCalculatorService } from './accuracy.js';
-import { ConsistencyScoreService } from './consistency.js';
-import { RiskAssessmentService } from './risk.js';
-import { emitBacktestCompleted } from '../provider.events.js';
-
-export class BacktestingService {
+const { AccuracyCalculatorService } = require('./accuracy.js');
+const { ConsistencyScoreService } = require('./consistency.js');
+const { RiskAssessmentService } = require('./risk.js');
+const { emitBacktestCompleted } = require('../provider.events.js');
+class BacktestingService {
   constructor(dependencies = {}) {
     this.accuracy = dependencies.accuracy || new AccuracyCalculatorService();
     this.consistency = dependencies.consistency || new ConsistencyScoreService();
@@ -74,5 +72,5 @@ export class BacktestingService {
     return summary;
   }
 }
-
-export default BacktestingService;
+module.exports = BacktestingService;
+module.exports.BacktestingService = BacktestingService;

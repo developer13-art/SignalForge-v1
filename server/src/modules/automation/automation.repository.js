@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/automation/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class AutomationRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class AutomationRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -260,5 +258,5 @@ export class AutomationRepository {
     return result.rows[0]?.count || 0;
   }
 }
-
-export default AutomationRepository;
+module.exports = AutomationRepository;
+module.exports.AutomationRepository = AutomationRepository;

@@ -3,15 +3,13 @@
  *
  * @module server/modules/admin/referrals/admin-referral.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-referral.repository';
-import { adminService } from '../admin.service';
-
-export async function listRewards({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-referral.repository');
+const { adminService } = require('../admin.service');
+async function listRewards({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listReferralRewards({
@@ -36,8 +34,7 @@ export async function listRewards({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getRewardDetails({ rewardId }) {
+async function getRewardDetails({ rewardId }) {
   if (!rewardId) {
     throw new AppError('rewardId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -50,8 +47,7 @@ export async function getRewardDetails({ rewardId }) {
 
   return reward;
 }
-
-export async function approveReward({ rewardId, adminId }) {
+async function approveReward({ rewardId, adminId }) {
   if (!rewardId || !adminId) {
     throw new AppError('rewardId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -74,8 +70,7 @@ export async function approveReward({ rewardId, adminId }) {
 
   return { approved: true };
 }
-
-export async function rejectReward({ rewardId, adminId, reason }) {
+async function rejectReward({ rewardId, adminId, reason }) {
   if (!rewardId || !adminId) {
     throw new AppError('rewardId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -98,8 +93,7 @@ export async function rejectReward({ rewardId, adminId, reason }) {
 
   return { rejected: true };
 }
-
-export async function listRelationships({ filters = {}, pagination = {} }) {
+async function listRelationships({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listReferralRelationships({
@@ -118,8 +112,7 @@ export async function listRelationships({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getRewardStatusBreakdown() {
+async function getRewardStatusBreakdown() {
   const rows = await repository.countRewardsByStatus();
 
   const breakdown = {};
@@ -135,8 +128,7 @@ export async function getRewardStatusBreakdown() {
 
   return { breakdown, totalAmount };
 }
-
-export const adminReferralService = {
+const adminReferralService = {
   listRewards,
   getRewardDetails,
   approveReward,
@@ -144,3 +136,16 @@ export const adminReferralService = {
   listRelationships,
   getRewardStatusBreakdown,
 };
+module.exports.adminReferralService = adminReferralService;
+
+module.exports.listRewards = listRewards;
+
+module.exports.getRewardDetails = getRewardDetails;
+
+module.exports.approveReward = approveReward;
+
+module.exports.rejectReward = rejectReward;
+
+module.exports.listRelationships = listRelationships;
+
+module.exports.getRewardStatusBreakdown = getRewardStatusBreakdown;

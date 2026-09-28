@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/referrals/ledger/service
  */
-
-import { ReferralLedgerRepository } from './repository.js';
-import { ReferralLedgerEntryService } from './entry-service.js';
-
-export class ReferralLedgerService {
+const { ReferralLedgerRepository } = require('./repository.js');
+const { ReferralLedgerEntryService } = require('./entry-service.js');
+class ReferralLedgerService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ReferralLedgerRepository();
     this.entries =
@@ -75,5 +73,5 @@ export class ReferralLedgerService {
     };
   }
 }
-
-export default ReferralLedgerService;
+module.exports = ReferralLedgerService;
+module.exports.ReferralLedgerService = ReferralLedgerService;

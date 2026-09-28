@@ -3,18 +3,11 @@
  *
  * @module signalforge/server/modules/traders/controller
  */
-
-import { TraderService } from './service.js';
-import { TraderProfileController } from './profile/controller.js';
-import {
-  validateTraderRegistrationPayload,
-  validateTraderUpdatePayload,
-  validateFollowPayload,
-  validateCopySettingsPayload,
-} from './trader.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class TraderController {
+const { TraderService } = require('./service.js');
+const { TraderProfileController } = require('./profile/controller.js');
+const { validateTraderRegistrationPayload, validateTraderUpdatePayload, validateFollowPayload, validateCopySettingsPayload } = require('./trader.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class TraderController {
   constructor(service = null) {
     this.service = service || new TraderService();
     this.profileController = new TraderProfileController(this.service.profile);
@@ -279,5 +272,5 @@ export class TraderController {
     }
   };
 }
-
-export default TraderController;
+module.exports = TraderController;
+module.exports.TraderController = TraderController;

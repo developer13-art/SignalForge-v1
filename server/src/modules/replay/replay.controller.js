@@ -5,13 +5,11 @@
  *
  * @module server/modules/replay/replay.controller
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { successResponse } from '../../lib/response/success.response';
-import { replayService } from './replay.service';
-
-export async function getSignalReplay(req, res) {
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { successResponse } = require('../../lib/response/success.response');
+const { replayService } = require('./replay.service');
+async function getSignalReplay(req, res) {
   const userId = req.user && req.user.id;
   const { signalId } = req.params;
   const { includeAi, includeRisk, includeExecution } = req.query;
@@ -30,8 +28,7 @@ export async function getSignalReplay(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function getTradeReplay(req, res) {
+async function getTradeReplay(req, res) {
   const userId = req.user && req.user.id;
   const { tradeId } = req.params;
 
@@ -43,8 +40,7 @@ export async function getTradeReplay(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function getAiReplay(req, res) {
+async function getAiReplay(req, res) {
   const userId = req.user && req.user.id;
   const { signalId } = req.params;
 
@@ -56,8 +52,7 @@ export async function getAiReplay(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function getRiskReplay(req, res) {
+async function getRiskReplay(req, res) {
   const userId = req.user && req.user.id;
   const { signalId } = req.params;
 
@@ -69,8 +64,7 @@ export async function getRiskReplay(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function getExecutionReplay(req, res) {
+async function getExecutionReplay(req, res) {
   const userId = req.user && req.user.id;
   const { tradeId } = req.params;
 
@@ -82,8 +76,7 @@ export async function getExecutionReplay(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function getProviderMessageReplay(req, res) {
+async function getProviderMessageReplay(req, res) {
   const userId = req.user && req.user.id;
   const { providerId, sourceId, externalMessageId } = req.params;
 
@@ -100,8 +93,7 @@ export async function getProviderMessageReplay(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function getSystemReplay(req, res) {
+async function getSystemReplay(req, res) {
   const userId = req.user && req.user.id;
   const { correlationId } = req.params;
 
@@ -113,8 +105,7 @@ export async function getSystemReplay(req, res) {
 
   return successResponse(res, result);
 }
-
-export const replayController = {
+const replayController = {
   getSignalReplay,
   getTradeReplay,
   getAiReplay,
@@ -123,3 +114,18 @@ export const replayController = {
   getProviderMessageReplay,
   getSystemReplay,
 };
+module.exports.replayController = replayController;
+
+module.exports.getSignalReplay = getSignalReplay;
+
+module.exports.getTradeReplay = getTradeReplay;
+
+module.exports.getAiReplay = getAiReplay;
+
+module.exports.getRiskReplay = getRiskReplay;
+
+module.exports.getExecutionReplay = getExecutionReplay;
+
+module.exports.getProviderMessageReplay = getProviderMessageReplay;
+
+module.exports.getSystemReplay = getSystemReplay;

@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/execution/operations/open-position
  */
-
-import { GatewayFactory } from '../gateway/gateway.factory.js';
-import { GATEWAY_TYPES } from '../execution.constants.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class OpenPositionOperation {
+const { GatewayFactory } = require('../gateway/gateway.factory.js');
+const { GATEWAY_TYPES } = require('../execution.constants.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class OpenPositionOperation {
   constructor(gatewayFactory = null) {
     this.gatewayFactory = gatewayFactory || GatewayFactory;
     this.logger = getLogger('open-position-operation');
@@ -24,5 +22,5 @@ export class OpenPositionOperation {
     };
   }
 }
-
-export default OpenPositionOperation;
+module.exports = OpenPositionOperation;
+module.exports.OpenPositionOperation = OpenPositionOperation;

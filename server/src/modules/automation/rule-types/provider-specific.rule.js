@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/automation/rule-types/provider-specific
  */
-
-import { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } from '../automation.constants.js';
-
-export class ProviderSpecificRule {
+const { AUTOMATION_CONDITION_TYPES, AUTOMATION_ACTION_TYPES } = require('../automation.constants.js');
+class ProviderSpecificRule {
   static supports(condition) {
     return [
       AUTOMATION_CONDITION_TYPES.PROVIDER_IS,
@@ -18,5 +16,5 @@ export class ProviderSpecificRule {
     return [AUTOMATION_ACTION_TYPES.SKIP_SIGNAL];
   }
 }
-
-export default ProviderSpecificRule;
+module.exports = ProviderSpecificRule;
+module.exports.ProviderSpecificRule = ProviderSpecificRule;

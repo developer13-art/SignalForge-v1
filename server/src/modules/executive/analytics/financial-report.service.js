@@ -7,10 +7,9 @@
  *
  * @module server/modules/executive/analytics/financial-report.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { db } from '../../../database';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { db } = require('../../../database');
 
 const VALID_GRANULARITIES = Object.freeze(['day', 'week', 'month']);
 
@@ -32,8 +31,7 @@ function normalizeGranularity(granularity) {
   }
   return g;
 }
-
-export async function generateReport({ from, to, granularity }) {
+async function generateReport({ from, to, granularity }) {
   const range = normalizeRange({ from, to });
   const g = normalizeGranularity(granularity);
   const dateTrunc = g === 'month' ? 'month' : g === 'week' ? 'week' : 'day';
@@ -168,8 +166,7 @@ export async function generateReport({ from, to, granularity }) {
     series,
   };
 }
-
-export async function getMonthlySummary({ months = 12 }) {
+async function getMonthlySummary({ months = 12 }) {
   const since = new Date(Date.now() - months * 30 * 24 * 60 * 60 * 1000).toISOString();
 
   return generateReport({
@@ -178,8 +175,12 @@ export async function getMonthlySummary({ months = 12 }) {
     granularity: 'month',
   });
 }
-
-export const financialReportService = {
+const financialReportService = {
   generateReport,
   getMonthlySummary,
 };
+module.exports.financialReportService = financialReportService;
+
+module.exports.generateReport = generateReport;
+
+module.exports.getMonthlySummary = getMonthlySummary;

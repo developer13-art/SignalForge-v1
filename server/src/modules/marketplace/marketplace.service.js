@@ -3,19 +3,17 @@
  *
  * @module signalforge/server/modules/marketplace/service
  */
-
-import { MarketplaceRepository } from './marketplace.repository.js';
-import { ListingService } from './listings/service.js';
-import { ReviewService } from './reviews/service.js';
-import { CategoryService } from './discovery/category.js';
-import { SearchService } from './discovery/search.js';
-import { FeaturedService } from './discovery/featured.js';
-import { RecommendationService } from './discovery/recommendation.js';
-import { RankingService } from './discovery/ranking.js';
-import { ComparisonService } from './comparison/comparison.service.js';
-import { ProviderConsensusService } from './comparison/provider-consensus.service.js';
-
-export class MarketplaceService {
+const { MarketplaceRepository } = require('./marketplace.repository.js');
+const { ListingService } = require('./listings/service.js');
+const { ReviewService } = require('./reviews/service.js');
+const { CategoryService } = require('./discovery/category.js');
+const { SearchService } = require('./discovery/search.js');
+const { FeaturedService } = require('./discovery/featured.js');
+const { RecommendationService } = require('./discovery/recommendation.js');
+const { RankingService } = require('./discovery/ranking.js');
+const { ComparisonService } = require('./comparison/comparison.service.js');
+const { ProviderConsensusService } = require('./comparison/provider-consensus.service.js');
+class MarketplaceService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new MarketplaceRepository();
 
@@ -138,5 +136,5 @@ export class MarketplaceService {
     return this.consensus.computeConsensus(providerIds, windowHours);
   }
 }
-
-export default MarketplaceService;
+module.exports = MarketplaceService;
+module.exports.MarketplaceService = MarketplaceService;

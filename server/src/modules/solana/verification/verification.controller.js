@@ -3,45 +3,39 @@
  *
  * @module server/modules/solana/verification/verification.controller
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { successResponse } from '../../../lib/response/success.response';
-import { verificationService } from './verification.service';
-
-export async function verifyByAttestationId(req, res) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { successResponse } = require('../../../lib/response/success.response');
+const { verificationService } = require('./verification.service');
+async function verifyByAttestationId(req, res) {
   const result = await verificationService.verifyByAttestationId({
     attestationId: req.params.attestationId,
   });
 
   return successResponse(res, result);
 }
-
-export async function verifyByHash(req, res) {
+async function verifyByHash(req, res) {
   const result = await verificationService.verifyByHash({
     attestationHash: req.params.attestationHash,
   });
 
   return successResponse(res, result);
 }
-
-export async function verifySignal(req, res) {
+async function verifySignal(req, res) {
   const result = await verificationService.verifySignalBySignalId({
     signalId: req.params.signalId,
   });
 
   return successResponse(res, result);
 }
-
-export async function verifyByProcessingHash(req, res) {
+async function verifyByProcessingHash(req, res) {
   const result = await verificationService.verifyByProcessingHash({
     processingHash: req.params.processingHash,
   });
 
   return successResponse(res, result);
 }
-
-export async function auditAttestation(req, res) {
+async function auditAttestation(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -54,8 +48,7 @@ export async function auditAttestation(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function auditProvenance(req, res) {
+async function auditProvenance(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -68,8 +61,7 @@ export async function auditProvenance(req, res) {
 
   return successResponse(res, result);
 }
-
-export async function auditPending(req, res) {
+async function auditPending(req, res) {
   const userId = req.user && req.user.id;
 
   if (!userId) {
@@ -82,8 +74,7 @@ export async function auditPending(req, res) {
 
   return successResponse(res, result);
 }
-
-export const verificationController = {
+const verificationController = {
   verifyByAttestationId,
   verifyByHash,
   verifySignal,
@@ -92,3 +83,18 @@ export const verificationController = {
   auditProvenance,
   auditPending,
 };
+module.exports.verificationController = verificationController;
+
+module.exports.verifyByAttestationId = verifyByAttestationId;
+
+module.exports.verifyByHash = verifyByHash;
+
+module.exports.verifySignal = verifySignal;
+
+module.exports.verifyByProcessingHash = verifyByProcessingHash;
+
+module.exports.auditAttestation = auditAttestation;
+
+module.exports.auditProvenance = auditProvenance;
+
+module.exports.auditPending = auditPending;

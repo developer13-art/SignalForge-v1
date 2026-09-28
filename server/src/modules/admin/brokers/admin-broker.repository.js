@@ -5,11 +5,9 @@
  *
  * @module server/modules/admin/brokers/admin-broker.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function listBrokerAccounts({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function listBrokerAccounts({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -61,16 +59,14 @@ export async function listBrokerAccounts({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findBrokerAccountById({ brokerAccountId }) {
+async function findBrokerAccountById({ brokerAccountId }) {
   const { rows } = await db.query(
     `SELECT * FROM broker_accounts WHERE id = $1 LIMIT 1`,
     [brokerAccountId],
   );
   return rows[0] || null;
 }
-
-export async function markBrokerDisconnected({ brokerAccountId, adminId, reason }) {
+async function markBrokerDisconnected({ brokerAccountId, adminId, reason }) {
   const { rowCount } = await db.query(
     `UPDATE broker_accounts
         SET connection_status = 'DISCONNECTED',
@@ -82,8 +78,7 @@ export async function markBrokerDisconnected({ brokerAccountId, adminId, reason 
   );
   return rowCount > 0;
 }
-
-export async function countByConnectionStatus() {
+async function countByConnectionStatus() {
   const { rows } = await db.query(
     `SELECT connection_status, COUNT(*)::int AS count
        FROM broker_accounts
@@ -91,10 +86,18 @@ export async function countByConnectionStatus() {
   );
   return rows;
 }
-
-export const adminBrokerRepository = {
+const adminBrokerRepository = {
   listBrokerAccounts,
   findBrokerAccountById,
   markBrokerDisconnected,
   countByConnectionStatus,
 };
+module.exports.adminBrokerRepository = adminBrokerRepository;
+
+module.exports.listBrokerAccounts = listBrokerAccounts;
+
+module.exports.findBrokerAccountById = findBrokerAccountById;
+
+module.exports.markBrokerDisconnected = markBrokerDisconnected;
+
+module.exports.countByConnectionStatus = countByConnectionStatus;

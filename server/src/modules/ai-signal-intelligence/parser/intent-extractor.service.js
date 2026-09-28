@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/parser/intent
  */
-
-import { INTENT_TYPES } from '../ai.constants.js';
+const { INTENT_TYPES } = require('../ai.constants.js');
 
 const INTENT_PATTERNS = Object.freeze([
   { pattern: /\b(close|exit)\s+(half|partial|some|all)\b/i, intent: INTENT_TYPES.PARTIAL_CLOSE },
@@ -21,8 +20,7 @@ const INTENT_PATTERNS = Object.freeze([
   { pattern: /\b(analysis|outlook|bias|view)\b/i, intent: INTENT_TYPES.ANALYSIS_ONLY },
   { pattern: /\b(news|breaking|fed|fomc|cpi|nfp)\b/i, intent: INTENT_TYPES.INFORMATIONAL },
 ]);
-
-export class IntentExtractorService {
+class IntentExtractorService {
   extract(text) {
     if (typeof text !== 'string' || text.length === 0) {
       return INTENT_TYPES.UNKNOWN;
@@ -49,5 +47,5 @@ export class IntentExtractorService {
     ].includes(intent);
   }
 }
-
-export default IntentExtractorService;
+module.exports = IntentExtractorService;
+module.exports.IntentExtractorService = IntentExtractorService;

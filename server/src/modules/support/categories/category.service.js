@@ -5,11 +5,10 @@
  *
  * @module server/modules/support/categories/category.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import * as repository from './category.repository';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const repository = require('./category.repository');
 
 function slugify(name) {
   return String(name)
@@ -19,8 +18,7 @@ function slugify(name) {
     .replace(/\s+/g, '-')
     .substring(0, 64);
 }
-
-export async function createCategory({ name, description, active }) {
+async function createCategory({ name, description, active }) {
   if (!name) {
     throw new AppError('name is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -50,8 +48,7 @@ export async function createCategory({ name, description, active }) {
     active: record.active,
   };
 }
-
-export async function listCategories({ activeOnly = true } = {}) {
+async function listCategories({ activeOnly = true } = {}) {
   const rows = await repository.listAll({ activeOnly });
 
   return rows.map((row) => ({
@@ -62,8 +59,7 @@ export async function listCategories({ activeOnly = true } = {}) {
     active: row.active,
   }));
 }
-
-export async function getCategoryById({ categoryId }) {
+async function getCategoryById({ categoryId }) {
   if (!categoryId) {
     throw new AppError('categoryId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -82,8 +78,7 @@ export async function getCategoryById({ categoryId }) {
     active: record.active,
   };
 }
-
-export async function updateCategory({ categoryId, name, description, active }) {
+async function updateCategory({ categoryId, name, description, active }) {
   if (!categoryId) {
     throw new AppError('categoryId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -107,8 +102,7 @@ export async function updateCategory({ categoryId, name, description, active }) 
     active: updated.active,
   };
 }
-
-export async function deleteCategory({ categoryId }) {
+async function deleteCategory({ categoryId }) {
   if (!categoryId) {
     throw new AppError('categoryId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -121,11 +115,21 @@ export async function deleteCategory({ categoryId }) {
 
   return { deleted: true };
 }
-
-export const categoryService = {
+const categoryService = {
   createCategory,
   listCategories,
   getCategoryById,
   updateCategory,
   deleteCategory,
 };
+module.exports.categoryService = categoryService;
+
+module.exports.createCategory = createCategory;
+
+module.exports.listCategories = listCategories;
+
+module.exports.getCategoryById = getCategoryById;
+
+module.exports.updateCategory = updateCategory;
+
+module.exports.deleteCategory = deleteCategory;

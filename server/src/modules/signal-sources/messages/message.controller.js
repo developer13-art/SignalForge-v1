@@ -7,16 +7,14 @@
  *
  * @module server/modules/signal-sources/messages/message.controller
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { successResponse } from '../../../lib/response/success.response';
-import { paginatedResponse } from '../../../lib/response/paginated.response';
-import * as repository from './message-raw-store.service';
-import { messageFingerprintService } from './message-fingerprint.service';
-
-export async function listMessages(req, res) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { successResponse } = require('../../../lib/response/success.response');
+const { paginatedResponse } = require('../../../lib/response/paginated.response');
+const repository = require('./message-raw-store.service');
+const { messageFingerprintService } = require('./message-fingerprint.service');
+async function listMessages(req, res) {
   const userId = req.user && req.user.id;
   const { sourceType, channelId, from, to, page, limit } = req.query;
 
@@ -35,8 +33,7 @@ export async function listMessages(req, res) {
     meta: result.meta,
   });
 }
-
-export async function getMessage(req, res) {
+async function getMessage(req, res) {
   const userId = req.user && req.user.id;
   const { messageId } = req.params;
 
@@ -52,8 +49,7 @@ export async function getMessage(req, res) {
 
   return successResponse(res, { message });
 }
-
-export async function getMessageProcessingStatus(req, res) {
+async function getMessageProcessingStatus(req, res) {
   const userId = req.user && req.user.id;
   const { messageId } = req.params;
 
@@ -69,8 +65,7 @@ export async function getMessageProcessingStatus(req, res) {
 
   return successResponse(res, { status });
 }
-
-export async function getMessageFingerprint(req, res) {
+async function getMessageFingerprint(req, res) {
   const userId = req.user && req.user.id;
   const { messageId } = req.params;
 
@@ -86,8 +81,7 @@ export async function getMessageFingerprint(req, res) {
 
   return successResponse(res, { fingerprint });
 }
-
-export async function reprocessMessage(req, res) {
+async function reprocessMessage(req, res) {
   const userId = req.user && req.user.id;
   const { messageId } = req.params;
 
@@ -101,8 +95,7 @@ export async function reprocessMessage(req, res) {
 
   return successResponse(res, { enqueued: true, jobId: result.jobId });
 }
-
-export async function deleteMessage(req, res) {
+async function deleteMessage(req, res) {
   const userId = req.user && req.user.id;
   const { messageId } = req.params;
 
@@ -114,8 +107,7 @@ export async function deleteMessage(req, res) {
 
   return successResponse(res, { deleted: true });
 }
-
-export const messageController = {
+const messageController = {
   listMessages,
   getMessage,
   getMessageProcessingStatus,
@@ -123,3 +115,16 @@ export const messageController = {
   reprocessMessage,
   deleteMessage,
 };
+module.exports.messageController = messageController;
+
+module.exports.listMessages = listMessages;
+
+module.exports.getMessage = getMessage;
+
+module.exports.getMessageProcessingStatus = getMessageProcessingStatus;
+
+module.exports.getMessageFingerprint = getMessageFingerprint;
+
+module.exports.reprocessMessage = reprocessMessage;
+
+module.exports.deleteMessage = deleteMessage;

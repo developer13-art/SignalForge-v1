@@ -3,18 +3,13 @@
  *
  * @module signalforge/server/modules/subscriptions/usage/service
  */
-
-import { UsageRepository } from './repository.js';
-import { UsageLimitsService } from './limits.js';
-import { PlanService } from '../plans/service.js';
-import { SubscriptionRepository } from '../subscription.repository.js';
-import { UsageLimitExceededError } from '../subscription.errors.js';
-import {
-  emitUsageUpdated,
-  emitUsageLimitReached,
-} from '../subscription.events.js';
-
-export class UsageService {
+const { UsageRepository } = require('./repository.js');
+const { UsageLimitsService } = require('./limits.js');
+const { PlanService } = require('../plans/service.js');
+const { SubscriptionRepository } = require('../subscription.repository.js');
+const { UsageLimitExceededError } = require('../subscription.errors.js');
+const { emitUsageUpdated, emitUsageLimitReached } = require('../subscription.events.js');
+class UsageService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new UsageRepository();
     this.limits = dependencies.limits || new UsageLimitsService();
@@ -114,5 +109,5 @@ export class UsageService {
     return this.limits.checkLimit(plan, metric, used + amount);
   }
 }
-
-export default UsageService;
+module.exports = UsageService;
+module.exports.UsageService = UsageService;

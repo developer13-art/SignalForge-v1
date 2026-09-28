@@ -7,18 +7,17 @@
  *
  * @module server/modules/compliance/review/review.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-import { db } from '../../../database';
-import { publishEvent } from '../../../events/event-publisher';
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { complianceService } from '../compliance.service';
-import { approveKyc } from './approve.service';
-import { rejectKyc } from './reject.service';
-import { requestResubmission } from './resubmit.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+const { db } = require('../../../database');
+const { publishEvent } = require('../../../events/event-publisher');
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { complianceService } = require('../compliance.service');
+const { approveKyc } = require('./approve.service');
+const { rejectKyc } = require('./reject.service');
+const { requestResubmission } = require('./resubmit.service');
 
 async function loadApplication({ applicationId }) {
   const { rows } = await db.query(
@@ -38,8 +37,7 @@ async function loadDocuments({ applicationId }) {
   );
   return rows;
 }
-
-export async function getApplicationForReview({ applicationId, reviewerId }) {
+async function getApplicationForReview({ applicationId, reviewerId }) {
   if (!applicationId || !reviewerId) {
     throw new AppError('applicationId and reviewerId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -73,8 +71,7 @@ export async function getApplicationForReview({ applicationId, reviewerId }) {
     })),
   };
 }
-
-export async function approveApplication({ applicationId, reviewerId, notes }) {
+async function approveApplication({ applicationId, reviewerId, notes }) {
   const result = await approveKyc({ applicationId, reviewerId, notes });
 
   await complianceService.recordComplianceAction({
@@ -101,8 +98,7 @@ export async function approveApplication({ applicationId, reviewerId, notes }) {
 
   return { approved: true, applicationId, userId: result.userId };
 }
-
-export async function rejectApplication({ applicationId, reviewerId, reason }) {
+async function rejectApplication({ applicationId, reviewerId, reason }) {
   if (!reason) {
     throw new AppError('Rejection reason is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -134,8 +130,7 @@ export async function rejectApplication({ applicationId, reviewerId, reason }) {
 
   return { rejected: true, applicationId, userId: result.userId };
 }
-
-export async function requestResubmission({ applicationId, reviewerId, reason, specificIssues }) {
+async function requestResubmission({ applicationId, reviewerId, reason, specificIssues }) {
   if (!reason) {
     throw new AppError('Resubmission reason is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -167,8 +162,7 @@ export async function requestResubmission({ applicationId, reviewerId, reason, s
 
   return { resubmissionRequested: true, applicationId, userId: result.userId };
 }
-
-export async function suspendApplication({ applicationId, reviewerId, reason }) {
+async function suspendApplication({ applicationId, reviewerId, reason }) {
   if (!applicationId || !reviewerId) {
     throw new AppError('applicationId and reviewerId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -209,8 +203,7 @@ export async function suspendApplication({ applicationId, reviewerId, reason }) 
 
   return { suspended: true };
 }
-
-export async function escalateApplication({ applicationId, reviewerId, reason }) {
+async function escalateApplication({ applicationId, reviewerId, reason }) {
   if (!applicationId || !reviewerId) {
     throw new AppError('applicationId and reviewerId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -238,8 +231,7 @@ export async function escalateApplication({ applicationId, reviewerId, reason })
 
   return { escalated: true };
 }
-
-export const reviewService = {
+const reviewService = {
   getApplicationForReview,
   approveApplication,
   rejectApplication,
@@ -247,3 +239,16 @@ export const reviewService = {
   suspendApplication,
   escalateApplication,
 };
+module.exports.reviewService = reviewService;
+
+module.exports.getApplicationForReview = getApplicationForReview;
+
+module.exports.approveApplication = approveApplication;
+
+module.exports.rejectApplication = rejectApplication;
+
+module.exports.requestResubmission = requestResubmission;
+
+module.exports.suspendApplication = suspendApplication;
+
+module.exports.escalateApplication = escalateApplication;

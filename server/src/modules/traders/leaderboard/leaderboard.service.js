@@ -3,18 +3,11 @@
  *
  * @module signalforge/server/modules/traders/leaderboard/service
  */
-
-import { LeaderboardRepository } from './repository.js';
-import {
-  LEADERBOARD_METRICS,
-  LEADERBOARD_PERIODS,
-  DEFAULT_LEADERBOARD_LIMIT,
-  MAX_LEADERBOARD_LIMIT,
-} from '../trader.constants.js';
-import { LeaderboardError } from '../trader.errors.js';
-import { emitLeaderboardRefreshed } from '../trader.events.js';
-
-export class LeaderboardService {
+const { LeaderboardRepository } = require('./repository.js');
+const { LEADERBOARD_METRICS, LEADERBOARD_PERIODS, DEFAULT_LEADERBOARD_LIMIT, MAX_LEADERBOARD_LIMIT } = require('../trader.constants.js');
+const { LeaderboardError } = require('../trader.errors.js');
+const { emitLeaderboardRefreshed } = require('../trader.events.js');
+class LeaderboardService {
   constructor(repository = null) {
     this.repository = repository || new LeaderboardRepository();
   }
@@ -81,5 +74,5 @@ export class LeaderboardService {
     );
   }
 }
-
-export default LeaderboardService;
+module.exports = LeaderboardService;
+module.exports.LeaderboardService = LeaderboardService;

@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/referrals/settlement/service
  */
-
-import { ReferralSettlementRepository } from './repository.js';
-import { MonthlySettlementService } from './monthly-settlement.service.js';
-import { SettlementSchedulerService } from './scheduler.js';
-import { SettlementFreezeService } from './freeze.js';
-import { ReferralSettlementNotFoundError } from '../referral.errors.js';
-
-export class ReferralSettlementService {
+const { ReferralSettlementRepository } = require('./repository.js');
+const { MonthlySettlementService } = require('./monthly-settlement.service.js');
+const { SettlementSchedulerService } = require('./scheduler.js');
+const { SettlementFreezeService } = require('./freeze.js');
+const { ReferralSettlementNotFoundError } = require('../referral.errors.js');
+class ReferralSettlementService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ReferralSettlementRepository();
     this.freeze = dependencies.freeze || new SettlementFreezeService();
@@ -113,5 +111,5 @@ export class ReferralSettlementService {
     return input;
   }
 }
-
-export default ReferralSettlementService;
+module.exports = ReferralSettlementService;
+module.exports.ReferralSettlementService = ReferralSettlementService;

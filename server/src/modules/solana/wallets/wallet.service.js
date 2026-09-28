@@ -7,12 +7,11 @@
  *
  * @module server/modules/solana/wallets/wallet.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { walletRepository } from './wallet.repository';
-import { walletConnectService } from './wallet-connect.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { walletRepository } = require('./wallet.repository');
+const { walletConnectService } = require('./wallet-connect.service');
 
 function mapWallet(row) {
   return {
@@ -26,8 +25,7 @@ function mapWallet(row) {
     updatedAt: row.updated_at,
   };
 }
-
-export async function listWallets({ userId }) {
+async function listWallets({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -36,8 +34,7 @@ export async function listWallets({ userId }) {
 
   return rows.map(mapWallet);
 }
-
-export async function getWallet({ userId, walletId }) {
+async function getWallet({ userId, walletId }) {
   if (!userId || !walletId) {
     throw new AppError('userId and walletId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -50,8 +47,7 @@ export async function getWallet({ userId, walletId }) {
 
   return mapWallet(record);
 }
-
-export async function getPrimaryWallet({ userId }) {
+async function getPrimaryWallet({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -60,8 +56,7 @@ export async function getPrimaryWallet({ userId }) {
 
   return record ? mapWallet(record) : null;
 }
-
-export async function setPrimary({ userId, walletId }) {
+async function setPrimary({ userId, walletId }) {
   if (!userId || !walletId) {
     throw new AppError('userId and walletId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -82,8 +77,7 @@ export async function setPrimary({ userId, walletId }) {
 
   return { walletId, isPrimary: true };
 }
-
-export async function updateLabel({ userId, walletId, label }) {
+async function updateLabel({ userId, walletId, label }) {
   if (!userId || !walletId) {
     throw new AppError('userId and walletId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -98,16 +92,14 @@ export async function updateLabel({ userId, walletId, label }) {
 
   return getWallet({ userId, walletId });
 }
-
-export async function countWallets({ userId }) {
+async function countWallets({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
   const count = await walletRepository.countByUser({ userId });
   return { count };
 }
-
-export const walletService = {
+const walletService = {
   listWallets,
   getWallet,
   getPrimaryWallet,
@@ -119,3 +111,16 @@ export const walletService = {
   completeConnect: walletConnectService.completeConnect,
   disconnectWallet: walletConnectService.disconnectWallet,
 };
+module.exports.walletService = walletService;
+
+module.exports.listWallets = listWallets;
+
+module.exports.getWallet = getWallet;
+
+module.exports.getPrimaryWallet = getPrimaryWallet;
+
+module.exports.setPrimary = setPrimary;
+
+module.exports.updateLabel = updateLabel;
+
+module.exports.countWallets = countWallets;

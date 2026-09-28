@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Migration Runner Initialization
  *
@@ -8,35 +10,25 @@
  * @module signalforge/server/bootstrap/initMigrations
  */
 
-import fs from 'node:fs/promises';
-import path from 'node:path';
-
-import databaseConfig from '../config/database.config.js';
-import appConfig from '../config/app.config.js';
-import { getLogger } from './initLogger.js';
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const databaseConfig = require('../config/database.config.js');
+const appConfig = require('../config/app.config.js');
+const { getLogger } = require('./initLogger.js');
 
 const MIGRATION_LOCK_ID = 9001;
+const MAX_MIGRATION_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 3000;
+const KEEPALIVE_INTERVAL_MS = 10000;
 
 let runnerState = null;
-
-async function ensureMigrationTable(db) {
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS schema_migrations (
-      id SERIAL PRIMARY KEY,
-      filename VARCHAR(255) NOT NULL UNIQUE,
-      checksum VARCHAR(128) NOT NULL,
-      applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      execution_time_ms INTEGER NOT NULL DEFAULT 0
-    )
-  `);
-}
 
 async function loadMigrationFiles() {
   const dir = path.resolve(process.cwd(), databaseConfig.migrations.directory);
   try {
     const entries = await fs.readdir(dir);
     return entries
-      .filter((name) => name.endsWith('.js'))
+      .filter((name) => /^\d{3,}_[A-Za-z0-9_]+\.js$/.test(name))
       .sort((a, b) => a.localeCompare(b))
       .map((name) => ({ name, path: path.join(dir, name) }));
   } catch (error) {
@@ -47,21 +39,68 @@ async function loadMigrationFiles() {
   }
 }
 
-async function getAppliedMigrations(db) {
-  const result = await db.query('SELECT filename FROM schema_migrations ORDER BY id ASC');
-  return new Set(result.rows.map((row) => row.filename));
-}
+function importMigration(filePath) {
+  // eslint-disable-next-line global-require, import/no-dynamic-require
+  const loaded = require(filePath);
+  const migration = loaded && loaded.default ? loaded.default : loaded;
 
-async function importMigration(filePath) {
-  const url = `file://${filePath}`;
-  const module = await import(url);
-  if (typeof module.up !== 'function') {
+  if (!migration || typeof migration.up !== 'function') {
     throw new Error(`Migration ${filePath} does not export an "up" function`);
   }
-  return module;
+  return migration;
 }
 
-export async function initMigrations(dependencies = {}) {
+async function ensureMigrationTable(client) {
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS schema_migrations (
+      id SERIAL PRIMARY KEY,
+      filename VARCHAR(255) NOT NULL UNIQUE,
+      checksum VARCHAR(128) NOT NULL,
+      applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      execution_time_ms INTEGER NOT NULL DEFAULT 0
+    )
+  `);
+}
+
+function isTransientError(error) {
+  const transientCodes = ['ECONNRESET', 'ETIMEDOUT', 'EPIPE', 'ECONNREFUSED'];
+  const transientMessages = [
+    'Connection terminated unexpectedly',
+    'Client was closed and is not queryable',
+    'Connection terminated due to connection timeout',
+    'Client has encountered a connection error',
+  ];
+  if (transientCodes.includes(error.code)) {
+    return true;
+  }
+  const message = String(error.message || '');
+  return transientMessages.some((m) => message.includes(m));
+}
+
+async function runMigrationWithRetry({ client, migration, file, logger }) {
+  for (let attempt = 1; attempt <= MAX_MIGRATION_ATTEMPTS; attempt += 1) {
+    try {
+      await migration.up(client);
+      return;
+    } catch (error) {
+      if (!isTransientError(error) || attempt === MAX_MIGRATION_ATTEMPTS) {
+        logger.fatal(
+          { err: error, file: file.name, attempt },
+          'Migration failed; aborting startup',
+        );
+        throw error;
+      }
+
+      logger.warn(
+        { file: file.name, attempt, err: error.message },
+        'Transient error during migration; retrying',
+      );
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+    }
+  }
+}
+
+async function initMigrations(dependencies = {}) {
   const logger = getLogger('migrations');
 
   if (runnerState) {
@@ -81,15 +120,7 @@ export async function initMigrations(dependencies = {}) {
   }
 
   const applied = await db.advisoryLock(MIGRATION_LOCK_ID, async (client) => {
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS schema_migrations (
-        id SERIAL PRIMARY KEY,
-        filename VARCHAR(255) NOT NULL UNIQUE,
-        checksum VARCHAR(128) NOT NULL,
-        applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        execution_time_ms INTEGER NOT NULL DEFAULT 0
-      )
-    `);
+    await ensureMigrationTable(client);
 
     const existing = await client.query('SELECT filename FROM schema_migrations');
     const appliedSet = new Set(existing.rows.map((row) => row.filename));
@@ -97,33 +128,38 @@ export async function initMigrations(dependencies = {}) {
     const files = await loadMigrationFiles();
     let appliedCount = 0;
 
-    for (const file of files) {
-      if (appliedSet.has(file.name)) {
-        continue;
-      }
+    // Keep the Neon compute warm during long migration sequences so
+    // that autosuspend does not terminate the connection mid-run.
+    const keepalive = setInterval(() => {
+      client.query('SELECT 1').catch(() => {});
+    }, KEEPALIVE_INTERVAL_MS);
+    if (keepalive.unref) {
+      keepalive.unref();
+    }
 
-      const start = Date.now();
-      const migration = await importMigration(file.path);
+    try {
+      for (const file of files) {
+        if (appliedSet.has(file.name)) {
+          continue;
+        }
 
-      try {
-        await migration.up(client);
-      } catch (error) {
-        logger.fatal(
-          { err: error, file: file.name },
-          'Migration failed; aborting startup',
+        const start = Date.now();
+        const migration = importMigration(file.path);
+
+        await runMigrationWithRetry({ client, migration, file, logger });
+
+        const duration = Date.now() - start;
+
+        await client.query(
+          'INSERT INTO schema_migrations (filename, checksum, execution_time_ms) VALUES ($1, $2, $3)',
+          [file.name, 'not-computed', duration],
         );
-        throw error;
+
+        logger.info({ file: file.name, duration }, 'Migration applied');
+        appliedCount++;
       }
-
-      const duration = Date.now() - start;
-
-      await client.query(
-        'INSERT INTO schema_migrations (filename, checksum, execution_time_ms) VALUES ($1, $2, $3)',
-        [file.name, 'not-computed', duration],
-      );
-
-      logger.info({ file: file.name, duration }, 'Migration applied');
-      appliedCount++;
+    } finally {
+      clearInterval(keepalive);
     }
 
     return appliedCount;
@@ -142,4 +178,6 @@ export async function initMigrations(dependencies = {}) {
   return runnerState;
 }
 
-export default initMigrations;
+module.exports = initMigrations;
+module.exports.initMigrations = initMigrations;
+module.exports.importMigration = importMigration;

@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/users/profile/controller
  */
-
-import { ProfileService } from './profile.service.js';
-import { AvatarService } from './avatar.service.js';
-import { validateProfilePayload } from './profile.validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class ProfileController {
+const { ProfileService } = require('./profile.service.js');
+const { AvatarService } = require('./avatar.service.js');
+const { validateProfilePayload } = require('./profile.validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class ProfileController {
   constructor(service = null, avatarService = null) {
     this.service = service || new ProfileService();
     this.avatarService = avatarService || new AvatarService();
@@ -80,5 +78,5 @@ export class ProfileController {
     }
   };
 }
-
-export default ProfileController;
+module.exports = ProfileController;
+module.exports.ProfileController = ProfileController;

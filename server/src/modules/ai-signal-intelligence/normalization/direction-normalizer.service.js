@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/normalization/direction
  */
-
-import { normalizeDirection } from '@signalforge/shared/constants/order-directions';
+const { normalizeDirection } = require('@signalforge/shared/constants/order-directions');
 
 const ADDITIONAL_ALIASES = Object.freeze({
   L: 'BUY',
@@ -17,8 +16,7 @@ const ADDITIONAL_ALIASES = Object.freeze({
   BUY: 'BUY',
   SELL: 'SELL',
 });
-
-export class DirectionNormalizerService {
+class DirectionNormalizerService {
   normalize(input) {
     if (!input || typeof input !== 'string') {
       return null;
@@ -44,5 +42,5 @@ export class DirectionNormalizerService {
     return null;
   }
 }
-
-export default DirectionNormalizerService;
+module.exports = DirectionNormalizerService;
+module.exports.DirectionNormalizerService = DirectionNormalizerService;

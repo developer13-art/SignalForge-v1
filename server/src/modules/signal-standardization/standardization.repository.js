@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/signal-standardization/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class StandardizationRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class StandardizationRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -240,5 +238,5 @@ export class StandardizationRepository {
     return result.rows;
   }
 }
-
-export default StandardizationRepository;
+module.exports = StandardizationRepository;
+module.exports.StandardizationRepository = StandardizationRepository;

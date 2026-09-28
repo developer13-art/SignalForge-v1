@@ -8,33 +8,21 @@
  *
  * @module signalforge/server/modules/validation/service
  */
-
-import { ValidationRepository } from './validation.repository.js';
-import { SymbolCheck } from './validators/symbol.validator.js';
-import { DirectionCheck } from './validators/direction.validator.js';
-import { PriceCheck } from './validators/price.validator.js';
-import { ExpiryCheck } from './validators/expiry.validator.js';
-import { CompletenessCheck } from './validators/completeness.validator.js';
-import { SourceTrustCheck } from './validators/source-trust.validator.js';
-import { MarketTradableCheck } from './validators/market-tradable.validator.js';
-import { AccountPermissionCheck } from './validators/account-permission.validator.js';
-import { SessionCheck } from './validators/session.validator.js';
-import { DuplicateDetectorService } from './duplicate/duplicate-detector.service.js';
-import { ConflictDetectorService } from './conflict/conflict-detector.service.js';
-import {
-  VALIDATION_RESULTS,
-  getCheckSeverity,
-  FAILED_CHECK_SEVERITY,
-} from './validation.constants.js';
-import {
-  emitValidationStarted,
-  emitValidationCompleted,
-  emitValidationFailed,
-  emitValidationCheckPassed,
-  emitValidationCheckFailed,
-} from './validation.events.js';
-
-export class ValidationService {
+const { ValidationRepository } = require('./validation.repository.js');
+const { SymbolCheck } = require('./validators/symbol.validator.js');
+const { DirectionCheck } = require('./validators/direction.validator.js');
+const { PriceCheck } = require('./validators/price.validator.js');
+const { ExpiryCheck } = require('./validators/expiry.validator.js');
+const { CompletenessCheck } = require('./validators/completeness.validator.js');
+const { SourceTrustCheck } = require('./validators/source-trust.validator.js');
+const { MarketTradableCheck } = require('./validators/market-tradable.validator.js');
+const { AccountPermissionCheck } = require('./validators/account-permission.validator.js');
+const { SessionCheck } = require('./validators/session.validator.js');
+const { DuplicateDetectorService } = require('./duplicate/duplicate-detector.service.js');
+const { ConflictDetectorService } = require('./conflict/conflict-detector.service.js');
+const { VALIDATION_RESULTS, getCheckSeverity, FAILED_CHECK_SEVERITY } = require('./validation.constants.js');
+const { emitValidationStarted, emitValidationCompleted, emitValidationFailed, emitValidationCheckPassed, emitValidationCheckFailed } = require('./validation.events.js');
+class ValidationService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new ValidationRepository();
     this.duplicateDetector =
@@ -222,5 +210,5 @@ export class ValidationService {
     };
   }
 }
-
-export default ValidationService;
+module.exports = ValidationService;
+module.exports.ValidationService = ValidationService;

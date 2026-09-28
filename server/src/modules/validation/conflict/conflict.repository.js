@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/validation/conflict/repository
  */
-
-import { ValidationRepository } from '../validation.repository.js';
-
-export class ConflictRepository {
+const { ValidationRepository } = require('../validation.repository.js');
+class ConflictRepository {
   constructor(db = null) {
     this.validationRepository = new ValidationRepository(db);
   }
@@ -23,5 +21,5 @@ export class ConflictRepository {
     return this.validationRepository.findUnresolvedConflictsBySymbol(symbol, since);
   }
 }
-
-export default ConflictRepository;
+module.exports = ConflictRepository;
+module.exports.ConflictRepository = ConflictRepository;

@@ -7,12 +7,10 @@
  *
  * @module signalforge/server/modules/performance/equity/reconstructor
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { EquityReconstructionError } from '../performance.errors.js';
-import { emitEquityReconstructed } from '../performance.events.js';
-
-export class EquityReconstructorService {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { EquityReconstructionError } = require('../performance.errors.js');
+const { emitEquityReconstructed } = require('../performance.events.js');
+class EquityReconstructorService {
   constructor(database = null) {
     this.db = database || getDatabase();
   }
@@ -129,5 +127,5 @@ export class EquityReconstructorService {
     };
   }
 }
-
-export default EquityReconstructorService;
+module.exports = EquityReconstructorService;
+module.exports.EquityReconstructorService = EquityReconstructorService;

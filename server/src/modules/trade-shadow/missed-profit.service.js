@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-shadow/missed-profit
  */
-
-import { DEFAULT_MISSED_PROFIT_THRESHOLD } from './shadow.constants.js';
-
-export class MissedProfitService {
+const { DEFAULT_MISSED_PROFIT_THRESHOLD } = require('./shadow.constants.js');
+class MissedProfitService {
   constructor(threshold = DEFAULT_MISSED_PROFIT_THRESHOLD) {
     this.threshold = threshold;
   }
@@ -58,5 +56,5 @@ export class MissedProfitService {
     };
   }
 }
-
-export default MissedProfitService;
+module.exports = MissedProfitService;
+module.exports.MissedProfitService = MissedProfitService;

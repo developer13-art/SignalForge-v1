@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/015_create_financial_ops_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS withdrawal_requests (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -31,7 +30,8 @@ export async function up(client) {
       ON withdrawal_requests (status);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS withdrawal_requests CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

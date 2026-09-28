@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/signal-sources/discord/oauth
  */
-
-import discordConfig from '../../../config/discord.config.js';
-import { DiscordRepository } from './discord.repository.js';
-import { SourceNotConfiguredError, SourceConnectionError } from '../source.errors.js';
-
-export class DiscordOAuthService {
+const discordConfig = require('../../../config/discord.config.js');
+const { DiscordRepository } = require('./discord.repository.js');
+const { SourceNotConfiguredError, SourceConnectionError } = require('../source.errors.js');
+class DiscordOAuthService {
   constructor(repository = null) {
     this.repository = repository || new DiscordRepository();
   }
@@ -93,5 +91,5 @@ export class DiscordOAuthService {
     return response.json();
   }
 }
-
-export default DiscordOAuthService;
+module.exports = DiscordOAuthService;
+module.exports.DiscordOAuthService = DiscordOAuthService;

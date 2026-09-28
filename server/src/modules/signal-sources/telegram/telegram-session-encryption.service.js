@@ -7,12 +7,9 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/session-encryption
  */
-
-import crypto from 'node:crypto';
-
-import telegramConfig from '../../../config/telegram.config.js';
-
-export class TelegramSessionEncryptionService {
+const crypto = require('node:crypto');
+const telegramConfig = require('../../../config/telegram.config.js');
+class TelegramSessionEncryptionService {
   constructor(key = null) {
     this.key = key || telegramConfig.session.encryptionKey;
   }
@@ -71,5 +68,5 @@ export class TelegramSessionEncryptionService {
     return Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString('utf8');
   }
 }
-
-export default TelegramSessionEncryptionService;
+module.exports = TelegramSessionEncryptionService;
+module.exports.TelegramSessionEncryptionService = TelegramSessionEncryptionService;

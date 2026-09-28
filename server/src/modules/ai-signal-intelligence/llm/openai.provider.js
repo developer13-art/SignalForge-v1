@@ -3,17 +3,10 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/openai
  */
-
-import { LlmProviderInterface } from './llm-provider.interface.js';
-import llmConfig from '../../../config/llm.config.js';
-import {
-  LlmProviderError,
-  LlmProviderNotConfiguredError,
-  LlmRateLimitError,
-  LlmTimeoutError,
-} from '../ai.errors.js';
-
-export class OpenAiProvider extends LlmProviderInterface {
+const { LlmProviderInterface } = require('./llm-provider.interface.js');
+const llmConfig = require('../../../config/llm.config.js');
+const { LlmProviderError, LlmProviderNotConfiguredError, LlmRateLimitError, LlmTimeoutError } = require('../ai.errors.js');
+class OpenAiProvider extends LlmProviderInterface {
   constructor(config = null) {
     super('openai');
     this.config = (config || llmConfig).providers.openai;
@@ -148,5 +141,5 @@ export class OpenAiProvider extends LlmProviderInterface {
     }
   }
 }
-
-export default OpenAiProvider;
+module.exports = OpenAiProvider;
+module.exports.OpenAiProvider = OpenAiProvider;

@@ -7,13 +7,11 @@
  *
  * @module signalforge/server/bootstrap/initMetaApiStreams
  */
-
-import { getLogger } from './initLogger.js';
-import metaApiConfig from '../config/metaapi.config.js';
+const { getLogger } = require('./initLogger.js');
+const metaApiConfig = require('../config/metaapi.config.js');
 
 let streamsState = null;
-
-export async function initMetaApiStreams(dependencies = {}) {
+async function initMetaApiStreams(dependencies = {}) {
   const logger = getLogger('metaapi-streams');
 
   if (!metaApiConfig.enabled || !metaApiConfig.stream.enabled) {
@@ -41,7 +39,7 @@ export async function initMetaApiStreams(dependencies = {}) {
         `
           SELECT id, user_id, metaapi_account_id, platform
           FROM broker_accounts
-          WHERE status = 'CONNECTED'
+          WHERE connection_status = 'CONNECTED'
             AND metaapi_account_id IS NOT NULL
         `,
       );
@@ -111,9 +109,10 @@ export async function initMetaApiStreams(dependencies = {}) {
 
   return streamsState;
 }
-
-export function getMetaApiStreams() {
+function getMetaApiStreams() {
   return streamsState;
 }
+module.exports = initMetaApiStreams;
+module.exports.getMetaApiStreams = getMetaApiStreams;
 
-export default initMetaApiStreams;
+module.exports.initMetaApiStreams = initMetaApiStreams;

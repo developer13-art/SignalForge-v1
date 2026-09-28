@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/provider-dna/profile/symbol-profile
  */
-
-import { RuleRepository } from '../rules/rule.repository.js';
-import { DNA_RULE_TYPES } from '../dna.constants.js';
-
-export class SymbolProfileService {
+const { RuleRepository } = require('../rules/rule.repository.js');
+const { DNA_RULE_TYPES } = require('../dna.constants.js');
+class SymbolProfileService {
   constructor(repository = null) {
     this.repository = repository || new RuleRepository();
   }
@@ -37,5 +35,5 @@ export class SymbolProfileService {
     };
   }
 }
-
-export default SymbolProfileService;
+module.exports = SymbolProfileService;
+module.exports.SymbolProfileService = SymbolProfileService;

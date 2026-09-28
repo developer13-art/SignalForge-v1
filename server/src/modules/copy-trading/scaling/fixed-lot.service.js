@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/copy-trading/scaling/fixed-lot
  */
-
-import { DEFAULT_MIN_LOT_SIZE, DEFAULT_MAX_LOT_SIZE, DEFAULT_LOT_STEP } from '../copy-trading.constants.js';
-import { ScalingCalculationError } from '../copy-trading.errors.js';
-
-export class FixedLotService {
+const { DEFAULT_MIN_LOT_SIZE, DEFAULT_MAX_LOT_SIZE, DEFAULT_LOT_STEP } = require('../copy-trading.constants.js');
+const { ScalingCalculationError } = require('../copy-trading.errors.js');
+class FixedLotService {
   calculate(subscription, providerTrade, options = {}) {
     const fixedLot = Number(subscription.fixed_lot);
     if (!Number.isFinite(fixedLot) || fixedLot <= 0) {
@@ -32,5 +30,5 @@ export class FixedLotService {
     };
   }
 }
-
-export default FixedLotService;
+module.exports = FixedLotService;
+module.exports.FixedLotService = FixedLotService;

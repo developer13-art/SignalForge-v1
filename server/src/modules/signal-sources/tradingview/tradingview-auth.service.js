@@ -3,12 +3,9 @@
  *
  * @module signalforge/server/modules/signal-sources/tradingview/auth
  */
-
-import crypto from 'node:crypto';
-
-import tradingViewConfig from '../../../config/tradingview.config.js';
-
-export class TradingViewAuthService {
+const crypto = require('node:crypto');
+const tradingViewConfig = require('../../../config/tradingview.config.js');
+class TradingViewAuthService {
   generateSecret() {
     return crypto.randomBytes(32).toString('base64url');
   }
@@ -48,5 +45,5 @@ export class TradingViewAuthService {
     return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
   }
 }
-
-export default TradingViewAuthService;
+module.exports = TradingViewAuthService;
+module.exports.TradingViewAuthService = TradingViewAuthService;

@@ -7,28 +7,15 @@
  *
  * @module signalforge/server/modules/signal-standardization/service
  */
-
-import crypto from 'node:crypto';
-
-import { StandardizationRepository } from './standardization.repository.js';
-import { SchemaMapperService } from './schema-mapper.service.js';
-import { FingerprintService } from './fingerprint.service.js';
-import { CanonicalFormService } from './canonical-form.service.js';
-import { DuplicateFingerprintError } from './standardization.errors.js';
-import {
-  DUPLICATE_WINDOW_SECONDS,
-  MAX_STANDARDIZED_SIGNAL_SIZE_BYTES,
-} from './standardization.constants.js';
-import {
-  emitStandardizationStarted,
-  emitStandardizationCompleted,
-  emitStandardizationFailed,
-  emitFingerprintComputed,
-  emitDuplicateFingerprintDetected,
-  emitCanonicalFormApplied,
-} from './standardization.events.js';
-
-export class StandardizationService {
+const crypto = require('node:crypto');
+const { StandardizationRepository } = require('./standardization.repository.js');
+const { SchemaMapperService } = require('./schema-mapper.service.js');
+const { FingerprintService } = require('./fingerprint.service.js');
+const { CanonicalFormService } = require('./canonical-form.service.js');
+const { DuplicateFingerprintError } = require('./standardization.errors.js');
+const { DUPLICATE_WINDOW_SECONDS, MAX_STANDARDIZED_SIGNAL_SIZE_BYTES } = require('./standardization.constants.js');
+const { emitStandardizationStarted, emitStandardizationCompleted, emitStandardizationFailed, emitFingerprintComputed, emitDuplicateFingerprintDetected, emitCanonicalFormApplied } = require('./standardization.events.js');
+class StandardizationService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new StandardizationRepository();
     this.mapper = dependencies.mapper || new SchemaMapperService();
@@ -185,5 +172,5 @@ export class StandardizationService {
     };
   }
 }
-
-export default StandardizationService;
+module.exports = StandardizationService;
+module.exports.StandardizationService = StandardizationService;

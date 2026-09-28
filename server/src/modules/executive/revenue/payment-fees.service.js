@@ -6,10 +6,8 @@
  *
  * @module server/modules/executive/revenue/payment-fees.service
  */
-
-import { db } from '../../../database';
-
-export async function getFees({ from, to, granularity = 'day' }) {
+const { db } = require('../../../database');
+async function getFees({ from, to, granularity = 'day' }) {
   const fromDate = from || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const toDate = to || new Date().toISOString();
 
@@ -48,7 +46,9 @@ export async function getFees({ from, to, granularity = 'day' }) {
     })),
   };
 }
-
-export const paymentFeesService = {
+const paymentFeesService = {
   getFees,
 };
+module.exports.paymentFeesService = paymentFeesService;
+
+module.exports.getFees = getFees;

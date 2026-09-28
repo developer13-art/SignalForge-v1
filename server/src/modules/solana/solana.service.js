@@ -7,29 +7,27 @@
  *
  * @module server/modules/solana/solana.service
  */
-
-import { connectionService } from './config/connection.service';
-import { networkService } from './config/network.service';
-import { programConfigService } from './config/program-config.service';
-import { commitmentService } from './config/commitment.service';
-import { walletService } from './wallets/wallet.service';
-import { walletConnectService } from './wallets/wallet-connect.service';
-import { siwsService } from './wallets/siws.service';
-import { signatureVerificationService } from './wallets/signature-verification.service';
-import { walletNonceService } from './wallets/wallet-nonce.service';
-import { attestationService } from './attestations/attestation.service';
-import { certificationAttestationService } from './attestations/certification-attestation.service';
-import { dnaAttestationService } from './attestations/dna-attestation.service';
-import { reputationAttestationService } from './attestations/reputation-attestation.service';
-import { provenanceService } from './provenance/provenance.service';
-import { provenanceAnchorService } from './provenance/provenance-anchor.service';
-import { solanaPaymentService } from './payments/solana-payment.service';
-import { paymentVerificationService } from './payments/payment-verification.service';
-import { transactionService } from './transactions/transaction.service';
-import { verificationService } from './verification/verification.service';
-import { publicVerificationService } from './verification/public-verification.service';
-
-export async function getSolanaOverview() {
+const { connectionService } = require('./config/connection.service');
+const { networkService } = require('./config/network.service');
+const { programConfigService } = require('./config/program-config.service');
+const { commitmentService } = require('./config/commitment.service');
+const { walletService } = require('./wallets/wallet.service');
+const { walletConnectService } = require('./wallets/wallet-connect.service');
+const { siwsService } = require('./wallets/siws.service');
+const { signatureVerificationService } = require('./wallets/signature-verification.service');
+const { walletNonceService } = require('./wallets/wallet-nonce.service');
+const { attestationService } = require('./attestations/attestation.service');
+const { certificationAttestationService } = require('./attestations/certification-attestation.service');
+const { dnaAttestationService } = require('./attestations/dna-attestation.service');
+const { reputationAttestationService } = require('./attestations/reputation-attestation.service');
+const { provenanceService } = require('./provenance/provenance.service');
+const { provenanceAnchorService } = require('./provenance/provenance-anchor.service');
+const { solanaPaymentService } = require('./payments/solana-payment.service');
+const { paymentVerificationService } = require('./payments/payment-verification.service');
+const { transactionService } = require('./transactions/transaction.service');
+const { verificationService } = require('./verification/verification.service');
+const { publicVerificationService } = require('./verification/public-verification.service');
+async function getSolanaOverview() {
   const [network, programs, connectionHealth] = await Promise.all([
     Promise.resolve(networkService.getCurrentNetwork()),
     Promise.resolve(programConfigService.getPrograms()),
@@ -43,8 +41,7 @@ export async function getSolanaOverview() {
     checkedAt: new Date().toISOString(),
   };
 }
-
-export const solanaService = {
+const solanaService = {
   getSolanaOverview,
 
   connection: connectionService,
@@ -74,3 +71,6 @@ export const solanaService = {
   verification: verificationService,
   publicVerification: publicVerificationService,
 };
+module.exports.solanaService = solanaService;
+
+module.exports.getSolanaOverview = getSolanaOverview;

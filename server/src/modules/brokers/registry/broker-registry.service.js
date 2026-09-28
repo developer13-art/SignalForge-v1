@@ -3,9 +3,8 @@
  *
  * @module signalforge/server/modules/brokers/registry/broker-registry
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { BROKER_PLATFORMS } from '../broker.constants.js';
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { BROKER_PLATFORMS } = require('../broker.constants.js');
 
 const DEFAULT_BROKERS = Object.freeze({
   [BROKER_PLATFORMS.MT4]: [
@@ -28,8 +27,7 @@ const DEFAULT_BROKERS = Object.freeze({
     { name: 'Pepperstone', server: 'Pepperstone-MT5-Live' },
   ],
 });
-
-export class BrokerRegistryService {
+class BrokerRegistryService {
   constructor(repository = null) {
     this.repository = repository;
     this.logger = getLogger('broker-registry');
@@ -88,5 +86,5 @@ export class BrokerRegistryService {
     this.cache.clear();
   }
 }
-
-export default BrokerRegistryService;
+module.exports = BrokerRegistryService;
+module.exports.BrokerRegistryService = BrokerRegistryService;

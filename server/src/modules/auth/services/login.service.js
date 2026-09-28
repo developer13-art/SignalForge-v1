@@ -3,34 +3,16 @@
  *
  * @module signalforge/server/modules/auth/services/login
  */
-
-import { normalizeEmail } from '@signalforge/shared/validators/email.validator';
-
-import { LocalStrategy } from '../strategies/local.strategy.js';
-import { SessionService } from './session.service.js';
-import { DeviceService } from './device.service.js';
-import { accessTokenService } from '../tokens/access-token.service.js';
-import { refreshTokenService } from '../tokens/refresh-token.service.js';
-import {
-  InvalidCredentialsError,
-  AccountLockedError,
-  AccountNotActiveError,
-  TwoFactorRequiredError,
-} from '../auth.errors.js';
-import {
-  MAX_FAILED_LOGIN_ATTEMPTS,
-  FAILED_LOGIN_WINDOW_MINUTES,
-  LOCKOUT_DURATION_MINUTES,
-  LOGIN_STATUSES,
-} from '../auth.constants.js';
-import {
-  emitUserLoggedIn,
-  emitLoginFailed,
-  emitAccountLocked,
-  emitTwoFactorChallenge,
-} from '../auth.events.js';
-
-export class LoginService {
+const { normalizeEmail } = require('@signalforge/shared/validators/email.validator');
+const { LocalStrategy } = require('../strategies/local.strategy.js');
+const { SessionService } = require('./session.service.js');
+const { DeviceService } = require('./device.service.js');
+const { accessTokenService } = require('../tokens/access-token.service.js');
+const { refreshTokenService } = require('../tokens/refresh-token.service.js');
+const { InvalidCredentialsError, AccountLockedError, AccountNotActiveError, TwoFactorRequiredError } = require('../auth.errors.js');
+const { MAX_FAILED_LOGIN_ATTEMPTS, FAILED_LOGIN_WINDOW_MINUTES, LOCKOUT_DURATION_MINUTES, LOGIN_STATUSES } = require('../auth.constants.js');
+const { emitUserLoggedIn, emitLoginFailed, emitAccountLocked, emitTwoFactorChallenge } = require('../auth.events.js');
+class LoginService {
   constructor(repository) {
     this.repository = repository;
     this.localStrategy = new LocalStrategy(repository);
@@ -215,5 +197,5 @@ export class LoginService {
     return this.completeLogin(user, req);
   }
 }
-
-export default LoginService;
+module.exports = LoginService;
+module.exports.LoginService = LoginService;

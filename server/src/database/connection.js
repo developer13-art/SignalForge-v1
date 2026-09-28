@@ -7,10 +7,9 @@
  *
  * @module server/database/connection
  */
-
-import pg from 'pg';
-import { config } from '../config';
-import { logger } from '../lib/logger';
+const pg = require('pg');
+const { config } = require('../config');
+const { logger } = require('../lib/logger');
 
 const { Pool } = pg;
 
@@ -33,8 +32,7 @@ function buildPoolConfig() {
     application_name: 'signalforge-server',
   };
 }
-
-export function getPool() {
+function getPool() {
   if (!pool) {
     pool = new Pool(buildPoolConfig());
 
@@ -54,13 +52,11 @@ export function getPool() {
 
   return pool;
 }
-
-export async function getClient() {
+async function getClient() {
   const activePool = getPool();
   return activePool.connect();
 }
-
-export async function closePool() {
+async function closePool() {
   if (!pool) {
     return;
   }
@@ -74,11 +70,16 @@ export async function closePool() {
     pool = null;
   }
 }
-
-export const db = {
+const db = {
   query: async (text, params) => {
     const activePool = getPool();
     return activePool.query(text, params);
   },
   getClient,
 };
+module.exports.db = db;
+module.exports.getPool = getPool;
+
+module.exports.getClient = getClient;
+
+module.exports.closePool = closePool;

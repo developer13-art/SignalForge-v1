@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/users/devices/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class DeviceRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class DeviceRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -44,5 +42,5 @@ export class DeviceRepository {
     return result.rowCount;
   }
 }
-
-export default DeviceRepository;
+module.exports = DeviceRepository;
+module.exports.DeviceRepository = DeviceRepository;

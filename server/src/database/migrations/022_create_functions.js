@@ -6,8 +6,7 @@
  *
  * @module server/database/migrations/022_create_functions
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE OR REPLACE FUNCTION acquire_job_lock(
       p_job_id UUID,
@@ -155,11 +154,12 @@ export async function up(client) {
     $$ LANGUAGE plpgsql;
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP FUNCTION IF EXISTS generate_referral_code()`);
   await client.query(`DROP FUNCTION IF EXISTS append_wallet_ledger_entry(UUID, VARCHAR, NUMERIC, VARCHAR, VARCHAR, UUID, TEXT)`);
   await client.query(`DROP FUNCTION IF EXISTS append_referral_ledger_entry(UUID, VARCHAR, NUMERIC, VARCHAR, VARCHAR, UUID, TEXT)`);
   await client.query(`DROP FUNCTION IF EXISTS release_job_lock(UUID)`);
   await client.query(`DROP FUNCTION IF EXISTS acquire_job_lock(UUID, VARCHAR)`);
 }
+module.exports.up = up;
+module.exports.down = down;

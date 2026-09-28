@@ -6,10 +6,8 @@
  *
  * @module server/modules/replay/system-timeline/event-reconstructor.service
  */
-
-import { replayRepository } from '../replay.repository';
-
-export async function reconstructByCorrelation({ correlationId }) {
+const { replayRepository } = require('../replay.repository');
+async function reconstructByCorrelation({ correlationId }) {
   if (!correlationId) {
     return [];
   }
@@ -28,8 +26,7 @@ export async function reconstructByCorrelation({ correlationId }) {
     occurredAt: row.created_at,
   }));
 }
-
-export function buildCausationChain({ events }) {
+function buildCausationChain({ events }) {
   if (!Array.isArray(events) || events.length === 0) {
     return [];
   }
@@ -52,8 +49,7 @@ export function buildCausationChain({ events }) {
 
   return roots;
 }
-
-export function flattenChain({ roots }) {
+function flattenChain({ roots }) {
   const result = [];
 
   function walk(node) {
@@ -72,9 +68,13 @@ export function flattenChain({ roots }) {
 
   return result;
 }
-
-export const eventReconstructorService = {
+const eventReconstructorService = {
   reconstructByCorrelation,
   buildCausationChain,
   flattenChain,
 };
+module.exports.eventReconstructorService = eventReconstructorService;
+module.exports.buildCausationChain = buildCausationChain;
+module.exports.flattenChain = flattenChain;
+
+module.exports.reconstructByCorrelation = reconstructByCorrelation;

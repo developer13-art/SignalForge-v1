@@ -3,11 +3,9 @@
  *
  * @module server/modules/compliance/risk-flags/risk-flag.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function insertRiskFlag({
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function insertRiskFlag({
   applicationId,
   userId,
   flagType,
@@ -32,16 +30,14 @@ export async function insertRiskFlag({
   );
   return rows[0];
 }
-
-export async function findById({ flagId }) {
+async function findById({ flagId }) {
   const { rows } = await db.query(
     `SELECT * FROM kyc_risk_flags WHERE id = $1 LIMIT 1`,
     [flagId],
   );
   return rows[0] || null;
 }
-
-export async function listByApplication({ applicationId }) {
+async function listByApplication({ applicationId }) {
   const { rows } = await db.query(
     `SELECT * FROM kyc_risk_flags
       WHERE application_id = $1
@@ -50,8 +46,7 @@ export async function listByApplication({ applicationId }) {
   );
   return rows;
 }
-
-export async function listOpen({ filters = {}, pagination = {} }) {
+async function listOpen({ filters = {}, pagination = {} }) {
   const conditions = ['resolved_at IS NULL'];
   const params = [];
 
@@ -100,8 +95,7 @@ export async function listOpen({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function resolveFlag({ flagId, resolvedBy, resolutionNotes }) {
+async function resolveFlag({ flagId, resolvedBy, resolutionNotes }) {
   const { rowCount } = await db.query(
     `UPDATE kyc_risk_flags
         SET resolved_at = $1,
@@ -112,8 +106,7 @@ export async function resolveFlag({ flagId, resolvedBy, resolutionNotes }) {
   );
   return rowCount > 0;
 }
-
-export async function countBySeverity() {
+async function countBySeverity() {
   const { rows } = await db.query(
     `SELECT severity, COUNT(*)::int AS count
        FROM kyc_risk_flags
@@ -122,8 +115,7 @@ export async function countBySeverity() {
   );
   return rows;
 }
-
-export const riskFlagRepository = {
+const riskFlagRepository = {
   insertRiskFlag,
   findById,
   listByApplication,
@@ -131,3 +123,16 @@ export const riskFlagRepository = {
   resolveFlag,
   countBySeverity,
 };
+module.exports.riskFlagRepository = riskFlagRepository;
+
+module.exports.insertRiskFlag = insertRiskFlag;
+
+module.exports.findById = findById;
+
+module.exports.listByApplication = listByApplication;
+
+module.exports.listOpen = listOpen;
+
+module.exports.resolveFlag = resolveFlag;
+
+module.exports.countBySeverity = countBySeverity;

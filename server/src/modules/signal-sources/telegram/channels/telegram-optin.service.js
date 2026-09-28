@@ -8,16 +8,14 @@
  *
  * @module server/modules/signal-sources/telegram/channels/telegram-optin.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { telegramChannelService } from './telegram-channel.service';
-import * as repository from './telegram-channel.repository';
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { telegramChannelService } = require('./telegram-channel.service');
+const repository = require('./telegram-channel.repository');
 
 const DEFAULT_MAX_MONITORED_CHANNELS = 50;
-
-export async function applyOptIn({ userId, channelIds, limit }) {
+async function applyOptIn({ userId, channelIds, limit }) {
   if (!userId || !Array.isArray(channelIds)) {
     throw new AppError(
       'userId and channelIds are required',
@@ -75,12 +73,10 @@ export async function applyOptIn({ userId, channelIds, limit }) {
 
   return result;
 }
-
-export async function applyOptOut({ userId, channelIds }) {
+async function applyOptOut({ userId, channelIds }) {
   return telegramChannelService.optOutChannels({ userId, channelIds });
 }
-
-export async function getOptInStatus({ userId }) {
+async function getOptInStatus({ userId }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -97,9 +93,15 @@ export async function getOptInStatus({ userId }) {
     })),
   };
 }
-
-export const telegramOptInService = {
+const telegramOptInService = {
   applyOptIn,
   applyOptOut,
   getOptInStatus,
 };
+module.exports.telegramOptInService = telegramOptInService;
+
+module.exports.applyOptIn = applyOptIn;
+
+module.exports.applyOptOut = applyOptOut;
+
+module.exports.getOptInStatus = getOptInStatus;

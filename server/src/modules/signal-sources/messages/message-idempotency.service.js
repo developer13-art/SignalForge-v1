@@ -7,11 +7,9 @@
  *
  * @module signalforge/server/modules/signal-sources/messages/idempotency
  */
-
-import { buildSourceMessageKey } from '@signalforge/shared/utils/idempotency.util';
-import { MessageRepository } from './message.repository.js';
-
-export class MessageIdempotencyService {
+const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
+const { MessageRepository } = require('./message.repository.js');
+class MessageIdempotencyService {
   constructor(repository = null) {
     this.repository = repository || new MessageRepository();
   }
@@ -31,5 +29,5 @@ export class MessageIdempotencyService {
     return { key, duplicate: exists };
   }
 }
-
-export default MessageIdempotencyService;
+module.exports = MessageIdempotencyService;
+module.exports.MessageIdempotencyService = MessageIdempotencyService;

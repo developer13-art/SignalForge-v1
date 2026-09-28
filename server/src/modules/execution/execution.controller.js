@@ -3,16 +3,10 @@
  *
  * @module signalforge/server/modules/execution/controller
  */
-
-import { ExecutionService } from './execution.service.js';
-import {
-  validateOpenPositionPayload,
-  validateModifyPositionPayload,
-  validatePartialClosePayload,
-} from './execution.validator.js';
-import { ValidationError } from '../../lib/errors/validation-error.js';
-
-export class ExecutionController {
+const { ExecutionService } = require('./execution.service.js');
+const { validateOpenPositionPayload, validateModifyPositionPayload, validatePartialClosePayload } = require('./execution.validator.js');
+const { ValidationError } = require('../../lib/errors/validation-error.js');
+class ExecutionController {
   constructor(service = null) {
     this.service = service || new ExecutionService();
   }
@@ -219,5 +213,5 @@ export class ExecutionController {
     }
   };
 }
-
-export default ExecutionController;
+module.exports = ExecutionController;
+module.exports.ExecutionController = ExecutionController;

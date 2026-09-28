@@ -7,15 +7,12 @@
  *
  * @module signalforge/server/modules/auth/services/social-login
  */
-
-import { normalizeEmail } from '@signalforge/shared/validators/email.validator';
-
-import { LoginService } from './login.service.js';
-import { DEFAULT_ROLE_ON_REGISTRATION } from '../auth.constants.js';
-import { InvalidTokenError } from '../auth.errors.js';
-import { emitUserRegistered } from '../auth.events.js';
-
-export class SocialLoginService {
+const { normalizeEmail } = require('@signalforge/shared/validators/email.validator');
+const { LoginService } = require('./login.service.js');
+const { DEFAULT_ROLE_ON_REGISTRATION } = require('../auth.constants.js');
+const { InvalidTokenError } = require('../auth.errors.js');
+const { emitUserRegistered } = require('../auth.events.js');
+class SocialLoginService {
   constructor(repository, options = {}) {
     this.repository = repository;
     this.loginService = new LoginService(repository);
@@ -72,5 +69,5 @@ export class SocialLoginService {
     return this.loginService.completeLogin(user, req);
   }
 }
-
-export default SocialLoginService;
+module.exports = SocialLoginService;
+module.exports.SocialLoginService = SocialLoginService;

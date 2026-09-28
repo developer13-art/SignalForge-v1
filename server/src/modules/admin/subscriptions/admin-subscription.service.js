@@ -3,15 +3,13 @@
  *
  * @module server/modules/admin/subscriptions/admin-subscription.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-subscription.repository';
-import { adminService } from '../admin.service';
-
-export async function listSubscriptions({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-subscription.repository');
+const { adminService } = require('../admin.service');
+async function listSubscriptions({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listSubscriptions({
@@ -35,8 +33,7 @@ export async function listSubscriptions({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getSubscriptionDetails({ subscriptionId }) {
+async function getSubscriptionDetails({ subscriptionId }) {
   if (!subscriptionId) {
     throw new AppError('subscriptionId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -49,8 +46,7 @@ export async function getSubscriptionDetails({ subscriptionId }) {
 
   return subscription;
 }
-
-export async function cancelSubscription({ subscriptionId, adminId, reason }) {
+async function cancelSubscription({ subscriptionId, adminId, reason }) {
   if (!subscriptionId || !adminId) {
     throw new AppError('subscriptionId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -73,8 +69,7 @@ export async function cancelSubscription({ subscriptionId, adminId, reason }) {
 
   return { cancelled: true };
 }
-
-export async function extendSubscription({ subscriptionId, adminId, extensionDays }) {
+async function extendSubscription({ subscriptionId, adminId, extensionDays }) {
   if (!subscriptionId || !adminId || !extensionDays) {
     throw new AppError('subscriptionId, adminId, and extensionDays are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -105,8 +100,7 @@ export async function extendSubscription({ subscriptionId, adminId, extensionDay
 
   return { extended: true, newEndDate };
 }
-
-export async function reactivateSubscription({ subscriptionId, adminId }) {
+async function reactivateSubscription({ subscriptionId, adminId }) {
   if (!subscriptionId || !adminId) {
     throw new AppError('subscriptionId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -127,8 +121,7 @@ export async function reactivateSubscription({ subscriptionId, adminId }) {
 
   return { reactivated: true };
 }
-
-export async function getStatusBreakdown() {
+async function getStatusBreakdown() {
   const rows = await repository.countByStatus();
 
   const breakdown = {};
@@ -138,8 +131,7 @@ export async function getStatusBreakdown() {
 
   return breakdown;
 }
-
-export const adminSubscriptionService = {
+const adminSubscriptionService = {
   listSubscriptions,
   getSubscriptionDetails,
   cancelSubscription,
@@ -147,3 +139,16 @@ export const adminSubscriptionService = {
   reactivateSubscription,
   getStatusBreakdown,
 };
+module.exports.adminSubscriptionService = adminSubscriptionService;
+
+module.exports.listSubscriptions = listSubscriptions;
+
+module.exports.getSubscriptionDetails = getSubscriptionDetails;
+
+module.exports.cancelSubscription = cancelSubscription;
+
+module.exports.extendSubscription = extendSubscription;
+
+module.exports.reactivateSubscription = reactivateSubscription;
+
+module.exports.getStatusBreakdown = getStatusBreakdown;

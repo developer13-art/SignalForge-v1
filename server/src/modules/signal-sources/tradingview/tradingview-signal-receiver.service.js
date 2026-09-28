@@ -3,19 +3,17 @@
  *
  * @module signalforge/server/modules/signal-sources/tradingview/signal-receiver
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import tradingViewConfig from '../../../config/tradingview.config.js';
-import { TradingViewRepository } from './tradingview.repository.js';
-import { TradingViewAuthService } from './tradingview-auth.service.js';
-import { TradingViewReplayProtectionService } from './tradingview-replay-protection.service.js';
-import { MessageService } from '../messages/message.service.js';
-import { MessageNormalizerService } from '../messages/message-normalizer.service.js';
-import { TradingViewAdapter } from '../adapters/tradingview.adapter.js';
-import { emitMessageReceived } from '../source.events.js';
-import { SourceConnectionError } from '../source.errors.js';
-
-export class TradingViewSignalReceiverService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const tradingViewConfig = require('../../../config/tradingview.config.js');
+const { TradingViewRepository } = require('./tradingview.repository.js');
+const { TradingViewAuthService } = require('./tradingview-auth.service.js');
+const { TradingViewReplayProtectionService } = require('./tradingview-replay-protection.service.js');
+const { MessageService } = require('../messages/message.service.js');
+const { MessageNormalizerService } = require('../messages/message-normalizer.service.js');
+const { TradingViewAdapter } = require('../adapters/tradingview.adapter.js');
+const { emitMessageReceived } = require('../source.events.js');
+const { SourceConnectionError } = require('../source.errors.js');
+class TradingViewSignalReceiverService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TradingViewRepository();
     this.auth = dependencies.auth || new TradingViewAuthService();
@@ -103,5 +101,5 @@ export class TradingViewSignalReceiverService {
     return { processed: true, messageId: result.messageId, duplicate: result.duplicate };
   }
 }
-
-export default TradingViewSignalReceiverService;
+module.exports = TradingViewSignalReceiverService;
+module.exports.TradingViewSignalReceiverService = TradingViewSignalReceiverService;

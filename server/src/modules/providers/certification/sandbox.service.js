@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/providers/certification/sandbox
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { emitSandboxRunCompleted } from '../provider.events.js';
-
-export class SandboxService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { emitSandboxRunCompleted } = require('../provider.events.js');
+class SandboxService {
   constructor() {
     this.logger = getLogger('provider-sandbox');
   }
@@ -46,5 +44,5 @@ export class SandboxService {
     return { summary, results };
   }
 }
-
-export default SandboxService;
+module.exports = SandboxService;
+module.exports.SandboxService = SandboxService;

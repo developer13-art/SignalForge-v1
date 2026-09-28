@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/users/sessions/repository
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class SessionRepository {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class SessionRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -75,5 +73,5 @@ export class SessionRepository {
     return result.rowCount;
   }
 }
-
-export default SessionRepository;
+module.exports = SessionRepository;
+module.exports.SessionRepository = SessionRepository;

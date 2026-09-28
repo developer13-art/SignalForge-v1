@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/risk/decision/logger
  */
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { DecisionRepository } from './decision.repository.js';
-
-export class DecisionLoggerService {
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { DecisionRepository } = require('./decision.repository.js');
+class DecisionLoggerService {
   constructor(repository = null) {
     this.repository = repository || new DecisionRepository();
     this.logger = getLogger('risk-decision');
@@ -22,5 +20,5 @@ export class DecisionLoggerService {
     }
   }
 }
-
-export default DecisionLoggerService;
+module.exports = DecisionLoggerService;
+module.exports.DecisionLoggerService = DecisionLoggerService;

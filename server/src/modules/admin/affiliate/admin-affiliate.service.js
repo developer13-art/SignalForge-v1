@@ -3,15 +3,13 @@
  *
  * @module server/modules/admin/affiliate/admin-affiliate.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { normalizePagination, buildPaginationMeta } from '@signalforge/shared/utils/pagination.util';
-import * as repository from './admin-affiliate.repository';
-import { adminService } from '../admin.service';
-
-export async function listPartners({ filters = {}, pagination = {} }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
+const repository = require('./admin-affiliate.repository');
+const { adminService } = require('../admin.service');
+async function listPartners({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listPartners({
@@ -32,8 +30,7 @@ export async function listPartners({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getPartnerDetails({ partnerId }) {
+async function getPartnerDetails({ partnerId }) {
   if (!partnerId) {
     throw new AppError('partnerId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -46,8 +43,7 @@ export async function getPartnerDetails({ partnerId }) {
 
   return partner;
 }
-
-export async function suspendPartner({ partnerId, adminId, reason }) {
+async function suspendPartner({ partnerId, adminId, reason }) {
   if (!partnerId || !adminId) {
     throw new AppError('partnerId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -70,8 +66,7 @@ export async function suspendPartner({ partnerId, adminId, reason }) {
 
   return { suspended: true };
 }
-
-export async function activatePartner({ partnerId, adminId }) {
+async function activatePartner({ partnerId, adminId }) {
   if (!partnerId || !adminId) {
     throw new AppError('partnerId and adminId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -84,8 +79,7 @@ export async function activatePartner({ partnerId, adminId }) {
 
   return { activated: true };
 }
-
-export async function updatePartnerTier({ partnerId, adminId, tier }) {
+async function updatePartnerTier({ partnerId, adminId, tier }) {
   if (!partnerId || !adminId || !tier) {
     throw new AppError('partnerId, adminId, and tier are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -112,8 +106,7 @@ export async function updatePartnerTier({ partnerId, adminId, tier }) {
 
   return { updated: true, tier };
 }
-
-export async function listCommissions({ filters = {}, pagination = {} }) {
+async function listCommissions({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
   const result = await repository.listCommissions({
@@ -136,8 +129,7 @@ export async function listCommissions({ filters = {}, pagination = {} }) {
     meta: buildPaginationMeta({ page, limit, total: result.total }),
   };
 }
-
-export async function getPartnerStatusBreakdown() {
+async function getPartnerStatusBreakdown() {
   const rows = await repository.countPartnersByStatus();
 
   const breakdown = {};
@@ -147,8 +139,7 @@ export async function getPartnerStatusBreakdown() {
 
   return breakdown;
 }
-
-export const adminAffiliateService = {
+const adminAffiliateService = {
   listPartners,
   getPartnerDetails,
   suspendPartner,
@@ -157,3 +148,18 @@ export const adminAffiliateService = {
   listCommissions,
   getPartnerStatusBreakdown,
 };
+module.exports.adminAffiliateService = adminAffiliateService;
+
+module.exports.listPartners = listPartners;
+
+module.exports.getPartnerDetails = getPartnerDetails;
+
+module.exports.suspendPartner = suspendPartner;
+
+module.exports.activatePartner = activatePartner;
+
+module.exports.updatePartnerTier = updatePartnerTier;
+
+module.exports.listCommissions = listCommissions;
+
+module.exports.getPartnerStatusBreakdown = getPartnerStatusBreakdown;

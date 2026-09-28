@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/parser/timeframe
  */
-
-import { TimeframeNormalizerService } from '../normalization/timeframe-normalizer.service.js';
-
-export class TimeframeExtractorService {
+const { TimeframeNormalizerService } = require('../normalization/timeframe-normalizer.service.js');
+class TimeframeExtractorService {
   constructor(normalizer = null) {
     this.normalizer = normalizer || new TimeframeNormalizerService();
   }
@@ -18,5 +16,5 @@ export class TimeframeExtractorService {
     return this.normalizer.extractFromText(text);
   }
 }
-
-export default TimeframeExtractorService;
+module.exports = TimeframeExtractorService;
+module.exports.TimeframeExtractorService = TimeframeExtractorService;

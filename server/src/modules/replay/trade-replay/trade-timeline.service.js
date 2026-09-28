@@ -7,11 +7,9 @@
  *
  * @module server/modules/replay/trade-replay/trade-timeline.service
  */
-
-import { replayRepository } from '../replay.repository';
-import { timelineBuilderService } from '../signal-replay/timeline-builder.service';
-
-export async function buildTradeTimeline({ tradeId }) {
+const { replayRepository } = require('../replay.repository');
+const { timelineBuilderService } = require('../signal-replay/timeline-builder.service');
+async function buildTradeTimeline({ tradeId }) {
   const tradeEvents = await replayRepository.listTradeEvents({ tradeId });
   const executionLogs = await replayRepository.listExecutionLogs({ tradeId });
 
@@ -46,8 +44,7 @@ export async function buildTradeTimeline({ tradeId }) {
 
   return merged;
 }
-
-export async function buildTradeTimelineSummary({ tradeId }) {
+async function buildTradeTimelineSummary({ tradeId }) {
   const events = await buildTradeTimeline({ tradeId });
 
   const summary = timelineBuilderService.buildTimelineSummary({ events });
@@ -55,8 +52,12 @@ export async function buildTradeTimelineSummary({ tradeId }) {
 
   return { events, summary, durations };
 }
-
-export const tradeTimelineService = {
+const tradeTimelineService = {
   buildTradeTimeline,
   buildTradeTimelineSummary,
 };
+module.exports.tradeTimelineService = tradeTimelineService;
+
+module.exports.buildTradeTimeline = buildTradeTimeline;
+
+module.exports.buildTradeTimelineSummary = buildTradeTimelineSummary;

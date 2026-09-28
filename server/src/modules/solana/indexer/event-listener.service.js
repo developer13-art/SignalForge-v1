@@ -7,13 +7,12 @@
  *
  * @module server/modules/solana/indexer/event-listener.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { connectionService } from '../config/connection.service';
-import { programConfigService } from '../config/program-config.service';
-import { programEventProcessorService } from './program-event-processor.service';
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { logger } = require('../../../lib/logger');
+const { connectionService } = require('../config/connection.service');
+const { programConfigService } = require('../config/program-config.service');
+const { programEventProcessorService } = require('./program-event-processor.service');
 
 const ACTIVE_SUBSCRIPTIONS = new Map();
 
@@ -69,8 +68,7 @@ function extractEventTypeAndPayload({ buffer }) {
     payloadBytes,
   };
 }
-
-export async function startListening({ programKey = 'attestation' }) {
+async function startListening({ programKey = 'attestation' }) {
   const programId = programConfigService.tryGetProgramId({ key: programKey });
 
   if (!programId) {
@@ -123,8 +121,7 @@ export async function startListening({ programKey = 'attestation' }) {
 
   return { listening: true, subscriptionId };
 }
-
-export async function stopListening({ programKey }) {
+async function stopListening({ programKey }) {
   if (!programKey) {
     throw new AppError('programKey is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -148,8 +145,7 @@ export async function stopListening({ programKey }) {
 
   return { listening: false };
 }
-
-export async function stopAll() {
+async function stopAll() {
   const keys = Array.from(ACTIVE_SUBSCRIPTIONS.keys());
   const results = [];
 
@@ -160,18 +156,24 @@ export async function stopAll() {
 
   return results;
 }
-
-export function listActiveListeners() {
+function listActiveListeners() {
   return Array.from(ACTIVE_SUBSCRIPTIONS.entries()).map(([programKey, entry]) => ({
     programKey,
     programId: entry.programId,
     subscriptionId: entry.subscriptionId,
   }));
 }
-
-export const eventListenerService = {
+const eventListenerService = {
   startListening,
   stopListening,
   stopAll,
   listActiveListeners,
 };
+module.exports.eventListenerService = eventListenerService;
+module.exports.listActiveListeners = listActiveListeners;
+
+module.exports.startListening = startListening;
+
+module.exports.stopListening = stopListening;
+
+module.exports.stopAll = stopAll;

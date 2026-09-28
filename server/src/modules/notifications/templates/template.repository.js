@@ -5,11 +5,9 @@
  *
  * @module server/modules/notifications/templates/template.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function findByKey({ templateKey, channel, locale = 'en' }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function findByKey({ templateKey, channel, locale = 'en' }) {
   const { rows } = await db.query(
     `SELECT * FROM notification_templates
       WHERE template_key = $1 AND channel = $2 AND locale = $3 AND active = TRUE
@@ -18,8 +16,7 @@ export async function findByKey({ templateKey, channel, locale = 'en' }) {
   );
   return rows[0] || null;
 }
-
-export async function listActive({ channel, locale = 'en' }) {
+async function listActive({ channel, locale = 'en' }) {
   const conditions = [`active = TRUE`, `locale = $1`];
   const params = [locale];
 
@@ -37,8 +34,7 @@ export async function listActive({ channel, locale = 'en' }) {
 
   return rows;
 }
-
-export async function upsertTemplate({
+async function upsertTemplate({
   templateKey,
   channel,
   locale,
@@ -71,8 +67,7 @@ export async function upsertTemplate({
   );
   return rows[0];
 }
-
-export async function deactivate({ templateKey, channel, locale = 'en' }) {
+async function deactivate({ templateKey, channel, locale = 'en' }) {
   const { rowCount } = await db.query(
     `UPDATE notification_templates
         SET active = FALSE, updated_at = $1
@@ -81,10 +76,18 @@ export async function deactivate({ templateKey, channel, locale = 'en' }) {
   );
   return rowCount > 0;
 }
-
-export const templateRepository = {
+const templateRepository = {
   findByKey,
   listActive,
   upsertTemplate,
   deactivate,
 };
+module.exports.templateRepository = templateRepository;
+
+module.exports.findByKey = findByKey;
+
+module.exports.listActive = listActive;
+
+module.exports.upsertTemplate = upsertTemplate;
+
+module.exports.deactivate = deactivate;

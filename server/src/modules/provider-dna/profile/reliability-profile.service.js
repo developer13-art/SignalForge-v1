@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/provider-dna/profile/reliability-profile
  */
-
-import { RuleRepository } from '../rules/rule.repository.js';
-
-export class ReliabilityProfileService {
+const { RuleRepository } = require('../rules/rule.repository.js');
+class ReliabilityProfileService {
   constructor(repository = null) {
     this.repository = repository || new RuleRepository();
   }
@@ -50,5 +48,5 @@ export class ReliabilityProfileService {
     };
   }
 }
-
-export default ReliabilityProfileService;
+module.exports = ReliabilityProfileService;
+module.exports.ReliabilityProfileService = ReliabilityProfileService;

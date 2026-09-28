@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/signal-sources/tradingview/service
  */
-
-import { TradingViewRepository } from './tradingview.repository.js';
-import { TradingViewAuthService } from './tradingview-auth.service.js';
-import { TradingViewSignalReceiverService } from './tradingview-signal-receiver.service.js';
-
-export class TradingViewService {
+const { TradingViewRepository } = require('./tradingview.repository.js');
+const { TradingViewAuthService } = require('./tradingview-auth.service.js');
+const { TradingViewSignalReceiverService } = require('./tradingview-signal-receiver.service.js');
+class TradingViewService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new TradingViewRepository();
     this.auth = dependencies.auth || new TradingViewAuthService();
@@ -57,5 +55,5 @@ export class TradingViewService {
     return this.receiver.process(userId, payload, ip, providedSecret);
   }
 }
-
-export default TradingViewService;
+module.exports = TradingViewService;
+module.exports.TradingViewService = TradingViewService;

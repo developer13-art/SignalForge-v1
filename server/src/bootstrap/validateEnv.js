@@ -13,14 +13,18 @@ const REQUIRED_ALWAYS = [
   'APP_PORT',
   'APP_URL',
   'API_URL',
-  'DB_HOST',
-  'DB_PORT',
-  'DB_NAME',
-  'DB_USER',
   'JWT_SECRET',
   'SESSION_SECRET',
   'COOKIE_SECRET',
   'ENCRYPTION_KEY',
+];
+
+const REQUIRED_DB_GROUPS = [
+  {
+    name: 'database',
+    anyOf: ['DATABASE_URL'],
+    allOf: ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER'],
+  },
 ];
 
 const REQUIRED_IN_PRODUCTION = [
@@ -65,8 +69,7 @@ function isTruthy(value) {
   }
   return ['true', '1', 'yes', 'on', 'enabled'].includes(String(value).toLowerCase());
 }
-
-export function validateEnv(options = {}) {
+function validateEnv(options = {}) {
   const errors = [];
   const warnings = [];
   const env = process.env.NODE_ENV || 'development';
@@ -75,6 +78,23 @@ export function validateEnv(options = {}) {
   for (const variable of REQUIRED_ALWAYS) {
     if (!process.env[variable] || process.env[variable] === '') {
       errors.push(`Missing required environment variable: ${variable}`);
+    }
+  }
+
+  for (const group of REQUIRED_DB_GROUPS) {
+    const hasAnyOf = group.anyOf.some(
+      (variable) => process.env[variable] && process.env[variable] !== '',
+    );
+    if (hasAnyOf) {
+      continue;
+    }
+    const missing = group.allOf.filter(
+      (variable) => !process.env[variable] || process.env[variable] === '',
+    );
+    if (missing.length > 0) {
+      errors.push(
+        `Database configuration is incomplete. Provide DATABASE_URL or set: ${missing.join(', ')}`,
+      );
     }
   }
 
@@ -195,13 +215,13 @@ export function validateEnv(options = {}) {
     warnings,
   };
 }
-
-export const VALIDATION_RULES = Object.freeze({
+const VALIDATION_RULES = Object.freeze({
   requiredAlways: REQUIRED_ALWAYS,
   requiredInProduction: REQUIRED_IN_PRODUCTION,
   requiredWhenFeatureEnabled: REQUIRED_WHEN_FEATURE_ENABLED,
   numericVars: NUMERIC_VARS,
   secretMinLength: SECRET_MIN_LENGTH,
 });
-
-export default validateEnv;
+module.exports = validateEnv;
+module.exports.VALIDATION_RULES = VALIDATION_RULES;
+module.exports.validateEnv = validateEnv;

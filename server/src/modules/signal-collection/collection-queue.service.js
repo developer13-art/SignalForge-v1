@@ -5,17 +5,11 @@
  *
  * @module signalforge/server/modules/signal-collection/queue
  */
-
-import { CollectionRepository } from './collection.repository.js';
-import {
-  COLLECTION_PRIORITIES,
-  DEFAULT_MAX_ATTEMPTS,
-  DEFAULT_QUEUE_DEPTH_WARNING,
-} from './collection.constants.js';
-import { emitItemEnqueued, emitQueueDepthWarning } from './collection.events.js';
-import { getLogger } from '../../bootstrap/initLogger.js';
-
-export class CollectionQueueService {
+const { CollectionRepository } = require('./collection.repository.js');
+const { COLLECTION_PRIORITIES, DEFAULT_MAX_ATTEMPTS, DEFAULT_QUEUE_DEPTH_WARNING } = require('./collection.constants.js');
+const { emitItemEnqueued, emitQueueDepthWarning } = require('./collection.events.js');
+const { getLogger } = require('../../bootstrap/initLogger.js');
+class CollectionQueueService {
   constructor(repository = null) {
     this.repository = repository || new CollectionRepository();
     this.logger = getLogger('collection-queue');
@@ -85,5 +79,5 @@ export class CollectionQueueService {
     return { byStatus, pending, processing };
   }
 }
-
-export default CollectionQueueService;
+module.exports = CollectionQueueService;
+module.exports.CollectionQueueService = CollectionQueueService;

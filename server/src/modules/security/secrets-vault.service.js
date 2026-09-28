@@ -8,18 +8,16 @@
  *
  * @module server/modules/security/secrets-vault.service
  */
-
-import { AppError } from '../../lib/errors/app-error';
-import { ERROR_CODES } from '../../lib/errors/error-codes';
-import { logger } from '../../lib/logger';
-import { config } from '../../config';
-import { encryptString, decryptString } from './encryption.service';
+const { AppError } = require('../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../lib/errors/error-codes');
+const { logger } = require('../../lib/logger');
+const { config } = require('../../config');
+const { encryptString, decryptString } = require('./encryption.service');
 
 const IN_MEMORY_VAULT = new Map();
 
 let backend = null;
-
-export function registerVaultBackend(impl) {
+function registerVaultBackend(impl) {
   if (!impl || typeof impl !== 'object') {
     throw new AppError('Vault backend must be an object', ERROR_CODES.VALIDATION_FAILED, 500);
   }
@@ -38,8 +36,7 @@ function validateSecretName(name) {
     throw new AppError('Secret name contains invalid characters', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 }
-
-export async function setSecret({ name, value, metadata }) {
+async function setSecret({ name, value, metadata }) {
   validateSecretName(name);
 
   if (value === undefined || value === null) {
@@ -61,8 +58,7 @@ export async function setSecret({ name, value, metadata }) {
 
   return { stored: true, backend: 'in-memory' };
 }
-
-export async function getSecret({ name }) {
+async function getSecret({ name }) {
   validateSecretName(name);
 
   if (backend) {
@@ -78,8 +74,7 @@ export async function getSecret({ name }) {
 
   return decryptString({ packed: entry.encrypted });
 }
-
-export async function deleteSecret({ name }) {
+async function deleteSecret({ name }) {
   validateSecretName(name);
 
   if (backend && typeof backend.delete === 'function') {
@@ -90,19 +85,16 @@ export async function deleteSecret({ name }) {
   const existed = IN_MEMORY_VAULT.delete(name);
   return { deleted: existed };
 }
-
-export async function listSecretNames() {
+async function listSecretNames() {
   if (backend && typeof backend.list === 'function') {
     return backend.list();
   }
   return Array.from(IN_MEMORY_VAULT.keys());
 }
-
-export function hasSecretsMasterKey() {
+function hasSecretsMasterKey() {
   return Boolean(config.security && config.security.encryptionKey);
 }
-
-export const secretsVaultService = {
+const secretsVaultService = {
   registerVaultBackend,
   setSecret,
   getSecret,
@@ -110,3 +102,14 @@ export const secretsVaultService = {
   listSecretNames,
   hasSecretsMasterKey,
 };
+module.exports.secretsVaultService = secretsVaultService;
+module.exports.registerVaultBackend = registerVaultBackend;
+module.exports.hasSecretsMasterKey = hasSecretsMasterKey;
+
+module.exports.setSecret = setSecret;
+
+module.exports.getSecret = getSecret;
+
+module.exports.deleteSecret = deleteSecret;
+
+module.exports.listSecretNames = listSecretNames;

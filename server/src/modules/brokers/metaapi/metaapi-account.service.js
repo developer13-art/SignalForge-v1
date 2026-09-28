@@ -3,16 +3,14 @@
  *
  * @module signalforge/server/modules/brokers/metaapi/account
  */
-
-import { MetaApiClient } from './metaapi.client.js';
-import { BrokerRepository } from '../broker.repository.js';
-import { AccountRepository } from '../accounts/account.repository.js';
-import { AccountCredentialService } from '../accounts/account-credential.service.js';
-import { BrokerDeploymentError } from '../broker.errors.js';
-import { isMetaApiSupported } from '../broker.constants.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class MetaApiAccountService {
+const { MetaApiClient } = require('./metaapi.client.js');
+const { BrokerRepository } = require('../broker.repository.js');
+const { AccountRepository } = require('../accounts/account.repository.js');
+const { AccountCredentialService } = require('../accounts/account-credential.service.js');
+const { BrokerDeploymentError } = require('../broker.errors.js');
+const { isMetaApiSupported } = require('../broker.constants.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class MetaApiAccountService {
   constructor(dependencies = {}) {
     this.client = dependencies.client || new MetaApiClient();
     this.repository = dependencies.repository || new BrokerRepository();
@@ -88,5 +86,5 @@ export class MetaApiAccountService {
     return this.client.updateAccount(metaApiAccountId, payload);
   }
 }
-
-export default MetaApiAccountService;
+module.exports = MetaApiAccountService;
+module.exports.MetaApiAccountService = MetaApiAccountService;

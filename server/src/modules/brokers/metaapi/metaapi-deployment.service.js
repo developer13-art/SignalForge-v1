@@ -3,17 +3,11 @@
  *
  * @module signalforge/server/modules/brokers/metaapi/deployment
  */
-
-import { MetaApiClient } from './metaapi.client.js';
-import { AccountRepository } from '../accounts/account.repository.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import {
-  emitAccountDeploying,
-  emitAccountDeployed,
-  emitAccountDeploymentFailed,
-} from '../broker.events.js';
-
-export class MetaApiDeploymentService {
+const { MetaApiClient } = require('./metaapi.client.js');
+const { AccountRepository } = require('../accounts/account.repository.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { emitAccountDeploying, emitAccountDeployed, emitAccountDeploymentFailed } = require('../broker.events.js');
+class MetaApiDeploymentService {
   constructor(dependencies = {}) {
     this.client = dependencies.client || new MetaApiClient();
     this.repository = dependencies.repository || new AccountRepository();
@@ -76,5 +70,5 @@ export class MetaApiDeploymentService {
     return this.deploy(accountId);
   }
 }
-
-export default MetaApiDeploymentService;
+module.exports = MetaApiDeploymentService;
+module.exports.MetaApiDeploymentService = MetaApiDeploymentService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-state/controller
  */
-
-import { TradeStateService } from './trade-state.service.js';
-
-export class TradeStateController {
+const { TradeStateService } = require('./trade-state.service.js');
+class TradeStateController {
   constructor(service = null) {
     this.service = service || new TradeStateService();
   }
@@ -184,5 +182,5 @@ export class TradeStateController {
     }
   };
 }
-
-export default TradeStateController;
+module.exports = TradeStateController;
+module.exports.TradeStateController = TradeStateController;

@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/validation/validators/direction
  */
-
-import { isValidDirection } from '@signalforge/shared/constants/order-directions';
-import { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES } from '../validation.constants.js';
-
-export class DirectionCheck {
+const { isValidDirection } = require('@signalforge/shared/constants/order-directions');
+const { VALIDATION_RESULTS, VALIDATION_CHECK_NAMES } = require('../validation.constants.js');
+class DirectionCheck {
   constructor() {
     this.name = VALIDATION_CHECK_NAMES.DIRECTION;
   }
@@ -31,5 +29,5 @@ export class DirectionCheck {
     return { name: this.name, result: VALIDATION_RESULTS.PASSED };
   }
 }
-
-export default DirectionCheck;
+module.exports = DirectionCheck;
+module.exports.DirectionCheck = DirectionCheck;

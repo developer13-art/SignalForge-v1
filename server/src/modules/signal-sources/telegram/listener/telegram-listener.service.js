@@ -8,26 +8,18 @@
  *
  * @module server/modules/signal-sources/telegram/listener/telegram-listener.service
  */
-
-import { AppError } from '../../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../../lib/errors/error-codes';
-import { logger } from '../../../../lib/logger';
-import { getTelegramClient } from '../client/telegram-client.factory';
-import { telegramSessionService } from '../session/telegram-session.service';
-import { telegramRateLimitService } from '../reconnect/telegram-rate-limit.service';
-import { telegramHealthService } from '../reconnect/telegram-health.service';
-import {
-  emitTelegramListenerStarted,
-  emitTelegramListenerStopped,
-} from '../telegram.events';
-import {
-  handleIncomingMessage,
-  handleMessageEdited,
-  handleMessageDeleted,
-} from './telegram-message-handler.service';
-import { handleMessageEdited as handleEdited } from './telegram-edit-handler.service';
-import { handleMessageDeleted as handleDeleted } from './telegram-delete-handler.service';
-import { handleMediaMessage } from './telegram-media-handler.service';
+const { AppError } = require('../../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
+const { logger } = require('../../../../lib/logger');
+const { getTelegramClient } = require('../client/telegram-client.factory');
+const { telegramSessionService } = require('../session/telegram-session.service');
+const { telegramRateLimitService } = require('../reconnect/telegram-rate-limit.service');
+const { telegramHealthService } = require('../reconnect/telegram-health.service');
+const { emitTelegramListenerStarted, emitTelegramListenerStopped } = require('../telegram.events');
+const { handleIncomingMessage, handleMessageEdited, handleMessageDeleted } = require('./telegram-message-handler.service');
+const { handleMessageEdited: handleEdited } = require('./telegram-edit-handler.service');
+const { handleMessageDeleted: handleDeleted } = require('./telegram-delete-handler.service');
+const { handleMediaMessage } = require('./telegram-media-handler.service');
 
 const ACTIVE_LISTENERS = new Map();
 
@@ -48,8 +40,7 @@ function setListenerState(userId, state, extra = {}) {
 function getListenerState(userId) {
   return ACTIVE_LISTENERS.get(userId) || null;
 }
-
-export async function start({ userId, session, channelIds, onMessage, onEdit, onDelete }) {
+async function start({ userId, session, channelIds, onMessage, onEdit, onDelete }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -161,8 +152,7 @@ export async function start({ userId, session, channelIds, onMessage, onEdit, on
 
   return { started: true, channels: channelIds };
 }
-
-export async function stop({ userId, reason }) {
+async function stop({ userId, reason }) {
   if (!userId) {
     throw new AppError('userId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -190,8 +180,7 @@ export async function stop({ userId, reason }) {
 
   return { stopped: true };
 }
-
-export async function stopAll() {
+async function stopAll() {
   const userIds = Array.from(ACTIVE_LISTENERS.keys());
   const results = [];
 
@@ -206,23 +195,19 @@ export async function stopAll() {
 
   return results;
 }
-
-export function isRunning({ userId }) {
+function isRunning({ userId }) {
   const state = getListenerState(userId);
   return Boolean(state && state.state === LISTENER_STATES.RUNNING);
 }
-
-export function getState({ userId }) {
+function getState({ userId }) {
   return getListenerState(userId);
 }
-
-export function listRunning() {
+function listRunning() {
   return Array.from(ACTIVE_LISTENERS.entries())
     .filter(([, state]) => state.state === LISTENER_STATES.RUNNING)
     .map(([userId, state]) => ({ userId, channelIds: state.channelIds, startedAt: state.startedAt }));
 }
-
-export const telegramListenerService = {
+const telegramListenerService = {
   start,
   stop,
   stopAll,
@@ -231,3 +216,13 @@ export const telegramListenerService = {
   listRunning,
   LISTENER_STATES,
 };
+module.exports.telegramListenerService = telegramListenerService;
+module.exports.isRunning = isRunning;
+module.exports.getState = getState;
+module.exports.listRunning = listRunning;
+
+module.exports.start = start;
+
+module.exports.stop = stop;
+
+module.exports.stopAll = stopAll;

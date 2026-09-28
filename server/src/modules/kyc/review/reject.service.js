@@ -3,12 +3,10 @@
  *
  * @module signalforge/server/modules/kyc/review/reject
  */
-
-import { ReviewRepository } from './review.repository.js';
-import { KycReviewAlreadyDecidedError, KycApplicationNotFoundError } from '../kyc.errors.js';
-import { emitApplicationRejected, emitStatusChanged } from '../kyc.events.js';
-
-export class RejectService {
+const { ReviewRepository } = require('./review.repository.js');
+const { KycReviewAlreadyDecidedError, KycApplicationNotFoundError } = require('../kyc.errors.js');
+const { emitApplicationRejected, emitStatusChanged } = require('../kyc.events.js');
+class RejectService {
   constructor(repository = null) {
     this.repository = repository || new ReviewRepository();
   }
@@ -52,5 +50,5 @@ export class RejectService {
     return { rejected: true };
   }
 }
-
-export default RejectService;
+module.exports = RejectService;
+module.exports.RejectService = RejectService;

@@ -3,11 +3,9 @@
  *
  * @module server/modules/admin/withdrawals/admin-withdrawal.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function listWithdrawals({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function listWithdrawals({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -57,16 +55,14 @@ export async function listWithdrawals({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findWithdrawalById({ withdrawalId }) {
+async function findWithdrawalById({ withdrawalId }) {
   const { rows } = await db.query(
     `SELECT * FROM withdrawal_requests WHERE id = $1 LIMIT 1`,
     [withdrawalId],
   );
   return rows[0] || null;
 }
-
-export async function updateWithdrawalStatus({ withdrawalId, status, adminId, reason }) {
+async function updateWithdrawalStatus({ withdrawalId, status, adminId, reason }) {
   const { rowCount } = await db.query(
     `UPDATE withdrawal_requests
         SET status = $1,
@@ -79,8 +75,7 @@ export async function updateWithdrawalStatus({ withdrawalId, status, adminId, re
   );
   return rowCount > 0;
 }
-
-export async function countByStatus() {
+async function countByStatus() {
   const { rows } = await db.query(
     `SELECT status, COUNT(*)::int AS count, COALESCE(SUM(amount), 0)::numeric AS total_amount
        FROM withdrawal_requests
@@ -88,10 +83,18 @@ export async function countByStatus() {
   );
   return rows;
 }
-
-export const adminWithdrawalRepository = {
+const adminWithdrawalRepository = {
   listWithdrawals,
   findWithdrawalById,
   updateWithdrawalStatus,
   countByStatus,
 };
+module.exports.adminWithdrawalRepository = adminWithdrawalRepository;
+
+module.exports.listWithdrawals = listWithdrawals;
+
+module.exports.findWithdrawalById = findWithdrawalById;
+
+module.exports.updateWithdrawalStatus = updateWithdrawalStatus;
+
+module.exports.countByStatus = countByStatus;

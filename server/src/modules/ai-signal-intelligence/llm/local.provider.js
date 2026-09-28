@@ -5,16 +5,10 @@
  *
  * @module signalforge/server/modules/ai-signal-intelligence/llm/local
  */
-
-import { LlmProviderInterface } from './llm-provider.interface.js';
-import llmConfig from '../../../config/llm.config.js';
-import {
-  LlmProviderError,
-  LlmProviderNotConfiguredError,
-  LlmTimeoutError,
-} from '../ai.errors.js';
-
-export class LocalProvider extends LlmProviderInterface {
+const { LlmProviderInterface } = require('./llm-provider.interface.js');
+const llmConfig = require('../../../config/llm.config.js');
+const { LlmProviderError, LlmProviderNotConfiguredError, LlmTimeoutError } = require('../ai.errors.js');
+class LocalProvider extends LlmProviderInterface {
   constructor(config = null) {
     super('local');
     this.config = (config || llmConfig).providers.local;
@@ -120,5 +114,5 @@ export class LocalProvider extends LlmProviderInterface {
     }
   }
 }
-
-export default LocalProvider;
+module.exports = LocalProvider;
+module.exports.LocalProvider = LocalProvider;

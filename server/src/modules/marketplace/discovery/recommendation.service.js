@@ -3,16 +3,12 @@
  *
  * @module signalforge/server/modules/marketplace/discovery/recommendation
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-import { ListingRepository } from '../listings/repository.js';
-import { RankingService } from './ranking.js';
-import {
-  RECOMMENDATION_STRATEGIES,
-} from '../marketplace.constants.js';
-import { emitRecommendationGenerated } from '../marketplace.events.js';
-
-export class RecommendationService {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+const { ListingRepository } = require('../listings/repository.js');
+const { RankingService } = require('./ranking.js');
+const { RECOMMENDATION_STRATEGIES } = require('../marketplace.constants.js');
+const { emitRecommendationGenerated } = require('../marketplace.events.js');
+class RecommendationService {
   constructor(database = null, repository = null, ranking = null) {
     this.db = database || getDatabase();
     this.repository = repository || new ListingRepository();
@@ -64,5 +60,5 @@ export class RecommendationService {
     return this.ranking.rank(listings).slice(0, limit);
   }
 }
-
-export default RecommendationService;
+module.exports = RecommendationService;
+module.exports.RecommendationService = RecommendationService;

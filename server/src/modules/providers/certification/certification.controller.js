@@ -3,15 +3,10 @@
  *
  * @module signalforge/server/modules/providers/certification/controller
  */
-
-import { CertificationService } from './service.js';
-import {
-  validateCertificationStartPayload,
-  validateCertificationDecisionPayload,
-} from '../provider.validator.js';
-import { ValidationError } from '../../../lib/errors/validation-error.js';
-
-export class CertificationController {
+const { CertificationService } = require('./service.js');
+const { validateCertificationStartPayload, validateCertificationDecisionPayload } = require('../provider.validator.js');
+const { ValidationError } = require('../../../lib/errors/validation-error.js');
+class CertificationController {
   constructor(service = null) {
     this.service = service || new CertificationService();
   }
@@ -101,5 +96,5 @@ export class CertificationController {
     }
   };
 }
-
-export default CertificationController;
+module.exports = CertificationController;
+module.exports.CertificationController = CertificationController;

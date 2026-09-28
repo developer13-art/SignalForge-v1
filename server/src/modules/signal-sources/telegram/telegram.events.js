@@ -7,14 +7,12 @@
  *
  * @module server/modules/signal-sources/telegram/telegram.events
  */
-
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
-import { SOURCE_TYPES } from '@signalforge/shared/constants/source-types';
-import { publishEvent } from '../../../events/event-publisher';
+const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
+const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
+const { publishEvent } = require('../../../events/event-publisher');
 
 const SOURCE = 'telegram.events';
-
-export async function emitTelegramSessionInitiated({ userId, sessionId, phoneNumber }) {
+async function emitTelegramSessionInitiated({ userId, sessionId, phoneNumber }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_INITIATED,
     source: SOURCE,
@@ -28,8 +26,7 @@ export async function emitTelegramSessionInitiated({ userId, sessionId, phoneNum
     },
   });
 }
-
-export async function emitTelegramSessionConnected({ userId, sessionId, telegramUserId }) {
+async function emitTelegramSessionConnected({ userId, sessionId, telegramUserId }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_CONNECTED,
     source: SOURCE,
@@ -43,8 +40,7 @@ export async function emitTelegramSessionConnected({ userId, sessionId, telegram
     },
   });
 }
-
-export async function emitTelegramSessionRevoked({ userId, sessionId, reason }) {
+async function emitTelegramSessionRevoked({ userId, sessionId, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_REVOKED,
     source: SOURCE,
@@ -58,8 +54,7 @@ export async function emitTelegramSessionRevoked({ userId, sessionId, reason }) 
     },
   });
 }
-
-export async function emitTelegramSessionExpired({ userId, sessionId }) {
+async function emitTelegramSessionExpired({ userId, sessionId }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_SESSION_EXPIRED,
     source: SOURCE,
@@ -72,8 +67,7 @@ export async function emitTelegramSessionExpired({ userId, sessionId }) {
     },
   });
 }
-
-export async function emitTelegramChannelsDiscovered({ userId, sessionId, channelCount }) {
+async function emitTelegramChannelsDiscovered({ userId, sessionId, channelCount }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNELS_DISCOVERED,
     source: SOURCE,
@@ -87,8 +81,7 @@ export async function emitTelegramChannelsDiscovered({ userId, sessionId, channe
     },
   });
 }
-
-export async function emitTelegramChannelOptIn({ userId, channelId, channelTitle }) {
+async function emitTelegramChannelOptIn({ userId, channelId, channelTitle }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNEL_OPT_IN,
     source: SOURCE,
@@ -102,8 +95,7 @@ export async function emitTelegramChannelOptIn({ userId, channelId, channelTitle
     },
   });
 }
-
-export async function emitTelegramChannelOptOut({ userId, channelId }) {
+async function emitTelegramChannelOptOut({ userId, channelId }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_CHANNEL_OPT_OUT,
     source: SOURCE,
@@ -116,8 +108,7 @@ export async function emitTelegramChannelOptOut({ userId, channelId }) {
     },
   });
 }
-
-export async function emitTelegramListenerStarted({ userId, channelCount }) {
+async function emitTelegramListenerStarted({ userId, channelCount }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_LISTENER_STARTED,
     source: SOURCE,
@@ -130,8 +121,7 @@ export async function emitTelegramListenerStarted({ userId, channelCount }) {
     },
   });
 }
-
-export async function emitTelegramListenerStopped({ userId, reason }) {
+async function emitTelegramListenerStopped({ userId, reason }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_LISTENER_STOPPED,
     source: SOURCE,
@@ -144,8 +134,7 @@ export async function emitTelegramListenerStopped({ userId, reason }) {
     },
   });
 }
-
-export async function emitTelegramReconnectAttempt({ userId, attempt, delayMs }) {
+async function emitTelegramReconnectAttempt({ userId, attempt, delayMs }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_RECONNECT_ATTEMPT,
     source: SOURCE,
@@ -159,8 +148,7 @@ export async function emitTelegramReconnectAttempt({ userId, attempt, delayMs })
     },
   });
 }
-
-export async function emitTelegramReconnectSucceeded({ userId, attempt }) {
+async function emitTelegramReconnectSucceeded({ userId, attempt }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_RECONNECT_SUCCEEDED,
     source: SOURCE,
@@ -173,8 +161,7 @@ export async function emitTelegramReconnectSucceeded({ userId, attempt }) {
     },
   });
 }
-
-export async function emitTelegramReconnectFailed({ userId, attempts, error }) {
+async function emitTelegramReconnectFailed({ userId, attempts, error }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_RECONNECT_FAILED,
     source: SOURCE,
@@ -188,8 +175,7 @@ export async function emitTelegramReconnectFailed({ userId, attempts, error }) {
     },
   });
 }
-
-export async function emitTelegramRateLimitHit({ userId, operation, retryAfterMs }) {
+async function emitTelegramRateLimitHit({ userId, operation, retryAfterMs }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_RATE_LIMIT_HIT,
     source: SOURCE,
@@ -203,8 +189,7 @@ export async function emitTelegramRateLimitHit({ userId, operation, retryAfterMs
     },
   });
 }
-
-export async function emitTelegramHealthCheck({ userId, healthy, details }) {
+async function emitTelegramHealthCheck({ userId, healthy, details }) {
   return publishEvent({
     eventType: EVENT_TYPES.SOURCE_HEALTH_CHECK,
     source: SOURCE,
@@ -218,8 +203,7 @@ export async function emitTelegramHealthCheck({ userId, healthy, details }) {
     },
   });
 }
-
-export const TELEGRAM_EVENT_NAMES = Object.freeze({
+const TELEGRAM_EVENT_NAMES = Object.freeze({
   SESSION_INITIATED: EVENT_TYPES.SOURCE_SESSION_INITIATED,
   SESSION_CONNECTED: EVENT_TYPES.SOURCE_SESSION_CONNECTED,
   SESSION_REVOKED: EVENT_TYPES.SOURCE_SESSION_REVOKED,
@@ -235,3 +219,32 @@ export const TELEGRAM_EVENT_NAMES = Object.freeze({
   RATE_LIMIT_HIT: EVENT_TYPES.SOURCE_RATE_LIMIT_HIT,
   HEALTH_CHECK: EVENT_TYPES.SOURCE_HEALTH_CHECK,
 });
+module.exports.TELEGRAM_EVENT_NAMES = TELEGRAM_EVENT_NAMES;
+
+module.exports.emitTelegramSessionInitiated = emitTelegramSessionInitiated;
+
+module.exports.emitTelegramSessionConnected = emitTelegramSessionConnected;
+
+module.exports.emitTelegramSessionRevoked = emitTelegramSessionRevoked;
+
+module.exports.emitTelegramSessionExpired = emitTelegramSessionExpired;
+
+module.exports.emitTelegramChannelsDiscovered = emitTelegramChannelsDiscovered;
+
+module.exports.emitTelegramChannelOptIn = emitTelegramChannelOptIn;
+
+module.exports.emitTelegramChannelOptOut = emitTelegramChannelOptOut;
+
+module.exports.emitTelegramListenerStarted = emitTelegramListenerStarted;
+
+module.exports.emitTelegramListenerStopped = emitTelegramListenerStopped;
+
+module.exports.emitTelegramReconnectAttempt = emitTelegramReconnectAttempt;
+
+module.exports.emitTelegramReconnectSucceeded = emitTelegramReconnectSucceeded;
+
+module.exports.emitTelegramReconnectFailed = emitTelegramReconnectFailed;
+
+module.exports.emitTelegramRateLimitHit = emitTelegramRateLimitHit;
+
+module.exports.emitTelegramHealthCheck = emitTelegramHealthCheck;

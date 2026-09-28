@@ -3,11 +3,9 @@
  *
  * @module server/modules/admin/trades/admin-trade.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function listTrades({ filters = {}, pagination = {} }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function listTrades({ filters = {}, pagination = {} }) {
   const conditions = [];
   const params = [];
 
@@ -62,16 +60,14 @@ export async function listTrades({ filters = {}, pagination = {} }) {
     total: countResult.rows[0]?.total || 0,
   };
 }
-
-export async function findTradeById({ tradeId }) {
+async function findTradeById({ tradeId }) {
   const { rows } = await db.query(
     `SELECT * FROM trades WHERE id = $1 LIMIT 1`,
     [tradeId],
   );
   return rows[0] || null;
 }
-
-export async function listTradeEvents({ tradeId }) {
+async function listTradeEvents({ tradeId }) {
   const { rows } = await db.query(
     `SELECT id, event_type, actor_type, actor_id, details, created_at
        FROM trade_events
@@ -81,8 +77,7 @@ export async function listTradeEvents({ tradeId }) {
   );
   return rows;
 }
-
-export async function markTradeForcedClose({ tradeId, adminId, reason }) {
+async function markTradeForcedClose({ tradeId, adminId, reason }) {
   const { rowCount } = await db.query(
     `UPDATE trades
         SET status = 'CLOSED',
@@ -95,8 +90,7 @@ export async function markTradeForcedClose({ tradeId, adminId, reason }) {
   );
   return rowCount > 0;
 }
-
-export async function countByStatus({ since }) {
+async function countByStatus({ since }) {
   const params = [];
   let where = '';
 
@@ -111,11 +105,21 @@ export async function countByStatus({ since }) {
   );
   return rows;
 }
-
-export const adminTradeRepository = {
+const adminTradeRepository = {
   listTrades,
   findTradeById,
   listTradeEvents,
   markTradeForcedClose,
   countByStatus,
 };
+module.exports.adminTradeRepository = adminTradeRepository;
+
+module.exports.listTrades = listTrades;
+
+module.exports.findTradeById = findTradeById;
+
+module.exports.listTradeEvents = listTradeEvents;
+
+module.exports.markTradeForcedClose = markTradeForcedClose;
+
+module.exports.countByStatus = countByStatus;

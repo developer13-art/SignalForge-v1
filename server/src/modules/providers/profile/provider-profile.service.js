@@ -3,17 +3,11 @@
  *
  * @module signalforge/server/modules/providers/profile/service
  */
-
-import { ProviderProfileRepository } from './repository.js';
-import { ProviderRepository } from '../provider.repository.js';
-import { ProviderNotFoundError, ProviderNotOwnedError } from '../provider.errors.js';
-import {
-  emitProviderProfileUpdated,
-  emitProviderAvatarUpdated,
-  emitProviderAvatarRemoved,
-} from '../provider.events.js';
-
-export class ProviderProfileService {
+const { ProviderProfileRepository } = require('./repository.js');
+const { ProviderRepository } = require('../provider.repository.js');
+const { ProviderNotFoundError, ProviderNotOwnedError } = require('../provider.errors.js');
+const { emitProviderProfileUpdated, emitProviderAvatarUpdated, emitProviderAvatarRemoved } = require('../provider.events.js');
+class ProviderProfileService {
   constructor(repository = null, providerRepository = null) {
     this.repository = repository || new ProviderProfileRepository();
     this.providerRepository = providerRepository || new ProviderRepository();
@@ -156,5 +150,5 @@ export class ProviderProfileService {
     return input;
   }
 }
-
-export default ProviderProfileService;
+module.exports = ProviderProfileService;
+module.exports.ProviderProfileService = ProviderProfileService;

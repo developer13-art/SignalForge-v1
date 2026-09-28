@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/payments/providers/interface
  */
-
-export class PaymentProviderInterface {
+class PaymentProviderInterface {
   constructor(name) {
     this.name = name;
   }
@@ -41,5 +40,5 @@ export class PaymentProviderInterface {
     throw new Error(`${this.name} must implement parseWebhookEvent()`);
   }
 }
-
-export default PaymentProviderInterface;
+module.exports = PaymentProviderInterface;
+module.exports.PaymentProviderInterface = PaymentProviderInterface;

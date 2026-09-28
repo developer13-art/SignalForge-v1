@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/provider-dna/profile/service
  */
-
-import { LanguageProfileService } from './language-profile.service.js';
-import { SymbolProfileService } from './symbol-profile.service.js';
-import { RiskProfileService } from './risk-profile.service.js';
-import { ManagementProfileService } from './management-profile.service.js';
-import { ReliabilityProfileService } from './reliability-profile.service.js';
-
-export class ProfileService {
+const { LanguageProfileService } = require('./language-profile.service.js');
+const { SymbolProfileService } = require('./symbol-profile.service.js');
+const { RiskProfileService } = require('./risk-profile.service.js');
+const { ManagementProfileService } = require('./management-profile.service.js');
+const { ReliabilityProfileService } = require('./reliability-profile.service.js');
+class ProfileService {
   constructor(dependencies = {}) {
     this.language = dependencies.language || new LanguageProfileService();
     this.symbol = dependencies.symbol || new SymbolProfileService();
@@ -58,5 +56,5 @@ export class ProfileService {
     return this.reliability.build(providerId);
   }
 }
-
-export default ProfileService;
+module.exports = ProfileService;
+module.exports.ProfileService = ProfileService;

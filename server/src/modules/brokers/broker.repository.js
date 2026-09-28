@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/brokers/repository
  */
-
-import { getDatabase } from '../../bootstrap/initDatabase.js';
-
-export class BrokerRepository {
+const { getDatabase } = require('../../bootstrap/initDatabase.js');
+class BrokerRepository {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -425,5 +423,5 @@ export class BrokerRepository {
     return { logs: result.rows, limit, offset };
   }
 }
-
-export default BrokerRepository;
+module.exports = BrokerRepository;
+module.exports.BrokerRepository = BrokerRepository;

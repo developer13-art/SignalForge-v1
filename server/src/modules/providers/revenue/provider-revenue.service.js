@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/providers/revenue/service
  */
-
-import { ProviderRevenueRepository } from './repository.js';
-import { emitProviderRevenueUpdated } from '../provider.events.js';
-
-export class ProviderRevenueService {
+const { ProviderRevenueRepository } = require('./repository.js');
+const { emitProviderRevenueUpdated } = require('../provider.events.js');
+class ProviderRevenueService {
   constructor(repository = null) {
     this.repository = repository || new ProviderRevenueRepository();
   }
@@ -70,5 +68,5 @@ export class ProviderRevenueService {
     };
   }
 }
-
-export default ProviderRevenueService;
+module.exports = ProviderRevenueService;
+module.exports.ProviderRevenueService = ProviderRevenueService;

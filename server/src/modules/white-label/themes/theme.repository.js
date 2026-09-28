@@ -5,19 +5,16 @@
  *
  * @module server/modules/white-label/themes/theme.repository
  */
-
-import { db } from '../../../database';
-import { nowIso } from '@signalforge/shared/utils/date.util';
-
-export async function findByProjectId({ projectId }) {
+const { db } = require('../../../database');
+const { nowIso } = require('@signalforge/shared/utils/date.util');
+async function findByProjectId({ projectId }) {
   const { rows } = await db.query(
     `SELECT * FROM white_label_themes WHERE project_id = $1 LIMIT 1`,
     [projectId],
   );
   return rows[0] || null;
 }
-
-export async function insertTheme({
+async function insertTheme({
   projectId,
   mode,
   fontFamily,
@@ -34,8 +31,7 @@ export async function insertTheme({
   );
   return rows[0];
 }
-
-export async function updateTheme({ projectId, mode, fontFamily, primaryColor, accentColor, customCss }) {
+async function updateTheme({ projectId, mode, fontFamily, primaryColor, accentColor, customCss }) {
   const { rowCount } = await db.query(
     `UPDATE white_label_themes
         SET mode = COALESCE($1, mode),
@@ -49,18 +45,25 @@ export async function updateTheme({ projectId, mode, fontFamily, primaryColor, a
   );
   return rowCount > 0;
 }
-
-export async function deleteTheme({ projectId }) {
+async function deleteTheme({ projectId }) {
   const { rowCount } = await db.query(
     `DELETE FROM white_label_themes WHERE project_id = $1`,
     [projectId],
   );
   return rowCount > 0;
 }
-
-export const themeRepository = {
+const themeRepository = {
   findByProjectId,
   insertTheme,
   updateTheme,
   deleteTheme,
 };
+module.exports.themeRepository = themeRepository;
+
+module.exports.findByProjectId = findByProjectId;
+
+module.exports.insertTheme = insertTheme;
+
+module.exports.updateTheme = updateTheme;
+
+module.exports.deleteTheme = deleteTheme;

@@ -3,14 +3,12 @@
  *
  * @module signalforge/server/modules/signal-collection/service
  */
-
-import { CollectionRepository } from './collection.repository.js';
-import { CollectionQueueService } from './collection-queue.service.js';
-import { CollectionDispatcherService } from './collection-dispatcher.service.js';
-import { CollectionWorker } from './collection.worker.js';
-import { CollectionItemNotFoundError } from './collection.errors.js';
-
-export class CollectionService {
+const { CollectionRepository } = require('./collection.repository.js');
+const { CollectionQueueService } = require('./collection-queue.service.js');
+const { CollectionDispatcherService } = require('./collection-dispatcher.service.js');
+const { CollectionWorker } = require('./collection.worker.js');
+const { CollectionItemNotFoundError } = require('./collection.errors.js');
+class CollectionService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new CollectionRepository();
     this.queue = dependencies.queue || new CollectionQueueService(this.repository);
@@ -89,5 +87,5 @@ export class CollectionService {
     };
   }
 }
-
-export default CollectionService;
+module.exports = CollectionService;
+module.exports.CollectionService = CollectionService;

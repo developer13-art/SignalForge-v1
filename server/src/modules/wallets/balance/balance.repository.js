@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/wallets/balance/repository
  */
-
-import { WalletRepository } from '../wallet.repository.js';
-
-export class BalanceRepository {
+const { WalletRepository } = require('../wallet.repository.js');
+class BalanceRepository {
   constructor(db = null) {
     this.walletRepository = new WalletRepository(db);
   }
@@ -27,5 +25,5 @@ export class BalanceRepository {
     return this.walletRepository.sumByWalletType(walletType, currency);
   }
 }
-
-export default BalanceRepository;
+module.exports = BalanceRepository;
+module.exports.BalanceRepository = BalanceRepository;

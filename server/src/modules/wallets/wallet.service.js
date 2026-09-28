@@ -3,35 +3,14 @@
  *
  * @module signalforge/server/modules/wallets/service
  */
-
-import { WalletRepository } from './wallet.repository.js';
-import { LedgerService } from './ledger/ledger.service.js';
-import { BalanceService } from './balance/balance.service.js';
-import { BalanceCalculatorService } from './balance/calculator.js';
-import {
-  WALLET_STATUSES,
-  WALLET_TYPES,
-  LEDGER_ENTRY_DIRECTIONS,
-  LEDGER_ENTRY_STATUSES,
-} from './wallet.constants.js';
-import {
-  WalletNotFoundError,
-  WalletAlreadyExistsError,
-  WalletNotActiveError,
-  InsufficientBalanceError,
-  InvalidTransactionAmountError,
-} from './wallet.errors.js';
-import {
-  emitWalletCreated,
-  emitWalletUpdated,
-  emitWalletFrozen,
-  emitWalletUnfrozen,
-  emitWalletCredited,
-  emitWalletDebited,
-  emitInsufficientBalance,
-} from './wallet.events.js';
-
-export class WalletService {
+const { WalletRepository } = require('./wallet.repository.js');
+const { LedgerService } = require('./ledger/ledger.service.js');
+const { BalanceService } = require('./balance/balance.service.js');
+const { BalanceCalculatorService } = require('./balance/calculator.js');
+const { WALLET_STATUSES, WALLET_TYPES, LEDGER_ENTRY_DIRECTIONS, LEDGER_ENTRY_STATUSES } = require('./wallet.constants.js');
+const { WalletNotFoundError, WalletAlreadyExistsError, WalletNotActiveError, InsufficientBalanceError, InvalidTransactionAmountError } = require('./wallet.errors.js');
+const { emitWalletCreated, emitWalletUpdated, emitWalletFrozen, emitWalletUnfrozen, emitWalletCredited, emitWalletDebited, emitInsufficientBalance } = require('./wallet.events.js');
+class WalletService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new WalletRepository();
     this.ledger =
@@ -330,6 +309,5 @@ export class WalletService {
   }
 }
 
-export { WALLET_TYPES };
-
-export default WalletService;
+module.exports = WalletService;
+module.exports.WalletService = WalletService;

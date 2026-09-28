@@ -6,13 +6,11 @@
  *
  * @module server/modules/replay/ai-replay/ai-replay.service
  */
-
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { replayRepository } from '../replay.repository';
-import { aiTimelineService } from './ai-timeline.service';
-
-export async function buildAiReplay({ signalId, userId }) {
+const { AppError } = require('../../../lib/errors/app-error');
+const { ERROR_CODES } = require('../../../lib/errors/error-codes');
+const { replayRepository } = require('../replay.repository');
+const { aiTimelineService } = require('./ai-timeline.service');
+async function buildAiReplay({ signalId, userId }) {
   if (!signalId) {
     throw new AppError('signalId is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
@@ -36,7 +34,9 @@ export async function buildAiReplay({ signalId, userId }) {
     summary,
   };
 }
-
-export const aiReplayService = {
+const aiReplayService = {
   buildAiReplay,
 };
+module.exports.aiReplayService = aiReplayService;
+
+module.exports.buildAiReplay = buildAiReplay;

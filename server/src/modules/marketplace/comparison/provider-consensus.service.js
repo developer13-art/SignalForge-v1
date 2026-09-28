@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/marketplace/comparison/provider-consensus
  */
-
-import { getDatabase } from '../../../bootstrap/initDatabase.js';
-
-export class ProviderConsensusService {
+const { getDatabase } = require('../../../bootstrap/initDatabase.js');
+class ProviderConsensusService {
   constructor(db = null) {
     this.db = db || getDatabase();
   }
@@ -59,5 +57,5 @@ export class ProviderConsensusService {
     };
   }
 }
-
-export default ProviderConsensusService;
+module.exports = ProviderConsensusService;
+module.exports.ProviderConsensusService = ProviderConsensusService;

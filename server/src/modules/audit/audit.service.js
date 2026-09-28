@@ -6,20 +6,17 @@
  *
  * @module server/modules/audit/audit.service
  */
-
-import { auditLoggerService } from './audit-logger.service';
-import { auditQueryService } from './audit-query.service';
-import { auditRepository } from './audit.repository';
-
-export async function purgeOlderThan({ retentionDays = 365 }) {
+const { auditLoggerService } = require('./audit-logger.service');
+const { auditQueryService } = require('./audit-query.service');
+const { auditRepository } = require('./audit.repository');
+async function purgeOlderThan({ retentionDays = 365 }) {
   const cutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000).toISOString();
 
   const deleted = await auditRepository.deleteOlderThan({ cutoff });
 
   return { deletedCount: deleted, cutoff };
 }
-
-export const auditService = {
+const auditService = {
   log: auditLoggerService.logAction,
   logBatch: auditLoggerService.logBatch,
   logSystem: auditLoggerService.logSystemAction,
@@ -38,3 +35,6 @@ export const auditService = {
 
   purgeOlderThan,
 };
+module.exports.auditService = auditService;
+
+module.exports.purgeOlderThan = purgeOlderThan;

@@ -3,13 +3,11 @@
  *
  * @module signalforge/server/modules/referrals/codes/service
  */
-
-import { ReferralCodeRepository } from './repository.js';
-import { CodeGeneratorService } from './generator.js';
-import { ReferralCodeNotFoundError, ReferralCodeAlreadyExistsError } from '../referral.errors.js';
-import { emitCodeCreated, emitCodeRegenerated } from '../referral.events.js';
-
-export class ReferralCodeService {
+const { ReferralCodeRepository } = require('./repository.js');
+const { CodeGeneratorService } = require('./generator.js');
+const { ReferralCodeNotFoundError, ReferralCodeAlreadyExistsError } = require('../referral.errors.js');
+const { emitCodeCreated, emitCodeRegenerated } = require('../referral.events.js');
+class ReferralCodeService {
   constructor(repository = null, generator = null) {
     this.repository = repository || new ReferralCodeRepository();
     this.generator = generator || new CodeGeneratorService();
@@ -117,5 +115,5 @@ export class ReferralCodeService {
     };
   }
 }
-
-export default ReferralCodeService;
+module.exports = ReferralCodeService;
+module.exports.ReferralCodeService = ReferralCodeService;

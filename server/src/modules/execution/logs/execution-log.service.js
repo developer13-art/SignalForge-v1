@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/execution/logs/service
  */
-
-import { ExecutionLogRepository } from './execution-log.repository.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-
-export class ExecutionLogService {
+const { ExecutionLogRepository } = require('./execution-log.repository.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+class ExecutionLogService {
   constructor(repository = null) {
     this.repository = repository || new ExecutionLogRepository();
     this.logger = getLogger('execution-log');
@@ -34,5 +32,5 @@ export class ExecutionLogService {
     return this.repository.countBySymbol(filters, limit);
   }
 }
-
-export default ExecutionLogService;
+module.exports = ExecutionLogService;
+module.exports.ExecutionLogService = ExecutionLogService;

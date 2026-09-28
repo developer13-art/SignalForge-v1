@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/016_create_system_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS system_settings (
       key VARCHAR(128) PRIMARY KEY,
@@ -257,8 +256,7 @@ export async function up(client) {
       ON knowledge_base_articles (locale, published);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS knowledge_base_articles CASCADE`);
   await client.query(`DROP TABLE IF EXISTS support_sla_breaches CASCADE`);
   await client.query(`DROP TABLE IF EXISTS support_messages CASCADE`);
@@ -274,3 +272,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS jobs CASCADE`);
   await client.query(`DROP TABLE IF EXISTS system_settings CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

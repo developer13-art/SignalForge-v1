@@ -3,25 +3,14 @@
  *
  * @module signalforge/server/modules/affiliate/links/service
  */
-
-import crypto from 'node:crypto';
-
-import { AffiliateLinkRepository } from './repository.js';
-import { AffiliatePartnerService } from '../partners/service.js';
-import {
-  AffiliateLinkNotFoundError,
-  AffiliateLinkAlreadyExistsError,
-  AffiliatePartnerNotFoundError,
-} from '../affiliate.errors.js';
-import {
-  emitLinkCreated,
-  emitLinkUpdated,
-  emitLinkDeleted,
-} from '../affiliate.events.js';
+const crypto = require('node:crypto');
+const { AffiliateLinkRepository } = require('./repository.js');
+const { AffiliatePartnerService } = require('../partners/service.js');
+const { AffiliateLinkNotFoundError, AffiliateLinkAlreadyExistsError, AffiliatePartnerNotFoundError } = require('../affiliate.errors.js');
+const { emitLinkCreated, emitLinkUpdated, emitLinkDeleted } = require('../affiliate.events.js');
 
 const CODE_LENGTH = 8;
-
-export class AffiliateLinkService {
+class AffiliateLinkService {
   constructor(repository = null, partnerService = null) {
     this.repository = repository || new AffiliateLinkRepository();
     this.partners = partnerService || new AffiliatePartnerService();
@@ -172,5 +161,5 @@ export class AffiliateLinkService {
     return input;
   }
 }
-
-export default AffiliateLinkService;
+module.exports = AffiliateLinkService;
+module.exports.AffiliateLinkService = AffiliateLinkService;

@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/brokers/registry/broker-spec
  */
-
-import { BROKER_PLATFORMS } from '../broker.constants.js';
+const { BROKER_PLATFORMS } = require('../broker.constants.js');
 
 const BROKER_SPECS = Object.freeze({
   'Exness-MT4-Real': {
@@ -49,8 +48,7 @@ const DEFAULT_SPEC = Object.freeze({
   maxLotSize: 100,
   lotStep: 0.01,
 });
-
-export class BrokerSpecService {
+class BrokerSpecService {
   getSpec(server) {
     if (!server) {
       return DEFAULT_SPEC;
@@ -70,5 +68,5 @@ export class BrokerSpecService {
     return this.getSpec(server).accountCurrency;
   }
 }
-
-export default BrokerSpecService;
+module.exports = BrokerSpecService;
+module.exports.BrokerSpecService = BrokerSpecService;

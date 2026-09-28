@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/trade-state/events/repository
  */
-
-import { TradeStateRepository } from '../trade-state.repository.js';
-
-export class TradeEventRepository {
+const { TradeStateRepository } = require('../trade-state.repository.js');
+class TradeEventRepository {
   constructor(db = null) {
     this.tradeStateRepository = new TradeStateRepository(db);
   }
@@ -31,5 +29,5 @@ export class TradeEventRepository {
     return this.tradeStateRepository.countEventsByType(tradeId);
   }
 }
-
-export default TradeEventRepository;
+module.exports = TradeEventRepository;
+module.exports.TradeEventRepository = TradeEventRepository;

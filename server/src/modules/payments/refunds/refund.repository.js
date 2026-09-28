@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/payments/refunds/repository
  */
-
-import { PaymentRepository } from '../payment.repository.js';
-
-export class RefundRepository {
+const { PaymentRepository } = require('../payment.repository.js');
+class RefundRepository {
   constructor(db = null) {
     this.paymentRepository = new PaymentRepository(db);
   }
@@ -31,5 +29,5 @@ export class RefundRepository {
     return this.paymentRepository.sumRefundsForPayment(paymentId);
   }
 }
-
-export default RefundRepository;
+module.exports = RefundRepository;
+module.exports.RefundRepository = RefundRepository;

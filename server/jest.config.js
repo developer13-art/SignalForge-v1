@@ -20,7 +20,6 @@ export default {
     '/coverage/',
   ],
   moduleFileExtensions: ['js', 'mjs', 'cjs', 'json'],
-  extensionsToTreatAsEsm: ['.js'],
   transform: {},
   clearMocks: true,
   resetMocks: true,

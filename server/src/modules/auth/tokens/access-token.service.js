@@ -3,12 +3,9 @@
  *
  * @module signalforge/server/modules/auth/tokens/access-token
  */
-
-import jwt from 'jsonwebtoken';
-
-import jwtConfig from '../../../config/jwt.config.js';
-
-export class AccessTokenService {
+const jwt = require('jsonwebtoken');
+const jwtConfig = require('../../../config/jwt.config.js');
+class AccessTokenService {
   sign(payload, options = {}) {
     const {
       expiresIn = jwtConfig.accessExpiresIn,
@@ -43,7 +40,6 @@ export class AccessTokenService {
     return jwt.decode(token, { complete: true });
   }
 }
-
-export const accessTokenService = new AccessTokenService();
-
-export default accessTokenService;
+const accessTokenService = new AccessTokenService();
+module.exports = accessTokenService;
+module.exports.accessTokenService = accessTokenService;

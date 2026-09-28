@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/referrals/settlement/repository
  */
-
-import { ReferralRepository } from '../referral.repository.js';
-
-export class ReferralSettlementRepository {
+const { ReferralRepository } = require('../referral.repository.js');
+class ReferralSettlementRepository {
   constructor(db = null) {
     this.referralRepository = new ReferralRepository(db);
   }
@@ -31,5 +29,5 @@ export class ReferralSettlementRepository {
     return this.referralRepository.listSettlements(filters, pagination);
   }
 }
-
-export default ReferralSettlementRepository;
+module.exports = ReferralSettlementRepository;
+module.exports.ReferralSettlementRepository = ReferralSettlementRepository;

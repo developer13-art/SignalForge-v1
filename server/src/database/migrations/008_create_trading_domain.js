@@ -3,8 +3,7 @@
  *
  * @module server/database/migrations/008_create_trading_domain
  */
-
-export async function up(client) {
+async function up(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS risk_profiles (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -205,8 +204,7 @@ export async function up(client) {
       ON execution_requests (trade_id);
   `);
 }
-
-export async function down(client) {
+async function down(client) {
   await client.query(`DROP TABLE IF EXISTS execution_requests CASCADE`);
   await client.query(`DROP TABLE IF EXISTS execution_logs CASCADE`);
   await client.query(`DROP TABLE IF EXISTS risk_decisions CASCADE`);
@@ -216,3 +214,5 @@ export async function down(client) {
   await client.query(`DROP TABLE IF EXISTS automation_rules CASCADE`);
   await client.query(`DROP TABLE IF EXISTS risk_profiles CASCADE`);
 }
+module.exports.up = up;
+module.exports.down = down;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/kyc/audit/service
  */
-
-import { KycAuditRepository } from './kyc-audit.repository.js';
-
-export class KycAuditService {
+const { KycAuditRepository } = require('./kyc-audit.repository.js');
+class KycAuditService {
   constructor(repository = null) {
     this.repository = repository || new KycAuditRepository();
   }
@@ -19,5 +17,5 @@ export class KycAuditService {
     return this.repository.list(applicationId);
   }
 }
-
-export default KycAuditService;
+module.exports = KycAuditService;
+module.exports.KycAuditService = KycAuditService;

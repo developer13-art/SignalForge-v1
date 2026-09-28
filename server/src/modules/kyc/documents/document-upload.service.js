@@ -6,30 +6,19 @@
  *
  * @module signalforge/server/modules/kyc/documents/document-upload
  */
-
-import path from 'node:path';
-import crypto from 'node:crypto';
-
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import storageConfig from '../../../config/storage.config.js';
-import { DocumentRepository } from './document.repository.js';
-import { FileValidationService } from './file-validation.service.js';
-import { QualityCheckService } from './quality-check.service.js';
-import { DuplicateDetectionService } from './duplicate-detection.service.js';
-import { DocumentTypeService } from './document-type.service.js';
-import {
-  KycApplicationNotFoundError,
-  KycDocumentNotFoundError,
-} from '../kyc.errors.js';
-import {
-  emitDocumentUploaded,
-  emitDocumentDeleted,
-  emitDocumentQualityFailed,
-  emitSelfieUploaded,
-} from '../kyc.events.js';
-import { ApplicationRepository } from '../application/application.repository.js';
-
-export class DocumentUploadService {
+const path = require('node:path');
+const crypto = require('node:crypto');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const storageConfig = require('../../../config/storage.config.js');
+const { DocumentRepository } = require('./document.repository.js');
+const { FileValidationService } = require('./file-validation.service.js');
+const { QualityCheckService } = require('./quality-check.service.js');
+const { DuplicateDetectionService } = require('./duplicate-detection.service.js');
+const { DocumentTypeService } = require('./document-type.service.js');
+const { KycApplicationNotFoundError, KycDocumentNotFoundError } = require('../kyc.errors.js');
+const { emitDocumentUploaded, emitDocumentDeleted, emitDocumentQualityFailed, emitSelfieUploaded } = require('../kyc.events.js');
+const { ApplicationRepository } = require('../application/application.repository.js');
+class DocumentUploadService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new DocumentRepository();
     this.applicationRepository = dependencies.applicationRepository || new ApplicationRepository();
@@ -226,5 +215,5 @@ export class DocumentUploadService {
     };
   }
 }
-
-export default DocumentUploadService;
+module.exports = DocumentUploadService;
+module.exports.DocumentUploadService = DocumentUploadService;

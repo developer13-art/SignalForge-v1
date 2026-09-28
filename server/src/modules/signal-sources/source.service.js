@@ -3,24 +3,15 @@
  *
  * @module signalforge/server/modules/signal-sources/service
  */
-
-import { SourceRepository } from './source.repository.js';
-import { MessageService } from './messages/message.service.js';
-import { MessageNormalizerService } from './messages/message-normalizer.service.js';
-import { AdapterRegistry } from './adapters/adapter.registry.js';
-import { SOURCE_CONNECTION_STATUSES } from './source.constants.js';
-import { SourceNotFoundError, SourceNotOwnedError } from './source.errors.js';
-import {
-  emitSourceCreated,
-  emitSourceUpdated,
-  emitSourceDeleted,
-  emitSourceConnected,
-  emitSourceDisconnected,
-  emitSourceError,
-} from './source.events.js';
-import { getLogger } from '../../bootstrap/initLogger.js';
-
-export class SourceService {
+const { SourceRepository } = require('./source.repository.js');
+const { MessageService } = require('./messages/message.service.js');
+const { MessageNormalizerService } = require('./messages/message-normalizer.service.js');
+const { AdapterRegistry } = require('./adapters/adapter.registry.js');
+const { SOURCE_CONNECTION_STATUSES } = require('./source.constants.js');
+const { SourceNotFoundError, SourceNotOwnedError } = require('./source.errors.js');
+const { emitSourceCreated, emitSourceUpdated, emitSourceDeleted, emitSourceConnected, emitSourceDisconnected, emitSourceError } = require('./source.events.js');
+const { getLogger } = require('../../bootstrap/initLogger.js');
+class SourceService {
   constructor(repository = null, messageService = null) {
     this.repository = repository || new SourceRepository();
     this.messageService = messageService || new MessageService();
@@ -185,5 +176,5 @@ export class SourceService {
     };
   }
 }
-
-export default SourceService;
+module.exports = SourceService;
+module.exports.SourceService = SourceService;

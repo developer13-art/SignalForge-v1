@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/trade-shadow/behavior-feedback
  */
-
-import { BEHAVIOR_CATEGORIES, DIVERGENCE_TYPES } from './shadow.constants.js';
+const { BEHAVIOR_CATEGORIES, DIVERGENCE_TYPES } = require('./shadow.constants.js');
 
 const CATEGORY_THRESHOLDS = Object.freeze({
   minSamples: 3,
@@ -12,8 +11,7 @@ const CATEGORY_THRESHOLDS = Object.freeze({
   impulsiveEarlyExitRatio: 0.5,
   patientLateExitRatio: 0.5,
 });
-
-export class BehaviorFeedbackService {
+class BehaviorFeedbackService {
   classify(shadows) {
     if (!Array.isArray(shadows) || shadows.length < CATEGORY_THRESHOLDS.minSamples) {
       return {
@@ -140,5 +138,5 @@ export class BehaviorFeedbackService {
     return { classification, insights };
   }
 }
-
-export default BehaviorFeedbackService;
+module.exports = BehaviorFeedbackService;
+module.exports.BehaviorFeedbackService = BehaviorFeedbackService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/affiliate/links/repository
  */
-
-import { AffiliateRepository } from '../affiliate.repository.js';
-
-export class AffiliateLinkRepository {
+const { AffiliateRepository } = require('../affiliate.repository.js');
+class AffiliateLinkRepository {
   constructor(db = null) {
     this.affiliateRepository = new AffiliateRepository(db);
   }
@@ -43,5 +41,5 @@ export class AffiliateLinkRepository {
     return this.affiliateRepository.incrementLinkConversion(linkId);
   }
 }
-
-export default AffiliateLinkRepository;
+module.exports = AffiliateLinkRepository;
+module.exports.AffiliateLinkRepository = AffiliateLinkRepository;

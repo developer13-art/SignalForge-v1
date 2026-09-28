@@ -6,13 +6,11 @@
  *
  * @module signalforge/server/modules/provider-dna/learning/fast-path
  */
-
-import { DnaRepository } from '../dna.repository.js';
-import { DNA_RULE_TYPES, DEFAULT_FAST_PATH_MIN_CONFIDENCE } from '../dna.constants.js';
-import { getLogger } from '../../../bootstrap/initLogger.js';
-import { emitDnaFastPathHit, emitDnaFastPathMiss } from '../dna.events.js';
-
-export class FastPathService {
+const { DnaRepository } = require('../dna.repository.js');
+const { DNA_RULE_TYPES, DEFAULT_FAST_PATH_MIN_CONFIDENCE } = require('../dna.constants.js');
+const { getLogger } = require('../../../bootstrap/initLogger.js');
+const { emitDnaFastPathHit, emitDnaFastPathMiss } = require('../dna.events.js');
+class FastPathService {
   constructor(repository = null) {
     this.repository = repository || new DnaRepository();
     this.logger = getLogger('dna-fast-path');
@@ -100,5 +98,5 @@ export class FastPathService {
     };
   }
 }
-
-export default FastPathService;
+module.exports = FastPathService;
+module.exports.FastPathService = FastPathService;

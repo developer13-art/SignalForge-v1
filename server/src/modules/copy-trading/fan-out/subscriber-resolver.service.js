@@ -3,11 +3,9 @@
  *
  * @module signalforge/server/modules/copy-trading/fan-out/subscriber-resolver
  */
-
-import { CopyTradingRepository } from '../copy-trading.repository.js';
-import { normalizeSymbol } from '@signalforge/shared/validators/symbol.validator';
-
-export class SubscriberResolverService {
+const { CopyTradingRepository } = require('../copy-trading.repository.js');
+const { normalizeSymbol } = require('@signalforge/shared/validators/symbol.validator');
+class SubscriberResolverService {
   constructor(repository = null) {
     this.repository = repository || new CopyTradingRepository();
   }
@@ -55,5 +53,5 @@ export class SubscriberResolverService {
     return this.repository.countSubscribersByProvider(providerId);
   }
 }
-
-export default SubscriberResolverService;
+module.exports = SubscriberResolverService;
+module.exports.SubscriberResolverService = SubscriberResolverService;

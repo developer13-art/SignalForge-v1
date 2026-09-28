@@ -3,17 +3,15 @@
  *
  * @module signalforge/server/modules/provider-dna/service
  */
-
-import { DnaRepository } from './dna.repository.js';
-import { LearningService } from './learning/learning.service.js';
-import { RuleService } from './rules/rule.service.js';
-import { ProfileService } from './profile/profile.service.js';
-import { DnaTestService } from './testing/dna-test.service.js';
-import { VersionService } from './versioning/version.service.js';
-import { DnaNotFoundError } from './dna.errors.js';
-import { emitDnaCreated, emitDnaUpdated } from './dna.events.js';
-
-export class DnaService {
+const { DnaRepository } = require('./dna.repository.js');
+const { LearningService } = require('./learning/learning.service.js');
+const { RuleService } = require('./rules/rule.service.js');
+const { ProfileService } = require('./profile/profile.service.js');
+const { DnaTestService } = require('./testing/dna-test.service.js');
+const { VersionService } = require('./versioning/version.service.js');
+const { DnaNotFoundError } = require('./dna.errors.js');
+const { emitDnaCreated, emitDnaUpdated } = require('./dna.events.js');
+class DnaService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new DnaRepository();
     this.learning = dependencies.learning || new LearningService({
@@ -119,5 +117,5 @@ export class DnaService {
     };
   }
 }
-
-export default DnaService;
+module.exports = DnaService;
+module.exports.DnaService = DnaService;

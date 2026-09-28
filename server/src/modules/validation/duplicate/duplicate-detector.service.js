@@ -3,16 +3,12 @@
  *
  * @module signalforge/server/modules/validation/duplicate/detector
  */
-
-import { DuplicateRepository } from './duplicate.repository.js';
-import { FingerprintMatcherService } from './fingerprint-matcher.service.js';
-import { StandardizationRepository } from '../../signal-standardization/standardization.repository.js';
-import {
-  DEFAULT_DUPLICATE_WINDOW_MINUTES,
-} from '../validation.constants.js';
-import { emitDuplicateDetected } from '../validation.events.js';
-
-export class DuplicateDetectorService {
+const { DuplicateRepository } = require('./duplicate.repository.js');
+const { FingerprintMatcherService } = require('./fingerprint-matcher.service.js');
+const { StandardizationRepository } = require('../../signal-standardization/standardization.repository.js');
+const { DEFAULT_DUPLICATE_WINDOW_MINUTES } = require('../validation.constants.js');
+const { emitDuplicateDetected } = require('../validation.events.js');
+class DuplicateDetectorService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new DuplicateRepository();
     this.matcher = dependencies.matcher || new FingerprintMatcherService();
@@ -67,5 +63,5 @@ export class DuplicateDetectorService {
     return this.repository.findBySignal(signalId);
   }
 }
-
-export default DuplicateDetectorService;
+module.exports = DuplicateDetectorService;
+module.exports.DuplicateDetectorService = DuplicateDetectorService;

@@ -3,10 +3,8 @@
  *
  * @module signalforge/server/modules/users/sessions/controller
  */
-
-import { SessionService } from './session.service.js';
-
-export class SessionController {
+const { SessionService } = require('./session.service.js');
+class SessionController {
   constructor(service = null) {
     this.service = service || new SessionService();
   }
@@ -47,5 +45,5 @@ export class SessionController {
     }
   };
 }
-
-export default SessionController;
+module.exports = SessionController;
+module.exports.SessionController = SessionController;

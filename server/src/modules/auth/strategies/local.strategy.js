@@ -6,12 +6,9 @@
  *
  * @module signalforge/server/modules/auth/strategies/local
  */
-
-import bcrypt from 'bcrypt';
-
-import { InvalidCredentialsError } from '../auth.errors.js';
-
-export class LocalStrategy {
+const bcrypt = require('bcrypt');
+const { InvalidCredentialsError } = require('../auth.errors.js');
+class LocalStrategy {
   constructor(repository) {
     this.repository = repository;
   }
@@ -48,5 +45,5 @@ export class LocalStrategy {
     return bcrypt.compare(password, hash);
   }
 }
-
-export default LocalStrategy;
+module.exports = LocalStrategy;
+module.exports.LocalStrategy = LocalStrategy;

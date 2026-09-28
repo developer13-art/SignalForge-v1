@@ -3,8 +3,7 @@
  *
  * @module signalforge/server/modules/analytics/metrics/drawdown
  */
-
-export class DrawdownService {
+class DrawdownService {
   calculate(trades) {
     if (!Array.isArray(trades) || trades.length === 0) {
       return {
@@ -65,5 +64,5 @@ export class DrawdownService {
     };
   }
 }
-
-export default DrawdownService;
+module.exports = DrawdownService;
+module.exports.DrawdownService = DrawdownService;
