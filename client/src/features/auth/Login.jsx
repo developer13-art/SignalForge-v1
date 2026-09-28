@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
+import { Mail, ArrowRight, AlertCircle } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
 import Heading from '../../components/ui/primitives/Heading';
@@ -8,6 +8,7 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import FormField from '../../components/forms/FormField';
 import PasswordInput from '../../components/forms/PasswordInput';
+import Input from '../../components/common/Input';
 import Alert from '../../components/feedback/Alert';
 import Checkbox from '../../components/common/Checkbox';
 import { validators } from '../../components/forms/validators';
@@ -27,15 +28,21 @@ const Login = function Login() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
-  const validateEmail = useMemo(() => validators.compose(validators.required(), validators.email()), []);
+  const validateEmail = useMemo(
+    () => validators.compose(validators.required(), validators.email()),
+    [],
+  );
   const validatePassword = useMemo(() => validators.required(), []);
 
-  const handleChange = useCallback((field, value) => {
-    setValues((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: null }));
-    }
-  }, [errors]);
+  const handleChange = useCallback(
+    (field, value) => {
+      setValues((prev) => ({ ...prev, [field]: value }));
+      if (errors[field]) {
+        setErrors((prev) => ({ ...prev, [field]: null }));
+      }
+    },
+    [errors],
+  );
 
   const validate = useCallback(() => {
     const next = {};
@@ -105,7 +112,7 @@ const Login = function Login() {
 
   return (
     <Container size="sm" className="py-12">
-      <Card padding="lg" variant="elevated">
+      <Card padding="lg" variant="elevated" className="bg-surface border border-surface-border shadow-elevated">
         <div className="mb-6 text-center">
           <Heading level={1} size="text-2xl" align="center">
             Welcome back
@@ -126,22 +133,17 @@ const Login = function Login() {
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <FormField label="Email" error={errors.email} required>
             {({ id }) => (
-              <div className="relative">
-                <Mail
-                  size={16}
-                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                  aria-hidden="true"
-                />
-                <input
-                  id={id}
-                  type="email"
-                  autoComplete="email"
-                  value={values.email}
-                  onChange={(event) => handleChange('email', event.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full rounded-md border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                />
-              </div>
+              <Input
+                id={id}
+                type="email"
+                autoComplete="email"
+                value={values.email}
+                onChange={(event) => handleChange('email', event.target.value)}
+                placeholder="you@example.com"
+                leftIcon={Mail}
+                error={errors.email}
+                required
+              />
             )}
           </FormField>
 
@@ -166,7 +168,7 @@ const Login = function Login() {
             />
             <Link
               to="/forgot-password"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+              className="text-small font-medium text-primary-400 hover:text-primary-300 hover:underline"
             >
               Forgot password?
             </Link>
@@ -184,49 +186,49 @@ const Login = function Login() {
         </form>
 
         <div className="my-5 flex items-center gap-3">
-          <span className="h-px flex-1 bg-slate-200" />
-          <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <span className="h-px flex-1 bg-surface-border" />
+          <span className="text-caption font-medium uppercase tracking-wide text-text-tertiary">
             or continue with
           </span>
-          <span className="h-px flex-1 bg-slate-200" />
+          <span className="h-px flex-1 bg-surface-border" />
         </div>
 
         <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
             onClick={() => handleOauth('google')}
-            className="flex items-center justify-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50"
+            className="flex items-center justify-center gap-1.5 rounded-md border border-surface-border bg-surface px-3 py-2 text-small font-medium text-text-primary transition-colors hover:bg-surface-hover"
           >
             Google
           </button>
           <button
             type="button"
             onClick={() => handleOauth('discord')}
-            className="flex items-center justify-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50"
+            className="flex items-center justify-center gap-1.5 rounded-md border border-surface-border bg-surface px-3 py-2 text-small font-medium text-text-primary transition-colors hover:bg-surface-hover"
           >
             Discord
           </button>
           <button
             type="button"
             onClick={() => handleOauth('telegram')}
-            className="flex items-center justify-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50"
+            className="flex items-center justify-center gap-1.5 rounded-md border border-surface-border bg-surface px-3 py-2 text-small font-medium text-text-primary transition-colors hover:bg-surface-hover"
           >
             Telegram
           </button>
         </div>
 
-        <div className="mt-6 text-center text-sm text-slate-500">
+        <div className="mt-6 text-center text-small text-text-secondary">
           Don&apos;t have an account?{' '}
           <Link
             to="/register"
-            className="font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
+            className="font-semibold text-primary-400 hover:text-primary-300 hover:underline"
           >
             Create one
           </Link>
         </div>
       </Card>
 
-      <div className="mt-6 flex items-center justify-center gap-1.5 text-xs text-slate-400">
+      <div className="mt-6 flex items-center justify-center gap-1.5 text-caption text-text-tertiary">
         <AlertCircle size={12} aria-hidden="true" />
         <span>Protected by enterprise-grade security</span>
       </div>

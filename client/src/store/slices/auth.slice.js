@@ -9,7 +9,48 @@
  * @module client/src/store/slices/auth
  */
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+import apiClient from '../../api/client';
+
+/**
+ * logoutThunk
+ *
+ * Invalidates the current session on the backend and clears the auth
+ * slice. It is safe to dispatch at any time: if the backend call
+ * fails (for example, because the token is already expired), the
+ * slice is still cleared so the user is logged out locally.
+ */
+export const logoutThunk = createAsyncThunk(
+  'auth/logoutThunk',
+  async (_payload, { dispatch, rejectWithValue }) => {
+    try {
+      await apiClient.post('/auth/logout');
+    } catch (error) {
+      // A failed logout call should never block the local logout.
+      // We log it for observability and continue.
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('[auth] logout call failed', error?.message || error);
+      }
+    }
+
+    dispatch(logoutSuccess());
+
+    // Clear any auth-related storage the client may keep.
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('signalforge.auth');
+        localStorage.removeItem('signalforge.accessToken');
+        localStorage.removeItem('signalforge.refreshToken');
+      }
+    } catch (_storageError) {
+      // Storage may be unavailable (private mode); ignore.
+    }
+
+    void rejectWithValue;
+    return true;
+  },
+);
 
 const initialState = {
   user: null,

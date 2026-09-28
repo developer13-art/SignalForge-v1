@@ -29,7 +29,7 @@ import clsx from 'clsx';
 
 import logo from '@assets/icons/svg/logo.svg';
 import { routes } from '@config/routes.config.js';
-import { useSidebar } from '../hooks/useSidebar.js';
+import { useSidebar } from '../../hooks/useSidebar';
 import { useTheme } from '@context/ThemeContext.jsx';
 import EnvironmentBadge from './EnvironmentBadge.jsx';
 import NotificationsMenu from './NotificationsMenu.jsx';

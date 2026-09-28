@@ -1,3 +1,23 @@
+/**
+ * FormField
+ *
+ * Wraps a single form control with its label, description, and error
+ * message. Supports three usage patterns:
+ *
+ *   1. render prop:
+ *        <FormField label="Email" render={(props) => <Input {...props} />} />
+ *
+ *   2. children as a React element (FormField clones it and injects props):
+ *        <FormField label="Email"><Input /></FormField>
+ *
+ *   3. children as a function (FormField calls it with the resolved props):
+ *        <FormField label="Email">
+ *          {({ id, error }) => <Input id={id} error={error} />}
+ *        </FormField>
+ *
+ * @module client/src/components/forms/FormField
+ */
+
 import React, { forwardRef, useId } from 'react';
 import PropTypes from 'prop-types';
 import { useFormContext } from './Form';
@@ -26,7 +46,7 @@ const FormField = forwardRef(function FormField(
   let context = null;
   try {
     context = useFormContext();
-  } catch (error) {
+  } catch (_error) {
     context = null;
   }
 
@@ -68,14 +88,25 @@ const FormField = forwardRef(function FormField(
     value: context && name ? context.values[name] : undefined,
   };
 
-  const content = render
-    ? render({
-        ...inputProps,
-        error: shouldShowError ? resolvedError : null,
-      })
-    : React.isValidElement(children)
-    ? React.cloneElement(children, { ...inputProps, ...children.props })
-    : children;
+  const resolvedErrorForChild = shouldShowError ? resolvedError : null;
+
+  let content;
+
+  if (render) {
+    content = render({
+      ...inputProps,
+      error: resolvedErrorForChild,
+    });
+  } else if (typeof children === 'function') {
+    content = children({
+      ...inputProps,
+      error: resolvedErrorForChild,
+    });
+  } else if (React.isValidElement(children)) {
+    content = React.cloneElement(children, { ...inputProps, ...children.props });
+  } else {
+    content = children;
+  }
 
   return (
     <div
@@ -88,7 +119,7 @@ const FormField = forwardRef(function FormField(
         <label
           htmlFor={fieldId}
           className={[
-            'text-sm font-medium text-slate-700',
+            'text-small font-medium text-text-secondary',
             disabled ? 'opacity-60' : '',
             labelClassName,
           ]
@@ -96,14 +127,16 @@ const FormField = forwardRef(function FormField(
             .join(' ')}
         >
           {label}
-          {required ? <span className="ml-0.5 text-rose-500">*</span> : null}
+          {required ? <span className="ml-0.5 text-error">*</span> : null}
         </label>
       ) : null}
 
       {description ? (
         <p
           id={`${fieldId}-description`}
-          className={['text-xs text-slate-500', descriptionClassName].filter(Boolean).join(' ')}
+          className={['text-caption text-text-tertiary', descriptionClassName]
+            .filter(Boolean)
+            .join(' ')}
         >
           {description}
         </p>
@@ -114,7 +147,7 @@ const FormField = forwardRef(function FormField(
       {shouldShowError ? (
         <p
           role="alert"
-          className={['text-xs font-medium text-rose-600', errorClassName]
+          className={['text-caption font-medium text-error', errorClassName]
             .filter(Boolean)
             .join(' ')}
         >
@@ -134,7 +167,7 @@ FormField.propTypes = {
   showError: PropTypes.bool,
   showLabel: PropTypes.bool,
   htmlFor: PropTypes.string,
-  children: PropTypes.node,
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
   className: PropTypes.string,
   labelClassName: PropTypes.string,
   descriptionClassName: PropTypes.string,

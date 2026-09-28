@@ -2,6 +2,11 @@
 
 /**
  * SignalForge - Frontend API Configuration
+ *
+ * Centralized configuration for every HTTP call the frontend makes.
+ * Exports both the canonical `API_CONFIG` and a lowercase alias
+ * `apiConfig` so that older modules that import either name continue
+ * to work.
  */
 
 function resolveEnv(name, fallback) {
@@ -15,12 +20,20 @@ function resolveEnv(name, fallback) {
   return value;
 }
 
+const DEFAULT_HEADERS = Object.freeze({
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
+});
+
 const API_CONFIG = Object.freeze({
   baseUrl: resolveEnv('VITE_API_URL', 'http://localhost:4000'),
   version: resolveEnv('VITE_API_VERSION', 'v1'),
   timeoutMs: Number(resolveEnv('VITE_API_TIMEOUT_MS', 30000)),
+  uploadTimeoutMs: Number(resolveEnv('VITE_API_UPLOAD_TIMEOUT_MS', 120000)),
   retryAttempts: Number(resolveEnv('VITE_API_RETRY_ATTEMPTS', 2)),
   retryBackoffMs: 500,
+
+  headers: DEFAULT_HEADERS,
 
   // Feature flags relevant to API behavior.
   useSolanaActions: resolveEnv('VITE_FEATURE_SOLANA_ACTIONS', 'true') === 'true',
@@ -41,5 +54,8 @@ const API_CONFIG = Object.freeze({
   },
 });
 
+// Lowercase alias used by older modules.
+const apiConfig = API_CONFIG;
+
 export default API_CONFIG;
-export { API_CONFIG };
+export { API_CONFIG, apiConfig, DEFAULT_HEADERS };

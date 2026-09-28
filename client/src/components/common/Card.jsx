@@ -1,13 +1,26 @@
+/**
+ * Card
+ *
+ * Container component used throughout the platform. All colours are
+ * expressed as design tokens so that the card follows the active
+ * theme. The `className` prop is appended last so that callers can
+ * always override backgrounds, borders, and shadows when a specific
+ * page needs a different tone.
+ *
+ * @module client/src/components/common/Card
+ */
+
 import React, { forwardRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 const VARIANTS = {
-  default: 'bg-white border border-slate-200',
-  elevated: 'bg-white border border-slate-200 shadow-md',
-  outlined: 'bg-white border-2 border-slate-300',
+  default: 'bg-surface border border-surface-border',
+  elevated: 'bg-surface border border-surface-border shadow-elevated',
+  outlined: 'bg-surface border-2 border-surface-border',
   ghost: 'bg-transparent border-0',
-  filled: 'bg-slate-50 border border-slate-200',
-  dark: 'bg-slate-800 border border-slate-700 text-slate-100',
+  filled: 'bg-surface-elevated border border-surface-border',
+  dark: 'bg-surface-elevated border border-surface-border text-text-primary',
+  light: 'bg-white border border-slate-200 text-slate-900',
 };
 
 const PADDINGS = {
@@ -57,7 +70,7 @@ const Card = forwardRef(function Card(
       RADII[radius] || RADII.lg,
       hoverable ? 'hover:shadow-lg hover:-translate-y-0.5' : '',
       isInteractive
-        ? 'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2'
+        ? 'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2'
         : '',
       className,
     ]
@@ -100,7 +113,7 @@ const Card = forwardRef(function Card(
       {hasHeader ? (
         <div
           className={[
-            'flex items-center justify-between gap-3 border-b border-slate-200',
+            'flex items-center justify-between gap-3 border-b border-surface-border',
             padding === 'none' ? 'px-4 py-3' : '',
             headerClassName,
           ]
@@ -112,11 +125,7 @@ const Card = forwardRef(function Card(
       ) : null}
 
       <div
-        className={[
-          paddingClass,
-          hasHeader || hasFooter ? 'flex-1' : '',
-          bodyClassName,
-        ]
+        className={[paddingClass, hasHeader || hasFooter ? 'flex-1' : '', bodyClassName]
           .filter(Boolean)
           .join(' ')}
       >
@@ -126,7 +135,7 @@ const Card = forwardRef(function Card(
       {hasFooter ? (
         <div
           className={[
-            'flex items-center justify-between gap-3 border-t border-slate-200',
+            'flex items-center justify-between gap-3 border-t border-surface-border',
             padding === 'none' ? 'px-4 py-3' : '',
             footerClassName,
           ]
@@ -142,7 +151,7 @@ const Card = forwardRef(function Card(
 
 Card.propTypes = {
   children: PropTypes.node,
-  variant: PropTypes.oneOf(['default', 'elevated', 'outlined', 'ghost', 'filled', 'dark']),
+  variant: PropTypes.oneOf(['default', 'elevated', 'outlined', 'ghost', 'filled', 'dark', 'light']),
   padding: PropTypes.oneOf(['none', 'sm', 'md', 'lg', 'xl']),
   radius: PropTypes.oneOf(['none', 'sm', 'md', 'lg', 'xl', '2xl']),
   hoverable: PropTypes.bool,

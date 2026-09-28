@@ -6,6 +6,11 @@
  * Uses a stable id generated from React's `useId` so that
  * server-rendered and client-rendered markup align.
  *
+ * The input surface is one shade lighter than the surrounding card
+ * (surface-elevated vs. surface) so that the field is always visible
+ * on the dark theme, with a stronger focus ring and full-opacity
+ * borders for error and success states.
+ *
  * @module client/src/components/common/Input
  */
 
@@ -96,39 +101,49 @@ const Input = forwardRef(function Input(
     }
   }, [isControlled, name, onChange, onClear]);
 
-  const showClear = Boolean(onClear) && String(currentValue || '').length > 0 && !disabled && !readOnly;
+  const showClear =
+    Boolean(onClear) && String(currentValue || '').length > 0 && !disabled && !readOnly;
 
   const dimensions = SIZES[size] || SIZES.md;
 
   return (
-    <div className={clsx(fullWidth && 'w-full', wrapperClassName)}>
+    <div className={clsx(fullWidth && 'w-full', wrapperClassName, className)}>
       {label ? (
         <label
           htmlFor={inputId}
           className="mb-1.5 flex items-center gap-1 text-small font-medium text-text-secondary"
         >
           {label}
-          {required ? <span className="text-error" aria-hidden="true">*</span> : null}
+          {required ? (
+            <span className="text-error" aria-hidden="true">
+              *
+            </span>
+          ) : null}
         </label>
       ) : null}
 
       <div
         className={clsx(
-          'relative flex items-center gap-2 border bg-surface transition-all duration-150',
+          'relative flex items-center gap-2 border transition-all duration-150',
+          'bg-surface-elevated',
           dimensions,
           error
-            ? 'border-error/60 focus-within:border-error focus-within:ring-2 focus-within:ring-error/25'
+            ? 'border-error focus-within:border-error focus-within:ring-2 focus-within:ring-error/30'
             : success
-            ? 'border-success/60 focus-within:border-success focus-within:ring-2 focus-within:ring-success/25'
+            ? 'border-success focus-within:border-success focus-within:ring-2 focus-within:ring-success/30'
             : isFocused
-            ? 'border-primary-500 ring-2 ring-primary-500/25'
-            : 'border-surface-border hover:border-surface-hover focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/25',
-          disabled && 'opacity-60 cursor-not-allowed',
+            ? 'border-primary-500 ring-2 ring-primary-500/30'
+            : 'border-surface-border hover:border-primary-500/60 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/30',
+          disabled && 'cursor-not-allowed opacity-60',
           readOnly && 'bg-background-subtle',
         )}
       >
-        {prefix ? <span className="shrink-0 text-caption text-text-tertiary">{prefix}</span> : null}
-        {!prefix && LeftIcon ? <LeftIcon className="shrink-0 h-4 w-4 text-text-tertiary" /> : null}
+        {prefix ? (
+          <span className="shrink-0 text-caption text-text-tertiary">{prefix}</span>
+        ) : null}
+        {!prefix && LeftIcon ? (
+          <LeftIcon className="h-4 w-4 shrink-0 text-text-tertiary" aria-hidden="true" />
+        ) : null}
 
         <input
           ref={ref}
@@ -162,8 +177,10 @@ const Input = forwardRef(function Input(
           aria-describedby={describedBy}
           aria-required={required || undefined}
           className={clsx(
-            'min-w-0 flex-1 bg-transparent text-text-primary placeholder:text-text-tertiary',
+            'min-w-0 flex-1 bg-transparent text-text-primary',
+            'placeholder:text-text-tertiary',
             'focus:outline-none',
+            'disabled:cursor-not-allowed',
             type === 'password' && 'pr-9',
             hideNumberSpinners && type === 'number' && 'appearance-none',
             inputClassName,
@@ -174,7 +191,10 @@ const Input = forwardRef(function Input(
         {hideNumberSpinners && type === 'number' ? (
           <style>{`
             #${inputId}::-webkit-outer-spin-button,
-            #${inputId}::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+            #${inputId}::-webkit-inner-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+            }
           `}</style>
         ) : null}
 
@@ -182,11 +202,11 @@ const Input = forwardRef(function Input(
           <button
             type="button"
             onClick={handleClear}
-            className="shrink-0 inline-flex h-6 w-6 items-center justify-center rounded-md text-text-tertiary transition hover:text-text-primary"
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-text-tertiary transition hover:text-text-primary"
             aria-label="Clear input"
             tabIndex={-1}
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         ) : null}
 
@@ -194,18 +214,24 @@ const Input = forwardRef(function Input(
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="shrink-0 inline-flex h-6 w-6 items-center justify-center rounded-md text-text-tertiary transition hover:text-text-primary"
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-text-tertiary transition hover:text-text-primary"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
             aria-pressed={showPassword}
             tabIndex={-1}
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Eye className="h-4 w-4" aria-hidden="true" />
+            )}
           </button>
         ) : null}
 
-        {suffix ? <span className="shrink-0 text-caption text-text-tertiary">{suffix}</span> : null}
+        {suffix ? (
+          <span className="shrink-0 text-caption text-text-tertiary">{suffix}</span>
+        ) : null}
         {!suffix && RightIcon && type !== 'password' ? (
-          <RightIcon className="shrink-0 h-4 w-4 text-text-tertiary" />
+          <RightIcon className="h-4 w-4 shrink-0 text-text-tertiary" aria-hidden="true" />
         ) : null}
       </div>
 

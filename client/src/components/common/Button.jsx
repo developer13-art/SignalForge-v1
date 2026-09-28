@@ -7,6 +7,10 @@
  * states. Handles keyboard activation, loading spinners, and
  * aria-busy without requiring the caller to remember them.
  *
+ * Icon props accept both naming conventions:
+ *   - leadingIcon  / trailingIcon  (preferred in new code)
+ *   - leftIcon     / rightIcon     (legacy aliases)
+ *
  * @module client/src/components/common/Button
  */
 
@@ -45,6 +49,17 @@ const SIZES = {
   'icon-lg': 'h-11 w-11 rounded-xl justify-center',
 };
 
+function iconSizeClass(size, variant) {
+  if (size === 'xs' || size === 'icon-sm') {
+    return 'h-3.5 w-3.5';
+  }
+  if (size === 'lg' || size === 'xl') {
+    return 'h-5 w-5';
+  }
+  void variant;
+  return 'h-4 w-4';
+}
+
 const Button = forwardRef(function Button(
   {
     as,
@@ -56,6 +71,10 @@ const Button = forwardRef(function Button(
     disabled = false,
     loading = false,
     fullWidth = false,
+    // Preferred icon prop names.
+    leadingIcon: LeadingIcon,
+    trailingIcon: TrailingIcon,
+    // Legacy aliases.
     leftIcon: LeftIcon,
     rightIcon: RightIcon,
     iconOnly = false,
@@ -77,9 +96,13 @@ const Button = forwardRef(function Button(
   },
   ref,
 ) {
+  const ResolvedLeadingIcon = LeadingIcon || LeftIcon;
+  const ResolvedTrailingIcon = TrailingIcon || RightIcon;
+
   const isDisabled = disabled || loading;
   const variantClasses = VARIANTS[variant] || VARIANTS.primary;
-  const sizeClasses = SIZES[iconOnly ? (size === 'md' ? 'icon' : `icon-${size}`) : size] || SIZES.md;
+  const sizeKey = iconOnly ? (size === 'md' ? 'icon' : `icon-${size}`) : size;
+  const sizeClasses = SIZES[sizeKey] || SIZES.md;
 
   const classes = clsx(
     'inline-flex select-none items-center justify-center font-medium',
@@ -92,18 +115,20 @@ const Button = forwardRef(function Button(
     className,
   );
 
+  const iconClass = iconSizeClass(size, variant);
+
   const content = (
     <>
       {loading ? (
-        <Loader2 className={clsx('animate-spin', size === 'xs' || size === 'icon-sm' ? 'h-3.5 w-3.5' : 'h-4 w-4')} />
-      ) : LeftIcon ? (
-        <LeftIcon className={clsx(size === 'xs' || size === 'icon-sm' ? 'h-3.5 w-3.5' : size === 'lg' || size === 'xl' ? 'h-5 w-5' : 'h-4 w-4')} />
+        <Loader2 className={clsx('animate-spin', iconClass)} />
+      ) : ResolvedLeadingIcon ? (
+        <ResolvedLeadingIcon className={iconClass} />
       ) : null}
 
       {children ? <span className={clsx(iconOnly && 'sr-only')}>{children}</span> : null}
 
-      {!loading && RightIcon ? (
-        <RightIcon className={clsx(size === 'xs' || size === 'icon-sm' ? 'h-3.5 w-3.5' : size === 'lg' || size === 'xl' ? 'h-5 w-5' : 'h-4 w-4')} />
+      {!loading && ResolvedTrailingIcon ? (
+        <ResolvedTrailingIcon className={iconClass} />
       ) : null}
     </>
   );
@@ -138,7 +163,15 @@ const Button = forwardRef(function Button(
 
   if (as === 'a' || href) {
     return (
-      <a ref={ref} href={isDisabled ? undefined : href} target={target} rel={rel} download={download} {...sharedProps} {...rest}>
+      <a
+        ref={ref}
+        href={isDisabled ? undefined : href}
+        target={target}
+        rel={rel}
+        download={download}
+        {...sharedProps}
+        {...rest}
+      >
         {content}
       </a>
     );

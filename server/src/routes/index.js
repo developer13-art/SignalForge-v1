@@ -18,6 +18,12 @@ const router = express.Router();
 // -------------------- Public / unauthenticated --------------------
 router.use('/public', require('./public.routes'));
 
+// -------------------- Health (unauthenticated) --------------------
+// Mounted directly under /api/health so that load balancers and
+// container orchestrators can probe without authentication.
+// Exposes: /, /live, /ready, /detailed
+router.use('/health', require('./health.routes'));
+
 // -------------------- Authentication --------------------
 router.use('/auth', require('./auth.routes'));
 

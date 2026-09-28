@@ -2,23 +2,31 @@
   "name": "@signalforge/shared",
   "version": "1.0.0",
   "private": true,
-  "description": "SignalForge AI - Shared constants, schemas, and utilities",
-  "main": "src/index.js",
   "type": "commonjs",
-  "engines": {
-    "node": ">=20.11.1"
-  },
-  "scripts": {
-    "lint": "eslint \"src/**/*.js\"",
-    "lint:fix": "eslint \"src/**/*.js\" --fix",
-    "test": "echo \"No tests for shared package yet\"",
-    "clean": "rm -rf node_modules"
-  },
-  "dependencies": {
-    "bs58": "^6.0.0",
-    "uuid": "^9.0.1"
-  },
-  "devDependencies": {
-    "eslint": "^8.57.0"
+  "main": "./src/index.cjs",
+  "exports": {
+    ".": "./src/index.cjs",
+    "./package.json": "./package.json",
+
+    "./constants": "./src/constants/index.cjs",
+    "./constants/crypto-pairs": "./src/constants/crypto-pairs/index.cjs",
+    "./constants/proof-of-alpha": "./src/constants/proof-of-alpha/index.cjs",
+    "./constants/solana-actions": "./src/constants/solana-actions/index.cjs",
+    "./constants/*": "./src/constants/*.cjs",
+
+    "./schemas": "./src/schemas/index.cjs",
+    "./schemas/actions": "./src/schemas/actions/index.cjs",
+    "./schemas/execution-routing": "./src/schemas/execution-routing/index.cjs",
+    "./schemas/proof-of-alpha": "./src/schemas/proof-of-alpha/index.cjs",
+    "./schemas/*": "./src/schemas/*.cjs",
+
+    "./types": "./src/types/index.cjs",
+    "./types/*": "./src/types/*.cjs",
+
+    "./utils": "./src/utils/index.cjs",
+    "./utils/*": "./src/utils/*.cjs",
+
+    "./validators": "./src/validators/index.cjs",
+    "./validators/*": "./src/validators/*.cjs"
   }
 }

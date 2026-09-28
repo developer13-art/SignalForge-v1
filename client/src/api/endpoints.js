@@ -302,8 +302,6 @@ function findEndpoint(group, key) {
   return target[key] || null;
 }
 
-module.exports = {
-  API_ENDPOINTS,
-  resolveEndpoint,
-  findEndpoint,
-};
+export { API_ENDPOINTS, resolveEndpoint, findEndpoint };
+export const endpoints = API_ENDPOINTS;
+export default API_ENDPOINTS;

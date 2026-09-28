@@ -46,7 +46,8 @@ const Checkbox = forwardRef(function Checkbox(
   const descriptionId = description ? `${checkboxId}-description` : undefined;
   const helperId = helperText ? `${checkboxId}-helper` : undefined;
   const errorId = error ? `${checkboxId}-error` : undefined;
-  const describedBy = [ariaDescribedBy, errorId, helperId, descriptionId].filter(Boolean).join(' ') || undefined;
+  const describedBy =
+    [ariaDescribedBy, errorId, helperId, descriptionId].filter(Boolean).join(' ') || undefined;
 
   const localRef = useRef(null);
 
@@ -98,6 +99,7 @@ const Checkbox = forwardRef(function Checkbox(
             aria-hidden="true"
             className={clsx(
               'flex items-center justify-center rounded-md border transition-all duration-150',
+              'bg-surface',
               'peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500/40 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background',
               'peer-checked:bg-primary peer-checked:border-primary peer-checked:text-white',
               indeterminate && 'bg-primary border-primary text-white',
@@ -110,7 +112,12 @@ const Checkbox = forwardRef(function Checkbox(
             {indeterminate ? (
               <Minus className={dimensions.icon} />
             ) : (
-              <Check className={clsx(dimensions.icon, 'opacity-0 peer-checked:opacity-100 transition-opacity')} />
+              <Check
+                className={clsx(
+                  dimensions.icon,
+                  'opacity-0 peer-checked:opacity-100 transition-opacity',
+                )}
+              />
             )}
           </span>
         </span>

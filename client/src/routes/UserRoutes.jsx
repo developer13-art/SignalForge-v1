@@ -26,7 +26,6 @@ import SignalDetails from '../features/signal-center/SignalDetails.jsx';
 import SignalProcessingTimeline from '../features/signal-center/SignalProcessingTimeline.jsx';
 import SignalConfidence from '../features/signal-center/SignalConfidence.jsx';
 import SignalRiskAnalysis from '../features/signal-center/SignalRiskAnalysis.jsx';
-import ProviderSignals from '../features/signal-center/ProviderSignals.jsx';
 import DuplicateSignals from '../features/signal-center/DuplicateSignals.jsx';
 import ConsensusSignals from '../features/signal-center/ConsensusSignals.jsx';
 import RejectedSignals from '../features/signal-center/RejectedSignals.jsx';
@@ -168,7 +167,6 @@ import IntelligenceOverview from '../features/trader-intelligence/IntelligenceOv
 import ConsistencyDiscipline from '../features/trader-intelligence/ConsistencyDiscipline.jsx';
 import AverageRiskReward from '../features/trader-intelligence/AverageRiskReward.jsx';
 import HoldingTime from '../features/trader-intelligence/HoldingTime.jsx';
-import RiskBehavior from '../features/trader-intelligence/RiskBehavior.jsx';
 import MartingaleGridDetection from '../features/trader-intelligence/MartingaleGridDetection.jsx';
 import NewsExposure from '../features/trader-intelligence/NewsExposure.jsx';
 import RecoveryTrading from '../features/trader-intelligence/RecoveryTrading.jsx';

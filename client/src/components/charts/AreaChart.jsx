@@ -9,7 +9,6 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  defs as Defs,
 } from 'recharts';
 import ChartTooltip from './ChartTooltip';
 

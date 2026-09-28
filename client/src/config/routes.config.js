@@ -4,10 +4,21 @@
  * Central definition of every route path. Components and hooks import
  * from here so paths are never duplicated as string literals.
  *
+ * The file exports:
+ *   - routes          : the complete route tree, with every namespace
+ *                       available both nested (routes.user.admin) and
+ *                       flattened at the top level (routes.admin).
+ *   - publicRoutes    : array of public route paths
+ *   - protectedRoutes : merged object of authenticated namespaces
+ *   - adminRoutes     : admin namespace
+ *   - complianceRoutes: compliance namespace
+ *   - executiveRoutes : executive namespace
+ *   - supportRoutes   : support namespace
+ *
  * @module client/src/config/routes.config
  */
 
-export const routes = Object.freeze({
+const _routes = {
   public: {
     home: '/',
     howItWorks: '/how-it-works',
@@ -450,9 +461,44 @@ export const routes = Object.freeze({
       onChainBadges: '/solana/badges',
     },
   },
-});
+};
+
+// Flatten: expose every nested namespace as a top-level key so that
+// consumers can write routes.support.helpCenter instead of
+// routes.user.support.helpCenter. The nested form remains available.
+_routes.providerBusiness = _routes.user.providerBusiness;
+_routes.providerCertification = _routes.user.providerCertification;
+_routes.affiliate = _routes.user.affiliate;
+_routes.ib = _routes.user.ib;
+_routes.whiteLabel = _routes.user.whiteLabel;
+_routes.notifications = _routes.user.notifications;
+_routes.settings = _routes.user.settings;
+_routes.referrals = _routes.user.referrals;
+_routes.subscriptions = _routes.user.subscriptions;
+_routes.wallet = _routes.user.wallet;
+_routes.admin = _routes.user.admin;
+_routes.compliance = _routes.user.compliance;
+_routes.executive = _routes.user.executive;
+_routes.support = _routes.user.support;
+_routes.replay = _routes.user.replay;
+_routes.solana = _routes.user.solana;
+_routes.providerMarketplace = _routes.user.providerMarketplace;
+_routes.traderMarketplace = _routes.user.traderMarketplace;
+_routes.signalCenter = _routes.user.signalCenter;
+_routes.signalSources = _routes.user.signalSources;
+_routes.aiIntelligence = _routes.user.aiIntelligence;
+_routes.providerDna = _routes.user.providerDna;
+_routes.trading = _routes.user.trading;
+_routes.riskAutomation = _routes.user.riskAutomation;
+_routes.brokers = _routes.user.brokers;
+_routes.analytics = _routes.user.analytics;
+_routes.traderIntelligence = _routes.user.traderIntelligence;
+
+// Freeze exactly once, after flattening.
+export const routes = Object.freeze(_routes);
 
 export const publicRoutes = Object.values(routes.public);
+
 export const protectedRoutes = {
   ...routes.user,
   ...routes.providerBusiness,
@@ -467,6 +513,7 @@ export const protectedRoutes = {
   ...routes.wallet,
   ...routes.solana,
 };
+
 export const adminRoutes = routes.admin;
 export const complianceRoutes = routes.compliance;
 export const executiveRoutes = routes.executive;

@@ -1,65 +1,110 @@
 /**
  * Authentication Routes
  *
+ * Mounts every authentication endpoint on top of the AuthController.
+ * The controller delegates to the AuthService, which dispatches to
+ * the individual service modules (register, login, refresh, and so
+ * on) and returns canonical JSON responses.
+ *
+ * Public (unauthenticated) endpoints:
+ *   POST   /api/auth/register
+ *   POST   /api/auth/login
+ *   POST   /api/auth/refresh
+ *   POST   /api/auth/forgot-password
+ *   POST   /api/auth/reset-password
+ *   POST   /api/auth/verify-email
+ *   POST   /api/auth/2fa/verify
+ *   POST   /api/auth/account-recovery
+ *
+ * Authenticated endpoints (require a valid access token):
+ *   POST   /api/auth/logout
+ *   POST   /api/auth/logout-all
+ *   POST   /api/auth/change-password
+ *   POST   /api/auth/verify-email/request
+ *   POST   /api/auth/verify-phone/request
+ *   POST   /api/auth/verify-phone
+ *   POST   /api/auth/2fa/setup
+ *   POST   /api/auth/2fa/confirm
+ *   POST   /api/auth/2fa/disable
+ *   GET    /api/auth/2fa/status
+ *   POST   /api/auth/2fa/backup-codes
+ *   GET    /api/auth/sessions
+ *   DELETE /api/auth/sessions/:sessionId
+ *   GET    /api/auth/devices
+ *
  * @module signalforge/server/routes/auth
  */
+
 const { Router } = require('express');
 
+const { AuthController } = require('../modules/auth/auth.controller.js');
+const { authenticationMiddleware } = require('../middleware/authentication.middleware.js');
+const { rateLimitMiddleware } = require('../middleware/rate-limit.middleware.js');
+
 const router = Router();
+const controller = new AuthController();
 
-router.post('/register', (req, res) => {
-  res.status(202).json({ message: 'Registration endpoint placeholder' });
+const authRateLimiter = rateLimitMiddleware({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: 'Too many authentication attempts. Please try again later.',
 });
 
-router.post('/login', (req, res) => {
-  res.status(202).json({ message: 'Login endpoint placeholder' });
+const sensitiveRateLimiter = rateLimitMiddleware({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: 'Too many requests. Please try again later.',
 });
 
-router.post('/logout', (req, res) => {
-  res.status(202).json({ message: 'Logout endpoint placeholder' });
-});
+// -------------------- Public (unauthenticated) --------------------
 
-router.post('/refresh', (req, res) => {
-  res.status(202).json({ message: 'Refresh token endpoint placeholder' });
-});
+router.post('/register', authRateLimiter, controller.register);
+router.post('/login', authRateLimiter, controller.login);
+router.post('/refresh', controller.refresh);
+router.post('/forgot-password', sensitiveRateLimiter, controller.requestPasswordReset);
+router.post('/reset-password', sensitiveRateLimiter, controller.resetPassword);
+router.post('/verify-email', controller.verifyEmail);
+router.post('/2fa/verify', authRateLimiter, controller.verifyTwoFactor);
+router.post('/account-recovery', sensitiveRateLimiter, controller.accountRecoveryRequest);
+router.post('/account-recovery/complete', sensitiveRateLimiter, controller.accountRecoveryComplete);
+router.post('/social', controller.socialLogin);
 
-router.post('/forgot-password', (req, res) => {
-  res.status(202).json({ message: 'Forgot password endpoint placeholder' });
-});
+// -------------------- Authenticated --------------------
 
-router.post('/reset-password', (req, res) => {
-  res.status(202).json({ message: 'Reset password endpoint placeholder' });
-});
+router.post('/logout', authenticationMiddleware, controller.logout);
+router.post('/logout-all', authenticationMiddleware, controller.logoutAll);
+router.post('/change-password', authenticationMiddleware, controller.changePassword);
 
-router.post('/verify-email', (req, res) => {
-  res.status(202).json({ message: 'Verify email endpoint placeholder' });
-});
+router.post(
+  '/verify-email/request',
+  authenticationMiddleware,
+  controller.requestEmailVerification,
+);
 
-router.post('/verify-phone', (req, res) => {
-  res.status(202).json({ message: 'Verify phone endpoint placeholder' });
-});
+router.post(
+  '/verify-phone/request',
+  authenticationMiddleware,
+  controller.requestPhoneVerification,
+);
+router.post('/verify-phone', authenticationMiddleware, controller.verifyPhone);
 
-router.post('/2fa/setup', (req, res) => {
-  res.status(202).json({ message: '2FA setup endpoint placeholder' });
-});
+router.post('/2fa/setup', authenticationMiddleware, controller.twoFactorSetup);
+router.post('/2fa/confirm', authenticationMiddleware, controller.twoFactorConfirm);
+router.post('/2fa/disable', authenticationMiddleware, controller.twoFactorDisable);
+router.get('/2fa/status', authenticationMiddleware, controller.twoFactorStatus);
+router.post(
+  '/2fa/backup-codes',
+  authenticationMiddleware,
+  controller.regenerateBackupCodes,
+);
 
-router.post('/2fa/verify', (req, res) => {
-  res.status(202).json({ message: '2FA verify endpoint placeholder' });
-});
+router.get('/sessions', authenticationMiddleware, controller.listSessions);
+router.delete(
+  '/sessions/:sessionId',
+  authenticationMiddleware,
+  controller.revokeSession,
+);
 
-router.post('/2fa/disable', (req, res) => {
-  res.status(202).json({ message: '2FA disable endpoint placeholder' });
-});
+router.get('/devices', authenticationMiddleware, controller.listDevices);
 
-router.post('/account-recovery', (req, res) => {
-  res.status(202).json({ message: 'Account recovery endpoint placeholder' });
-});
-
-router.get('/sessions', (req, res) => {
-  res.status(200).json({ sessions: [] });
-});
-
-router.delete('/sessions/:sessionId', (req, res) => {
-  res.status(202).json({ message: 'Session revoke endpoint placeholder' });
-});
 module.exports = router;

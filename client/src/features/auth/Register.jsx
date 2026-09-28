@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Mail, User, Phone, ArrowRight, Check } from 'lucide-react';
+import { Mail, User, ArrowRight, Check } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
 import Heading from '../../components/ui/primitives/Heading';
@@ -9,6 +9,7 @@ import Button from '../../components/common/Button';
 import FormField from '../../components/forms/FormField';
 import PasswordInput from '../../components/forms/PasswordInput';
 import PhoneInput from '../../components/forms/PhoneInput';
+import Input from '../../components/common/Input';
 import Checkbox from '../../components/common/Checkbox';
 import Alert from '../../components/feedback/Alert';
 import { validators } from '../../components/forms/validators';
@@ -33,17 +34,31 @@ const Register = function Register() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
-  const validateEmail = useMemo(() => validators.compose(validators.required(), validators.email()), []);
-  const validatePhone = useMemo(() => validators.compose(validators.required(), validators.phone()), []);
+  const validateEmail = useMemo(
+    () => validators.compose(validators.required(), validators.email()),
+    [],
+  );
+  const validatePhone = useMemo(
+    () => validators.compose(validators.required(), validators.phone()),
+    [],
+  );
   const validatePassword = useMemo(
     () =>
       validators.compose(
         validators.required(),
-        validators.password({ min: 8, requireUppercase: true, requireLowercase: true, requireNumber: true }),
+        validators.password({
+          min: 8,
+          requireUppercase: true,
+          requireLowercase: true,
+          requireNumber: true,
+        }),
       ),
     [],
   );
-  const validateName = useMemo(() => validators.compose(validators.required(), validators.minLength(2)), []);
+  const validateName = useMemo(
+    () => validators.compose(validators.required(), validators.minLength(2)),
+    [],
+  );
 
   const handleChange = useCallback(
     (field, value) => {
@@ -116,14 +131,16 @@ const Register = function Register() {
         const payload = await response.json();
 
         if (!response.ok) {
-          const message = payload?.error?.message || 'Registration failed. Please try again.';
+          const message =
+            payload?.error?.message || 'Registration failed. Please try again.';
           setSubmitError(message);
           return;
         }
 
-        navigate(`/verify-email?email=${encodeURIComponent(values.email.trim().toLowerCase())}`, {
-          replace: true,
-        });
+        navigate(
+          `/verify-email?email=${encodeURIComponent(values.email.trim().toLowerCase())}`,
+          { replace: true },
+        );
       } catch (_error) {
         setSubmitError('Unable to reach the server. Please try again.');
       } finally {
@@ -135,7 +152,7 @@ const Register = function Register() {
 
   return (
     <Container size="sm" className="py-12">
-      <Card padding="lg" variant="elevated">
+      <Card padding="lg" variant="elevated" className="bg-surface border border-surface-border shadow-elevated">
         <div className="mb-6 text-center">
           <Heading level={1} size="text-2xl" align="center">
             Create your account
@@ -157,33 +174,29 @@ const Register = function Register() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField label="First Name" error={errors.firstName} required>
               {({ id }) => (
-                <div className="relative">
-                  <User
-                    size={16}
-                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                    aria-hidden="true"
-                  />
-                  <input
-                    id={id}
-                    type="text"
-                    autoComplete="given-name"
-                    value={values.firstName}
-                    onChange={(event) => handleChange('firstName', event.target.value)}
-                    className="w-full rounded-md border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                  />
-                </div>
+                <Input
+                  id={id}
+                  type="text"
+                  autoComplete="given-name"
+                  value={values.firstName}
+                  onChange={(event) => handleChange('firstName', event.target.value)}
+                  leftIcon={User}
+                  error={errors.firstName}
+                  required
+                />
               )}
             </FormField>
 
             <FormField label="Last Name" error={errors.lastName} required>
               {({ id }) => (
-                <input
+                <Input
                   id={id}
                   type="text"
                   autoComplete="family-name"
                   value={values.lastName}
                   onChange={(event) => handleChange('lastName', event.target.value)}
-                  className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  error={errors.lastName}
+                  required
                 />
               )}
             </FormField>
@@ -191,22 +204,17 @@ const Register = function Register() {
 
           <FormField label="Email" error={errors.email} required>
             {({ id }) => (
-              <div className="relative">
-                <Mail
-                  size={16}
-                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                  aria-hidden="true"
-                />
-                <input
-                  id={id}
-                  type="email"
-                  autoComplete="email"
-                  value={values.email}
-                  onChange={(event) => handleChange('email', event.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full rounded-md border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                />
-              </div>
+              <Input
+                id={id}
+                type="email"
+                autoComplete="email"
+                value={values.email}
+                onChange={(event) => handleChange('email', event.target.value)}
+                placeholder="you@example.com"
+                leftIcon={Mail}
+                error={errors.email}
+                required
+              />
             )}
           </FormField>
 
@@ -238,11 +246,11 @@ const Register = function Register() {
           {referralCode ? (
             <FormField label="Referral Code">
               {() => (
-                <input
+                <Input
                   type="text"
                   value={values.referralCode}
                   readOnly
-                  className="w-full cursor-not-allowed rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-500"
+                  disabled
                 />
               )}
             </FormField>
@@ -253,11 +261,17 @@ const Register = function Register() {
               label={
                 <span>
                   I agree to the{' '}
-                  <Link to="/terms" className="font-medium text-indigo-600 hover:underline">
+                  <Link
+                    to="/terms"
+                    className="font-medium text-primary-400 hover:underline"
+                  >
                     Terms of Service
                   </Link>{' '}
                   and{' '}
-                  <Link to="/privacy" className="font-medium text-indigo-600 hover:underline">
+                  <Link
+                    to="/privacy"
+                    className="font-medium text-primary-400 hover:underline"
+                  >
                     Privacy Policy
                   </Link>
                 </span>
@@ -266,7 +280,7 @@ const Register = function Register() {
               onChange={(checked) => handleChange('agree', checked)}
             />
             {errors.agree ? (
-              <p className="mt-1 text-xs font-medium text-rose-600">{errors.agree}</p>
+              <p className="mt-1 text-caption font-medium text-error">{errors.agree}</p>
             ) : null}
           </div>
 
@@ -281,28 +295,28 @@ const Register = function Register() {
           </Button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-slate-500">
+        <div className="mt-6 text-center text-small text-text-secondary">
           Already have an account?{' '}
           <Link
             to="/login"
-            className="font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
+            className="font-semibold text-primary-400 hover:text-primary-300 hover:underline"
           >
             Sign in
           </Link>
         </div>
       </Card>
 
-      <div className="mt-6 grid grid-cols-3 gap-3 text-xs text-slate-500">
+      <div className="mt-6 grid grid-cols-3 gap-3 text-caption text-text-tertiary">
         <div className="flex items-start gap-1.5">
-          <Check size={12} className="mt-0.5 shrink-0 text-emerald-600" aria-hidden="true" />
+          <Check size={12} className="mt-0.5 shrink-0 text-success" aria-hidden="true" />
           <span>No credit card required</span>
         </div>
         <div className="flex items-start gap-1.5">
-          <Check size={12} className="mt-0.5 shrink-0 text-emerald-600" aria-hidden="true" />
+          <Check size={12} className="mt-0.5 shrink-0 text-success" aria-hidden="true" />
           <span>7-day free trial</span>
         </div>
         <div className="flex items-start gap-1.5">
-          <Check size={12} className="mt-0.5 shrink-0 text-emerald-600" aria-hidden="true" />
+          <Check size={12} className="mt-0.5 shrink-0 text-success" aria-hidden="true" />
           <span>Cancel anytime</span>
         </div>
       </div>

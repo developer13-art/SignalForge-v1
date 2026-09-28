@@ -34,3 +34,21 @@ export const selectHasAnyRole = (roleNames) => (state) => {
   const roles = state.auth.user?.roles || [];
   return roleNames.some((r) => roles.includes(r));
 };
+
+export const selectAuthUser = (state) => state.auth.user;
+
+export const selectAuthStatus = (state) => {
+  if (state.auth.twoFactorRequired) {
+    return 'two_factor_required';
+  }
+  if (state.auth.loading) {
+    return state.auth.initialized ? 'loading' : 'authenticating';
+  }
+  if (state.auth.error) {
+    return 'error';
+  }
+  if (state.auth.accessToken && state.auth.user) {
+    return 'authenticated';
+  }
+  return 'unauthenticated';
+};

@@ -61,5 +61,6 @@ const SOLANA_CONFIG = Object.freeze({
   },
 });
 
-export default SOLANA_CONFIG;
 export { SOLANA_CONFIG, SOLANA_CLUSTERS };
+export const solanaConfig = SOLANA_CONFIG;
+export default SOLANA_CONFIG;

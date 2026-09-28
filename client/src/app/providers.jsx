@@ -16,19 +16,19 @@ import { WhiteLabelProvider } from '../context/WhiteLabelContext';
 /**
  * SignalForge - Application Providers
  *
- * Composes the entire provider tree the application relies on. The
- * ordering is deliberate:
+ * The ordering below is deliberate and load-bearing:
  *
  *   1. Redux store
  *   2. React Query client
- *   3. Theme (needs to be first so that children can read the theme)
+ *   3. Theme (everything reads theme)
  *   4. Auth (needs Redux)
  *   5. User (needs Auth)
  *   6. Notification (needs User)
- *   7. WhiteLabel (branding overrides; needs to be before Wallet)
- *   8. Wallet (generic wallet provider; used by Auth upgrades)
- *   9. Solana (specific to on-chain features; needs Wallet)
- *  10. Toast notifications (mounted last so all contexts can emit)
+ *   7. WhiteLabel (branding; independent)
+ *   8. Wallet (must be an ANCESTOR of Solana because Solana
+ *      reads wallet-adapter state)
+ *   9. Solana (needs Wallet)
+ *  10. Toaster (last; can consume every context above)
  */
 export default function AppProviders({ children }) {
   return (

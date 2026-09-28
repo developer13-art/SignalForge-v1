@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Linkedin, Youtube, Send, ArrowRight } from 'lucide-react';
 import logo from '@assets/icons/svg/logo.svg';
 import { routes } from '@config/routes.config.js';
+console.log('ROUTES_DEBUG', routes);
 import { appConfig } from '@config/app.config.js';
 
 const COLUMNS = [

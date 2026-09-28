@@ -5,8 +5,16 @@
  * NOTIFY for cross-process delivery and an in-process EventEmitter
  * for local subscribers.
  *
+ * The reconnect path is intentionally defensive: when the LISTEN
+ * connection drops (which Neon does routinely when its pooler
+ * closes an idle connection), the bus releases the broken client,
+ * waits, and re-acquires a fresh one. Errors on the reconnect path
+ * are swallowed after being logged so the process never crashes
+ * because of a transient database connection failure.
+ *
  * @module signalforge/server/bootstrap/initEventBus
  */
+
 const { EventEmitter } = require('node:events');
 const { randomUUID } = require('node:crypto');
 const { getLogger } = require('./initLogger.js');
@@ -14,6 +22,7 @@ const databaseConfig = require('../config/database.config.js');
 
 const CHANNEL_NAME = 'signalforge_events';
 const MAX_LISTENERS = 500;
+const RECONNECT_DELAY_MS = 5000;
 
 let busState = null;
 
@@ -27,6 +36,13 @@ function isEnvelope(value) {
     typeof value.payload === 'object'
   );
 }
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 async function initEventBus(dependencies = {}) {
   const logger = getLogger('event-bus');
 
@@ -45,10 +61,31 @@ async function initEventBus(dependencies = {}) {
 
   let listenClient = null;
   let closing = false;
+  let reconnecting = false;
+
+  function detachListenClient() {
+    if (!listenClient) {
+      return;
+    }
+    try {
+      listenClient.removeAllListeners('notification');
+      listenClient.removeAllListeners('error');
+      listenClient.release(true);
+    } catch (_error) {
+      // Ignore release errors on a broken client.
+    } finally {
+      listenClient = null;
+    }
+  }
 
   async function acquireListenClient() {
-    listenClient = await db.pool.connect();
-    listenClient.on('notification', (msg) => {
+    if (closing) {
+      return;
+    }
+
+    const client = await db.pool.connect();
+
+    client.on('notification', (msg) => {
       if (msg.channel !== CHANNEL_NAME || !msg.payload) {
         return;
       }
@@ -65,14 +102,36 @@ async function initEventBus(dependencies = {}) {
       }
     });
 
-    listenClient.on('error', (error) => {
+    client.on('error', (error) => {
       logger.error({ err: error }, 'Event bus listen client error');
-      if (!closing) {
-        setTimeout(acquireListenClient, 5000).catch(() => {});
-      }
+      detachListenClient();
+      scheduleReconnect();
     });
 
-    await listenClient.query(`LISTEN ${CHANNEL_NAME}`);
+    await client.query(`LISTEN ${CHANNEL_NAME}`);
+
+    listenClient = client;
+  }
+
+  function scheduleReconnect() {
+    if (closing || reconnecting) {
+      return;
+    }
+    reconnecting = true;
+    (async () => {
+      try {
+        await sleep(RECONNECT_DELAY_MS);
+        if (closing) {
+          return;
+        }
+        await acquireListenClient();
+        logger.info('Event bus listen client reconnected');
+      } catch (error) {
+        logger.error({ err: error }, 'Event bus reconnect failed');
+      } finally {
+        reconnecting = false;
+      }
+    })();
   }
 
   await acquireListenClient();
@@ -130,13 +189,20 @@ async function initEventBus(dependencies = {}) {
   async function close() {
     closing = true;
     if (listenClient) {
+      const client = listenClient;
+      listenClient = null;
       try {
-        await listenClient.query(`UNLISTEN ${CHANNEL_NAME}`);
-      } catch {
+        await client.query(`UNLISTEN ${CHANNEL_NAME}`);
+      } catch (_error) {
         // ignore
       }
-      listenClient.release();
-      listenClient = null;
+      try {
+        client.removeAllListeners('notification');
+        client.removeAllListeners('error');
+        client.release(true);
+      } catch (_error) {
+        // ignore
+      }
     }
     emitter.removeAllListeners();
     busState = null;
@@ -161,13 +227,14 @@ async function initEventBus(dependencies = {}) {
 
   return busState;
 }
+
 function getEventBus() {
   if (!busState) {
     throw new Error('Event bus has not been initialized');
   }
   return busState;
 }
+
 module.exports = initEventBus;
 module.exports.getEventBus = getEventBus;
-
 module.exports.initEventBus = initEventBus;

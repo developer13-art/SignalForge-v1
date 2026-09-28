@@ -41,7 +41,7 @@ function createApp() {
   app.set('trust proxy', 1);
 
   app.use(requestIdMiddleware);
-  app.use(requestLoggerMiddleware);
+  //app.use(requestLoggerMiddleware);
   app.use(responseTimeMiddleware);
 
   app.use(helmetMiddleware());

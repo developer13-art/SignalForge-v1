@@ -6,16 +6,64 @@
  * summary of the wallet state, and the helpers the UI needs to sign
  * SIWS messages and to submit transactions.
  *
+ * The Solana wallet-adapter is mounted here, once, for the whole
+ * application. `SolanaProvider` renders the adapter's ConnectionProvider
+ * and WalletProvider around its children, then reads the adapter state
+ * from a child component (where useWallet() is valid).
+ *
  * @module client/src/context/SolanaContext
  */
 
-import { createContext, useContext, useMemo, useCallback } from 'react';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react';
+import {
+  ConnectionProvider,
+  WalletProvider as SolanaWalletProvider,
+  useConnection,
+  useWallet,
+} from '@solana/wallet-adapter-react';
+import {
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
+} from '@solana/wallet-adapter-wallets';
+import { clusterApiUrl } from '@solana/web3.js';
 import toast from 'react-hot-toast';
 
 const SolanaContext = createContext(null);
 
-export function SolanaProvider({ children }) {
+function resolveRpcEndpoint() {
+  const configured = import.meta?.env?.VITE_SOLANA_RPC_URL;
+  if (configured) {
+    return configured;
+  }
+  const network = import.meta?.env?.VITE_SOLANA_NETWORK || 'devnet';
+  if (network === 'mainnet-beta' || network === 'mainnet') {
+    return clusterApiUrl('mainnet-beta');
+  }
+  if (network === 'testnet') {
+    return clusterApiUrl('testnet');
+  }
+  return clusterApiUrl('devnet');
+}
+
+function resolveAutoConnect() {
+  const value = import.meta?.env?.VITE_SOLANA_WALLET_AUTO_CONNECT;
+  if (value === 'true') {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Inner provider. This component is a child of the Solana wallet
+ * adapter's providers, so useConnection() and useWallet() are valid
+ * here.
+ */
+function SolanaStateProvider({ children }) {
   const { connection } = useConnection();
   const {
     publicKey,
@@ -31,119 +79,109 @@ export function SolanaProvider({ children }) {
     select,
   } = useWallet();
 
-  const walletAddress = useMemo(() => (publicKey ? publicKey.toBase58() : null), [publicKey]);
+  const walletAddress = useMemo(
+    () => (publicKey ? publicKey.toBase58() : null),
+    [publicKey],
+  );
 
   const shortAddress = useMemo(() => {
     if (!walletAddress) {
       return null;
     }
-    return `${walletAddress.substring(0, 4)}…${walletAddress.substring(walletAddress.length - 4)}`;
+    return `${walletAddress.substring(0, 4)}...${walletAddress.substring(walletAddress.length - 4)}`;
   }, [walletAddress]);
 
-  const signSiwsMessage = useCallback(
-    async (message) => {
-      if (!signMessage) {
-        throw new Error('Wallet does not support message signing');
+  const disconnectSafely = useCallback(async () => {
+    try {
+      await disconnect();
+    } catch (error) {
+      toast.error(error?.message || 'Failed to disconnect wallet');
+    }
+  }, [disconnect]);
+
+  const selectWallet = useCallback(
+    (walletName) => {
+      const target = wallets.find((entry) => entry.adapter.name === walletName);
+      if (!target) {
+        toast.error(`Wallet ${walletName} is not available`);
+        return;
       }
-
-      const encoded = new TextEncoder().encode(message);
-      const signature = await signMessage(encoded);
-
-      return {
-        signatureBase58: toBase58(signature),
-        message,
-        walletAddress,
-      };
-    },
-    [signMessage, walletAddress],
-  );
-
-  const submitTransaction = useCallback(
-    async (transaction, options = {}) => {
-      if (!connected || !publicKey) {
-        toast.error('Connect a Solana wallet first');
-        throw new Error('Wallet not connected');
+      try {
+        select(target.adapter.name);
+      } catch (error) {
+        toast.error(error?.message || 'Failed to select wallet');
       }
-
-      const signature = await sendTransaction(transaction, connection, options);
-      toast.success('Transaction submitted');
-      return signature;
     },
-    [connected, publicKey, sendTransaction, connection],
+    [select, wallets],
   );
 
   const value = useMemo(
     () => ({
       connection,
-      wallet,
-      wallets,
-      select,
-      publicKey,
+      publicKey: publicKey || null,
       walletAddress,
       shortAddress,
       connected,
       connecting,
       disconnecting,
-      disconnect,
+      disconnect: disconnectSafely,
+      sendTransaction,
       signMessage,
       signTransaction,
-      signSiwsMessage,
-      submitTransaction,
+      wallet: wallet || null,
+      wallets,
+      select: selectWallet,
+      available: wallets.length > 0,
     }),
     [
       connection,
-      wallet,
-      wallets,
-      select,
       publicKey,
       walletAddress,
       shortAddress,
       connected,
       connecting,
       disconnecting,
-      disconnect,
+      disconnectSafely,
+      sendTransaction,
       signMessage,
       signTransaction,
-      signSiwsMessage,
-      submitTransaction,
+      wallet,
+      wallets,
+      selectWallet,
     ],
   );
 
   return <SolanaContext.Provider value={value}>{children}</SolanaContext.Provider>;
 }
 
-function toBase58(bytes) {
-  const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-  const digits = [0];
-  for (let i = 0; i < bytes.length; i += 1) {
-    let carry = bytes[i];
-    for (let j = 0; j < digits.length; j += 1) {
-      carry += digits[j] << 8;
-      digits[j] = carry % 58;
-      carry = (carry / 58) | 0;
-    }
-    while (carry > 0) {
-      digits.push(carry % 58);
-      carry = (carry / 58) | 0;
-    }
-  }
-  let result = '';
-  for (let i = bytes.length - 1; i >= 0 && bytes[i] === 0; i -= 1) {
-    result += '1';
-  }
-  for (let i = digits.length - 1; i >= 0; i -= 1) {
-    result += alphabet[digits[i]];
-  }
-  return result;
+/**
+ * Public provider. Mounts the Solana wallet adapter once for the
+ * application, then delegates state management to SolanaStateProvider.
+ */
+export function SolanaProvider({ children }) {
+  const endpoint = useMemo(() => resolveRpcEndpoint(), []);
+  const autoConnect = useMemo(() => resolveAutoConnect(), []);
+
+  const wallets = useMemo(
+    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
+    [],
+  );
+
+  return (
+    <ConnectionProvider endpoint={endpoint}>
+      <SolanaWalletProvider wallets={wallets} autoConnect={autoConnect}>
+        <SolanaStateProvider>{children}</SolanaStateProvider>
+      </SolanaWalletProvider>
+    </ConnectionProvider>
+  );
 }
 
-export function useSolanaContext() {
-  const ctx = useContext(SolanaContext);
-  if (!ctx) {
-    throw new Error('useSolanaContext must be used within a SolanaProvider');
+export function useSolana() {
+  const context = useContext(SolanaContext);
+  if (!context) {
+    throw new Error('useSolana must be used inside a SolanaProvider');
   }
-  return ctx;
+  return context;
 }
 
-export { SolanaContext };
 export default SolanaContext;
