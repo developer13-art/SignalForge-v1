@@ -1,40 +1,67 @@
+'use strict';
+
 /**
- * Feature Flags
+ * SignalForge - Frontend Feature Flags
  *
- * Client-side feature flags. These are intentionally separate from the
- * server's flags because some features are gated purely in the UI.
- * Both layers must agree before a gated feature is exposed.
- *
- * @module client/src/config/feature-flags.config
+ * Feature flags are read from environment variables at build time so
+ * that the frontend can hide or show entire sections without a
+ * separate deployment. Every new feature added to the platform must
+ * register its flag here.
  */
 
-function toBool(value, fallback = false) {
+function resolveFlag(name, fallback = false) {
+  if (typeof import.meta === 'undefined' || !import.meta.env) {
+    return fallback;
+  }
+  const value = import.meta.env[name];
   if (value === undefined || value === null || value === '') {
     return fallback;
   }
-  return String(value).toLowerCase() === 'true' || value === '1' || value === true;
+  const normalized = String(value).toLowerCase();
+  if (['true', '1', 'yes', 'on'].includes(normalized)) {
+    return true;
+  }
+  if (['false', '0', 'no', 'off'].includes(normalized)) {
+    return false;
+  }
+  return fallback;
 }
 
-export const featureFlags = Object.freeze({
-  solana: toBool(import.meta.env.VITE_FEATURE_SOLANA, true),
-  copyTrading: toBool(import.meta.env.VITE_FEATURE_COPY_TRADING, true),
-  marketplace: toBool(import.meta.env.VITE_FEATURE_MARKETPLACE, true),
-  referrals: toBool(import.meta.env.VITE_FEATURE_REFERRALS, true),
-  whiteLabel: toBool(import.meta.env.VITE_FEATURE_WHITE_LABEL, false),
-  consensusEngine: true,
-  providerCertification: true,
-  affiliate: true,
-  ib: true,
-  support: true,
-  replay: true,
-  notifications: true,
-  twoFactor: true,
-  emailVerification: true,
-  phoneVerification: true,
+const FEATURE_FLAGS = Object.freeze({
+  // Core platform
+  solana: resolveFlag('VITE_FEATURE_SOLANA', true),
+  solanaActions: resolveFlag('VITE_FEATURE_SOLANA_ACTIONS', true),
+  copyTrading: resolveFlag('VITE_FEATURE_COPY_TRADING', true),
+  consensus: resolveFlag('VITE_FEATURE_CONSENSUS', true),
+  providerCertification: resolveFlag('VITE_FEATURE_PROVIDER_CERTIFICATION', true),
+  marketplace: resolveFlag('VITE_FEATURE_MARKETPLACE', true),
+  referrals: resolveFlag('VITE_FEATURE_REFERRALS', true),
+  whiteLabel: resolveFlag('VITE_FEATURE_WHITE_LABEL', false),
+
+  // Feature B
+  proofOfAlpha: resolveFlag('VITE_FEATURE_PROOF_OF_ALPHA', true),
+
+  // Feature C
+  cryptoTrading: resolveFlag('VITE_FEATURE_CRYPTO_TRADING', true),
+  hybridExecution: resolveFlag('VITE_FEATURE_HYBRID_EXECUTION', true),
 });
 
-export function isFeatureEnabled(flagName) {
-  return Boolean(featureFlags[flagName]);
+function isEnabled(flagName) {
+  if (!flagName) {
+    return false;
+  }
+  return FEATURE_FLAGS[flagName] === true;
 }
 
-export default featureFlags;
+function getAllFlags() {
+  return { ...FEATURE_FLAGS };
+}
+
+function listEnabledFlags() {
+  return Object.entries(FEATURE_FLAGS)
+    .filter(([, enabled]) => enabled === true)
+    .map(([name]) => name);
+}
+
+export default FEATURE_FLAGS;
+export { FEATURE_FLAGS, isEnabled, getAllFlags, listEnabledFlags };

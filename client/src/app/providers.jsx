@@ -1,55 +1,56 @@
-/**
- * Provider Composer
- *
- * Exposes a single component that wraps children with every top-level
- * provider required by the app. Used by tests and by the root `App`
- * to avoid repeating the provider tree.
- *
- * @module client/src/app/providers
- */
-
+import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
+import { Toaster } from 'sonner';
 
-import { store } from './store.js';
-import { queryClient } from './queryClient.js';
+import store from './store';
+import queryClient from './queryClient';
+import { AuthProvider } from '../context/AuthContext';
+import { UserProvider } from '../context/UserContext';
+import { ThemeProvider } from '../context/ThemeContext';
+import { NotificationProvider } from '../context/NotificationContext';
+import { WalletProvider } from '../context/WalletContext';
+import { SolanaProvider } from '../context/SolanaContext';
+import { WhiteLabelProvider } from '../context/WhiteLabelContext';
 
-import { ThemeProvider } from '../context/ThemeContext.jsx';
-import { AuthProvider } from '../context/AuthContext.jsx';
-import { UserProvider } from '../context/UserContext.jsx';
-import { NotificationProvider } from '../context/NotificationContext.jsx';
-import { WalletProvider } from '../context/WalletContext.jsx';
-import { SolanaProvider } from '../context/SolanaContext.jsx';
-import { WhiteLabelProvider } from '../context/WhiteLabelContext.jsx';
-
-export default function AppProviders({ children, withRouter = true }) {
-  const content = (
+/**
+ * SignalForge - Application Providers
+ *
+ * Composes the entire provider tree the application relies on. The
+ * ordering is deliberate:
+ *
+ *   1. Redux store
+ *   2. React Query client
+ *   3. Theme (needs to be first so that children can read the theme)
+ *   4. Auth (needs Redux)
+ *   5. User (needs Auth)
+ *   6. Notification (needs User)
+ *   7. WhiteLabel (branding overrides; needs to be before Wallet)
+ *   8. Wallet (generic wallet provider; used by Auth upgrades)
+ *   9. Solana (specific to on-chain features; needs Wallet)
+ *  10. Toast notifications (mounted last so all contexts can emit)
+ */
+export default function AppProviders({ children }) {
+  return (
     <ReduxProvider store={store}>
       <QueryClientProvider client={queryClient}>
-        <HelmetProvider>
-          <ThemeProvider>
-            <WhiteLabelProvider>
-              <AuthProvider>
-                <UserProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <UserProvider>
+              <NotificationProvider>
+                <WhiteLabelProvider>
                   <WalletProvider>
                     <SolanaProvider>
-                      <NotificationProvider>{children}</NotificationProvider>
+                      {children}
+                      <Toaster position="top-right" richColors closeButton />
                     </SolanaProvider>
                   </WalletProvider>
-                </UserProvider>
-              </AuthProvider>
-            </WhiteLabelProvider>
-          </ThemeProvider>
-        </HelmetProvider>
+                </WhiteLabelProvider>
+              </NotificationProvider>
+            </UserProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ReduxProvider>
   );
-
-  if (!withRouter) {
-    return content;
-  }
-
-  return <BrowserRouter>{content}</BrowserRouter>;
 }

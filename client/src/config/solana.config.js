@@ -1,55 +1,65 @@
+'use strict';
+
 /**
- * Solana Configuration
+ * SignalForge - Frontend Solana Configuration
  *
- * Client-side Solana network and program configuration. Values come
- * from Vite environment variables so devnet and mainnet deployments
- * can be swapped without a rebuild.
- *
- * @module client/src/config/solana.config
+ * Everything the frontend needs to talk to the Solana network and to
+ * SignalForge's on-chain features. Kept in one place so the network
+ * can be switched without editing feature code.
  */
 
-const network = import.meta.env.VITE_SOLANA_NETWORK || 'devnet';
+function resolveEnv(name, fallback) {
+  if (typeof import.meta === 'undefined' || !import.meta.env) {
+    return fallback;
+  }
+  const value = import.meta.env[name];
+  if (value === undefined || value === null || value === '') {
+    return fallback;
+  }
+  return value;
+}
 
-const DEFAULT_RPC = {
-  'mainnet-beta': 'https://api.mainnet-beta.solana.com',
-  devnet: 'https://api.devnet.solana.com',
-  testnet: 'https://api.testnet.solana.com',
-  localnet: 'http://localhost:8899',
-};
+const SOLANA_NETWORK = resolveEnv('VITE_SOLANA_NETWORK', 'mainnet-beta');
 
-const DEFAULT_WS = {
-  'mainnet-beta': 'wss://api.mainnet-beta.solana.com',
-  devnet: 'wss://api.devnet.solana.com',
-  testnet: 'wss://api.testnet.solana.com',
-  localnet: 'ws://localhost:8900',
-};
-
-export const solanaConfig = Object.freeze({
-  network,
-  rpcUrl: import.meta.env.VITE_SOLANA_RPC_URL || DEFAULT_RPC[network] || DEFAULT_RPC.devnet,
-  wsUrl: import.meta.env.VITE_SOLANA_WS_URL || DEFAULT_WS[network] || DEFAULT_WS.devnet,
-  commitment: 'confirmed',
-  programs: {
-    attestation: import.meta.env.VITE_SOLANA_ATTESTATION_PROGRAM_ID || null,
-    provenance: import.meta.env.VITE_SOLANA_PROVENANCE_PROGRAM_ID || null,
-    payment: import.meta.env.VITE_SOLANA_PAYMENT_PROGRAM_ID || null,
+const SOLANA_CLUSTERS = Object.freeze({
+  'mainnet-beta': {
+    network: 'mainnet-beta',
+    rpcUrl: 'https://api.mainnet-beta.solana.com',
+    wsUrl: 'wss://api.mainnet-beta.solana.com',
+    explorerUrl: 'https://explorer.solana.com',
+    clusterQuery: '',
   },
-  tokens: {
-    SOL: { symbol: 'SOL', decimals: 9 },
-    USDC: {
-      symbol: 'USDC',
-      decimals: 6,
-      mainnetMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-      devnetMint: '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU',
-    },
-    USDT: {
-      symbol: 'USDT',
-      decimals: 6,
-      mainnetMint: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-      devnetMint: 'EJwZgeZrdC8TXTQbQBoL6bfuAnFUUy1PVCMB4DYPzVaS',
-    },
+  devnet: {
+    network: 'devnet',
+    rpcUrl: 'https://api.devnet.solana.com',
+    wsUrl: 'wss://api.devnet.solana.com',
+    explorerUrl: 'https://explorer.solana.com',
+    clusterQuery: '?cluster=devnet',
   },
-  walletStorageKey: 'signalforge.solana.wallet',
+  testnet: {
+    network: 'testnet',
+    rpcUrl: 'https://api.testnet.solana.com',
+    wsUrl: 'wss://api.testnet.solana.com',
+    explorerUrl: 'https://explorer.solana.com',
+    clusterQuery: '?cluster=testnet',
+  },
 });
 
-export default solanaConfig;
+const cluster = SOLANA_CLUSTERS[SOLANA_NETWORK] || SOLANA_CLUSTERS['mainnet-beta'];
+
+const SOLANA_CONFIG = Object.freeze({
+  ...cluster,
+  commitment: resolveEnv('VITE_SOLANA_COMMITMENT', 'confirmed'),
+  memoProgramId: 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
+  tokenProgramId: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+  token2022ProgramId: 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
+  associatedTokenProgramId: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+
+  explorer: {
+    txUrl: (signature) => `${cluster.explorerUrl}/tx/${signature}${cluster.clusterQuery}`,
+    addressUrl: (address) => `${cluster.explorerUrl}/address/${address}${cluster.clusterQuery}`,
+  },
+});
+
+export default SOLANA_CONFIG;
+export { SOLANA_CONFIG, SOLANA_CLUSTERS };

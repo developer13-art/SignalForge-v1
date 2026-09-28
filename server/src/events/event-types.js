@@ -1,104 +1,68 @@
+'use strict';
+
 /**
- * Event Types
+ * SignalForge - Event Type Registry
  *
- * Re-exports the shared event type constants and provides a mapping
- * from each event type to its logical category so consumers can
- * subscribe at the category level.
- *
- * @module server/events/event-types
+ * Aggregates every event name emitted across the platform. Consumers
+ * subscribe to these names; new features (Solana Actions, Proof of
+ * Alpha, hybrid execution) add their events to the same registry so
+ * that a single subscription point exists for the whole platform.
  */
 
-import { EVENT_TYPES } from '@signalforge/shared/constants/event-types';
+const ACTIONS_EVENTS = require('../modules/solana/actions/actions.events');
+const PROOF_EVENTS = require('../modules/solana/proof-of-alpha/proof.events');
+const ROUTER_EVENTS = require('../modules/execution/routers/execution-router.events');
 
-export { EVENT_TYPES };
-
-export const EVENT_CATEGORY_MAP = Object.freeze({
-  SIGNAL: [
-    EVENT_TYPES.MESSAGE_RECEIVED,
-    EVENT_TYPES.MESSAGE_CLASSIFIED,
-    EVENT_TYPES.SIGNAL_DETECTED,
-    EVENT_TYPES.SIGNAL_ANALYSIS_REQUESTED,
-    EVENT_TYPES.SIGNAL_ANALYZED,
-    EVENT_TYPES.SIGNAL_UPDATED,
-    EVENT_TYPES.SIGNAL_DELETED,
-    EVENT_TYPES.SIGNAL_VALIDATED,
-    EVENT_TYPES.SIGNAL_VALIDATION_FAILED,
-    EVENT_TYPES.PROVIDER_DNA_LEARNED,
-    EVENT_TYPES.PROVIDER_DNA_UPDATED,
-    EVENT_TYPES.SIGNAL_DUPLICATE_DETECTED,
-    EVENT_TYPES.SIGNAL_CONFLICT_DETECTED,
-    EVENT_TYPES.CONSENSUS_REACHED,
-    EVENT_TYPES.CONSENSUS_FAILED,
-    EVENT_TYPES.SIGNAL_FANOUT_REQUESTED,
-    EVENT_TYPES.SIGNAL_FANOUT_COMPLETED,
-  ],
-  TRADING: [
-    EVENT_TYPES.RISK_CHECK_REQUESTED,
-    EVENT_TYPES.RISK_APPROVED,
-    EVENT_TYPES.RISK_REJECTED,
-    EVENT_TYPES.RISK_LIMIT_HIT,
-    EVENT_TYPES.AUTOMATION_RULE_TRIGGERED,
-    EVENT_TYPES.EXECUTION_REQUESTED,
-    EVENT_TYPES.EXECUTION_ACCEPTED,
-    EVENT_TYPES.EXECUTION_REJECTED,
-    EVENT_TYPES.EXECUTION_FAILED,
-    EVENT_TYPES.EXECUTION_RETRY,
-    EVENT_TYPES.TRADE_EXECUTED,
-    EVENT_TYPES.TRADE_OPENED,
-    EVENT_TYPES.TRADE_UPDATED,
-    EVENT_TYPES.TRADE_CLOSED,
-    EVENT_TYPES.TRADE_ARCHIVED,
-    EVENT_TYPES.TRADE_SHADOW_CREATED,
-  ],
-  KYC: [
-    EVENT_TYPES.KYC_SUBMITTED,
-    EVENT_TYPES.KYC_APPROVED,
-    EVENT_TYPES.KYC_REJECTED,
-    EVENT_TYPES.KYC_EXPIRED,
-    EVENT_TYPES.KYC_RESUBMIT_REQUESTED,
-  ],
-  BILLING: [
-    EVENT_TYPES.SUBSCRIPTION_CREATED,
-    EVENT_TYPES.SUBSCRIPTION_ACTIVATED,
-    EVENT_TYPES.SUBSCRIPTION_RENEWED,
-    EVENT_TYPES.SUBSCRIPTION_EXPIRED,
-    EVENT_TYPES.SUBSCRIPTION_CANCELLED,
-    EVENT_TYPES.SUBSCRIPTION_PAST_DUE,
-    EVENT_TYPES.PAYMENT_INITIATED,
-    EVENT_TYPES.PAYMENT_COMPLETED,
-    EVENT_TYPES.PAYMENT_FAILED,
-    EVENT_TYPES.PAYMENT_REFUNDED,
-  ],
-  REFERRAL: [
-    EVENT_TYPES.REFERRAL_RELATIONSHIP_CREATED,
-    EVENT_TYPES.REFERRAL_REWARD_CALCULATED,
-    EVENT_TYPES.REFERRAL_REWARD_APPROVED,
-    EVENT_TYPES.REFERRAL_REWARD_SETTLED,
-    EVENT_TYPES.REFERRAL_SETTLEMENT_STARTED,
-    EVENT_TYPES.REFERRAL_SETTLEMENT_COMPLETED,
-  ],
-  SOLANA: [
-    EVENT_TYPES.SOLANA_WALLET_CONNECTED,
-    EVENT_TYPES.SOLANA_WALLET_DISCONNECTED,
-    EVENT_TYPES.SOLANA_ATTESTATION_ANCHORED,
-    EVENT_TYPES.SOLANA_PROVENANCE_ANCHORED,
-    EVENT_TYPES.SOLANA_TRANSACTION_CONFIRMED,
-    EVENT_TYPES.SOLANA_TRANSACTION_FAILED,
-    EVENT_TYPES.SOLANA_PAYMENT_CONFIRMED,
-  ],
+const CORE_EVENTS = Object.freeze({
+  // Existing platform events.
+  SIGNAL_RECEIVED: 'signal.received',
+  SIGNAL_CLASSIFIED: 'signal.classified',
+  SIGNAL_PARSED: 'signal.parsed',
+  SIGNAL_VALIDATED: 'signal.validated',
+  SIGNAL_FANOUT_REQUESTED: 'signal.fanout.requested',
+  RISK_APPROVED: 'risk.approved',
+  RISK_REJECTED: 'risk.rejected',
+  TRADE_EXECUTED: 'trade.executed',
+  TRADE_CLOSED: 'trade.closed',
+  SUBSCRIPTION_CREATED: 'subscription.created',
+  PAYMENT_COMPLETED: 'payment.completed',
+  KYC_APPROVED: 'kyc.approved',
+  REFERRAL_SETTLED: 'referral.settled',
+  NOTIFICATION_SENT: 'notification.sent',
+  MARKETPLACE_REVIEW_ADDED: 'marketplace.review.added',
+  PROVIDER_DNA_LEARNED: 'provider.dna.learned',
+  BROKER_ACCOUNT_CONNECTED: 'broker.account.connected',
+  BROKER_ACCOUNT_DISCONNECTED: 'broker.account.disconnected',
 });
 
-export function getCategoryForEvent(eventType) {
-  for (const [category, events] of Object.entries(EVENT_CATEGORY_MAP)) {
-    if (events.includes(eventType)) {
-      return category;
-    }
+function listAllEvents() {
+  const all = {
+    ...CORE_EVENTS,
+    ...ACTIONS_EVENTS.ACTIONS_EVENT_NAMES,
+    ...PROOF_EVENTS.PROOF_EVENT_NAMES,
+    ...ROUTER_EVENTS.ROUTE_EVENT_NAMES,
+  };
+
+  const deduped = {};
+  for (const [key, value] of Object.entries(all)) {
+    deduped[value] = true;
   }
-  return 'UNCATEGORIZED';
+
+  return Object.keys(deduped).sort();
 }
 
-export function getEventsForCategory(category) {
-  return EVENT_CATEGORY_MAP[category] || [];
+function isKnownEvent(name) {
+  if (!name) {
+    return false;
+  }
+  return listAllEvents().includes(name);
 }
 
-export const EVENT_CATEGORIES = Object.freeze(Object.keys(EVENT_CATEGORY_MAP));
+module.exports = {
+  CORE_EVENTS,
+  ACTIONS_EVENTS: ACTIONS_EVENTS.ACTIONS_EVENT_NAMES,
+  PROOF_EVENTS: PROOF_EVENTS.PROOF_EVENT_NAMES,
+  ROUTER_EVENTS: ROUTER_EVENTS.ROUTE_EVENT_NAMES,
+  listAllEvents,
+  isKnownEvent,
+};

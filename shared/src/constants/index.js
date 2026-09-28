@@ -1,41 +1,101 @@
+'use strict';
+
 /**
- * Constants Barrel Export
+ * SignalForge - Shared Constants Root
  *
- * @module @signalforge/shared/constants
+ * Aggregates every constant module in the shared package so that
+ * consumers import from a single location. New features add their
+ * constants to this file when their constants folder is created.
  */
 
-export * from './roles.js';
-export * from './permissions.js';
-export * from './account-statuses.js';
-export * from './kyc-statuses.js';
-export * from './kyc-document-types.js';
-export * from './trade-states.js';
-export * from './trade-events.js';
-export * from './trade-actors.js';
-export * from './signal-classifications.js';
-export * from './signal-statuses.js';
-export * from './order-types.js';
-export * from './order-directions.js';
-export * from './subscription-statuses.js';
-export * from './subscription-plans.js';
-export * from './payment-statuses.js';
-export * from './payment-providers.js';
-export * from './withdrawal-statuses.js';
-export * from './referral-statuses.js';
-export * from './referral-settlement-statuses.js';
-export * from './ledger-entry-types.js';
-export * from './notification-types.js';
-export * from './notification-channels.js';
-export * from './job-types.js';
-export * from './job-statuses.js';
-export * from './event-types.js';
-export * from './broker-platforms.js';
-export * from './account-types.js';
-export * from './source-types.js';
-export * from './provider-certification-statuses.js';
-export * from './marketplace-categories.js';
-export * from './trading-styles.js';
-export * from './solana-networks.js';
-export * from './solana-tokens.js';
-export * from './solana-attestation-types.js';
-export * from './solana-payment-statuses.js';
+const coreConstants = require('./roles');
+const permissions = require('./permissions');
+const accountStatuses = require('./account-statuses');
+const kycStatuses = require('./kyc-statuses');
+const kycDocumentTypes = require('./kyc-document-types');
+const tradeStates = require('./trade-states');
+const tradeEvents = require('./trade-events');
+const tradeActors = require('./trade-actors');
+const signalClassifications = require('./signal-classifications');
+const signalStatuses = require('./signal-statuses');
+const orderTypes = require('./order-types');
+const orderDirections = require('./order-directions');
+const subscriptionStatuses = require('./subscription-statuses');
+const subscriptionPlans = require('./subscription-plans');
+const paymentStatuses = require('./payment-statuses');
+const paymentProviders = require('./payment-providers');
+const withdrawalStatuses = require('./withdrawal-statuses');
+const referralStatuses = require('./referral-statuses');
+const referralSettlementStatuses = require('./referral-settlement-statuses');
+const ledgerEntryTypes = require('./ledger-entry-types');
+const notificationTypes = require('./notification-types');
+const notificationChannels = require('./notification-channels');
+const jobTypes = require('./job-types');
+const jobStatuses = require('./job-statuses');
+const eventTypes = require('./event-types');
+const brokerPlatforms = require('./broker-platforms');
+const accountTypes = require('./account-types');
+const sourceTypes = require('./source-types');
+const providerCertificationStatuses = require('./provider-certification-statuses');
+const marketplaceCategories = require('./marketplace-categories');
+const tradingStyles = require('./trading-styles');
+const solanaNetworks = require('./solana-networks');
+const solanaTokens = require('./solana-tokens');
+const solanaAttestationTypes = require('./solana-attestation-types');
+const solanaPaymentStatuses = require('./solana-payment-statuses');
+
+// Feature A
+const solanaActions = require('./solana-actions');
+
+// Feature B
+const proofOfAlpha = require('./proof-of-alpha');
+
+// Feature C
+const cryptoPairs = require('./crypto-pairs');
+
+module.exports = {
+  ...coreConstants,
+  ...permissions,
+  ...accountStatuses,
+  ...kycStatuses,
+  ...kycDocumentTypes,
+  ...tradeStates,
+  ...tradeEvents,
+  ...tradeActors,
+  ...signalClassifications,
+  ...signalStatuses,
+  ...orderTypes,
+  ...orderDirections,
+  ...subscriptionStatuses,
+  ...subscriptionPlans,
+  ...paymentStatuses,
+  ...paymentProviders,
+  ...withdrawalStatuses,
+  ...referralStatuses,
+  ...referralSettlementStatuses,
+  ...ledgerEntryTypes,
+  ...notificationTypes,
+  ...notificationChannels,
+  ...jobTypes,
+  ...jobStatuses,
+  ...eventTypes,
+  ...brokerPlatforms,
+  ...accountTypes,
+  ...sourceTypes,
+  ...providerCertificationStatuses,
+  ...marketplaceCategories,
+  ...tradingStyles,
+  ...solanaNetworks,
+  ...solanaTokens,
+  ...solanaAttestationTypes,
+  ...solanaPaymentStatuses,
+
+  // Feature A
+  SOLANA_ACTIONS: solanaActions,
+
+  // Feature B
+  PROOF_OF_ALPHA: proofOfAlpha,
+
+  // Feature C
+  CRYPTO_PAIRS: cryptoPairs,
+};

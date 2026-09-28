@@ -1,138 +1,127 @@
+'use strict';
+
 /**
- * Connection Service
+ * SignalForge - Solana Connection Configuration
  *
- * Provides a cached Solana RPC connection and health information.
- * The concrete library (@solana/web3.js) is loaded lazily so that
- * the platform can boot without it installed in non-Solana
- * environments.
- *
- * @module server/modules/solana/config/connection.service
+ * The single source of truth for how the platform reaches the
+ * Solana network. Every Solana module reads its RPC URL, WebSocket
+ * URL, and commitment level from here.
  */
 
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { getRpcUrl, getNetworkInfo } from './network.service';
-
-let cachedConnection = null;
-let cachedConnectionRpcUrl = null;
-
-async function loadWeb3() {
-  try {
-    const module = await import('@solana/web3.js');
-    if (!module || !module.Connection) {
-      throw new Error('Connection export missing');
-    }
-    return module;
-  } catch (err) {
-    logger.warn({ err }, 'Solana web3 library is not installed');
-    throw new AppError(
-      'Solana web3 library is not available',
-      ERROR_CODES.CONFIGURATION_MISSING,
-      500,
-    );
+function optionalEnv(key, fallback = undefined) {
+  const value = process.env[key];
+  if (value === undefined || value === null || String(value).trim() === '') {
+    return fallback;
   }
+  return String(value).trim();
 }
 
-export async function getConnection() {
-  const rpcUrl = getRpcUrl();
-
-  if (cachedConnection && cachedConnectionRpcUrl === rpcUrl) {
-    return cachedConnection;
+function optionalBool(key, fallback = false) {
+  const value = optionalEnv(key);
+  if (value === undefined) {
+    return fallback;
   }
-
-  const web3 = await loadWeb3();
-
-  cachedConnection = new web3.Connection(rpcUrl, 'confirmed');
-  cachedConnectionRpcUrl = rpcUrl;
-
-  logger.info({ rpcUrl }, 'Solana connection created');
-
-  return cachedConnection;
-}
-
-export async function checkConnectionHealth() {
-  const info = getNetworkInfo();
-
-  try {
-    const connection = await getConnection();
-
-    const start = Date.now();
-    const slot = await connection.getSlot();
-    const latencyMs = Date.now() - start;
-
-    return {
-      healthy: true,
-      network: info.network,
-      rpcUrl: info.rpcUrl,
-      slot,
-      latencyMs,
-    };
-  } catch (err) {
-    logger.warn({ err }, 'Solana connection health check failed');
-    return {
-      healthy: false,
-      network: info.network,
-      rpcUrl: info.rpcUrl,
-      error: err.message,
-    };
+  const normalized = value.toLowerCase();
+  if (['true', '1', 'yes', 'on'].includes(normalized)) {
+    return true;
   }
+  if (['false', '0', 'no', 'off'].includes(normalized)) {
+    return false;
+  }
+  return fallback;
 }
 
-export async function getCurrentSlot() {
-  const connection = await getConnection();
-  return connection.getSlot();
+const NETWORKS = Object.freeze({
+  'mainnet-beta': {
+    rpcUrl: 'https://api.mainnet-beta.solana.com',
+    wsUrl: 'wss://api.mainnet-beta.solana.com',
+  },
+  devnet: {
+    rpcUrl: 'https://api.devnet.solana.com',
+    wsUrl: 'wss://api.devnet.solana.com',
+  },
+  testnet: {
+    rpcUrl: 'https://api.testnet.solana.com',
+    wsUrl: 'wss://api.testnet.solana.com',
+  },
+});
+
+function resolveNetwork() {
+  return optionalEnv('SOLANA_NETWORK', 'mainnet-beta');
 }
 
-export async function getLatestBlockhash() {
-  const connection = await getConnection();
-  const response = await connection.getLatestBlockhash('confirmed');
+function resolveRpcUrl() {
+  const explicit = optionalEnv('SOLANA_RPC_URL');
+  if (explicit) {
+    return explicit;
+  }
+  const network = resolveNetwork();
+  const config = NETWORKS[network] || NETWORKS['mainnet-beta'];
+  return config.rpcUrl;
+}
+
+function resolveWsUrl() {
+  const explicit = optionalEnv('SOLANA_WS_URL');
+  if (explicit) {
+    return explicit;
+  }
+  const network = resolveNetwork();
+  const config = NETWORKS[network] || NETWORKS['mainnet-beta'];
+  return config.wsUrl;
+}
+
+function resolveCommitment() {
+  const value = optionalEnv('SOLANA_COMMITMENT', 'confirmed');
+  if (!['processed', 'confirmed', 'finalized'].includes(value)) {
+    return 'confirmed';
+  }
+  return value;
+}
+
+function resolveTreasuryWallet() {
+  return optionalEnv('SOLANA_TREASURY_WALLET', '');
+}
+
+function resolveAttestationProgramId() {
+  return optionalEnv('SOLANA_ATTESTATION_PROGRAM_ID', '');
+}
+
+function resolveProvenanceProgramId() {
+  return optionalEnv('SOLANA_PROVENANCE_PROGRAM_ID', '');
+}
+
+function resolvePaymentProgramId() {
+  return optionalEnv('SOLANA_PAYMENT_PROGRAM_ID', '');
+}
+
+function isIndexerEnabled() {
+  return optionalBool('SOLANA_INDEXER_ENABLED', true);
+}
+
+function getNetworkConfig() {
+  const network = resolveNetwork();
   return {
-    blockhash: response.blockhash,
-    lastValidBlockHeight: response.lastValidBlockHeight,
+    network,
+    rpcUrl: resolveRpcUrl(),
+    wsUrl: resolveWsUrl(),
+    commitment: resolveCommitment(),
+    treasuryWallet: resolveTreasuryWallet(),
+    attestationProgramId: resolveAttestationProgramId(),
+    provenanceProgramId: resolveProvenanceProgramId(),
+    paymentProgramId: resolvePaymentProgramId(),
   };
 }
 
-export async function getBalance({ walletAddress }) {
-  if (!walletAddress) {
-    throw new AppError('walletAddress is required', ERROR_CODES.VALIDATION_FAILED, 400);
-  }
-
-  const connection = await getConnection();
-  const lamports = await connection.getBalance(new (await loadWeb3()).PublicKey(walletAddress));
-
-  return {
-    walletAddress,
-    lamports,
-    sol: lamports / 1_000_000_000,
-  };
-}
-
-export async function getTransaction({ txSignature }) {
-  if (!txSignature) {
-    throw new AppError('txSignature is required', ERROR_CODES.VALIDATION_FAILED, 400);
-  }
-
-  const connection = await getConnection();
-  const tx = await connection.getTransaction(txSignature, {
-    commitment: 'confirmed',
-    maxSupportedTransactionVersion: 0,
-  });
-
-  return tx;
-}
-
-export function resetConnection() {
-  cachedConnection = null;
-  cachedConnectionRpcUrl = null;
-}
-
-export const connectionService = {
-  getConnection,
-  checkConnectionHealth,
-  getCurrentSlot,
-  getLatestBlockhash,
-  getBalance,
-  getTransaction,
-  resetConnection,
+module.exports = {
+  NETWORKS,
+  resolveNetwork,
+  resolveRpcUrl,
+  resolveWsUrl,
+  resolveCommitment,
+  resolveTreasuryWallet,
+  resolveAttestationProgramId,
+  resolveProvenanceProgramId,
+  resolvePaymentProgramId,
+  isIndexerEnabled,
+  getNetworkConfig,
 };

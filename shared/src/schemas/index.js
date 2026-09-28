@@ -1,23 +1,61 @@
+'use strict';
+
 /**
- * Schemas Barrel Export
+ * SignalForge - Shared Schemas Root
  *
- * Central export point for all shared schema definitions.
- *
- * @module @signalforge/shared/schemas
+ * Aggregates every schema module in the shared package so that
+ * consumers import from a single location. Each feature keeps its
+ * schemas under its own namespace so that collisions are impossible.
  */
 
-export * from './standardized-signal.schema.js';
-export * from './signal-event.schema.js';
-export * from './trade-object.schema.js';
-export * from './risk-decision.schema.js';
-export * from './automation-rule.schema.js';
-export * from './execution-request.schema.js';
-export * from './provider-dna-rule.schema.js';
-export * from './kyc-application.schema.js';
-export * from './referral-reward.schema.js';
-export * from './ledger-entry.schema.js';
-export * from './notification-payload.schema.js';
-export * from './event-payload.schema.js';
-export * from './solana-attestation.schema.js';
-export * from './solana-provenance.schema.js';
-export * from './solana-payment.schema.js';
+const standardizedSignal = require('./standardized-signal.schema');
+const signalEvent = require('./signal-event.schema');
+const tradeObject = require('./trade-object.schema');
+const riskDecision = require('./risk-decision.schema');
+const automationRule = require('./automation-rule.schema');
+const executionRequest = require('./execution-request.schema');
+const providerDnaRule = require('./provider-dna-rule.schema');
+const kycApplication = require('./kyc-application.schema');
+const referralReward = require('./referral-reward.schema');
+const ledgerEntry = require('./ledger-entry.schema');
+const notificationPayload = require('./notification-payload.schema');
+const eventPayload = require('./event-payload.schema');
+const solanaAttestation = require('./solana-attestation.schema');
+const solanaProvenance = require('./solana-provenance.schema');
+const solanaPayment = require('./solana-payment.schema');
+
+// Feature A
+const actionsSchemas = require('./actions');
+
+// Feature B
+const proofOfAlphaSchemas = require('./proof-of-alpha');
+
+// Feature C
+const executionRoutingSchemas = require('./execution-routing');
+
+module.exports = {
+  ...standardizedSignal,
+  ...signalEvent,
+  ...tradeObject,
+  ...riskDecision,
+  ...automationRule,
+  ...executionRequest,
+  ...providerDnaRule,
+  ...kycApplication,
+  ...referralReward,
+  ...ledgerEntry,
+  ...notificationPayload,
+  ...eventPayload,
+  ...solanaAttestation,
+  ...solanaProvenance,
+  ...solanaPayment,
+
+  // Feature A
+  ...actionsSchemas,
+
+  // Feature B
+  ...proofOfAlphaSchemas,
+
+  // Feature C
+  ...executionRoutingSchemas,
+};

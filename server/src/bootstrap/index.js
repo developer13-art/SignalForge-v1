@@ -1,30 +1,70 @@
-/**
- * Bootstrap Barrel Export
- *
- * Central export point for all bootstrap modules used during server
- * startup and shutdown.
- *
- * @module signalforge/server/bootstrap
- */
+'use strict';
 
-export { loadEnv } from './loadEnv.js';
-export { validateEnv } from './validateEnv.js';
-export { initLogger } from './initLogger.js';
-export { initDatabase } from './initDatabase.js';
-export { initMigrations } from './initMigrations.js';
-export { initEventBus } from './initEventBus.js';
-export { initJobScheduler } from './initJobScheduler.js';
-export { initJobRunner } from './initJobRunner.js';
-export { initWebSocket } from './initWebSocket.js';
-export { initSolanaConnection } from './initSolanaConnection.js';
-export { initSolanaIndexer } from './initSolanaIndexer.js';
-export { initTelegramListeners } from './initTelegramListeners.js';
-export { initDiscordListeners } from './initDiscordListeners.js';
-export { initWhatsAppListeners } from './initWhatsAppListeners.js';
-export { initEmailListeners } from './initEmailListeners.js';
-export { initMetaApiStreams } from './initMetaApiStreams.js';
-export { registerRoutes } from './registerRoutes.js';
-export { registerMiddleware } from './registerMiddleware.js';
-export { registerErrorHandlers } from './registerErrorHandlers.js';
-export { registerGracefulShutdown } from './registerGracefulShutdown.js';
-export { installGracefulShutdown } from './gracefulShutdown.js';
+const registerRoutes = require('./registerRoutes');
+const registerMiddleware = require('./registerMiddleware');
+const registerErrorHandlers = require('./registerErrorHandlers');
+const registerGracefulShutdown = require('./registerGracefulShutdown');
+
+const initDatabase = require('./initDatabase');
+const initMigrations = require('./initMigrations');
+const initEventBus = require('./initEventBus');
+const initJobScheduler = require('./initJobScheduler');
+const initJobRunner = require('./initJobRunner');
+const initWebSocket = require('./initWebSocket');
+const initSolanaConnection = require('./initSolanaConnection');
+const initSolanaIndexer = require('./initSolanaIndexer');
+const initTelegramListeners = require('./initTelegramListeners');
+const initDiscordListeners = require('./initDiscordListeners');
+const initWhatsAppListeners = require('./initWhatsAppListeners');
+const initEmailListeners = require('./initEmailListeners');
+const initMetaApiStreams = require('./initMetaApiStreams');
+const loadEnv = require('./loadEnv');
+const validateEnv = require('./validateEnv');
+
+/**
+ * SignalForge - Bootstrap Sequence
+ *
+ * Every subsystem the platform needs at startup is initialized in
+ * strict order. New features (Solana Actions, Proof of Alpha, hybrid
+ * execution) register their initializers here.
+ */
+async function bootstrap(app) {
+  // Environment
+  loadEnv();
+  validateEnv();
+
+  // Persistence
+  await initDatabase();
+  await initMigrations();
+
+  // Infrastructure
+  await initEventBus();
+  await initJobScheduler();
+  await initJobRunner();
+
+  // Solana
+  await initSolanaConnection();
+  await initSolanaIndexer();
+
+  // Signal sources
+  await initTelegramListeners();
+  await initDiscordListeners();
+  await initWhatsAppListeners();
+  await initEmailListeners();
+
+  // Broker connectivity
+  await initMetaApiStreams();
+
+  // Real-time
+  await initWebSocket(app);
+
+  // HTTP
+  registerMiddleware(app);
+  registerRoutes(app);
+  registerErrorHandlers(app);
+  registerGracefulShutdown();
+
+  return app;
+}
+
+module.exports = bootstrap;

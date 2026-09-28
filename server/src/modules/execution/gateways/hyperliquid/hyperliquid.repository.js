@@ -1,0 +1,474 @@
+'use strict';
+
+const { query, transaction } = require('../../../../database/connection');
+const { buildPagination } = require('../../../../database/helpers/pagination.helper');
+
+/**
+ * SignalForge - Hyperliquid Repository
+ *
+ * Persists Hyperliquid-specific state: orders, fills, positions, and
+ * market snapshots. Every submission produces at most one order row;
+ * fills are appended as they are observed.
+ */
+
+const TABLES = Object.freeze({
+  ORDERS: 'hyperliquid_orders',
+  FILLS: 'hyperliquid_fills',
+  POSITIONS: 'hyperliquid_positions',
+  MARKETS: 'hyperliquid_markets',
+});
+
+async function createOrder(client, payload) {
+  const sql = `
+    INSERT INTO ${TABLES.ORDERS} (
+      id,
+      user_id,
+      account_id,
+      cloid,
+      symbol,
+      side,
+      order_type,
+      tif,
+      size,
+      price,
+      trigger_price,
+      reduce_only,
+      leverage,
+      status,
+      exchange_response,
+      error_message,
+      submitted_at,
+      confirmed_at,
+      created_at,
+      updated_at
+    ) VALUES (
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+      $11, $12, $13, $14, $15, $16, $17, $18, NOW(), NOW()
+    )
+    RETURNING *;
+  `;
+
+  const params = [
+    payload.id,
+    payload.userId || null,
+    payload.accountId || null,
+    payload.cloid || null,
+    payload.symbol,
+    payload.side,
+    payload.orderType,
+    payload.tif || 'Ioc',
+    payload.size,
+    payload.price || null,
+    payload.triggerPrice || null,
+    payload.reduceOnly === true,
+    payload.leverage || null,
+    payload.status || 'pending',
+    payload.exchangeResponse ? JSON.stringify(payload.exchangeResponse) : null,
+    payload.errorMessage || null,
+    payload.submittedAt || null,
+    payload.confirmedAt || null,
+  ];
+
+  const executor = client || { query: (text, values) => query(text, values) };
+  const result = await executor.query(sql, params);
+  return result.rows[0];
+}
+
+async function findOrderById(id) {
+  const sql = `SELECT * FROM ${TABLES.ORDERS} WHERE id = $1 LIMIT 1;`;
+  const result = await query(sql, [id]);
+  return result.rows[0] || null;
+}
+
+async function findOrderByCloid({ userId, cloid }) {
+  const sql = `
+    SELECT * FROM ${TABLES.ORDERS}
+    WHERE user_id = $1 AND cloid = $2
+    LIMIT 1;
+  `;
+  const result = await query(sql, [userId, cloid]);
+  return result.rows[0] || null;
+}
+
+async function updateOrderStatus(id, updates) {
+  const columnMap = {
+    status: 'status',
+    exchangeResponse: 'exchange_response',
+    errorMessage: 'error_message',
+    submittedAt: 'submitted_at',
+    confirmedAt: 'confirmed_at',
+  };
+
+  const setClauses = ['updated_at = NOW()'];
+  const params = [id];
+
+  for (const [key, value] of Object.entries(updates || {})) {
+    const column = columnMap[key];
+    if (column && value !== undefined) {
+      params.push(key === 'exchangeResponse' ? JSON.stringify(value) : value);
+      setClauses.push(`${column} = $${params.length}`);
+    }
+  }
+
+  const sql = `
+    UPDATE ${TABLES.ORDERS}
+    SET ${setClauses.join(', ')}
+    WHERE id = $1
+    RETURNING *;
+  `;
+  const result = await query(sql, params);
+  return result.rows[0] || null;
+}
+
+async function listOrders({ userId, symbol, status, page = 1, pageSize = 20 }) {
+  const conditions = [];
+  const params = [];
+
+  if (userId) {
+    params.push(userId);
+    conditions.push(`user_id = $${params.length}`);
+  }
+  if (symbol) {
+    params.push(symbol);
+    conditions.push(`symbol = $${params.length}`);
+  }
+  if (status) {
+    params.push(status);
+    conditions.push(`status = $${params.length}`);
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+  const { limit, offset } = buildPagination({ page, pageSize });
+
+  const countSql = `SELECT COUNT(*)::int AS total FROM ${TABLES.ORDERS} ${whereClause};`;
+  const countResult = await query(countSql, params);
+  const total = countResult.rows[0]?.total || 0;
+
+  params.push(limit);
+  params.push(offset);
+
+  const listSql = `
+    SELECT * FROM ${TABLES.ORDERS}
+    ${whereClause}
+    ORDER BY created_at DESC
+    LIMIT $${params.length - 1} OFFSET $${params.length};
+  `;
+  const listResult = await query(listSql, params);
+
+  return { items: listResult.rows, total, page, pageSize };
+}
+
+async function createFill(client, payload) {
+  const sql = `
+    INSERT INTO ${TABLES.FILLS} (
+      id,
+      order_id,
+      user_id,
+      symbol,
+      side,
+      price,
+      size,
+      fee,
+      fee_token,
+      closed_pnl,
+      is_liquidation,
+      direction,
+      trade_id,
+      crossed,
+      fill_time,
+      created_at
+    ) VALUES (
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+      $11, $12, $13, $14, $15, NOW()
+    )
+    RETURNING *;
+  `;
+
+  const params = [
+    payload.id,
+    payload.orderId || null,
+    payload.userId || null,
+    payload.symbol,
+    payload.side,
+    payload.price,
+    payload.size,
+    payload.fee || null,
+    payload.feeToken || null,
+    payload.closedPnl || null,
+    payload.isLiquidation === true,
+    payload.direction || null,
+    payload.tradeId || null,
+    payload.crossed === true,
+    payload.fillTime || null,
+  ];
+
+  const executor = client || { query: (text, values) => query(text, values) };
+  const result = await executor.query(sql, params);
+  return result.rows[0];
+}
+
+async function listFills({ userId, symbol, page = 1, pageSize = 20 }) {
+  const conditions = [];
+  const params = [];
+
+  if (userId) {
+    params.push(userId);
+    conditions.push(`user_id = $${params.length}`);
+  }
+  if (symbol) {
+    params.push(symbol);
+    conditions.push(`symbol = $${params.length}`);
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+  const { limit, offset } = buildPagination({ page, pageSize });
+
+  const countSql = `SELECT COUNT(*)::int AS total FROM ${TABLES.FILLS} ${whereClause};`;
+  const countResult = await query(countSql, params);
+  const total = countResult.rows[0]?.total || 0;
+
+  params.push(limit);
+  params.push(offset);
+
+  const listSql = `
+    SELECT * FROM ${TABLES.FILLS}
+    ${whereClause}
+    ORDER BY fill_time DESC NULLS LAST, created_at DESC
+    LIMIT $${params.length - 1} OFFSET $${params.length};
+  `;
+  const listResult = await query(listSql, params);
+
+  return { items: listResult.rows, total, page, pageSize };
+}
+
+async function upsertPosition(client, payload) {
+  const sql = `
+    INSERT INTO ${TABLES.POSITIONS} (
+      id,
+      user_id,
+      symbol,
+      side,
+      size,
+      entry_price,
+      mark_price,
+      liquidation_price,
+      leverage,
+      margin_used,
+      unrealized_pnl,
+      realized_pnl,
+      status,
+      opened_at,
+      closed_at,
+      metadata,
+      created_at,
+      updated_at
+    ) VALUES (
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+      $11, $12, $13, $14, $15, $16, NOW(), NOW()
+    )
+    ON CONFLICT (id) DO UPDATE SET
+      size = EXCLUDED.size,
+      entry_price = EXCLUDED.entry_price,
+      mark_price = EXCLUDED.mark_price,
+      liquidation_price = EXCLUDED.liquidation_price,
+      leverage = EXCLUDED.leverage,
+      margin_used = EXCLUDED.margin_used,
+      unrealized_pnl = EXCLUDED.unrealized_pnl,
+      realized_pnl = EXCLUDED.realized_pnl,
+      status = EXCLUDED.status,
+      closed_at = EXCLUDED.closed_at,
+      metadata = EXCLUDED.metadata,
+      updated_at = NOW()
+    RETURNING *;
+  `;
+
+  const params = [
+    payload.id,
+    payload.userId,
+    payload.symbol,
+    payload.side,
+    payload.size,
+    payload.entryPrice,
+    payload.markPrice || null,
+    payload.liquidationPrice || null,
+    payload.leverage || null,
+    payload.marginUsed || null,
+    payload.unrealizedPnl || null,
+    payload.realizedPnl || null,
+    payload.status || 'open',
+    payload.openedAt || null,
+    payload.closedAt || null,
+    JSON.stringify(payload.metadata || {}),
+  ];
+
+  const executor = client || { query: (text, values) => query(text, values) };
+  const result = await executor.query(sql, params);
+  return result.rows[0];
+}
+
+async function listOpenPositions(userId) {
+  const sql = `
+    SELECT * FROM ${TABLES.POSITIONS}
+    WHERE user_id = $1 AND status = 'open'
+    ORDER BY opened_at DESC NULLS LAST;
+  `;
+  const result = await query(sql, [userId]);
+  return result.rows;
+}
+
+async function listPositions({ userId, status, page = 1, pageSize = 20 }) {
+  const conditions = ['user_id = $1'];
+  const params = [userId];
+
+  if (status) {
+    params.push(status);
+    conditions.push(`status = $${params.length}`);
+  }
+
+  const whereClause = `WHERE ${conditions.join(' AND ')}`;
+  const { limit, offset } = buildPagination({ page, pageSize });
+
+  const countSql = `SELECT COUNT(*)::int AS total FROM ${TABLES.POSITIONS} ${whereClause};`;
+  const countResult = await query(countSql, params);
+  const total = countResult.rows[0]?.total || 0;
+
+  params.push(limit);
+  params.push(offset);
+
+  const listSql = `
+    SELECT * FROM ${TABLES.POSITIONS}
+    ${whereClause}
+    ORDER BY created_at DESC
+    LIMIT $${params.length - 1} OFFSET $${params.length};
+  `;
+  const listResult = await query(listSql, params);
+
+  return { items: listResult.rows, total, page, pageSize };
+}
+
+async function upsertMarket(client, payload) {
+  const sql = `
+    INSERT INTO ${TABLES.MARKETS} (
+      symbol,
+      name,
+      sz_decimals,
+      max_leverage,
+      only_isolated,
+      is_delisted,
+      metadata,
+      updated_at
+    ) VALUES (
+      $1, $2, $3, $4, $5, $6, $7, NOW()
+    )
+    ON CONFLICT (symbol) DO UPDATE SET
+      name = EXCLUDED.name,
+      sz_decimals = EXCLUDED.sz_decimals,
+      max_leverage = EXCLUDED.max_leverage,
+      only_isolated = EXCLUDED.only_isolated,
+      is_delisted = EXCLUDED.is_delisted,
+      metadata = EXCLUDED.metadata,
+      updated_at = NOW()
+    RETURNING *;
+  `;
+
+  const params = [
+    payload.symbol,
+    payload.name || null,
+    payload.szDecimals || null,
+    payload.maxLeverage || null,
+    payload.onlyIsolated === true,
+    payload.isDelisted === true,
+    JSON.stringify(payload.metadata || {}),
+  ];
+
+  const executor = client || { query: (text, values) => query(text, values) };
+  const result = await executor.query(sql, params);
+  return result.rows[0];
+}
+
+async function findMarketBySymbol(symbol) {
+  const sql = `SELECT * FROM ${TABLES.MARKETS} WHERE symbol = $1 LIMIT 1;`;
+  const result = await query(sql, [symbol]);
+  return result.rows[0] || null;
+}
+
+async function listMarkets() {
+  const sql = `SELECT * FROM ${TABLES.MARKETS} WHERE is_delisted = FALSE ORDER BY symbol ASC;`;
+  const result = await query(sql);
+  return result.rows;
+}
+
+async function countOrders({ userId, status } = {}) {
+  const conditions = [];
+  const params = [];
+
+  if (userId) {
+    params.push(userId);
+    conditions.push(`user_id = $${params.length}`);
+  }
+  if (status) {
+    params.push(status);
+    conditions.push(`status = $${params.length}`);
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+  const sql = `SELECT COUNT(*)::int AS total FROM ${TABLES.ORDERS} ${whereClause};`;
+  const result = await query(sql, params);
+  return result.rows[0]?.total || 0;
+}
+
+async function aggregateVolume({ userId, from, to } = {}) {
+  const conditions = [];
+  const params = [];
+
+  if (userId) {
+    params.push(userId);
+    conditions.push(`user_id = $${params.length}`);
+  }
+  if (from) {
+    params.push(from);
+    conditions.push(`fill_time >= $${params.length}`);
+  }
+  if (to) {
+    params.push(to);
+    conditions.push(`fill_time <= $${params.length}`);
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  const sql = `
+    SELECT
+      COUNT(*)::int AS total_fills,
+      COALESCE(SUM(price * size), 0) AS total_notional,
+      COALESCE(SUM(closed_pnl), 0) AS total_closed_pnl,
+      COALESCE(SUM(fee), 0) AS total_fees
+    FROM ${TABLES.FILLS}
+    ${whereClause};
+  `;
+  const result = await query(sql, params);
+  return result.rows[0] || {};
+}
+
+async function withTransaction(handler) {
+  return transaction(async (client) => handler(client));
+}
+
+module.exports = {
+  TABLES,
+  createOrder,
+  findOrderById,
+  findOrderByCloid,
+  updateOrderStatus,
+  listOrders,
+  createFill,
+  listFills,
+  upsertPosition,
+  listOpenPositions,
+  listPositions,
+  upsertMarket,
+  findMarketBySymbol,
+  listMarkets,
+  countOrders,
+  aggregateVolume,
+  withTransaction,
+};

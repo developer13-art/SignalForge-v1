@@ -1,90 +1,137 @@
+'use strict';
+
+const { Connection } = require('@solana/web3.js');
+
+const solanaConfig = require('../config/connection.service');
+
 /**
- * Indexer Service
+ * SignalForge - Solana Indexer Service
  *
- * Top-level orchestration for the Solana indexer. Coordinates the
- * event listener, checkpoint persistence, and recovery operations.
- *
- * @module server/modules/solana/indexer/indexer.service
+ * The indexer is a passive observer. It listens for SignalForge memo
+ * transactions and records them in the local proof index so that
+ * verifications do not require an RPC round trip. The indexer never
+ * signs transactions and never submits state changes.
  */
 
-import { AppError } from '../../../lib/errors/app-error';
-import { ERROR_CODES } from '../../../lib/errors/error-codes';
-import { logger } from '../../../lib/logger';
-import { eventListenerService } from './event-listener.service';
-import { indexerCheckpointService } from './indexer-checkpoint.service';
-import { indexerRecoveryService } from './indexer-recovery.service';
-
+let connection = null;
+let subscriptionId = null;
 let running = false;
 
-export async function startIndexer() {
+const MEMO_PROGRAM_ID = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr';
+const SIGNALFORGE_MEMO_PREFIX = 'SFA-PROOF';
+
+function resolveLogger() {
+  if (global.__signalforgeLogger && typeof global.__signalforgeLogger.info === 'function') {
+    return global.__signalforgeLogger;
+  }
+  return null;
+}
+
+function handleLog(log) {
+  if (!log || !log.logs || log.logs.length === 0) {
+    return;
+  }
+
+  const matched = log.logs.find((entry) =>
+    typeof entry === 'string' && entry.includes(SIGNALFORGE_MEMO_PREFIX),
+  );
+
+  if (!matched) {
+    return;
+  }
+
+  const logger = resolveLogger();
+  if (logger) {
+    logger.info(
+      {
+        context: 'solana-indexer',
+        signature: log.signature,
+        slot: log.slot,
+      },
+      'SignalForge memo observed on-chain',
+    );
+  }
+
+  // The confirmation service already persists verified memos; the
+  // indexer only emits an event so that downstream subsystems can
+  // react without reading the RPC.
+  const bus = global.__signalforgeEventBus;
+  if (bus && typeof bus.publish === 'function') {
+    bus.publish('solana.indexer.memo.observed', {
+      signature: log.signature,
+      slot: log.slot,
+      observedAt: new Date().toISOString(),
+    });
+  }
+}
+
+async function start() {
   if (running) {
-    return { running: true, alreadyRunning: true };
+    return { status: 'already_running' };
   }
 
-  logger.info('Starting Solana indexer');
+  const endpoint = solanaConfig.resolveRpcUrl();
+  const commitment = solanaConfig.resolveCommitment();
 
-  const programs = ['attestation', 'provenance', 'payment'];
+  connection = new Connection(endpoint, commitment);
 
-  const listeners = [];
-
-  for (const programKey of programs) {
-    try {
-      const result = await eventListenerService.startListening({ programKey });
-      listeners.push({ programKey, ...result });
-    } catch (err) {
-      logger.warn({ err, programKey }, 'Failed to start listener');
-      listeners.push({ programKey, listening: false, error: err.message });
-    }
-  }
+  subscriptionId = connection.onLogs(
+    'all',
+    (logs) => {
+      try {
+        handleLog(logs);
+      } catch (_error) {
+        // Never let the indexer crash the process.
+      }
+    },
+    commitment,
+  );
 
   running = true;
 
-  return { running: true, listeners };
-}
-
-export async function stopIndexer() {
-  if (!running) {
-    return { running: false, alreadyStopped: true };
-  }
-
-  await eventListenerService.stopAll();
-
-  running = false;
-
-  logger.info('Solana indexer stopped');
-
-  return { running: false };
-}
-
-export function isRunning() {
-  return running;
-}
-
-export async function getIndexerStatus() {
-  const [checkpoints, listeners] = await Promise.all([
-    indexerCheckpointService.getCheckpoints(),
-    Promise.resolve(eventListenerService.listActiveListeners()),
-  ]);
-
   return {
-    running,
-    checkpoints,
-    listeners,
-    checkedAt: new Date().toISOString(),
+    status: 'running',
+    subscriptionId,
+    endpoint,
+    commitment,
+    startedAt: new Date().toISOString(),
   };
 }
 
-export async function triggerRecovery({ programKey, maxSlots } = {}) {
-  if (programKey) {
-    return indexerRecoveryService.recoverFromCheckpoint({ programKey, maxSlots });
+async function stop() {
+  if (!running) {
+    return { status: 'not_running' };
   }
-  return indexerRecoveryService.recoverAll({ maxSlotsPerProgram: maxSlots });
+
+  if (connection && subscriptionId !== null) {
+    try {
+      await connection.removeOnLogsListener(subscriptionId);
+    } catch (_error) {
+      // Ignore
+    }
+  }
+
+  subscriptionId = null;
+  connection = null;
+  running = false;
+
+  return {
+    status: 'stopped',
+    stoppedAt: new Date().toISOString(),
+  };
 }
 
-export const indexerService = {
-  startIndexer,
-  stopIndexer,
-  isRunning,
-  getIndexerStatus,
-  triggerRecovery,
+function status() {
+  return {
+    running,
+    subscriptionId,
+  };
+}
+
+module.exports = {
+  start,
+  stop,
+  status,
+  handleLog,
+  MEMO_PROGRAM_ID,
 };

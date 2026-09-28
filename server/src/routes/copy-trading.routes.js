@@ -1,39 +1,53 @@
-/**
- * Copy Trading Routes
- *
- * @module signalforge/server/routes/copy-trading
- */
+'use strict';
 
-import { Router } from 'express';
+const express = require('express');
 
-const router = Router();
+const controller = require('../modules/crypto-trading/crypto-trading.controller');
+const executionRouterController = require('../modules/execution/routers/execution-router.controller');
 
-router.get('/subscriptions', (req, res) => {
-  res.status(200).json({ subscriptions: [] });
-});
+const router = express.Router();
 
-router.post('/subscriptions', (req, res) => {
-  res.status(202).json({ message: 'Subscribe to provider endpoint placeholder' });
-});
+function requireAuthentication(req, res, next) {
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({
+      message: 'Authentication is required',
+      error: { code: 'UNAUTHENTICATED' },
+    });
+  }
+  return next();
+}
 
-router.delete('/subscriptions/:subscriptionId', (req, res) => {
-  res.status(202).json({ message: 'Unsubscribe endpoint placeholder' });
-});
+router.use(requireAuthentication);
 
-router.patch('/subscriptions/:subscriptionId', (req, res) => {
-  res.status(202).json({ message: 'Update subscription endpoint placeholder' });
-});
+router.get('/positions', controller.listPositions);
+router.get('/positions/:positionId', controller.getPosition);
+router.post('/positions/:positionId/close', controller.closePosition);
 
-router.get('/settings', (req, res) => {
-  res.status(200).json({ settings: null });
-});
+router.get('/orders', controller.listOrders);
+router.get('/orders/:orderId', controller.getOrder);
+router.post('/orders/:orderId/cancel', controller.cancelOrder);
 
-router.patch('/settings', (req, res) => {
-  res.status(202).json({ message: 'Update copy settings endpoint placeholder' });
-});
+router.get('/history', controller.listHistory);
+router.get('/swaps', controller.listSwaps);
 
-router.get('/latency', (req, res) => {
-  res.status(200).json({ latency: null });
-});
+router.post('/swap/quote', controller.quoteSwap);
+router.post('/swap/build', controller.buildSwap);
+router.post('/swap/submit', controller.submitSwap);
+router.post('/swap/confirm', controller.confirmSwap);
 
-export default router;
+router.get('/wallet', controller.getTradingWallet);
+router.post('/wallet', controller.registerTradingWallet);
+router.delete('/wallet', controller.unregisterTradingWallet);
+
+router.get('/risk', controller.getRiskSettings);
+router.put('/risk', controller.updateRiskSettings);
+
+router.get('/automation', controller.getAutomation);
+router.put('/automation', controller.updateAutomation);
+
+// Route preview inside the crypto trading namespace.
+router.post('/route/simulate', executionRouterController.simulateRoute);
+router.post('/route/explain', executionRouterController.explainRoute);
+router.get('/route/gateways', executionRouterController.listSupportedGateways);
+
+module.exports = router;
