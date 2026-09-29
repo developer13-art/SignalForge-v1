@@ -17,6 +17,7 @@ import {
   ArrowLeftRight,
   Wallet as WalletIcon,
   ShieldAlert,
+  ShieldCheck,
   Cpu,
   LineChart,
   Users,
@@ -29,6 +30,13 @@ import {
   X,
   ChevronRight,
   Sparkles,
+  Plug,
+  Brain,
+  CreditCard,
+  BarChart3,
+  Database,
+  Repeat,
+  UserCircle,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -37,16 +45,19 @@ import { routes } from '@config/routes.config.js';
 
 const USER_NAV = [
   { label: 'Dashboard', to: routes.user.dashboard, icon: LayoutDashboard },
+  { label: 'Signal Sources', to: routes.user.signalSources.overview, icon: Plug },
   { label: 'Signals', to: routes.user.signalCenter.root, icon: Activity, badgeKey: 'signals' },
+  { label: 'AI Intelligence', to: routes.user.aiIntelligence.overview, icon: Sparkles },
+  { label: 'Provider DNA', to: routes.user.providerDna.overview, icon: Brain },
   { label: 'Trades', to: routes.user.trading.overview, icon: ArrowLeftRight },
   { label: 'Positions', to: routes.user.trading.openPositions, icon: WalletIcon },
   { label: 'Risk Management', to: routes.user.riskAutomation.overview, icon: ShieldAlert },
   { label: 'Automation', to: routes.user.riskAutomation.automationRules, icon: Cpu },
-  { label: 'AI Intelligence', to: routes.user.aiIntelligence.overview, icon: Sparkles },
   { label: 'Brokers', to: routes.user.brokers.accounts, icon: Store, badgeKey: 'brokers' },
   { label: 'Analytics', to: routes.user.analytics.overview, icon: LineChart },
   { label: 'Marketplace', to: routes.user.providerMarketplace.browse, icon: Users },
   { label: 'Copy Trading', to: routes.user.traderMarketplace.browse, icon: Copy },
+  { label: 'Subscription', to: routes.user.subscriptions.mySubscription, icon: CreditCard },
   { label: 'Wallet', to: routes.user.wallet.overview, icon: Coins },
   { label: 'Referrals', to: routes.user.referrals.dashboard, icon: Gift },
   { label: 'Notifications', to: routes.user.notifications.center, icon: Bell, badgeKey: 'notifications' },
@@ -59,8 +70,8 @@ const PROVIDER_NAV = [
   { label: 'Subscribers', to: routes.providerBusiness.subscribers, icon: Users },
   { label: 'Revenue', to: routes.providerBusiness.revenue, icon: Coins },
   { label: 'Analytics', to: routes.providerBusiness.analytics, icon: LineChart },
-  { label: 'Provider DNA', to: routes.providerBusiness.dna, icon: Sparkles },
-  { label: 'Certification', to: routes.providerCertification.dashboard, icon: ShieldAlert },
+  { label: 'Provider DNA', to: routes.providerBusiness.dna, icon: Brain },
+  { label: 'Certification', to: routes.providerCertification.dashboard, icon: ShieldCheck },
   { label: 'Subscription Plans', to: routes.providerBusiness.plans, icon: Store },
   { label: 'Withdrawals', to: routes.providerBusiness.withdrawals, icon: Coins },
   { label: 'IB Management', to: routes.providerBusiness.ib, icon: Users },
@@ -77,25 +88,28 @@ const ADMIN_NAV_GROUPS = [
     items: [
       { label: 'Dashboard', to: routes.admin.overview, icon: LayoutDashboard },
       { label: 'Users', to: routes.admin.users, icon: Users },
-      { label: 'KYC Management', to: routes.admin.kyc, icon: ShieldAlert },
+      { label: 'KYC Management', to: routes.admin.kyc, icon: ShieldCheck },
       { label: 'Providers', to: routes.admin.providers, icon: Store },
       { label: 'Traders', to: routes.admin.traders, icon: Users },
+      { label: 'Signal Sources', to: routes.admin.signalSources, icon: Plug },
       { label: 'Signals', to: routes.admin.liveSignalMonitor, icon: Activity, badgeKey: 'signals' },
       { label: 'Trading', to: routes.admin.liveTradeMonitor, icon: ArrowLeftRight },
       { label: 'Brokers', to: routes.admin.brokers, icon: Store },
       { label: 'Risk Management', to: routes.admin.riskMonitoring, icon: ShieldAlert },
       { label: 'AI & Intelligence', to: routes.admin.aiMonitoring, icon: Sparkles },
+      { label: 'Provider DNA', to: routes.admin.providerDnaMonitoring, icon: Brain },
       { label: 'Automation', to: routes.user.riskAutomation.automationRules, icon: Cpu },
     ],
   },
   {
     label: 'Financial Management',
     items: [
-      { label: 'Subscriptions', to: routes.admin.subscriptions, icon: Store },
+      { label: 'Subscriptions', to: routes.admin.subscriptions, icon: CreditCard },
       { label: 'Payments', to: routes.admin.payments, icon: Coins },
       { label: 'Wallet', to: routes.user.wallet.overview, icon: WalletIcon },
       { label: 'Withdrawals', to: routes.admin.withdrawals, icon: Coins },
       { label: 'Referrals & Rewards', to: routes.admin.referrals, icon: Gift },
+      { label: 'Affiliate', to: routes.admin.affiliate, icon: Users },
     ],
   },
   {
@@ -111,7 +125,7 @@ const ADMIN_NAV_GROUPS = [
     items: [
       { label: 'Analytics', to: routes.admin.systemAnalytics, icon: LineChart },
       { label: 'Notifications', to: routes.user.notifications.center, icon: Bell, badgeKey: 'notifications' },
-      { label: 'Audit Logs', to: routes.admin.auditLogs, icon: ShieldAlert },
+      { label: 'Audit Logs', to: routes.admin.auditLogs, icon: Database },
       { label: 'System Settings', to: routes.admin.systemSettings, icon: Settings },
       { label: 'Security Center', to: routes.admin.securityCenter, icon: ShieldAlert },
     ],
@@ -120,7 +134,7 @@ const ADMIN_NAV_GROUPS = [
 
 const COMPLIANCE_NAV = [
   { label: 'Dashboard', to: routes.compliance.dashboard, icon: LayoutDashboard },
-  { label: 'KYC Queue', to: routes.compliance.kycQueue, icon: ShieldAlert, badgeKey: 'kyc' },
+  { label: 'KYC Queue', to: routes.compliance.kycQueue, icon: ShieldCheck, badgeKey: 'kyc' },
   { label: 'Pending Verification', to: routes.compliance.pending, icon: Users },
   { label: 'Under Review', to: routes.compliance.underReview, icon: Users },
   { label: 'Verified Users', to: routes.compliance.verified, icon: Users },
@@ -130,7 +144,7 @@ const COMPLIANCE_NAV = [
   { label: 'Verification Providers', to: routes.compliance.verificationProviders, icon: Store },
   { label: 'Risk Flags', to: routes.compliance.riskFlags, icon: ShieldAlert },
   { label: 'Reports', to: routes.compliance.reports, icon: LineChart },
-  { label: 'Audit Trail', to: routes.compliance.auditTrail, icon: ShieldAlert },
+  { label: 'Audit Trail', to: routes.compliance.auditTrail, icon: Database },
 ];
 
 const EXECUTIVE_NAV = [
@@ -149,7 +163,7 @@ const EXECUTIVE_NAV = [
   { label: 'Platform Performance', to: routes.executive.platformPerformance, icon: LineChart },
   { label: 'Retention', to: routes.executive.retention, icon: Users },
   { label: 'Conversion', to: routes.executive.conversion, icon: Activity },
-  { label: 'Financial Reports', to: routes.executive.financialReports, icon: LineChart },
+  { label: 'Financial Reports', to: routes.executive.financialReports, icon: BarChart3 },
 ];
 
 const SUPPORT_NAV = [
@@ -159,7 +173,7 @@ const SUPPORT_NAV = [
   { label: 'Create Ticket', to: routes.support.createTicket, icon: Sparkles },
   { label: 'Knowledge Base', to: routes.support.knowledgeBase, icon: Store },
   { label: 'Trading FAQ', to: routes.support.tradingFaq, icon: Activity },
-  { label: 'KYC FAQ', to: routes.support.kycFaq, icon: ShieldAlert },
+  { label: 'KYC FAQ', to: routes.support.kycFaq, icon: ShieldCheck },
   { label: 'Billing FAQ', to: routes.support.billingFaq, icon: Coins },
   { label: 'Technical Support', to: routes.support.technicalSupport, icon: Settings },
 ];
@@ -205,14 +219,25 @@ function NavItem({ item, collapsed }) {
       {!collapsed ? <span className="truncate">{item.label}</span> : null}
       {!collapsed && item.badgeKey ? (
         <span className="ml-auto inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1.5 text-caption font-semibold text-white">
-          {item.badgeKey === 'signals' ? 24 : item.badgeKey === 'brokers' ? 3 : item.badgeKey === 'notifications' ? 12 : null}
+          {item.badgeKey === 'signals'
+            ? 24
+            : item.badgeKey === 'brokers'
+            ? 3
+            : item.badgeKey === 'notifications'
+            ? 12
+            : null}
         </span>
       ) : null}
     </NavLink>
   );
 }
 
-export default function Sidebar({ variant = 'user', collapsed = false, mobileOpen = false, onCloseMobile }) {
+export default function Sidebar({
+  variant = 'user',
+  collapsed = false,
+  mobileOpen = false,
+  onCloseMobile,
+}) {
   const nav = getNavForVariant(variant);
 
   return (
@@ -229,11 +254,16 @@ export default function Sidebar({ variant = 'user', collapsed = false, mobileOpe
         className={clsx(
           'fixed inset-y-0 left-0 z-50 flex flex-col bg-background-subtle border-r border-surface-border transition-transform duration-200',
           collapsed ? 'w-[76px]' : 'w-[264px]',
-          'lg:static lg:translate-x-0 lg:z-auto',
+          'lg:translate-x-0',
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
         )}
       >
-        <div className={clsx('flex items-center h-[68px] px-4 border-b border-surface-border', collapsed && 'justify-center')}>
+        <div
+          className={clsx(
+            'flex items-center h-[68px] px-4 border-b border-surface-border',
+            collapsed && 'justify-center',
+          )}
+        >
           <Link to={routes.user.dashboard} className="flex items-center gap-3 min-w-0">
             <img src={logo} alt="SignalForge" className="h-9 w-9 shrink-0" />
             {!collapsed ? (
@@ -268,7 +298,9 @@ export default function Sidebar({ variant = 'user', collapsed = false, mobileOpe
 
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
           {nav.kind === 'flat'
-            ? nav.items.map((item) => <NavItem key={item.to} item={item} collapsed={collapsed} />)
+            ? nav.items.map((item) => (
+                <NavItem key={item.to} item={item} collapsed={collapsed} />
+              ))
             : nav.groups.map((group) => (
                 <div key={group.label} className="space-y-1">
                   {!collapsed ? (

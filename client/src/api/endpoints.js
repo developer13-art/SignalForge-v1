@@ -35,12 +35,20 @@ const API_ENDPOINTS = Object.freeze({
 
   // -------------------- KYC --------------------
   kyc: {
-    status: '/kyc/status',
-    application: '/kyc/application',
-    documents: '/kyc/documents',
-    verification: '/kyc/verification',
-    submit: '/kyc/submit',
-  },
+  status: '/kyc/status',
+  application: '/kyc/applications/me',
+  createApplication: '/kyc/applications',
+  documentTypes: '/kyc/document-types',
+  submitPersonalInfo: (applicationId) => `/kyc/applications/${applicationId}/personal-info`,
+  uploadDocument: (applicationId) => `/kyc/applications/${applicationId}/documents`,
+  uploadSelfie: (applicationId) => `/kyc/applications/${applicationId}/selfie`,
+  submitApplication: (applicationId) => `/kyc/applications/${applicationId}/submit`,
+  resubmit: (applicationId) => `/kyc/applications/${applicationId}/resubmit`,
+  documents: (applicationId) => `/kyc/applications/${applicationId}/documents`,
+  document: (applicationId, documentId) =>
+    `/kyc/applications/${applicationId}/documents/${documentId}`,
+  verificationResult: (applicationId) => `/kyc/applications/${applicationId}/verification`,
+},
 
   // -------------------- Signal sources --------------------
   sources: {

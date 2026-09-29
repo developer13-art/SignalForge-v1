@@ -6,18 +6,22 @@ export default {
     extend: {
       colors: {
         background: {
-          DEFAULT: '#0A0E1A',
-          subtle: '#0B1020',
-          elevated: '#0F1424',
-          overlay: 'rgba(10, 14, 26, 0.85)',
+          DEFAULT: 'rgb(var(--bg) / <alpha-value>)',
+          subtle: 'rgb(var(--bg-subtle) / <alpha-value>)',
+          elevated: 'rgb(var(--bg-elevated) / <alpha-value>)',
+          overlay: 'var(--bg-overlay)',
         },
         surface: {
-          DEFAULT: '#111726',
-          subtle: '#141B2D',
-          elevated: '#1A2236',
-          hover: '#1E2740',
-          border: 'rgba(148, 163, 184, 0.1)',
+          DEFAULT: 'rgb(var(--surface) / <alpha-value>)',
+          subtle: 'rgb(var(--surface-subtle) / <alpha-value>)',
+          elevated: 'rgb(var(--surface-elevated) / <alpha-value>)',
+          hover: 'rgb(var(--surface-hover) / <alpha-value>)',
+          border: 'var(--surface-border)',
         },
+        'surface-border': 'var(--surface-border)',
+        'input-border': 'var(--input-border)',
+        'input-border-hover': 'var(--input-border-hover)',
+        'input-border-focus': 'var(--input-border-focus)',
         primary: {
           50: '#EEF2FF',
           100: '#E0E7FF',
@@ -83,11 +87,12 @@ export default {
           900: '#0F172A',
         },
         text: {
-          DEFAULT: '#F1F5F9',
-          primary: '#F1F5F9',
-          secondary: '#94A3B8',
-          tertiary: '#64748B',
-          disabled: '#475569',
+          DEFAULT: 'rgb(var(--text-primary) / <alpha-value>)',
+          primary: 'rgb(var(--text-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--text-secondary) / <alpha-value>)',
+          tertiary: 'rgb(var(--text-tertiary) / <alpha-value>)',
+          disabled: 'rgb(var(--text-disabled) / <alpha-value>)',
+          inverse: 'rgb(var(--text-inverse) / <alpha-value>)',
         },
       },
       fontFamily: {
@@ -135,7 +140,7 @@ export default {
         'slide-down': 'slideDown 0.3s ease-out',
         'pulse-subtle': 'pulseSubtle 2s ease-in-out infinite',
         'spin-slow': 'spin 3s linear infinite',
-        'shimmer': 'shimmer 1.6s linear infinite',
+        shimmer: 'shimmer 1.6s linear infinite',
       },
       keyframes: {
         fadeIn: {

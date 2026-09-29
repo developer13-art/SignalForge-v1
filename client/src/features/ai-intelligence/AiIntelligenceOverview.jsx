@@ -23,37 +23,37 @@ const QUICK_LINKS = [
     title: 'AI Signal Parser',
     description: 'See how AI interprets messages in real time',
     icon: Brain,
-    href: '/ai/parser',
+    href: '/ai-intelligence/parser',
   },
   {
     title: 'Provider DNA',
     description: 'Inspect learned patterns per provider',
     icon: Award,
-    href: '/ai/provider-dna',
+    href: '/ai-intelligence/provider-dna',
   },
   {
     title: 'Multilingual Processing',
     description: 'See language support and detected languages',
     icon: Languages,
-    href: '/ai/multilingual',
+    href: '/ai-intelligence/multilingual',
   },
   {
     title: 'Confidence Engine',
     description: 'Understand how confidence is calculated',
     icon: ShieldCheck,
-    href: '/ai/confidence',
+    href: '/ai-intelligence/confidence',
   },
   {
     title: 'Consensus Engine',
     description: 'Multi-provider agreement analysis',
     icon: Layers,
-    href: '/ai/consensus',
+    href: '/ai-intelligence/consensus',
   },
   {
     title: 'Model Performance',
     description: 'Parsing accuracy and latency metrics',
     icon: Sparkles,
-    href: '/ai/performance',
+    href: '/ai-intelligence/performance',
   },
 ];
 

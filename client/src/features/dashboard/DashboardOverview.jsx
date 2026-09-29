@@ -18,6 +18,7 @@ import AccountHealthWidget from './AccountHealthWidget';
 import KycStatusWidget from './KycStatusWidget';
 import SubscriptionStatusWidget from './SubscriptionStatusWidget';
 import ReferralSummaryWidget from './ReferralSummaryWidget';
+import { analyticsApi } from '../../api/analytics.api.js';
 
 const DashboardOverview = function DashboardOverview() {
   const navigate = useNavigate();
@@ -30,19 +31,21 @@ const DashboardOverview = function DashboardOverview() {
     setError(null);
 
     try {
-      const response = await fetch('/api/dashboard/overview', {
-        credentials: 'include',
+      const response = await analyticsApi.getOverview({ dateRange: 'LAST_30_DAYS' });
+      const overview = response?.overview;
+
+      setData({
+        performance: overview
+          ? {
+              totalTrades: overview.totalTrades,
+              winRate: overview.winRate?.winRate,
+              profitFactor: overview.profitFactor?.profitFactor,
+              averageRr: overview.averageRr?.averageRr,
+            }
+          : null,
       });
-      const payload = await response.json();
-
-      if (!response.ok) {
-        setError(payload?.error?.message || 'Failed to load dashboard data');
-        return;
-      }
-
-      setData(payload.data);
-    } catch (_err) {
-      setError('Unable to reach the server. Please try again.');
+    } catch (requestError) {
+      setError(requestError?.message || 'Unable to load dashboard data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -68,7 +71,7 @@ const DashboardOverview = function DashboardOverview() {
   }
 
   return (
-    <Container size="xl" className="py-6">
+    <Container size="xl" className="dashboard-overview py-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <Heading level={1} size="text-2xl">
@@ -141,7 +144,7 @@ const DashboardOverview = function DashboardOverview() {
 
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { label: 'Add Signal Source', href: '/sources/add' },
+              { label: 'Add Signal Source', href: '/signal-sources/add' },
               { label: 'Connect Broker', href: '/brokers/connect' },
               { label: 'View Signals', href: '/signals' },
               { label: 'Open Marketplace', href: '/providers' },

@@ -41,9 +41,9 @@ const LEVELS = {
 };
 
 const COLORS = {
-  default: 'text-slate-900',
-  muted: 'text-slate-600',
-  primary: 'text-indigo-600',
+  default: 'text-text-primary',
+  muted: 'text-text-secondary',
+  primary: 'text-primary-400',
   white: 'text-white',
   inherit: '',
 };

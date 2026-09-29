@@ -133,7 +133,7 @@ const Input = forwardRef(function Input(
             ? 'border-success focus-within:border-success focus-within:ring-2 focus-within:ring-success/30'
             : isFocused
             ? 'border-primary-500 ring-2 ring-primary-500/30'
-            : 'border-surface-border hover:border-primary-500/60 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/30',
+            : 'border-input-border hover:border-input-border-hover focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/30',
           disabled && 'cursor-not-allowed opacity-60',
           readOnly && 'bg-background-subtle',
         )}

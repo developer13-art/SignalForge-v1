@@ -46,8 +46,21 @@ function writeToken(key, value) {
       localStorage.setItem(key, value);
     }
   } catch (_err) {
-    // ignore storage quota errors
+    // Ignore storage quota errors.
   }
+}
+
+function readUserRoles(user) {
+  if (!user) {
+    return [];
+  }
+  if (Array.isArray(user.roles)) {
+    return user.roles;
+  }
+  if (typeof user.role === 'string' && user.role) {
+    return [user.role];
+  }
+  return [];
 }
 
 export function AuthProvider({ children }) {
@@ -89,7 +102,7 @@ export function AuthProvider({ children }) {
       return;
     }
     try {
-      const profile = await authApi.getCurrentUser();
+      const profile = await authApi.me();
       setUser(profile.user || profile);
     } catch (_err) {
       clearSession();
@@ -111,19 +124,14 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener('signalforge:auth:logout', handler);
   }, [clearSession]);
 
-const login = useCallback(
-  async (credentials) => {
-    // TEMP DEBUG
-    console.log('AUTH_LOGIN_CALLED', credentials);
-    const session = await authApi.login(credentials);
-    console.log('AUTH_LOGIN_RESPONSE', session);
-    console.log('AUTH_LOGIN_ACCESS_TOKEN', session && session.accessToken);
-    persistSession(session);
-    console.log('AUTH_LOGIN_AFTER_PERSIST', localStorage.getItem('signalforge.access_token'));
-    return session.user;
-  },
-  [persistSession],
-);
+  const login = useCallback(
+    async (credentials) => {
+      const session = await authApi.login(credentials);
+      persistSession(session);
+      return session.user;
+    },
+    [persistSession],
+  );
 
   const register = useCallback(
     async (payload) => {
@@ -140,7 +148,7 @@ const login = useCallback(
     try {
       await authApi.logout();
     } catch (_err) {
-      // ignore — we clear the session regardless
+      // Ignore — we clear the session regardless.
     } finally {
       clearSession();
       toast.success('Signed out');
@@ -156,9 +164,11 @@ const login = useCallback(
     return session.user;
   }, [refreshToken, persistSession]);
 
-  const value = useMemo(
-    () => ({
+  const value = useMemo(() => {
+    const roles = readUserRoles(user);
+    return {
       user,
+      roles,
       isAuthenticated: Boolean(user && accessToken),
       isLoading: loading,
       accessToken,
@@ -169,19 +179,18 @@ const login = useCallback(
       refresh,
       setUser,
       clearSession,
-    }),
-    [
-      user,
-      accessToken,
-      refreshToken,
-      loading,
-      login,
-      register,
-      logout,
-      refresh,
-      clearSession,
-    ],
-  );
+    };
+  }, [
+    user,
+    accessToken,
+    refreshToken,
+    loading,
+    login,
+    register,
+    logout,
+    refresh,
+    clearSession,
+  ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

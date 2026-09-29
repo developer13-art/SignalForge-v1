@@ -282,7 +282,7 @@ const Select = forwardRef(function Select(
             ? 'border-error/60 focus:border-error focus:ring-2 focus:ring-error/25'
             : open
             ? 'border-primary-500 ring-2 ring-primary-500/25'
-            : 'border-surface-border hover:border-surface-hover focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25',
+            : 'border-input-border hover:border-input-border-hover focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25',
           disabled && 'opacity-60 cursor-not-allowed',
         )}
         {...rest}
@@ -310,10 +310,10 @@ const Select = forwardRef(function Select(
           id={listboxId}
           role="listbox"
           aria-multiselectable={multiple || undefined}
-          className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-xl border border-surface-border bg-surface shadow-modal animate-fade-in"
+          className="absolute z-50 mt-1.5 w-full overflow-hidden rounded-xl border border-input-border bg-surface shadow-modal animate-fade-in"
         >
           {searchable ? (
-            <div className="border-b border-surface-border p-2">
+            <div className="border-b border-input-border p-2">
               <input
                 ref={searchRef}
                 type="text"
@@ -323,7 +323,7 @@ const Select = forwardRef(function Select(
                   setHighlightedIndex(0);
                 }}
                 placeholder="Search..."
-                className="w-full rounded-lg border border-surface-border bg-background px-3 py-2 text-small text-text-primary placeholder:text-text-tertiary focus:border-primary-500 focus:outline-none"
+                className="w-full rounded-lg border border-input-border bg-background px-3 py-2 text-small text-text-primary placeholder:text-text-tertiary hover:border-input-border-hover focus:border-input-border-focus focus:outline-none"
               />
             </div>
           ) : null}

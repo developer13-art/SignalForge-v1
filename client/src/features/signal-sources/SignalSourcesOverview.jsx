@@ -102,7 +102,7 @@ const SignalSourcesOverview = function SignalSourcesOverview() {
           </Button>
           <Button
             variant="primary"
-            onClick={() => navigate('/sources/add')}
+            onClick={() => navigate('/signal-sources/add')}
             leadingIcon={Plus}
           >
             Add Source
@@ -118,7 +118,7 @@ const SignalSourcesOverview = function SignalSourcesOverview() {
               title="No signal sources yet"
               description="Connect your first source to start receiving signals."
               action={
-                <Button variant="primary" onClick={() => navigate('/sources/add')} leadingIcon={Plus}>
+                <Button variant="primary" onClick={() => navigate('/signal-sources/add')} leadingIcon={Plus}>
                   Add Signal Source
                 </Button>
               }
@@ -169,7 +169,7 @@ const SignalSourcesOverview = function SignalSourcesOverview() {
                   <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
                     <button
                       type="button"
-                      onClick={() => navigate(`/sources/${source.id}`)}
+                      onClick={() => navigate(`/signal-sources/${source.id}`)}
                       className="text-xs font-medium text-indigo-600 hover:text-indigo-800"
                     >
                       Manage

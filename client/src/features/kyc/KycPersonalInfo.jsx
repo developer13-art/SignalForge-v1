@@ -6,29 +6,15 @@ import Heading from '../../components/ui/primitives/Heading';
 import Text from '../../components/ui/primitives/Text';
 import KycProgressStepper from '../../components/domain/kyc/KycProgressStepper';
 import KycPersonalInfoForm from '../../components/domain/kyc/KycPersonalInfoForm';
+import { kycApi } from '../../api/kyc.api.js';
 
 const KycPersonalInfo = function KycPersonalInfo() {
   const navigate = useNavigate();
 
   const handleSubmit = useCallback(
     async (values) => {
-      try {
-        const response = await fetch('/api/kyc/personal-info', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify(values),
-        });
-
-        if (!response.ok) {
-          const payload = await response.json();
-          throw new Error(payload?.error?.message || 'Failed to save personal information');
-        }
-
-        navigate('/kyc/document-selection');
-      } catch (error) {
-        throw error;
-      }
+      await kycApi.submitPersonalInfo(values);
+      navigate('/kyc/document-selection');
     },
     [navigate],
   );

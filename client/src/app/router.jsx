@@ -70,6 +70,8 @@ const TradeDetails = lazy(() => import('../features/trading/TradeDetails'));
 // Brokers
 const BrokerAccounts = lazy(() => import('../features/brokers/BrokerAccounts'));
 const ConnectBroker = lazy(() => import('../features/brokers/ConnectBroker'));
+const Mt4Connection = lazy(() => import('../features/brokers/Mt4Connection'));
+const Mt5Connection = lazy(() => import('../features/brokers/Mt5Connection'));
 
 // Analytics
 const AnalyticsOverview = lazy(() => import('../features/analytics/AnalyticsOverview'));
@@ -225,6 +227,8 @@ export default function AppRouter() {
               {/* Brokers */}
               <Route path="/brokers" element={<BrokerAccounts />} />
               <Route path="/brokers/connect" element={<ConnectBroker />} />
+              <Route path="/brokers/mt4" element={<Mt4Connection />} />
+              <Route path="/brokers/mt5" element={<Mt5Connection />} />
 
               {/* Analytics */}
               <Route path="/analytics" element={<AnalyticsOverview />} />

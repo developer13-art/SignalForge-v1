@@ -190,7 +190,7 @@ const Textarea = forwardRef(function Textarea(
           dimensions,
           error
             ? 'border-error/60 focus:border-error focus:ring-error/25'
-            : 'border-surface-border hover:border-surface-hover focus:border-primary-500 focus:ring-primary-500/25',
+            : 'border-input-border hover:border-input-border-hover focus:border-primary-500 focus:ring-primary-500/25',
           disabled && 'opacity-60 cursor-not-allowed',
           readOnly && 'bg-background-subtle',
           textareaClassName,

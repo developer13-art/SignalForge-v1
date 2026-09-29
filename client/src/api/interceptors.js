@@ -24,14 +24,53 @@ function generateRequestId() {
  * context and the interceptor historically used different key names.
  * Prefer the key from appConfig; fall back to the literal name.
  */
-function readAccessToken() {
-  const fromConfigKey = appConfig?.storage?.accessTokenKey
-    ? storage.local.get(appConfig.storage.accessTokenKey)
-    : null;
-  if (fromConfigKey) {
-    return fromConfigKey;
+function readStorageValue(key) {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const direct = window.localStorage.getItem(key);
+      if (direct !== null && direct !== undefined) {
+        return direct;
+      }
+    }
+  } catch (_storageError) {
+    // Ignore storage access issues and continue to fallbacks.
   }
-  return storage.local.get('access_token');
+
+  const fallbackKeys = [];
+  if (key && key.startsWith('signalforge.')) {
+    fallbackKeys.push(key.replace(/^signalforge\./, ''));
+  }
+  fallbackKeys.push(key.replace(/^signalforge\./, ''));
+  fallbackKeys.push(key.replace(/^(signalforge\.)?/, ''));
+
+  for (const candidate of fallbackKeys) {
+    const value = storage.local.get(candidate);
+    if (value) {
+      return value;
+    }
+  }
+
+  return null;
+}
+
+function readAccessToken() {
+  const keys = new Set([
+    appConfig?.storage?.accessTokenKey,
+    'signalforge.access_token',
+    'signalforge.accessToken',
+    'access_token',
+    'accessToken',
+  ]);
+
+  for (const key of keys) {
+    if (!key) continue;
+    const value = readStorageValue(key);
+    if (value) {
+      return value;
+    }
+  }
+
+  return null;
 }
 
 export function attachInterceptors(client) {

@@ -13,6 +13,18 @@ import { appConfig } from '../../config/app.config.js';
 const PREFIX = appConfig.storage.prefix;
 
 function buildKey(key) {
+  if (!key) {
+    return key;
+  }
+
+  if (key.startsWith(`${PREFIX}.`)) {
+    return key;
+  }
+
+  if (key.startsWith(PREFIX)) {
+    return `${PREFIX}.${key.slice(PREFIX.length).replace(/^\./, '')}`;
+  }
+
   return `${PREFIX}.${key}`;
 }
 

@@ -38,7 +38,7 @@ const ConnectBroker = function ConnectBroker() {
   const handleSelect = useCallback(
     (selected) => {
       setPlatform(selected);
-      navigate(selected === 'mt5' ? '/brokers/connect/mt5' : '/brokers/connect/mt4');
+      navigate(selected === 'mt5' ? '/brokers/mt5' : '/brokers/mt4');
     },
     [navigate],
   );

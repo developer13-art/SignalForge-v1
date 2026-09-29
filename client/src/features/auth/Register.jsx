@@ -13,6 +13,7 @@ import Input from '../../components/common/Input';
 import Checkbox from '../../components/common/Checkbox';
 import Alert from '../../components/feedback/Alert';
 import { validators } from '../../components/forms/validators';
+import { resolveHome } from '../../lib/utils/resolveHome.js';
 
 const Register = function Register() {
   const navigate = useNavigate();

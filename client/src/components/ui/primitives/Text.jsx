@@ -20,14 +20,14 @@ const WEIGHTS = {
 };
 
 const COLORS = {
-  default: 'text-slate-700',
-  muted: 'text-slate-500',
-  subtle: 'text-slate-400',
-  strong: 'text-slate-900',
-  primary: 'text-indigo-600',
-  success: 'text-emerald-600',
-  warning: 'text-amber-600',
-  danger: 'text-rose-600',
+  default: 'text-text-primary',
+  muted: 'text-text-secondary',
+  subtle: 'text-text-tertiary',
+  strong: 'text-text-primary',
+  primary: 'text-primary-400',
+  success: 'text-emerald-400',
+  warning: 'text-amber-400',
+  danger: 'text-rose-400',
   white: 'text-white',
   inherit: '',
 };

@@ -17,11 +17,22 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+enforceDarkTheme();
 
 const ThemeContext = createContext(null);
 
 const STORAGE_KEY = 'signalforge.theme';
 const VALID_THEMES = ['light', 'dark', 'system'];
+
+function enforceDarkTheme() {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  const root = document.documentElement;
+  root.classList.add('dark');
+  root.classList.remove('light');
+  root.style.colorScheme = 'dark';
+}
 
 function readStoredTheme() {
   if (typeof window === 'undefined' || !window.localStorage) {
@@ -63,18 +74,13 @@ function resolveEffectiveTheme(preference) {
   return preference;
 }
 
-function applyThemeToDocument(effective) {
+function applyThemeToDocument() {
   if (typeof document === 'undefined') {
     return;
   }
   const root = document.documentElement;
-  if (effective === 'dark') {
-    root.classList.add('dark');
-    root.style.colorScheme = 'dark';
-  } else {
-    root.classList.remove('dark');
-    root.style.colorScheme = 'light';
-  }
+  root.classList.add('dark');
+  root.style.colorScheme = 'dark';
 }
 
 export function ThemeProvider({ children, defaultTheme = 'system' }) {
@@ -90,7 +96,7 @@ export function ThemeProvider({ children, defaultTheme = 'system' }) {
     writeStoredTheme(preference);
     const next = resolveEffectiveTheme(preference);
     setEffective(next);
-    applyThemeToDocument(next);
+    applyThemeToDocument();
   }, [preference]);
 
   // React to system theme changes when the user is on "system".
@@ -103,7 +109,7 @@ export function ThemeProvider({ children, defaultTheme = 'system' }) {
       if (preference === 'system') {
         const next = resolveSystemTheme();
         setEffective(next);
-        applyThemeToDocument(next);
+        applyThemeToDocument();
       }
     };
     if (mediaQuery.addEventListener) {

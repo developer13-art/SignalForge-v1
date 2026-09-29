@@ -9,17 +9,15 @@
  */
 
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
-import { selectIsAuthenticated, selectAuthInitialized } from '../store/selectors/auth.selectors.js';
 import LoadingState from '../components/common/LoadingState.jsx';
+import { useAuthContext } from '../context/AuthContext.jsx';
 
 export default function ProtectedRoute({ redirectTo = '/login' }) {
   const location = useLocation();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const initialized = useSelector(selectAuthInitialized);
+  const { isAuthenticated, isLoading } = useAuthContext();
 
-  if (!initialized) {
+  if (isLoading) {
     return <LoadingState message="Preparing session" />;
   }
 

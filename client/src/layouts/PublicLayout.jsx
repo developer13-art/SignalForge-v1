@@ -67,7 +67,7 @@ export default function PublicLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-text-primary">
+    <div className="public-site min-h-screen flex flex-col bg-background text-text-primary">
       <header
         className={`sticky top-0 z-sticky transition-all duration-200 ${
           scrolled

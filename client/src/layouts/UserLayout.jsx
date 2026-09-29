@@ -2,9 +2,10 @@
  * User Layout
  *
  * Main authenticated application shell. Composes the Sidebar, Topbar,
- * optional KYC banner, and a scrollable main region. Fully responsive
- * with a mobile drawer for the sidebar and contextual UI matching the
- * dashboard mockups.
+ * optional KYC banner, and a scrollable main region. The sidebar is
+ * fixed on desktop and slides in as a drawer on mobile; the content
+ * column uses a left padding equal to the sidebar width so the two
+ * never overlap.
  *
  * @module client/src/layouts/UserLayout
  */
@@ -43,24 +44,31 @@ export default function UserLayout() {
     <div className="min-h-screen bg-background text-text-primary">
       <Sidebar variant="user" collapsed={collapsed} />
 
+      {/*
+       * Content column. The left padding reserves exactly the width of
+       * the fixed sidebar. It transitions with the sidebar's collapse
+       * state so the two stay aligned.
+       */}
       <div
         className={`flex min-h-screen flex-col transition-[padding] duration-200 ${
-          collapsed ? 'lg:pl-[76px]' : 'lg:pl-[260px]'
+          collapsed ? 'lg:pl-[76px]' : 'lg:pl-[264px]'
         }`}
       >
         <Topbar />
 
-        <main
-          className={`flex-1 px-4 pb-12 pt-4 sm:px-6 lg:px-8 ${
-            mounted ? 'animate-fade-in' : ''
-          }`}
-        >
-          <KycBanner />
-          <Outlet />
+        <main className="flex-1 px-4 pb-12 pt-6 sm:px-6 lg:px-8">
+          <div className={mounted ? 'animate-fade-in' : ''}>
+            <KycBanner />
+            <Outlet />
+          </div>
         </main>
       </div>
 
-      <MobileNav open={mobileOpen} variant="user" onClose={() => dispatch(setMobileNavOpen(false))} />
+      <MobileNav
+        open={mobileOpen}
+        variant="user"
+        onClose={() => dispatch(setMobileNavOpen(false))}
+      />
     </div>
   );
 }

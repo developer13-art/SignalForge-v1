@@ -20,7 +20,9 @@ export const authApi = {
 
   refresh: (refreshToken) => post(endpoints.auth.refresh, { refreshToken }),
 
-  me: () => get(endpoints.auth.me),
+  me: () => get(endpoints.users.me),
+
+  getCurrentUser: () => get(endpoints.users.me),
 
   verifyEmail: (payload) => post(endpoints.auth.verifyEmail, payload),
 

@@ -43,7 +43,8 @@ const ProfitLossWidget = function ProfitLossWidget({ performance, onViewAnalytic
     );
   }
 
-  const isProfit = Number(performance.totalProfit) >= 0;
+  const hasProfit = performance.totalProfit !== undefined && performance.totalProfit !== null;
+  const isProfit = hasProfit && Number(performance.totalProfit) >= 0;
 
   return (
     <Card padding="lg">
@@ -52,15 +53,21 @@ const ProfitLossWidget = function ProfitLossWidget({ performance, onViewAnalytic
           <span
             className={[
               'flex h-10 w-10 items-center justify-center rounded-lg',
-              isProfit ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600',
+              isProfit
+                ? 'bg-emerald-50 text-emerald-600'
+                : hasProfit
+                  ? 'bg-rose-50 text-rose-600'
+                  : 'bg-slate-100 text-slate-500',
             ]
               .filter(Boolean)
               .join(' ')}
           >
             {isProfit ? (
               <TrendingUp size={18} aria-hidden="true" />
-            ) : (
+            ) : hasProfit ? (
               <TrendingDown size={18} aria-hidden="true" />
+            ) : (
+              <BarChart3 size={18} aria-hidden="true" />
             )}
           </span>
           <div>
@@ -84,13 +91,18 @@ const ProfitLossWidget = function ProfitLossWidget({ performance, onViewAnalytic
         <p
           className={[
             'text-3xl font-bold',
-            isProfit ? 'text-emerald-600' : 'text-rose-600',
+            isProfit
+              ? 'text-emerald-600'
+              : hasProfit
+                ? 'text-rose-600'
+                : 'text-slate-400',
           ]
             .filter(Boolean)
             .join(' ')}
         >
-          {isProfit ? '+' : ''}
-          {formatMoney(performance.totalProfit, performance.currency)}
+          {hasProfit
+            ? `${isProfit ? '+' : ''}${formatMoney(performance.totalProfit, performance.currency)}`
+            : 'P&L data unavailable'}
         </p>
         {performance.profitPercent !== undefined ? (
           <p

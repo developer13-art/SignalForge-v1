@@ -13,6 +13,7 @@ import Alert from '../../components/feedback/Alert';
 import Checkbox from '../../components/common/Checkbox';
 import { validators } from '../../components/forms/validators';
 import { useAuthContext } from '../../context/AuthContext.jsx';
+import { resolveHome } from '../../lib/utils/resolveHome.js';
 
 const REMEMBER_KEY = 'signalforge.remember.email';
 
@@ -79,16 +80,18 @@ const Login = function Login() {
           localStorage.removeItem(REMEMBER_KEY);
         }
 
-        // Delegate to the auth context. It calls the API, persists the
-        // access and refresh tokens in localStorage, and updates the
-        // context state so that every downstream consumer sees the
-        // authenticated user immediately.
-        await login({
+        const session = await login({
           email: values.email.trim().toLowerCase(),
           password: values.password,
         });
 
-        const next = location.state?.redirect || '/dashboard';
+        // Prefer the destination the user was heading to before the
+        // login form intervened. Otherwise send them to the console
+        // that matches their role.
+        const next =
+          location.state?.redirect ||
+          resolveHome(session && session.user, session && session.roles);
+
         navigate(next, { replace: true });
       } catch (error) {
         const message =
@@ -108,7 +111,11 @@ const Login = function Login() {
 
   return (
     <Container size="sm" className="py-12">
-      <Card padding="lg" variant="elevated" className="bg-surface border border-surface-border shadow-elevated">
+      <Card
+        padding="lg"
+        variant="elevated"
+        className="bg-surface border border-surface-border shadow-elevated"
+      >
         <div className="mb-6 text-center">
           <Heading level={1} size="text-2xl" align="center">
             Welcome back

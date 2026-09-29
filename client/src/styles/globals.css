@@ -8,7 +8,7 @@
  *
  * @module client/src/styles/globals
  */
-
+@import './variables.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -125,7 +125,7 @@
     font-size: inherit;
     color: inherit;
     background: transparent;
-    border: none;
+    border: 0 solid var(--input-border);
     outline: none;
   }
 
@@ -539,6 +539,80 @@
 }
 
 @layer utilities {
+  html.dark .public-site .from-slate-50,
+  html.dark .public-site .from-indigo-50,
+  html.dark .public-site .from-violet-50,
+  html.dark .public-site .from-emerald-50,
+  html.dark .public-site .from-sky-50,
+  html.dark .public-site .from-amber-50 {
+    --tw-gradient-from: rgb(var(--surface) / 1) var(--tw-gradient-from-position);
+    --tw-gradient-to: rgb(var(--surface) / 0) var(--tw-gradient-to-position);
+  }
+
+  html.dark .public-site .via-white {
+    --tw-gradient-to: rgb(var(--surface) / 0) 50%;
+    --tw-gradient-stops:
+      var(--tw-gradient-from), rgb(var(--surface) / 1) 50%, var(--tw-gradient-to);
+  }
+
+  html.dark .public-site .to-white {
+    --tw-gradient-to: rgb(var(--bg) / 1) var(--tw-gradient-to-position);
+  }
+
+  html.dark .bg-white,
+  html.dark .bg-gray-50,
+  html.dark .bg-slate-50 {
+    background-color: rgb(var(--surface) / 1);
+  }
+
+  html.dark .bg-gray-100,
+  html.dark .bg-slate-100 {
+    background-color: rgb(var(--surface-elevated) / 1);
+  }
+
+  html.dark .bg-gray-200,
+  html.dark .bg-slate-200 {
+    background-color: rgb(var(--surface-hover) / 1);
+  }
+
+  html.dark .text-gray-900,
+  html.dark .text-slate-900,
+  html.dark .text-gray-800,
+  html.dark .text-slate-800 {
+    color: rgb(var(--text-primary) / 1);
+  }
+
+  html.dark .text-gray-700,
+  html.dark .text-slate-700,
+  html.dark .text-gray-600,
+  html.dark .text-slate-600,
+  html.dark .text-gray-500,
+  html.dark .text-slate-500 {
+    color: rgb(var(--text-secondary) / 1);
+  }
+
+  html.dark .text-gray-400,
+  html.dark .text-slate-400 {
+    color: rgb(var(--text-tertiary) / 1);
+  }
+
+  html.dark .border-gray-200,
+  html.dark .border-slate-200 {
+    border-color: var(--surface-border);
+  }
+
+  html.dark .border-gray-300,
+  html.dark .border-slate-300 {
+    border-color: var(--input-border);
+  }
+
+  html.dark [class~="hover:bg-gray-50"]:hover,
+  html.dark [class~="hover:bg-slate-50"]:hover,
+  html.dark [class~="hover:bg-gray-100"]:hover,
+  html.dark [class~="hover:bg-slate-100"]:hover {
+    background-color: rgb(var(--surface-hover) / 1);
+  }
+
   .text-balance {
     text-wrap: balance;
   }
