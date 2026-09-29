@@ -113,6 +113,14 @@ const Register = function Register() {
 
       setSubmitting(true);
       try {
+        // Normalize the phone number to E.164. The PhoneInput component
+        // returns the national portion; we prepend the country code
+        // selected in the UI (default NG -> +234).
+        const rawPhone = String(values.phone || '').trim();
+        const phoneWithCountry = rawPhone.startsWith('+')
+          ? rawPhone
+          : `+234${rawPhone.replace(/^0+/, '')}`;
+
         const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -121,8 +129,10 @@ const Register = function Register() {
             firstName: values.firstName.trim(),
             lastName: values.lastName.trim(),
             email: values.email.trim().toLowerCase(),
-            phone: values.phone.trim(),
+            phone: phoneWithCountry,
             password: values.password,
+            agree: values.agree === true,
+            acceptTerms: values.agree === true,
             referralCode: values.referralCode || undefined,
             plan: preselectedPlan || undefined,
           }),

@@ -3,7 +3,8 @@
  *
  * Request and response interceptors for the shared API client. Handles
  * bearer token injection, request id propagation, tenant header
- * resolution, and response error normalization.
+ * resolution, response error normalization, and the redirect-to-login
+ * rule on 401 responses.
  *
  * @module client/src/api/interceptors
  */
@@ -18,10 +19,25 @@ function generateRequestId() {
   return `req-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
 }
 
+/**
+ * Reads the access token. Two keys are checked because the auth
+ * context and the interceptor historically used different key names.
+ * Prefer the key from appConfig; fall back to the literal name.
+ */
+function readAccessToken() {
+  const fromConfigKey = appConfig?.storage?.accessTokenKey
+    ? storage.local.get(appConfig.storage.accessTokenKey)
+    : null;
+  if (fromConfigKey) {
+    return fromConfigKey;
+  }
+  return storage.local.get('access_token');
+}
+
 export function attachInterceptors(client) {
   client.interceptors.request.use(
     (config) => {
-      const token = storage.local.get('access_token');
+      const token = readAccessToken();
 
       if (token) {
         config.headers = config.headers || {};
@@ -62,6 +78,32 @@ export function attachInterceptors(client) {
           'Request failed';
         normalized.code = (data.error && data.error.code) || `HTTP_${error.response.status}`;
         normalized.details = (data.error && data.error.details) || null;
+
+        // On 401, clear the session and force the user to the login page.
+        // The dashboard and other protected pages rely on this so they
+        // do not spin forever when the token is missing or expired.
+        if (error.response.status === 401) {
+          try {
+            if (appConfig?.storage?.accessTokenKey) {
+              storage.local.remove(appConfig.storage.accessTokenKey);
+            }
+            if (appConfig?.storage?.refreshTokenKey) {
+              storage.local.remove(appConfig.storage.refreshTokenKey);
+            }
+            storage.local.remove('access_token');
+            storage.local.remove('refresh_token');
+          } catch (_storageError) {
+            // Ignore storage errors.
+          }
+
+          if (
+            typeof window !== 'undefined' &&
+            !window.location.pathname.startsWith('/login') &&
+            !window.location.pathname.startsWith('/register')
+          ) {
+            window.location.assign('/login');
+          }
+        }
       } else if (error.request) {
         normalized.message = 'Network error — please check your connection';
         normalized.code = 'NETWORK_ERROR';

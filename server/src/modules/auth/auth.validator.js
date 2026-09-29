@@ -46,17 +46,22 @@ function validateRegisterPayload(body) {
   }
 
   if (body.phone) {
-    if (!isValidPhone(body.phone)) {
+    const rawPhone = String(body.phone).trim();
+    const normalizedPhone = normalizePhone(rawPhone);
+    if (!normalizedPhone || !isValidPhone(normalizedPhone)) {
       errors.push('Phone number is invalid');
     }
   }
 
-  if (body.acceptTerms !== true) {
+  // Accept either `acceptTerms` or `agree` — the browser sends `agree`.
+  const termsAccepted = body.acceptTerms === true || body.agree === true;
+  if (!termsAccepted) {
     errors.push('You must accept the terms of service');
   }
 
   return { valid: errors.length === 0, errors };
 }
+
 function validateLoginPayload(body) {
   const errors = [];
 

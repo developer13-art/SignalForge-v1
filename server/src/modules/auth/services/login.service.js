@@ -9,9 +9,22 @@ const { SessionService } = require('./session.service.js');
 const { DeviceService } = require('./device.service.js');
 const { accessTokenService } = require('../tokens/access-token.service.js');
 const { refreshTokenService } = require('../tokens/refresh-token.service.js');
-const { InvalidCredentialsError, AccountLockedError, AccountNotActiveError, TwoFactorRequiredError } = require('../auth.errors.js');
-const { MAX_FAILED_LOGIN_ATTEMPTS, FAILED_LOGIN_WINDOW_MINUTES, LOCKOUT_DURATION_MINUTES, LOGIN_STATUSES } = require('../auth.constants.js');
-const { emitUserLoggedIn, emitLoginFailed, emitAccountLocked, emitTwoFactorChallenge } = require('../auth.events.js');
+const {
+  InvalidCredentialsError,
+  AccountLockedError,
+  AccountNotActiveError,
+  TwoFactorRequiredError,
+} = require('../auth.errors.js');
+const {
+  MAX_FAILED_LOGIN_ATTEMPTS,
+  FAILED_LOGIN_WINDOW_MINUTES,
+} = require('../auth.constants.js');
+const {
+  emitUserLoggedIn,
+  emitLoginFailed,
+  emitTwoFactorChallenge,
+} = require('../auth.events.js');
+
 class LoginService {
   constructor(repository) {
     this.repository = repository;
@@ -58,7 +71,7 @@ class LoginService {
     } catch (error) {
       await this.repository.logLoginAttempt({
         email,
-        status: LOGIN_STATUSES.FAILED,
+        success: false,
         ipAddress: req.ip,
         userAgent: req.headers['user-agent'],
         reason: 'invalid_credentials',
@@ -74,9 +87,10 @@ class LoginService {
       await this.repository.logLoginAttempt({
         userId: user.id,
         email,
-        status: LOGIN_STATUSES.LOCKED,
+        success: false,
         ipAddress: req.ip,
         userAgent: req.headers['user-agent'],
+        reason: 'account_locked',
       });
       throw new AccountLockedError('Account is locked', {
         lockedUntil: user.locked_until,
@@ -137,9 +151,10 @@ class LoginService {
     await this.repository.logLoginAttempt({
       userId: user.id,
       email: user.email,
-      status: LOGIN_STATUSES.SUCCESS,
+      success: true,
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
+      reason: 'success',
     });
 
     await emitUserLoggedIn(user.id, session.id, {
@@ -197,5 +212,6 @@ class LoginService {
     return this.completeLogin(user, req);
   }
 }
+
 module.exports = LoginService;
 module.exports.LoginService = LoginService;

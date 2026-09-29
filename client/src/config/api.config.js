@@ -26,7 +26,7 @@ const DEFAULT_HEADERS = Object.freeze({
 });
 
 const API_CONFIG = Object.freeze({
-  baseUrl: resolveEnv('VITE_API_URL', 'http://localhost:4000'),
+  baseUrl: resolveEnv('VITE_API_BASE_URL', '/api'),
   version: resolveEnv('VITE_API_VERSION', 'v1'),
   timeoutMs: Number(resolveEnv('VITE_API_TIMEOUT_MS', 30000)),
   uploadTimeoutMs: Number(resolveEnv('VITE_API_UPLOAD_TIMEOUT_MS', 120000)),

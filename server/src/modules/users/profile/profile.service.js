@@ -6,14 +6,21 @@
 const { ProfileRepository } = require('./profile.repository.js');
 const { ProfileNotFoundError } = require('../user.errors.js');
 const { emitProfileUpdated } = require('../user.events.js');
+
 class ProfileService {
   constructor(repository = null) {
     this.repository = repository || new ProfileRepository();
   }
 
   async getByUserId(userId) {
-    const profile = await this.repository.findByUserId(userId);
-    return profile || null;
+    const existing = await this.repository.findByUserId(userId);
+    if (existing) {
+      return existing;
+    }
+    // First access: create an empty profile so downstream clients always
+    // receive a real object. This keeps the endpoint idempotent and
+    // avoids the "null profile" state that stalls the dashboard.
+    return this.repository.upsert(userId, {});
   }
 
   async getOrCreate(userId) {
@@ -45,5 +52,6 @@ class ProfileService {
     return { deleted: true };
   }
 }
+
 module.exports = ProfileService;
 module.exports.ProfileService = ProfileService;

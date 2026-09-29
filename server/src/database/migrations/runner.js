@@ -43,6 +43,13 @@ const MIGRATION_FILES = [
   '024_create_proof_of_alpha_domain.js',
   '025_create_hybrid_execution_domain.js',
   '026_create_crypto_market_data_domain.js',
+  '027_add_auth_columns.js',
+  '028_seed_system_roles_and_permissions.js',
+  '029_create_verification_tokens.js',
+  '030_align_two_factor_auth.js',
+  '031_align_sessions_and_api_keys.js',
+  '032_align_user_sessions.js',
+  '033_finalize_session_token_rename.js',
 ];
 
 async function ensureMigrationsTable(client) {

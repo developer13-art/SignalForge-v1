@@ -5,10 +5,15 @@
  * label description, and validation styling. The native input is
  * preserved for form integration but visually replaced.
  *
+ * The onChange prop is always called with a boolean. When the caller
+ * passes the raw React event (from the internal input), this
+ * component extracts `event.target.checked` before invoking onChange,
+ * so consumers never have to unwrap the event themselves.
+ *
  * @module client/src/components/common/Checkbox
  */
 
-import { forwardRef, useId, useRef, useEffect } from 'react';
+import { forwardRef, useId, useRef, useEffect, useCallback } from 'react';
 import { Check, Minus } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -66,6 +71,27 @@ const Checkbox = forwardRef(function Checkbox(
     }
   }, [indeterminate]);
 
+  const handleChange = useCallback(
+    (event) => {
+      if (!onChange) {
+        return;
+      }
+      // Always deliver a boolean to the caller, regardless of whether
+      // they were expecting a React event or a primitive value.
+      onChange(event.target.checked, event);
+    },
+    [onChange],
+  );
+
+  const handleBlur = useCallback(
+    (event) => {
+      if (onBlur) {
+        onBlur(event);
+      }
+    },
+    [onBlur],
+  );
+
   const dimensions = SIZES[size] || SIZES.md;
 
   return (
@@ -85,8 +111,8 @@ const Checkbox = forwardRef(function Checkbox(
             type="checkbox"
             checked={checked}
             defaultChecked={defaultChecked}
-            onChange={onChange}
-            onBlur={onBlur}
+            onChange={handleChange}
+            onBlur={handleBlur}
             disabled={disabled}
             required={required}
             aria-invalid={Boolean(error)}

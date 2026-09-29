@@ -6,6 +6,10 @@
  * the individual service modules (register, login, refresh, and so
  * on) and returns canonical JSON responses.
  *
+ * The AuthController is constructed lazily on the first request so
+ * that the database and other subsystems have been initialized by
+ * the bootstrap sequence before any controller is instantiated.
+ *
  * Public (unauthenticated) endpoints:
  *   POST   /api/auth/register
  *   POST   /api/auth/login
@@ -42,7 +46,22 @@ const { authenticationMiddleware } = require('../middleware/authentication.middl
 const { rateLimitMiddleware } = require('../middleware/rate-limit.middleware.js');
 
 const router = Router();
-const controller = new AuthController();
+
+// The controller is constructed the first time a request reaches this
+// router. By that point, bootstrap has completed and every subsystem
+// the controller depends on is available.
+let controllerInstance = null;
+
+function controller() {
+  if (!controllerInstance) {
+    controllerInstance = new AuthController();
+  }
+  return controllerInstance;
+}
+
+function handle(method) {
+  return (req, res, next) => controller()[method](req, res, next);
+}
 
 const authRateLimiter = rateLimitMiddleware({
   windowMs: 15 * 60 * 1000,
@@ -58,53 +77,53 @@ const sensitiveRateLimiter = rateLimitMiddleware({
 
 // -------------------- Public (unauthenticated) --------------------
 
-router.post('/register', authRateLimiter, controller.register);
-router.post('/login', authRateLimiter, controller.login);
-router.post('/refresh', controller.refresh);
-router.post('/forgot-password', sensitiveRateLimiter, controller.requestPasswordReset);
-router.post('/reset-password', sensitiveRateLimiter, controller.resetPassword);
-router.post('/verify-email', controller.verifyEmail);
-router.post('/2fa/verify', authRateLimiter, controller.verifyTwoFactor);
-router.post('/account-recovery', sensitiveRateLimiter, controller.accountRecoveryRequest);
-router.post('/account-recovery/complete', sensitiveRateLimiter, controller.accountRecoveryComplete);
-router.post('/social', controller.socialLogin);
+router.post('/register', authRateLimiter, handle('register'));
+router.post('/login', authRateLimiter, handle('login'));
+router.post('/refresh', handle('refresh'));
+router.post('/forgot-password', sensitiveRateLimiter, handle('requestPasswordReset'));
+router.post('/reset-password', sensitiveRateLimiter, handle('resetPassword'));
+router.post('/verify-email', handle('verifyEmail'));
+router.post('/2fa/verify', authRateLimiter, handle('verifyTwoFactor'));
+router.post('/account-recovery', sensitiveRateLimiter, handle('accountRecoveryRequest'));
+router.post('/account-recovery/complete', sensitiveRateLimiter, handle('accountRecoveryComplete'));
+router.post('/social', handle('socialLogin'));
 
 // -------------------- Authenticated --------------------
 
-router.post('/logout', authenticationMiddleware, controller.logout);
-router.post('/logout-all', authenticationMiddleware, controller.logoutAll);
-router.post('/change-password', authenticationMiddleware, controller.changePassword);
+router.post('/logout', authenticationMiddleware, handle('logout'));
+router.post('/logout-all', authenticationMiddleware, handle('logoutAll'));
+router.post('/change-password', authenticationMiddleware, handle('changePassword'));
 
 router.post(
   '/verify-email/request',
   authenticationMiddleware,
-  controller.requestEmailVerification,
+  handle('requestEmailVerification'),
 );
 
 router.post(
   '/verify-phone/request',
   authenticationMiddleware,
-  controller.requestPhoneVerification,
+  handle('requestPhoneVerification'),
 );
-router.post('/verify-phone', authenticationMiddleware, controller.verifyPhone);
+router.post('/verify-phone', authenticationMiddleware, handle('verifyPhone'));
 
-router.post('/2fa/setup', authenticationMiddleware, controller.twoFactorSetup);
-router.post('/2fa/confirm', authenticationMiddleware, controller.twoFactorConfirm);
-router.post('/2fa/disable', authenticationMiddleware, controller.twoFactorDisable);
-router.get('/2fa/status', authenticationMiddleware, controller.twoFactorStatus);
+router.post('/2fa/setup', authenticationMiddleware, handle('twoFactorSetup'));
+router.post('/2fa/confirm', authenticationMiddleware, handle('twoFactorConfirm'));
+router.post('/2fa/disable', authenticationMiddleware, handle('twoFactorDisable'));
+router.get('/2fa/status', authenticationMiddleware, handle('twoFactorStatus'));
 router.post(
   '/2fa/backup-codes',
   authenticationMiddleware,
-  controller.regenerateBackupCodes,
+  handle('regenerateBackupCodes'),
 );
 
-router.get('/sessions', authenticationMiddleware, controller.listSessions);
+router.get('/sessions', authenticationMiddleware, handle('listSessions'));
 router.delete(
   '/sessions/:sessionId',
   authenticationMiddleware,
-  controller.revokeSession,
+  handle('revokeSession'),
 );
 
-router.get('/devices', authenticationMiddleware, controller.listDevices);
+router.get('/devices', authenticationMiddleware, handle('listDevices'));
 
 module.exports = router;

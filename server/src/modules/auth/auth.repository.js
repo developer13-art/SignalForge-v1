@@ -471,14 +471,14 @@ class AuthRepository {
     );
   }
 
-  async assignRoleToUser(userId, roleName) {
+  async assignRoleToUser(userId, roleName, grantedBy = null) {
     await this.db.query(
-      `INSERT INTO user_roles (user_id, role_id, assigned_at)
-       SELECT $1, r.id, NOW()
+      `INSERT INTO user_roles (user_id, role_id, granted_at, granted_by)
+       SELECT $1, r.id, NOW(), $3
          FROM roles r
         WHERE r.name = $2
        ON CONFLICT (user_id, role_id) DO NOTHING`,
-      [userId, roleName],
+      [userId, roleName, grantedBy],
     );
   }
 
@@ -508,14 +508,14 @@ class AuthRepository {
   async logLoginAttempt(data) {
     await this.db.query(
       `INSERT INTO login_attempts (
-         user_id, email, status, ip_address, user_agent, reason, created_at
+         user_id, email, ip_address, user_agent, success, reason, created_at
        ) VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
       [
         data.userId || null,
         data.email,
-        data.status,
         data.ipAddress || null,
         data.userAgent || null,
+        data.success === true,
         data.reason || null,
       ],
     );
@@ -526,7 +526,7 @@ class AuthRepository {
       `SELECT COUNT(*)::int AS count
          FROM login_attempts
         WHERE LOWER(email) = LOWER($1)
-          AND status = 'FAILED'
+          AND success = FALSE
           AND created_at > NOW() - ($2::int * interval '1 minute')`,
       [email, windowMinutes],
     );

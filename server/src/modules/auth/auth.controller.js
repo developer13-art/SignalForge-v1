@@ -31,6 +31,10 @@ class AuthController {
   validateOrThrow(validator, body) {
     const result = validator(body);
     if (!result.valid) {
+      console.error('[AUTH VALIDATION FAILED]', {
+        body,
+        errors: result.errors,
+      });
       throw new ValidationError('Validation failed', {
         code: 'VALIDATION_FAILED',
         details: { errors: result.errors },

@@ -6,10 +6,23 @@
  * localStorage so the session survives page reloads. Also listens for
  * forced-logout events (e.g. token revocation from another device).
  *
+ * Exports:
+ *   - AuthProvider      the provider component
+ *   - useAuthContext    canonical hook name
+ *   - useAuth           alias of useAuthContext for convenience
+ *   - AuthContext       the raw context (rarely used directly)
+ *
  * @module client/src/context/AuthContext
  */
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import toast from 'react-hot-toast';
 
 import { authApi } from '../api/auth.api.js';
@@ -20,7 +33,7 @@ const AuthContext = createContext(null);
 function readToken(key) {
   try {
     return localStorage.getItem(key) || null;
-  } catch (err) {
+  } catch (_err) {
     return null;
   }
 }
@@ -32,15 +45,19 @@ function writeToken(key, value) {
     } else {
       localStorage.setItem(key, value);
     }
-  } catch (err) {
+  } catch (_err) {
     // ignore storage quota errors
   }
 }
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [accessToken, setAccessToken] = useState(() => readToken(appConfig.storage.accessTokenKey));
-  const [refreshToken, setRefreshToken] = useState(() => readToken(appConfig.storage.refreshTokenKey));
+  const [accessToken, setAccessToken] = useState(() =>
+    readToken(appConfig.storage.accessTokenKey),
+  );
+  const [refreshToken, setRefreshToken] = useState(() =>
+    readToken(appConfig.storage.refreshTokenKey),
+  );
   const [loading, setLoading] = useState(true);
 
   const clearSession = useCallback(() => {
@@ -51,17 +68,20 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
-  const persistSession = useCallback((session) => {
-    if (!session) {
-      clearSession();
-      return;
-    }
-    writeToken(appConfig.storage.accessTokenKey, session.accessToken);
-    writeToken(appConfig.storage.refreshTokenKey, session.refreshToken);
-    setAccessToken(session.accessToken);
-    setRefreshToken(session.refreshToken);
-    setUser(session.user || null);
-  }, [clearSession]);
+  const persistSession = useCallback(
+    (session) => {
+      if (!session) {
+        clearSession();
+        return;
+      }
+      writeToken(appConfig.storage.accessTokenKey, session.accessToken);
+      writeToken(appConfig.storage.refreshTokenKey, session.refreshToken);
+      setAccessToken(session.accessToken);
+      setRefreshToken(session.refreshToken);
+      setUser(session.user || null);
+    },
+    [clearSession],
+  );
 
   const loadCurrentUser = useCallback(async () => {
     if (!accessToken) {
@@ -71,7 +91,7 @@ export function AuthProvider({ children }) {
     try {
       const profile = await authApi.getCurrentUser();
       setUser(profile.user || profile);
-    } catch (err) {
+    } catch (_err) {
       clearSession();
     } finally {
       setLoading(false);
@@ -91,14 +111,19 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener('signalforge:auth:logout', handler);
   }, [clearSession]);
 
-  const login = useCallback(
-    async (credentials) => {
-      const session = await authApi.login(credentials);
-      persistSession(session);
-      return session.user;
-    },
-    [persistSession],
-  );
+const login = useCallback(
+  async (credentials) => {
+    // TEMP DEBUG
+    console.log('AUTH_LOGIN_CALLED', credentials);
+    const session = await authApi.login(credentials);
+    console.log('AUTH_LOGIN_RESPONSE', session);
+    console.log('AUTH_LOGIN_ACCESS_TOKEN', session && session.accessToken);
+    persistSession(session);
+    console.log('AUTH_LOGIN_AFTER_PERSIST', localStorage.getItem('signalforge.access_token'));
+    return session.user;
+  },
+  [persistSession],
+);
 
   const register = useCallback(
     async (payload) => {
@@ -114,7 +139,7 @@ export function AuthProvider({ children }) {
   const logout = useCallback(async () => {
     try {
       await authApi.logout();
-    } catch (err) {
+    } catch (_err) {
       // ignore — we clear the session regardless
     } finally {
       clearSession();
@@ -145,7 +170,17 @@ export function AuthProvider({ children }) {
       setUser,
       clearSession,
     }),
-    [user, accessToken, refreshToken, loading, login, register, logout, refresh, clearSession],
+    [
+      user,
+      accessToken,
+      refreshToken,
+      loading,
+      login,
+      register,
+      logout,
+      refresh,
+      clearSession,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -158,6 +193,10 @@ export function useAuthContext() {
   }
   return ctx;
 }
+
+// Alias. Consumers that prefer `useAuth` (as the UserContext does) can
+// use the same hook under the shorter name.
+export const useAuth = useAuthContext;
 
 export { AuthContext };
 export default AuthContext;

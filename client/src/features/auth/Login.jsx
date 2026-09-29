@@ -12,12 +12,14 @@ import Input from '../../components/common/Input';
 import Alert from '../../components/feedback/Alert';
 import Checkbox from '../../components/common/Checkbox';
 import { validators } from '../../components/forms/validators';
+import { useAuthContext } from '../../context/AuthContext.jsx';
 
 const REMEMBER_KEY = 'signalforge.remember.email';
 
 const Login = function Login() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuthContext();
 
   const [values, setValues] = useState({
     email: localStorage.getItem(REMEMBER_KEY) || '',
@@ -77,33 +79,27 @@ const Login = function Login() {
           localStorage.removeItem(REMEMBER_KEY);
         }
 
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            email: values.email.trim().toLowerCase(),
-            password: values.password,
-          }),
+        // Delegate to the auth context. It calls the API, persists the
+        // access and refresh tokens in localStorage, and updates the
+        // context state so that every downstream consumer sees the
+        // authenticated user immediately.
+        await login({
+          email: values.email.trim().toLowerCase(),
+          password: values.password,
         });
-
-        const payload = await response.json();
-
-        if (!response.ok) {
-          const message = payload?.error?.message || 'Invalid email or password';
-          setSubmitError(message);
-          return;
-        }
 
         const next = location.state?.redirect || '/dashboard';
         navigate(next, { replace: true });
-      } catch (_error) {
-        setSubmitError('Unable to reach the server. Please try again.');
+      } catch (error) {
+        const message =
+          (error && error.message) ||
+          'Unable to sign in. Please check your credentials and try again.';
+        setSubmitError(message);
       } finally {
         setSubmitting(false);
       }
     },
-    [values, validate, navigate, location.state],
+    [values, validate, navigate, location.state, login],
   );
 
   const handleOauth = (provider) => {
