@@ -37,6 +37,10 @@ import {
   Database,
   Repeat,
   UserCircle,
+  Boxes,
+  Trophy,
+  Zap,
+  Radio,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -55,6 +59,23 @@ const USER_NAV = [
   { label: 'Automation', to: routes.user.riskAutomation.automationRules, icon: Cpu },
   { label: 'Brokers', to: routes.user.brokers.accounts, icon: Store, badgeKey: 'brokers' },
   { label: 'Analytics', to: routes.user.analytics.overview, icon: LineChart },
+
+  // Solana features
+  { label: 'Crypto Trading', to: routes.user.crypto.overview, icon: Coins },
+  { label: 'Crypto Positions', to: routes.user.crypto.positions, icon: WalletIcon },
+  { label: 'Crypto Orders', to: routes.user.crypto.orders, icon: Boxes },
+  { label: 'Crypto History', to: routes.user.crypto.history, icon: BarChart3 },
+
+  // Solana Blinks
+  { label: 'Solana Blinks', to: routes.user.blinks.list, icon: Zap },
+  { label: 'Create Blink', to: routes.user.blinks.create, icon: Sparkles },
+
+  // Proof of Alpha
+  { label: 'Proof of Alpha', to: routes.user.proofOfAlpha.overview, icon: ShieldCheck },
+  { label: 'Proof Explorer', to: routes.user.proofOfAlpha.explorer, icon: Radio },
+  { label: 'Verified Leaderboard', to: routes.user.proofOfAlpha.leaderboard, icon: Trophy },
+
+  // Existing
   { label: 'Marketplace', to: routes.user.providerMarketplace.browse, icon: Users },
   { label: 'Copy Trading', to: routes.user.traderMarketplace.browse, icon: Copy },
   { label: 'Subscription', to: routes.user.subscriptions.mySubscription, icon: CreditCard },

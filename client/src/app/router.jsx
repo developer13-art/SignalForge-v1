@@ -9,11 +9,11 @@ import AdminLayout from '../layouts/AdminLayout';
 import ComplianceLayout from '../layouts/ComplianceLayout';
 import ExecutiveLayout from '../layouts/ExecutiveLayout';
 import SupportLayout from '../layouts/SupportLayout';
-import ProtectedRoute from './ProtectedRoute';
-import KycRequiredRoute from './KycRequiredRoute';
-import SubscriptionRequiredRoute from './SubscriptionRequiredRoute';
-import RoleRoute from './RoleRoute';
-import NotFoundRoute from './NotFoundRoute';
+import ProtectedRoute from '../routes/ProtectedRoute';
+import KycRequiredRoute from '../routes/KycRequiredRoute';
+import SubscriptionRequiredRoute from '../routes/SubscriptionRequiredRoute';
+import RoleRoute from '../routes/RoleRoute';
+import NotFoundRoute from '../routes/NotFoundRoute';
 import LoadingState from '../components/common/LoadingState';
 
 // Public

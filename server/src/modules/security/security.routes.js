@@ -19,7 +19,7 @@ const { apiKeyController } = require('./api-key.controller');
 
 const router = Router();
 
-router.use(authenticationMiddleware);
+router.use(authenticationMiddleware());
 
 router.get(
   '/overview',

@@ -21,7 +21,7 @@ const reportRoutes = require('./reports/compliance-report.routes');
 
 const router = Router();
 
-router.use(authenticationMiddleware);
+router.use(authenticationMiddleware());
 router.use(authorizationMiddleware(['COMPLIANCE_OFFICER', 'ADMIN', 'SUPER_ADMIN']));
 
 router.get(

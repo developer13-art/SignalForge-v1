@@ -459,6 +459,29 @@ const _routes = {
       paymentHistory: '/solana/payments/history',
       publicVerification: (hash = ':hash') => `/verify/${hash}`,
       onChainBadges: '/solana/badges',
+      
+    },
+        // Feature A — Solana Actions & Blinks
+    blinks: {
+      list: '/solana/blinks',
+      create: '/solana/blinks/create',
+      details: (blinkId = ':blinkId') => `/solana/blinks/${blinkId}`,
+    },
+    // Feature B — Proof of Alpha
+    proofOfAlpha: {
+      overview: '/proof-of-alpha',
+      explorer: '/proof-of-alpha/explorer',
+      providerHistory: (providerId = ':providerId') =>
+        `/proof-of-alpha/provider/${providerId}`,
+      verification: (signature = ':signature') => `/verify/${signature}`,
+      leaderboard: '/leaderboard',
+    },
+    // Feature C — Crypto Trading (in addition to the existing nested entries)
+    crypto: {
+      overview: '/crypto-trading',
+      positions: '/crypto-trading/positions',
+      orders: '/crypto-trading/orders',
+      history: '/crypto-trading/history',
     },
   },
 };
@@ -493,6 +516,9 @@ _routes.riskAutomation = _routes.user.riskAutomation;
 _routes.brokers = _routes.user.brokers;
 _routes.analytics = _routes.user.analytics;
 _routes.traderIntelligence = _routes.user.traderIntelligence;
+_routes.blinks = _routes.user.blinks;
+_routes.proofOfAlpha = _routes.user.proofOfAlpha;
+_routes.crypto = _routes.user.crypto;
 
 // Freeze exactly once, after flattening.
 export const routes = Object.freeze(_routes);

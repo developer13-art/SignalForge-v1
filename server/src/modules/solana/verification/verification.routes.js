@@ -35,19 +35,19 @@ router.get(
 
 router.get(
   '/audit/attestations/:attestationId',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   asyncHandler(verificationController.auditAttestation),
 );
 
 router.get(
   '/audit/provenance/:provenanceId',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   asyncHandler(verificationController.auditProvenance),
 );
 
 router.get(
   '/audit/pending',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   asyncHandler(verificationController.auditPending),
 );
 module.exports = router;

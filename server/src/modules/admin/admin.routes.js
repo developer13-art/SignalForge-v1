@@ -28,7 +28,7 @@ const adminReportRoutes = require('./reports/admin-report.routes');
 
 const router = Router();
 
-router.use(authenticationMiddleware);
+router.use(authenticationMiddleware());
 router.use(authorizationMiddleware(['ADMIN', 'SUPER_ADMIN']));
 
 router.get(

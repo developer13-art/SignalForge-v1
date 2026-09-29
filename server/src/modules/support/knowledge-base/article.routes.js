@@ -36,21 +36,21 @@ router.get(
 
 router.post(
   '/',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   authorizationMiddleware(['ADMIN', 'SUPER_ADMIN', 'SUPPORT']),
   asyncHandler(articleController.createArticle),
 );
 
 router.patch(
   '/:articleId',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   authorizationMiddleware(['ADMIN', 'SUPER_ADMIN', 'SUPPORT']),
   asyncHandler(articleController.updateArticle),
 );
 
 router.delete(
   '/:articleId',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   authorizationMiddleware(['ADMIN', 'SUPER_ADMIN']),
   asyncHandler(articleController.deleteArticle),
 );

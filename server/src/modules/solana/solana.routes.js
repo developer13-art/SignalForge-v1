@@ -35,7 +35,7 @@ router.get(
 
 router.get(
   '/overview',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   asyncHandler(solanaController.getOverview),
 );
 

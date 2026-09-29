@@ -16,7 +16,7 @@ router.get(
   asyncHandler(settingsController.listPublicSettings),
 );
 
-router.use(authenticationMiddleware);
+router.use(authenticationMiddleware());
 router.use(authorizationMiddleware(['ADMIN', 'SUPER_ADMIN']));
 
 router.get(

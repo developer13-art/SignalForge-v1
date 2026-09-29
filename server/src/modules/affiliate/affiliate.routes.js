@@ -14,7 +14,7 @@ const { asyncHandler } = require('../../lib/async-handler');
 
 const router = Router();
 
-router.use(authenticationMiddleware);
+router.use(authenticationMiddleware());
 
 router.get(
   '/dashboard',

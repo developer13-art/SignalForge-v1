@@ -90,40 +90,40 @@ router.post('/social', handle('socialLogin'));
 
 // -------------------- Authenticated --------------------
 
-router.post('/logout', authenticationMiddleware, handle('logout'));
-router.post('/logout-all', authenticationMiddleware, handle('logoutAll'));
-router.post('/change-password', authenticationMiddleware, handle('changePassword'));
+router.post('/logout', authenticationMiddleware(), handle('logout'));
+router.post('/logout-all', authenticationMiddleware(), handle('logoutAll'));
+router.post('/change-password', authenticationMiddleware(), handle('changePassword'));
 
 router.post(
   '/verify-email/request',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   handle('requestEmailVerification'),
 );
 
 router.post(
   '/verify-phone/request',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   handle('requestPhoneVerification'),
 );
-router.post('/verify-phone', authenticationMiddleware, handle('verifyPhone'));
+router.post('/verify-phone', authenticationMiddleware(), handle('verifyPhone'));
 
-router.post('/2fa/setup', authenticationMiddleware, handle('twoFactorSetup'));
-router.post('/2fa/confirm', authenticationMiddleware, handle('twoFactorConfirm'));
-router.post('/2fa/disable', authenticationMiddleware, handle('twoFactorDisable'));
-router.get('/2fa/status', authenticationMiddleware, handle('twoFactorStatus'));
+router.post('/2fa/setup', authenticationMiddleware(), handle('twoFactorSetup'));
+router.post('/2fa/confirm', authenticationMiddleware(), handle('twoFactorConfirm'));
+router.post('/2fa/disable', authenticationMiddleware(), handle('twoFactorDisable'));
+router.get('/2fa/status', authenticationMiddleware(), handle('twoFactorStatus'));
 router.post(
   '/2fa/backup-codes',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   handle('regenerateBackupCodes'),
 );
 
-router.get('/sessions', authenticationMiddleware, handle('listSessions'));
+router.get('/sessions', authenticationMiddleware(), handle('listSessions'));
 router.delete(
   '/sessions/:sessionId',
-  authenticationMiddleware,
+  authenticationMiddleware(),
   handle('revokeSession'),
 );
 
-router.get('/devices', authenticationMiddleware, handle('listDevices'));
+router.get('/devices', authenticationMiddleware(), handle('listDevices'));
 
 module.exports = router;
