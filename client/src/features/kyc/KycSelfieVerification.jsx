@@ -9,15 +9,19 @@ import Button from '../../components/common/Button';
 import Alert from '../../components/feedback/Alert';
 import KycProgressStepper from '../../components/domain/kyc/KycProgressStepper';
 import KycSelfieCapture from '../../components/domain/kyc/KycSelfieCapture';
+import Checkbox from '../../components/common/Checkbox';
+import { kycApi } from '../../api/kyc.api.js';
 
 const KycSelfieVerification = function KycSelfieVerification() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const documentType = location.state?.documentType || 'national_id';
+  const documentType = location.state?.documentType || 'NATIONAL_ID';
   const uploadId = location.state?.uploadId;
+  const resumeWithSavedSelfie = location.state?.resumeWithSavedSelfie === true;
 
   const [selfie, setSelfie] = useState(null);
+  const [confirmed, setConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -31,8 +35,12 @@ const KycSelfieVerification = function KycSelfieVerification() {
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    if (!selfie?.blob) {
+    if (!resumeWithSavedSelfie && !selfie?.blob) {
       setError('Please capture a selfie to continue');
+      return;
+    }
+    if (!confirmed) {
+      setError('Please confirm your information is accurate and accept the verification terms.');
       return;
     }
 
@@ -40,22 +48,12 @@ const KycSelfieVerification = function KycSelfieVerification() {
     setError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('selfie', selfie.blob, 'selfie.jpg');
-      formData.append('uploadId', uploadId);
-
-      const response = await fetch('/api/kyc/submit', {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      });
-
-      const payload = await response.json();
-
-      if (!response.ok) {
-        setError(payload?.error?.message || 'Submission failed. Please try again.');
-        return;
+      if (!resumeWithSavedSelfie) {
+        const formData = new FormData();
+        formData.append('selfie', selfie.blob, 'selfie.jpg');
+        await kycApi.uploadSelfie(formData);
       }
+      await kycApi.submitApplication({ confirmAccuracy: true, acceptTerms: true });
 
       navigate('/kyc/review-status');
     } catch (_err) {
@@ -63,7 +61,7 @@ const KycSelfieVerification = function KycSelfieVerification() {
     } finally {
       setSubmitting(false);
     }
-  }, [selfie, uploadId, navigate]);
+  }, [selfie, navigate, resumeWithSavedSelfie, confirmed]);
 
   const handleBack = useCallback(() => {
     navigate('/kyc/document-verification', { state: { documentType, uploadId } });
@@ -96,11 +94,25 @@ const KycSelfieVerification = function KycSelfieVerification() {
           </div>
         ) : null}
 
-        <div className="mt-6">
-          <KycSelfieCapture
-            onCapture={handleCapture}
-            onRetake={handleRetake}
-            error={null}
+        {resumeWithSavedSelfie ? (
+          <Alert variant="info" size="sm" className="mt-6">
+            Your selfie is saved. Confirm the information below to submit your verification.
+          </Alert>
+        ) : (
+          <div className="mt-6">
+            <KycSelfieCapture
+              onCapture={handleCapture}
+              onRetake={handleRetake}
+              error={null}
+            />
+          </div>
+        )}
+
+        <div className="mt-5">
+          <Checkbox
+            label="I confirm my information is accurate and agree to identity verification."
+            checked={confirmed}
+            onChange={setConfirmed}
           />
         </div>
 
@@ -129,7 +141,7 @@ const KycSelfieVerification = function KycSelfieVerification() {
           <Button
             variant="primary"
             onClick={handleSubmit}
-            disabled={!selfie || submitting}
+            disabled={(!resumeWithSavedSelfie && !selfie) || !confirmed || submitting}
             trailingIcon={ArrowRight}
           >
             {submitting ? 'Submitting...' : 'Submit for Review'}

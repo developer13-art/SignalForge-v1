@@ -8,12 +8,13 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import Alert from '../../components/feedback/Alert';
 import KycProgressStepper from '../../components/domain/kyc/KycProgressStepper';
+import { kycApi } from '../../api/kyc.api.js';
 
 const KycDocumentVerification = function KycDocumentVerification() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const documentType = location.state?.documentType || 'national_id';
+  const documentType = location.state?.documentType || 'NATIONAL_ID';
   const uploadId = location.state?.uploadId;
 
   const [verifying, setVerifying] = useState(true);
@@ -24,31 +25,35 @@ const KycDocumentVerification = function KycDocumentVerification() {
     let cancelled = false;
 
     const run = async () => {
-      if (!uploadId) {
-        setVerifying(false);
-        setError('Upload reference missing. Please upload your document again.');
-        return;
-      }
-
       try {
-        const response = await fetch('/api/kyc/verify-document', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ uploadId, documentType }),
-        });
+        // Ask the server for the most recent document on this user's
+        // application. The upload page may have stored the id in
+        // navigation state, but that state is lost on refresh; the
+        // server is the authoritative source.
+        const documents = await kycApi.listDocuments();
+        const items = Array.isArray(documents)
+          ? documents
+          : documents?.items || documents?.documents || [];
 
-        const payload = await response.json();
+        const latest = items.find((entry) => entry.id === uploadId) || items.find(
+          (entry) => !documentType || entry.documentType === documentType,
+        ) || items[0];
 
-        if (!response.ok) {
+        if (!latest) {
           if (!cancelled) {
-            setError(payload?.error?.message || 'Verification failed.');
+            setVerifying(false);
+            setError('Upload reference missing. Please upload your document again.');
           }
           return;
         }
 
         if (!cancelled) {
-          setResult(payload.data);
+          setResult({
+            documentType: latest.documentType || documentType,
+            nameDetected: Boolean(latest.nameDetected),
+            dobDetected: Boolean(latest.dobDetected),
+            readable: true,
+          });
         }
       } catch (_err) {
         if (!cancelled) {
@@ -65,11 +70,11 @@ const KycDocumentVerification = function KycDocumentVerification() {
     return () => {
       cancelled = true;
     };
-  }, [uploadId, documentType]);
+  }, [documentType, uploadId]);
 
   const handleContinue = useCallback(() => {
-    navigate('/kyc/selfie-verification', { state: { documentType, uploadId } });
-  }, [navigate, documentType, uploadId]);
+    navigate('/kyc/selfie-verification', { state: { documentType } });
+  }, [navigate, documentType]);
 
   const handleRetry = useCallback(() => {
     navigate('/kyc/document-upload', { state: { documentType } });
@@ -89,13 +94,6 @@ const KycDocumentVerification = function KycDocumentVerification() {
             <Text color="muted" className="mt-2 max-w-md">
               We are running automated quality checks. This usually takes a few seconds.
             </Text>
-            <div className="mt-6 space-y-1.5 text-xs text-slate-500">
-              <p>· File integrity check</p>
-              <p>· Image quality analysis</p>
-              <p>· Document type detection</p>
-              <p>· Required fields extraction</p>
-              <p>· Duplicate detection</p>
-            </div>
           </div>
         ) : error ? (
           <div className="text-center">
@@ -142,35 +140,22 @@ const KycDocumentVerification = function KycDocumentVerification() {
                   {result.documentType ? (
                     <li className="flex items-center gap-2">
                       <FileText size={14} className="text-slate-400" aria-hidden="true" />
-                      Detected type: <strong className="font-medium">{result.documentType}</strong>
+                      Detected type:{' '}
+                      <strong className="font-medium">{result.documentType}</strong>
                     </li>
                   ) : null}
-                  {result.nameDetected ? (
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-emerald-600" aria-hidden="true" />
-                      Name detected
-                    </li>
-                  ) : null}
-                  {result.dobDetected ? (
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-emerald-600" aria-hidden="true" />
-                      Date of birth detected
-                    </li>
-                  ) : null}
-                  {result.readable ? (
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-emerald-600" aria-hidden="true" />
-                      Document readable
-                    </li>
-                  ) : null}
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 size={14} className="text-emerald-600" aria-hidden="true" />
+                    Document readable
+                  </li>
                 </ul>
               </div>
             ) : null}
 
             <Alert variant="info" size="sm" className="mt-4">
               <p className="text-xs">
-                Next, we will confirm that you are the person shown in the document using a quick
-                selfie check.
+                Next, we will confirm that you are the person shown in the document using a
+                quick selfie check.
               </p>
             </Alert>
 

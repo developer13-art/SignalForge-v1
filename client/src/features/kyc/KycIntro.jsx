@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Shield,
@@ -17,6 +17,9 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import KycProgressStepper from '../../components/domain/kyc/KycProgressStepper';
+import Alert from '../../components/feedback/Alert';
+import { kycApi } from '../../api/kyc.api.js';
+import { resolveKycResume } from '../../lib/utils/kycResume.js';
 
 const REQUIREMENTS = [
   {
@@ -43,6 +46,48 @@ const REQUIREMENTS = [
 
 const KycIntro = function KycIntro() {
   const navigate = useNavigate();
+  const [checkingProgress, setCheckingProgress] = useState(true);
+  const [resumeError, setResumeError] = useState(null);
+
+  const checkProgress = useCallback(async () => {
+    setCheckingProgress(true);
+    setResumeError(null);
+
+    try {
+      const status = await kycApi.getStatus();
+      const application = status?.application;
+
+      if (!application) {
+        return;
+      }
+
+      const applicationStatus = String(application.status || '').toUpperCase();
+      const documents = applicationStatus === 'PENDING'
+        ? await kycApi.listDocuments()
+        : [];
+      const savedDocuments = Array.isArray(documents)
+        ? documents
+        : documents?.documents || documents?.items || [];
+      const destination = resolveKycResume(application, savedDocuments);
+
+      if (!destination) {
+        return;
+      }
+
+      navigate(destination.path, {
+        replace: true,
+        state: destination.state,
+      });
+    } catch (_error) {
+      setResumeError('We could not load your saved verification progress. Please try again.');
+    } finally {
+      setCheckingProgress(false);
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    checkProgress();
+  }, [checkProgress]);
 
   const handleStart = useCallback(() => {
     navigate('/kyc/personal-info');
@@ -52,11 +97,29 @@ const KycIntro = function KycIntro() {
     navigate('/kyc/help');
   }, [navigate]);
 
+  if (checkingProgress) {
+    return (
+      <Container size="lg" className="py-8">
+        <Card padding="lg" variant="elevated">
+          <Text color="muted">Checking your saved verification progress...</Text>
+        </Card>
+      </Container>
+    );
+  }
+
   return (
     <Container size="lg" className="py-8">
       <KycProgressStepper currentStep={0} />
 
       <Card padding="lg" variant="elevated" className="mt-8">
+        {resumeError ? (
+          <div className="mb-5">
+            <Alert variant="warning" size="sm">{resumeError}</Alert>
+            <Button variant="outline" className="mt-3" onClick={checkProgress}>
+              Retry
+            </Button>
+          </div>
+        ) : null}
         <div className="flex items-start gap-4">
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white">
             <Shield size={26} aria-hidden="true" />

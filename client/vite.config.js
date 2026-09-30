@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     resolve: {
+      extensions: ['.js', '.jsx', '.mjs', '.cjs', '.json'],
       alias: {
         '@': path.resolve(__dirname, './src'),
         '@app': path.resolve(__dirname, './src/app'),
@@ -22,6 +23,7 @@ export default defineConfig(({ mode }) => {
         '@routes': path.resolve(__dirname, './src/routes'),
         '@store': path.resolve(__dirname, './src/store'),
         '@assets': path.resolve(__dirname, './src/assets'),
+        '@shared': path.resolve(__dirname, '../shared/src'),
       },
     },
     server: {
@@ -65,7 +67,13 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-router-dom', 'axios'],
+      include: [
+        'react',
+        'react-dom',
+        'react-router-dom',
+        'axios',
+        '@signalforge/shared/constants/solana-actions',
+      ],
     },
     define: {
       __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0'),

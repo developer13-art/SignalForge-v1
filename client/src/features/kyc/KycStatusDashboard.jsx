@@ -17,6 +17,7 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import KycStatusBadge from '../../components/domain/kyc/KycStatusBadge';
+import { kycApi } from '../../api/kyc.api.js';
 
 const STATUS_ACTIONS = {
   not_started: {
@@ -29,7 +30,7 @@ const STATUS_ACTIONS = {
     title: 'Continue verification',
     description: 'You have an incomplete verification application.',
     action: 'Continue',
-    href: '/kyc/personal-info',
+    href: '/kyc',
   },
   under_review: {
     title: 'Verification in progress',
@@ -47,7 +48,7 @@ const STATUS_ACTIONS = {
     title: 'Verification rejected',
     description: 'Your previous submission could not be verified. You can try again.',
     action: 'Try Again',
-    href: '/kyc/result',
+    href: '/kyc',
   },
   resubmission: {
     title: 'Resubmission required',
@@ -59,7 +60,7 @@ const STATUS_ACTIONS = {
     title: 'Verification expired',
     description: 'Renew your verification to continue using protected features.',
     action: 'Renew',
-    href: '/kyc/personal-info',
+    href: '/kyc',
   },
   suspended: {
     title: 'Verification suspended',
@@ -77,11 +78,17 @@ const KycStatusDashboard = function KycStatusDashboard() {
   const fetchStatus = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/kyc/status', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setData(payload.data);
-      }
+      const status = await kycApi.getStatus();
+      const documents = await kycApi.listDocuments().catch(() => []);
+      const savedDocuments = Array.isArray(documents)
+        ? documents
+        : documents?.documents || [];
+      setData({
+        ...status,
+        documents: savedDocuments,
+        verifiedAt: status?.application?.verifiedAt,
+        lastUpdated: status?.application?.updatedAt,
+      });
     } catch (_err) {
       // silent
     } finally {
@@ -93,7 +100,7 @@ const KycStatusDashboard = function KycStatusDashboard() {
     fetchStatus();
   }, [fetchStatus]);
 
-  const status = data?.status || 'not_started';
+  const status = String(data?.status || 'NOT_STARTED').toLowerCase();
   const config = STATUS_ACTIONS[status] || STATUS_ACTIONS.not_started;
 
   return (

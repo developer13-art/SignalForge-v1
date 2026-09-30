@@ -16,10 +16,10 @@ const ROLE_TO_HOME = [
   { role: 'ADMIN', path: '/admin' },
   { role: 'FINANCE_ADMIN', path: '/executive' },
   { role: 'COMPLIANCE_OFFICER', path: '/compliance' },
-  { role: 'SUPPORT', path: '/support' },
-  { role: 'MODERATOR', path: '/support' },
+  { role: 'SUPPORT', path: '/support/console' },
+  { role: 'MODERATOR', path: '/support/console' },
   { role: 'PROVIDER', path: '/provider/dashboard' },
-  { role: 'TRADER', path: '/dashboard' },
+  { role: 'TRADER', path: '/trading' },
   { role: 'USER', path: '/dashboard' },
 ];
 

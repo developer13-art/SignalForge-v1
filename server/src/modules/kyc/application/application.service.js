@@ -82,6 +82,28 @@ class ApplicationService {
     return this.serialize(updated);
   }
 
+  async updateDocumentType(userId, documentType) {
+    if (!Object.values(KYC_DOCUMENT_TYPES).includes(documentType)) {
+      const { KycInvalidDocumentTypeError } = require('../kyc.errors.js');
+      throw new KycInvalidDocumentTypeError(undefined, { documentType });
+    }
+
+    let application = await this.repository.findActiveByUserId(userId);
+    if (!application) {
+      const created = await this.getOrCreateForUser(userId);
+      application = await this.repository.findById(created.id);
+    }
+
+    if (['UNDER_REVIEW', 'APPROVED'].includes(application.status)) {
+      throw new KycApplicationNotSubmittableError();
+    }
+
+    await this.repository.update(application.id, { documentType });
+    const updated = await this.repository.findById(application.id);
+    await emitApplicationUpdated(userId, application.id, ['documentType']);
+    return this.serialize(updated);
+  }
+
   async submit(userId) {
     const application = await this.repository.findActiveByUserId(userId);
     if (!application) {

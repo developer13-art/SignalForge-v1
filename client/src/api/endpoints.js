@@ -40,6 +40,7 @@ const API_ENDPOINTS = Object.freeze({
   createApplication: '/kyc/applications',
   documentTypes: '/kyc/document-types',
   submitPersonalInfo: (applicationId) => `/kyc/applications/${applicationId}/personal-info`,
+  updateDocumentType: (applicationId) => `/kyc/applications/${applicationId}/document-type`,
   uploadDocument: (applicationId) => `/kyc/applications/${applicationId}/documents`,
   uploadSelfie: (applicationId) => `/kyc/applications/${applicationId}/selfie`,
   submitApplication: (applicationId) => `/kyc/applications/${applicationId}/submit`,

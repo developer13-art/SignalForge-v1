@@ -46,6 +46,9 @@ const KycSelfieVerification = lazy(() => import('../features/kyc/KycSelfieVerifi
 const KycReviewStatus = lazy(() => import('../features/kyc/KycReviewStatus'));
 const KycResult = lazy(() => import('../features/kyc/KycResult'));
 const KycStatusDashboard = lazy(() => import('../features/kyc/KycStatusDashboard'));
+const KycDocumentVerification = lazy(
+  () => import('../features/kyc/KycDocumentVerification'),
+);
 
 // Dashboard
 const DashboardOverview = lazy(() => import('../features/dashboard/DashboardOverview'));
@@ -200,12 +203,18 @@ export default function AppRouter() {
               {/* KYC */}
               <Route path="/kyc" element={<KycIntro />} />
               <Route path="/kyc/personal" element={<KycPersonalInfo />} />
+              <Route path="/kyc/personal-info" element={<KycPersonalInfo />} />
               <Route path="/kyc/document" element={<KycDocumentSelection />} />
               <Route path="/kyc/upload" element={<KycDocumentUpload />} />
               <Route path="/kyc/selfie" element={<KycSelfieVerification />} />
               <Route path="/kyc/review" element={<KycReviewStatus />} />
               <Route path="/kyc/result" element={<KycResult />} />
               <Route path="/kyc/status" element={<KycStatusDashboard />} />
+              <Route path="/kyc/document-selection" element={<KycDocumentSelection />} />
+              <Route path="/kyc/document-upload" element={<KycDocumentUpload />} />
+              <Route path="/kyc/document-verification" element={<KycDocumentVerification />} />
+              <Route path="/kyc/selfie-verification" element={<KycSelfieVerification />} />
+              <Route path="/kyc/review-status" element={<KycReviewStatus />} />
 
               {/* Signals */}
               <Route path="/signals" element={<LiveSignals />} />

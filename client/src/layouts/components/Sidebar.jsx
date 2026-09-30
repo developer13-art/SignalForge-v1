@@ -138,7 +138,7 @@ const ADMIN_NAV_GROUPS = [
     items: [
       { label: 'Provider Marketplace', to: routes.admin.marketplaceModeration, icon: Store },
       { label: 'Trader Marketplace', to: routes.user.traderMarketplace.browse, icon: Users },
-      { label: 'Reviews & Ratings', to: routes.admin.marketplaceModeration, icon: Activity },
+      { label: 'Reviews & Ratings', to: '/admin/marketplace/reviews', icon: Activity },
     ],
   },
   {

@@ -6,7 +6,9 @@ import {
   Users,
   Heart,
 } from 'lucide-react';
-import { BLINK_TEMPLATE_LIST } from '../../../../../shared/src/constants/solana-actions/blink-templates';
+import solanaActionConstants from '@signalforge/shared/constants/solana-actions';
+
+const { BLINK_TEMPLATE_LIST } = solanaActionConstants;
 
 const ICONS = {
   'credit-card': CreditCard,

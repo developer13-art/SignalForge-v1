@@ -1,7 +1,7 @@
 /**
  * Support Routes
  *
- * Support console routes. Requires SUPPORT, ADMIN, or SUPER_ADMIN.
+ * Support console routes. Requires SUPPORT, MODERATOR, ADMIN, or SUPER_ADMIN.
  *
  * @module client/src/routes/SupportRoutes
  */
@@ -22,7 +22,11 @@ import KnowledgeBase from '../features/support/KnowledgeBase.jsx';
 export default function SupportRoutes() {
   return (
     <Route element={<ProtectedRoute />}>
-      <Route element={<RoleRoute allowed={['SUPPORT', 'ADMIN', 'SUPER_ADMIN']} />}>
+      <Route
+        element={
+          <RoleRoute allowed={['SUPPORT', 'MODERATOR', 'ADMIN', 'SUPER_ADMIN']} />
+        }
+      >
         <Route element={<SupportLayout />}>
           <Route path="/support/console" element={<SupportDashboard />} />
           <Route path="/support/console/tickets" element={<MyTickets />} />

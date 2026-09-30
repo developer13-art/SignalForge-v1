@@ -87,6 +87,11 @@ import TradeShadow from '../features/trading/TradeShadow.jsx';
 import TradeReplay from '../features/trading/TradeReplay.jsx';
 import ExecutionHistory from '../features/trading/ExecutionHistory.jsx';
 
+import CryptoTradingOverview from '../features/crypto-trading/CryptoTradingOverview.jsx';
+import CryptoPositions from '../features/crypto-trading/CryptoPositions.jsx';
+import CryptoOrders from '../features/crypto-trading/CryptoOrders.jsx';
+import CryptoHistory from '../features/crypto-trading/CryptoHistory.jsx';
+
 import RiskManagementOverview from '../features/risk-automation/RiskManagementOverview.jsx';
 import RiskProfile from '../features/risk-automation/RiskProfile.jsx';
 import RiskRules from '../features/risk-automation/RiskRules.jsx';
@@ -264,6 +269,15 @@ import SolanaPaymentHistory from '../features/solana/SolanaPaymentHistory.jsx';
 import PublicVerification from '../features/solana/PublicVerification.jsx';
 import OnChainBadgesShowcase from '../features/solana/OnChainBadgesShowcase.jsx';
 
+import BlinkHistory from '../features/solana/blinks/BlinkHistory.jsx';
+import BlinkBuilder from '../features/solana/blinks/BlinkBuilder.jsx';
+import BlinkDetails from '../features/solana/blinks/BlinkDetails.jsx';
+
+import ProofOfAlphaOverview from '../features/proof-of-alpha/ProofOfAlphaOverview.jsx';
+import ProofExplorer from '../features/proof-of-alpha/ProofExplorer.jsx';
+import ProviderProofHistory from '../features/proof-of-alpha/ProviderProofHistory.jsx';
+import LeaderboardVerified from '../features/proof-of-alpha/LeaderboardVerified.jsx';
+
 import HelpCenter from '../features/support/HelpCenter.jsx';
 import SupportDashboard from '../features/support/SupportDashboard.jsx';
 import CreateTicket from '../features/support/CreateTicket.jsx';
@@ -348,6 +362,10 @@ export default function UserRoutes() {
 
           {/* Trading */}
           <Route path="/trading" element={<TradingOverview />} />
+          <Route path="/crypto-trading" element={<CryptoTradingOverview />} />
+          <Route path="/crypto-trading/positions" element={<CryptoPositions />} />
+          <Route path="/crypto-trading/orders" element={<CryptoOrders />} />
+          <Route path="/crypto-trading/history" element={<CryptoHistory />} />
           <Route path="/trading/positions" element={<OpenPositions />} />
           <Route path="/trading/positions/:positionId" element={<PositionDetails />} />
           <Route path="/trading/history" element={<TradeHistory />} />
@@ -551,6 +569,16 @@ export default function UserRoutes() {
           <Route path="/replay/system/:correlationId" element={<SystemEventTimeline />} />
 
           {/* Solana */}
+          <Route path="/solana/blinks" element={<BlinkHistory />} />
+          <Route path="/solana/blinks/create" element={<BlinkBuilder />} />
+          <Route path="/solana/blinks/:blinkId" element={<BlinkDetails />} />
+          <Route path="/proof-of-alpha" element={<ProofOfAlphaOverview />} />
+          <Route path="/proof-of-alpha/explorer" element={<ProofExplorer />} />
+          <Route
+            path="/proof-of-alpha/provider/:providerId"
+            element={<ProviderProofHistory />}
+          />
+          <Route path="/leaderboard" element={<LeaderboardVerified />} />
           <Route path="/solana/wallet/connect" element={<SolanaWalletConnect />} />
           <Route path="/solana/wallet/settings" element={<SolanaWalletSettings />} />
           <Route path="/solana/reputation" element={<SolanaReputation />} />

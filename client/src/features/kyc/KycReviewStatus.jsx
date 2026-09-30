@@ -17,6 +17,7 @@ import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import KycProgressStepper from '../../components/domain/kyc/KycProgressStepper';
 import KycStatusBadge from '../../components/domain/kyc/KycStatusBadge';
+import { kycApi } from '../../api/kyc.api.js';
 
 const CHECK_ITEMS = [
   'Document authenticity check',
@@ -37,22 +38,17 @@ const KycReviewStatus = function KycReviewStatus() {
 
   const fetchStatus = useCallback(async () => {
     try {
-      const response = await fetch('/api/kyc/status', {
-        credentials: 'include',
-      });
-      const payload = await response.json();
+      const payload = await kycApi.getStatus();
+      const applicationStatus = String(payload?.status || 'UNDER_REVIEW').toLowerCase();
+      setStatus(applicationStatus);
+      setChecks(payload?.checks || []);
+      setSubmittedAt(payload?.application?.submittedAt || null);
 
-      if (response.ok) {
-        setStatus(payload.data?.status || 'under_review');
-        setChecks(payload.data?.checks || []);
-        setSubmittedAt(payload.data?.submittedAt || null);
-
-        if (payload.data?.status === 'verified') {
+        if (applicationStatus === 'verified') {
           setTimeout(() => navigate('/kyc/result'), 1000);
-        } else if (payload.data?.status === 'rejected') {
-          setTimeout(() => navigate('/kyc/result'), 1000);
+        } else if (applicationStatus === 'rejected') {
+          setTimeout(() => navigate('/kyc/resubmission'), 1000);
         }
-      }
     } catch (_err) {
       // silent
     } finally {

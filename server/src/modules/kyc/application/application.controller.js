@@ -59,6 +59,18 @@ class ApplicationController {
     }
   };
 
+  updateDocumentType = async (req, res, next) => {
+    try {
+      const application = await this.service.updateDocumentType(
+        req.user.id,
+        req.body.documentType,
+      );
+      res.status(200).json({ application });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   submit = async (req, res, next) => {
     try {
       this.validateOrThrow(validateSubmitApplicationPayload, req.body);

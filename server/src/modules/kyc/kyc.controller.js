@@ -67,6 +67,33 @@ class KycController {
     return this.applicationController.updatePersonalInfo(req, res, next);
   };
 
+  updateDocumentType = async (req, res, next) => {
+    return this.applicationController.updateDocumentType(req, res, next);
+  };
+
+    updateDocumentType = async (req, res, next) => {
+    try {
+      const { applicationId } = req.params;
+      const { documentType } = req.body;
+      if (!documentType) {
+        return res.status(400).json({
+          error: {
+            code: 'INVALID_REQUEST',
+            message: 'documentType is required',
+          },
+        });
+      }
+      const application = await this.service.updateDocumentType(
+        req.user.id,
+        applicationId,
+        documentType,
+      );
+      return res.status(200).json({ application });
+    } catch (error) {
+      return next(error);
+    }
+  };
+
   submitApplication = async (req, res, next) => {
     return this.applicationController.submit(req, res, next);
   };

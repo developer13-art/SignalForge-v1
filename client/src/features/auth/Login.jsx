@@ -80,7 +80,7 @@ const Login = function Login() {
           localStorage.removeItem(REMEMBER_KEY);
         }
 
-        const session = await login({
+        const user = await login({
           email: values.email.trim().toLowerCase(),
           password: values.password,
         });
@@ -90,7 +90,7 @@ const Login = function Login() {
         // that matches their role.
         const next =
           location.state?.redirect ||
-          resolveHome(session && session.user, session && session.roles);
+          resolveHome(user, user && user.roles);
 
         navigate(next, { replace: true });
       } catch (error) {

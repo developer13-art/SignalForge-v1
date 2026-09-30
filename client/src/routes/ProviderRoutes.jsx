@@ -7,7 +7,7 @@
  * @module client/src/routes/ProviderRoutes
  */
 
-import { Route } from 'react-router-dom';
+import { Navigate, Route } from 'react-router-dom';
 
 import ProviderLayout from '../layouts/ProviderLayout.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
@@ -69,7 +69,8 @@ export default function ProviderRoutes() {
     <Route element={<ProtectedRoute />}>
       <Route element={<RoleRoute allowed={['PROVIDER', 'ADMIN', 'SUPER_ADMIN']} />}>
         <Route element={<ProviderLayout />}>
-          <Route path="/provider" element={<ProviderDashboard />} />
+          <Route path="/provider" element={<Navigate to="/provider/dashboard" replace />} />
+          <Route path="/provider/dashboard" element={<ProviderDashboard />} />
           <Route path="/provider/profile" element={<ProviderProfileManagement />} />
           <Route path="/provider/subscribers" element={<ProviderSubscribers />} />
           <Route path="/provider/revenue" element={<ProviderRevenue />} />

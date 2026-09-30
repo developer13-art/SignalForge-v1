@@ -40,8 +40,8 @@ export default function KycBanner() {
     }
   }
 
-  const ctaLabel = kycStatus === 'NOT_STARTED' ? 'Complete KYC' : 'Continue KYC';
-  const ctaTo = kycStatus === 'NOT_STARTED' ? routes.kyc.intro : routes.kyc.statusDashboard;
+  const ctaLabel = 'Continue KYC';
+  const ctaTo = routes.kyc.intro;
 
   return (
     <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-warning/30 bg-warning-subtle px-5 py-4 sm:flex-row sm:items-center sm:justify-between">

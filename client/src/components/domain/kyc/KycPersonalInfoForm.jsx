@@ -153,6 +153,7 @@ const KycPersonalInfoForm = forwardRef(function KycPersonalInfoForm(
               id={id}
               name={name}
               type="date"
+              max={new Date().toISOString().split('T')[0]}
               value={value || ''}
               onChange={(event) => onChange(event.target.value)}
               className="w-full rounded-md border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"

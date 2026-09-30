@@ -85,13 +85,22 @@ export function AuthProvider({ children }) {
     (session) => {
       if (!session) {
         clearSession();
-        return;
+        return null;
       }
+      const sessionUser = session.user
+        ? {
+            ...session.user,
+            roles: Array.isArray(session.roles)
+              ? session.roles
+              : readUserRoles(session.user),
+          }
+        : null;
       writeToken(appConfig.storage.accessTokenKey, session.accessToken);
       writeToken(appConfig.storage.refreshTokenKey, session.refreshToken);
       setAccessToken(session.accessToken);
       setRefreshToken(session.refreshToken);
-      setUser(session.user || null);
+      setUser(sessionUser);
+      return sessionUser;
     },
     [clearSession],
   );
@@ -127,8 +136,7 @@ export function AuthProvider({ children }) {
   const login = useCallback(
     async (credentials) => {
       const session = await authApi.login(credentials);
-      persistSession(session);
-      return session.user;
+      return persistSession(session);
     },
     [persistSession],
   );

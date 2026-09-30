@@ -16,6 +16,7 @@ import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import Alert from '../../components/feedback/Alert';
 import KycProgressStepper from '../../components/domain/kyc/KycProgressStepper';
+import { kycApi } from '../../api/kyc.api.js';
 
 const KycResult = function KycResult() {
   const navigate = useNavigate();
@@ -26,11 +27,11 @@ const KycResult = function KycResult() {
   useEffect(() => {
     const fetchResult = async () => {
       try {
-        const response = await fetch('/api/kyc/result', { credentials: 'include' });
-        const payload = await response.json();
-        if (response.ok) {
-          setResult(payload.data);
-        }
+        const payload = await kycApi.getStatus();
+        setResult({
+          status: String(payload?.status || '').toLowerCase(),
+          reason: payload?.application?.rejectionReason,
+        });
       } catch (_err) {
         // silent
       } finally {
@@ -68,7 +69,7 @@ const KycResult = function KycResult() {
 
   const isVerified = result?.status === 'verified';
   const isRejected = result?.status === 'rejected';
-  const needsResubmission = result?.status === 'resubmission';
+  const needsResubmission = result?.status === 'resubmission' || result?.status === 'rejected';
 
   return (
     <Container size="lg" className="py-8">

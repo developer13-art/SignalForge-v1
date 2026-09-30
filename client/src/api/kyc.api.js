@@ -10,10 +10,8 @@
  * @module client/src/api/kyc.api
  */
 
-import { get, post, del, upload } from './client.js';
+import { get, post, patch, del, upload } from './client.js';
 import { endpoints } from './endpoints.js';
-
-let cachedApplicationId = null;
 
 export const kycApi = {
   getStatus: () => get(endpoints.kyc.status),
@@ -24,32 +22,24 @@ export const kycApi = {
    * its id.
    */
   ensureApplication: async () => {
-    if (cachedApplicationId) {
-      return { id: cachedApplicationId };
-    }
     try {
       const existing = await get(endpoints.kyc.application);
       if (existing && existing.application && existing.application.id) {
-        cachedApplicationId = existing.application.id;
         return existing.application;
       }
       if (existing && existing.id) {
-        cachedApplicationId = existing.id;
         return existing;
       }
     } catch (_error) {
       // Fall through and create one.
     }
     const created = await post(endpoints.kyc.createApplication, {});
-    const application = created.application || created;
-    if (application && application.id) {
-      cachedApplicationId = application.id;
-    }
-    return application;
+    return created.application || created;
   },
 
-  clearApplicationCache: () => {
-    cachedApplicationId = null;
+  updateDocumentType: async (documentType) => {
+    const application = await kycApi.ensureApplication();
+    return patch(endpoints.kyc.updateDocumentType(application.id), { documentType });
   },
 
   submitPersonalInfo: async (payload) => {

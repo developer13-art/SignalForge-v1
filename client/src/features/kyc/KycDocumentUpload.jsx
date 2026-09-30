@@ -9,63 +9,72 @@ import Button from '../../components/common/Button';
 import Alert from '../../components/feedback/Alert';
 import KycProgressStepper from '../../components/domain/kyc/KycProgressStepper';
 import KycDocumentUploader from '../../components/domain/kyc/KycDocumentUploader';
+import { kycApi } from '../../api/kyc.api.js';
 
 const DOCUMENT_LABELS = {
-  national_id: 'National Identity Card',
-  voters_card: "Voter's Card",
-  drivers_license: "Driver's Licence",
-  passport: 'International Passport',
-  other: 'Government ID',
+  NATIONAL_ID: 'National Identity Card',
+  VOTERS_CARD: "Voter's Card",
+  DRIVERS_LICENSE: "Driver's Licence",
+  INTERNATIONAL_PASSPORT: 'International Passport',
+  OTHER: 'Government ID',
 };
 
 const KycDocumentUpload = function KycDocumentUpload() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const documentType = location.state?.documentType || 'national_id';
+  const [documentType, setDocumentType] = useState(location.state?.documentType || '');
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleUpload = useCallback(
-    async () => {
-      if (!file) {
-        setError('Please select a document to upload');
-        return;
+  useEffect(() => {
+    if (documentType) {
+      return;
+    }
+    let cancelled = false;
+    kycApi.getStatus().then((status) => {
+      if (!cancelled) {
+        setDocumentType(status?.application?.documentType || 'NATIONAL_ID');
       }
-
-      setUploading(true);
-      setError(null);
-
-      try {
-        const formData = new FormData();
-        formData.append('document', file);
-        formData.append('documentType', documentType);
-
-        const response = await fetch('/api/kyc/upload-document', {
-          method: 'POST',
-          credentials: 'include',
-          body: formData,
-        });
-
-        const payload = await response.json();
-
-        if (!response.ok) {
-          setError(payload?.error?.message || 'Failed to upload document');
-          return;
-        }
-
-        navigate('/kyc/document-verification', {
-          state: { documentType, uploadId: payload.data?.uploadId },
-        });
-      } catch (_err) {
-        setError('Unable to reach the server. Please try again.');
-      } finally {
-        setUploading(false);
+    }).catch(() => {
+      if (!cancelled) {
+        setDocumentType('NATIONAL_ID');
       }
-    },
-    [file, documentType, navigate],
-  );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [documentType]);
+
+  const handleUpload = useCallback(async () => {
+    if (!file) {
+      setError('Please select a document to upload');
+      return;
+    }
+
+    setUploading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('document', file);
+      formData.append('documentType', documentType);
+
+      const result = await kycApi.uploadDocument(formData);
+
+      navigate('/kyc/document-verification', {
+        state: {
+          documentType,
+          uploadId: result?.document?.id || result?.id || null,
+        },
+      });
+    } catch (err) {
+      setError(err?.message || 'Failed to upload document');
+    } finally {
+      setUploading(false);
+    }
+  }, [file, documentType, navigate]);
 
   const handleBack = useCallback(() => {
     navigate('/kyc/document-selection');

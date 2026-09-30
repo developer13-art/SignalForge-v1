@@ -25,7 +25,7 @@ import { WalletProvider } from './context/WalletContext.jsx';
 import { SolanaProvider } from './context/SolanaContext.jsx';
 import { WhiteLabelProvider } from './context/WhiteLabelContext.jsx';
 
-import AppRouter from './routes/index.jsx';
+import AppRouter from './app/router.jsx';
 import ErrorBoundary from './app/ErrorBoundary.jsx';
 import ToastContainer from './components/feedback/ToastContainer.jsx';
 
@@ -42,10 +42,8 @@ export default function App() {
                     <WalletProvider>
                       <SolanaProvider>
                         <NotificationProvider>
-                          <BrowserRouter>
-                            <AppRouter />
-                            <ToastContainer />
-                          </BrowserRouter>
+                          <AppRouter />
+                          <ToastContainer />
                         </NotificationProvider>
                       </SolanaProvider>
                     </WalletProvider>

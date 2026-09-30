@@ -37,12 +37,19 @@ function validatePersonalInfoPayload(body) {
   } else if (!/^\d{4}-\d{2}-\d{2}$/.test(body.dateOfBirth)) {
     errors.push('Date of birth must be in YYYY-MM-DD format');
   } else {
-    const age = (Date.now() - new Date(body.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000);
-    if (age < 18) {
-      errors.push('You must be at least 18 years old');
-    }
-    if (age > 120) {
-      errors.push('Date of birth is not valid');
+    const birthDate = new Date(body.dateOfBirth);
+    const today = new Date();
+
+    if (birthDate > today) {
+      errors.push('Date of birth cannot be in the future');
+    } else {
+      const age = (Date.now() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+      if (age < 18) {
+        errors.push('You must be at least 18 years old');
+      }
+      if (age > 120) {
+        errors.push('Date of birth is not valid');
+      }
     }
   }
 

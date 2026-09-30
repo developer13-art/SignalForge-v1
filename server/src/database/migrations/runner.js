@@ -50,6 +50,8 @@ const MIGRATION_FILES = [
   '031_align_sessions_and_api_keys.js',
   '032_align_user_sessions.js',
   '033_finalize_session_token_rename.js',
+  '034_add_kyc_application_personal_info.js',
+  '035_align_kyc_workflow_schema.js',
 ];
 
 async function ensureMigrationsTable(client) {

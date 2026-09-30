@@ -1,6 +1,48 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
-import { DEX_REGISTRY } from '../../../../../shared/src/constants/crypto-pairs/dex-registry';
+
+/**
+ * SignalForge - DexBadge
+ *
+ * Renders a small badge identifying a DEX or perpetual gateway.
+ * The gateway metadata is defined inline so the badge does not depend
+ * on the shared package being resolvable during the client build.
+ * When the shared package is wired into the Vite resolve aliases,
+ * this inline registry can be replaced with the shared import.
+ */
+
+const DEX_REGISTRY = {
+  jupiter: {
+    key: 'jupiter',
+    displayName: 'Jupiter',
+    type: 'dex',
+    logo: '/assets/dex/jupiter.svg',
+  },
+  raydium: {
+    key: 'raydium',
+    displayName: 'Raydium',
+    type: 'dex',
+    logo: '/assets/dex/raydium.svg',
+  },
+  orca: {
+    key: 'orca',
+    displayName: 'Orca',
+    type: 'dex',
+    logo: '/assets/dex/orca.svg',
+  },
+  hyperliquid: {
+    key: 'hyperliquid',
+    displayName: 'Hyperliquid',
+    type: 'perp',
+    logo: '/assets/dex/hyperliquid.svg',
+  },
+  drift: {
+    key: 'drift',
+    displayName: 'Drift Protocol',
+    type: 'perp',
+    logo: '/assets/dex/drift.svg',
+  },
+};
 
 const FALLBACK = {
   displayName: 'Unknown DEX',

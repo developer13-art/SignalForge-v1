@@ -42,6 +42,20 @@ class KycService {
     };
   }
 
+    async updateDocumentType(userId, applicationId, documentType) {
+    const application = await this.repository.findApplicationById(applicationId);
+    if (!application) {
+      throw new KycNotFoundError('KYC application was not found');
+    }
+    if (application.user_id !== userId) {
+      throw new KycForbiddenError('You do not own this KYC application');
+    }
+    const updated = await this.repository.updateApplication(applicationId, {
+      document_type: documentType,
+    });
+    return updated;
+  }
+
   async getOrCreateApplication(userId) {
     return this.applicationService.getOrCreateForUser(userId);
   }
@@ -52,6 +66,10 @@ class KycService {
 
   async updatePersonalInfo(userId, payload) {
     return this.applicationService.updatePersonalInfo(userId, payload);
+  }
+
+  async updateDocumentType(userId, documentType) {
+    return this.applicationService.updateDocumentType(userId, documentType);
   }
 
   async submitApplication(userId) {

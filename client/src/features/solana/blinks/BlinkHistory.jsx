@@ -8,7 +8,9 @@ import EmptyState from '../../../components/common/EmptyState';
 import LoadingState from '../../../components/common/LoadingState';
 import ErrorState from '../../../components/common/ErrorState';
 import { listBlinks, pauseBlink, resumeBlink, archiveBlink } from '../../../api/solana-blinks.api';
-import { BLINK_TEMPLATE_LIST } from '../../../../../shared/src/constants/solana-actions/blink-templates';
+import solanaActionConstants from '@signalforge/shared/constants/solana-actions';
+
+const { BLINK_TEMPLATE_LIST } = solanaActionConstants;
 
 const PAGE_SIZE = 12;
 

@@ -6,8 +6,9 @@ import { ArrowLeft, Save, Eye } from 'lucide-react';
 import { createBlink } from '../../../api/solana-blinks.api';
 import BlinkTemplateSelector from './BlinkTemplateSelector';
 import BlinkPreview from './BlinkPreview';
-import { BLINK_TEMPLATE_METADATA } from '../../../../../shared/src/constants/solana-actions/blink-templates';
-import { SUPPORTED_TOKENS } from '../../../../../shared/src/constants/solana-actions/supported-tokens';
+import solanaActionConstants from '@signalforge/shared/constants/solana-actions';
+
+const { BLINK_TEMPLATE_METADATA, SUPPORTED_TOKENS } = solanaActionConstants;
 
 const INITIAL_FORM = {
   templateType: 'subscribe',

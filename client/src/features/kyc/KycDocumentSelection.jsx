@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, ArrowRight, ArrowLeft } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
@@ -7,34 +7,35 @@ import Heading from '../../components/ui/primitives/Heading';
 import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import KycProgressStepper from '../../components/domain/kyc/KycProgressStepper';
+import { kycApi } from '../../api/kyc.api.js';
 
 const DOCUMENT_TYPES = [
   {
-    id: 'national_id',
+    id: 'NATIONAL_ID',
     label: 'National Identity Card',
     description: 'The Nigerian national identity card or equivalent plastic ID card.',
     emoji: 'ID',
   },
   {
-    id: 'voters_card',
+    id: 'VOTERS_CARD',
     label: "Voter's Card",
     description: 'The official voter registration card (PVC).',
     emoji: 'VC',
   },
   {
-    id: 'drivers_license',
+    id: 'DRIVERS_LICENSE',
     label: "Driver's Licence",
     description: 'A valid driver\'s licence from an approved jurisdiction.',
     emoji: 'DL',
   },
   {
-    id: 'passport',
+    id: 'INTERNATIONAL_PASSPORT',
     label: 'International Passport',
     description: 'Any valid international passport.',
     emoji: 'PP',
   },
   {
-    id: 'other',
+    id: 'OTHER',
     label: 'Other Government ID',
     description: 'Another official identity document approved by the platform.',
     emoji: 'ID',
@@ -44,12 +45,33 @@ const DOCUMENT_TYPES = [
 const KycDocumentSelection = function KycDocumentSelection() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const handleContinue = useCallback(() => {
+  useEffect(() => {
+    let cancelled = false;
+    kycApi.getStatus().then((status) => {
+      if (!cancelled && status?.application?.documentType) {
+        setSelected(status.application.documentType);
+      }
+    }).catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleContinue = useCallback(async () => {
     if (!selected) {
       return;
     }
+    setSaving(true);
+    try {
+      await kycApi.updateDocumentType(selected);
+    } catch (_error) {
+      setSaving(false);
+      return;
+    }
     navigate('/kyc/document-upload', { state: { documentType: selected } });
+    setSaving(false);
   }, [selected, navigate]);
 
   const handleBack = useCallback(() => {
@@ -111,10 +133,10 @@ const KycDocumentSelection = function KycDocumentSelection() {
           <Button
             variant="primary"
             onClick={handleContinue}
-            disabled={!selected}
+            disabled={!selected || saving}
             trailingIcon={ArrowRight}
           >
-            Continue
+            {saving ? 'Saving...' : 'Continue'}
           </Button>
         </div>
       </Card>
