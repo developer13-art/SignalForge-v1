@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Shield, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Shield, CheckCircle2, SkipForward } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
 import Heading from '../../components/ui/primitives/Heading';
@@ -62,6 +62,10 @@ const KycSelfieVerification = function KycSelfieVerification() {
       setSubmitting(false);
     }
   }, [selfie, navigate, resumeWithSavedSelfie, confirmed]);
+
+  const handleSkipLiveness = useCallback(() => {
+    navigate('/kyc/review-status');
+  }, [navigate]);
 
   const handleBack = useCallback(() => {
     navigate('/kyc/document-verification', { state: { documentType, uploadId } });
@@ -134,18 +138,28 @@ const KycSelfieVerification = function KycSelfieVerification() {
           </ul>
         </div>
 
-        <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-200 pt-4">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4">
           <Button variant="outline" onClick={handleBack} leadingIcon={ArrowLeft}>
             Back
           </Button>
-          <Button
-            variant="primary"
-            onClick={handleSubmit}
-            disabled={(!resumeWithSavedSelfie && !selfie) || !confirmed || submitting}
-            trailingIcon={ArrowRight}
-          >
-            {submitting ? 'Submitting...' : 'Submit for Review'}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="ghost"
+              onClick={handleSkipLiveness}
+              disabled={submitting}
+              leadingIcon={SkipForward}
+            >
+              Skip for now
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleSubmit}
+              disabled={(!resumeWithSavedSelfie && !selfie) || !confirmed || submitting}
+              trailingIcon={ArrowRight}
+            >
+              {submitting ? 'Submitting...' : 'Submit for Review'}
+            </Button>
+          </div>
         </div>
       </Card>
     </Container>

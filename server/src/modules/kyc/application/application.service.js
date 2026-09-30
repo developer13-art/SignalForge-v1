@@ -4,10 +4,43 @@
  * @module signalforge/server/modules/kyc/application/service
  */
 const { ApplicationRepository } = require('./application.repository.js');
-const { KycApplicationNotFoundError, KycApplicationAlreadyExistsError, KycApplicationNotSubmittableError, KycSelfieRequiredError, KycDocumentRequiredError, KycAlreadyVerifiedError } = require('../kyc.errors.js');
+const {
+  KycApplicationNotFoundError,
+  KycApplicationAlreadyExistsError,
+  KycApplicationNotSubmittableError,
+  KycSelfieRequiredError,
+  KycDocumentRequiredError,
+  KycAlreadyVerifiedError,
+  KycInvalidDocumentTypeError,
+} = require('../kyc.errors.js');
 const { KycRepository } = require('../kyc.repository.js');
-const { emitApplicationCreated, emitApplicationSubmitted, emitApplicationUpdated, emitResubmissionCompleted, emitStatusChanged } = require('../kyc.events.js');
+const {
+  emitApplicationCreated,
+  emitApplicationSubmitted,
+  emitApplicationUpdated,
+  emitResubmissionCompleted,
+  emitStatusChanged,
+} = require('../kyc.events.js');
 const { KYC_DOCUMENT_TYPES } = require('../kyc.constants.js');
+const { normalizeKycDocumentType } = require('../kyc.constants.js');
+
+/**
+ * When true, the selfie/liveness requirement is bypassed. Used in
+ * development environments where a camera is not available. The flag
+ * is read from process.env on every call so it can be toggled without
+ * restarting the process in hot-reload environments. In production
+ * the check always runs, regardless of the flag's value.
+ */
+function isLivenessRequired() {
+  if (process.env.NODE_ENV === 'production') {
+    return true;
+  }
+  if (process.env.KYC_SKIP_LIVENESS === 'true') {
+    return false;
+  }
+  return true;
+}
+
 class ApplicationService {
   constructor(repository = null) {
     this.repository = repository || new ApplicationRepository();
@@ -83,8 +116,8 @@ class ApplicationService {
   }
 
   async updateDocumentType(userId, documentType) {
-    if (!Object.values(KYC_DOCUMENT_TYPES).includes(documentType)) {
-      const { KycInvalidDocumentTypeError } = require('../kyc.errors.js');
+    const normalizedDocumentType = normalizeKycDocumentType(documentType);
+    if (!normalizedDocumentType) {
       throw new KycInvalidDocumentTypeError(undefined, { documentType });
     }
 
@@ -98,7 +131,7 @@ class ApplicationService {
       throw new KycApplicationNotSubmittableError();
     }
 
-    await this.repository.update(application.id, { documentType });
+    await this.repository.update(application.id, { documentType: normalizedDocumentType });
     const updated = await this.repository.findById(application.id);
     await emitApplicationUpdated(userId, application.id, ['documentType']);
     return this.serialize(updated);
@@ -124,9 +157,11 @@ class ApplicationService {
       throw new KycDocumentRequiredError();
     }
 
-    const hasSelfie = documents.some((d) => d.document_type === 'SELFIE');
-    if (!hasSelfie) {
-      throw new KycSelfieRequiredError();
+    if (isLivenessRequired()) {
+      const hasSelfie = documents.some((d) => d.document_type === 'SELFIE');
+      if (!hasSelfie) {
+        throw new KycSelfieRequiredError();
+      }
     }
 
     const updated = await this.repository.update(application.id, {
@@ -230,5 +265,6 @@ class ApplicationService {
     };
   }
 }
+
 module.exports = ApplicationService;
 module.exports.ApplicationService = ApplicationService;

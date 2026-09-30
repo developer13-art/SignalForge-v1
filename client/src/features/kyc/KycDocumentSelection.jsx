@@ -42,6 +42,17 @@ const DOCUMENT_TYPES = [
   },
 ];
 
+function normalizeDocumentType(value) {
+  const normalized = String(value || '').trim().toUpperCase().replace(/[\s-]+/g, '_');
+  if (normalized === 'PASSPORT') {
+    return 'INTERNATIONAL_PASSPORT';
+  }
+  if (normalized === 'DRIVER_LICENSE' || normalized === 'DRIVERS_LICENCE') {
+    return 'DRIVERS_LICENSE';
+  }
+  return DOCUMENT_TYPES.some((document) => document.id === normalized) ? normalized : '';
+}
+
 const KycDocumentSelection = function KycDocumentSelection() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState('');
@@ -51,7 +62,7 @@ const KycDocumentSelection = function KycDocumentSelection() {
     let cancelled = false;
     kycApi.getStatus().then((status) => {
       if (!cancelled && status?.application?.documentType) {
-        setSelected(status.application.documentType);
+        setSelected(normalizeDocumentType(status.application.documentType));
       }
     }).catch(() => {});
     return () => {

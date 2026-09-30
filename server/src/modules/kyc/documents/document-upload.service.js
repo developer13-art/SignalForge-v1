@@ -18,6 +18,7 @@ const { DocumentTypeService } = require('./document-type.service.js');
 const { KycApplicationNotFoundError, KycDocumentNotFoundError } = require('../kyc.errors.js');
 const { emitDocumentUploaded, emitDocumentDeleted, emitDocumentQualityFailed, emitSelfieUploaded } = require('../kyc.events.js');
 const { ApplicationRepository } = require('../application/application.repository.js');
+const { normalizeKycDocumentType } = require('../kyc.constants.js');
 class DocumentUploadService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new DocumentRepository();
@@ -49,8 +50,13 @@ class DocumentUploadService {
 
   async uploadDocument(userId, payload, file) {
     const application = await this.getActiveApplication(userId);
+    const documentType = normalizeKycDocumentType(payload.documentType);
+    if (!documentType) {
+      const { KycInvalidDocumentTypeError } = require('../kyc.errors.js');
+      throw new KycInvalidDocumentTypeError(undefined, { documentType: payload.documentType });
+    }
 
-    await this.documentTypeService.assertValid(payload.documentType);
+    await this.documentTypeService.assertValid(documentType);
 
     const validation = this.fileValidation.validateDocumentFile(file);
 
@@ -61,7 +67,7 @@ class DocumentUploadService {
 
     await this.duplicateDetection.assertNotDuplicate(
       application.id,
-      payload.documentType,
+      documentType,
       validation.hash,
     );
 
@@ -78,7 +84,7 @@ class DocumentUploadService {
         metadata: {
           userId,
           applicationId: application.id,
-          documentType: payload.documentType,
+          documentType,
         },
       });
     }
@@ -86,7 +92,7 @@ class DocumentUploadService {
     const created = await this.repository.create({
       applicationId: application.id,
       userId,
-      documentType: payload.documentType,
+      documentType,
       storageKey,
       mimeType: validation.mimeType,
       sizeBytes: validation.size,
@@ -99,7 +105,7 @@ class DocumentUploadService {
       userId,
       application.id,
       created.id,
-      payload.documentType,
+      documentType,
     );
 
     return this.serialize(created);

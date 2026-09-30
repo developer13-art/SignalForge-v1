@@ -31,6 +31,21 @@ const KYC_DOCUMENT_TYPES = Object.freeze({
   RESIDENCE_PERMIT: 'RESIDENCE_PERMIT',
   OTHER: 'OTHER',
 });
+const KYC_DOCUMENT_TYPE_ALIASES = Object.freeze({
+  PASSPORT: KYC_DOCUMENT_TYPES.INTERNATIONAL_PASSPORT,
+  DRIVER_LICENSE: KYC_DOCUMENT_TYPES.DRIVERS_LICENSE,
+  DRIVERS_LICENCE: KYC_DOCUMENT_TYPES.DRIVERS_LICENSE,
+});
+
+function normalizeKycDocumentType(value) {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const normalized = value.trim().toUpperCase().replace(/[\s-]+/g, '_');
+  const canonical = KYC_DOCUMENT_TYPE_ALIASES[normalized] || normalized;
+  return Object.values(KYC_DOCUMENT_TYPES).includes(canonical) ? canonical : null;
+}
 const KYC_PROVIDERS = Object.freeze({
   SMILE_ID: 'smileid',
   VERIFYME: 'verifyme',
@@ -83,6 +98,7 @@ const KYC_GATED_FEATURES = Object.freeze({
 });
 module.exports.KYC_EVENTS = KYC_EVENTS;
 module.exports.KYC_DOCUMENT_TYPES = KYC_DOCUMENT_TYPES;
+module.exports.normalizeKycDocumentType = normalizeKycDocumentType;
 module.exports.KYC_PROVIDERS = KYC_PROVIDERS;
 module.exports.VERIFICATION_RESULTS = VERIFICATION_RESULTS;
 module.exports.QUALITY_CHECK_RESULTS = QUALITY_CHECK_RESULTS;

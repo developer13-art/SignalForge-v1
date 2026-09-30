@@ -4,7 +4,7 @@
  * @module signalforge/server/modules/kyc/validator
  */
 const { isValidEmail } = require('@signalforge/shared/validators/email.validator');
-const { KYC_DOCUMENT_TYPES, ALLOWED_DOCUMENT_MIME_TYPES, ALLOWED_SELFIE_MIME_TYPES } = require('./kyc.constants.js');
+const { normalizeKycDocumentType, ALLOWED_DOCUMENT_MIME_TYPES, ALLOWED_SELFIE_MIME_TYPES } = require('./kyc.constants.js');
 
 const COUNTRY_PATTERN = /^[A-Z]{2,3}$/;
 function validatePersonalInfoPayload(body) {
@@ -112,7 +112,7 @@ function validateDocumentUploadPayload(body, file) {
 
   if (!body.documentType || typeof body.documentType !== 'string') {
     errors.push('Document type is required');
-  } else if (!Object.values(KYC_DOCUMENT_TYPES).includes(body.documentType)) {
+  } else if (!normalizeKycDocumentType(body.documentType)) {
     errors.push('Document type is not supported');
   }
 

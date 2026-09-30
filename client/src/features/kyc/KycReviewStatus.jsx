@@ -44,11 +44,11 @@ const KycReviewStatus = function KycReviewStatus() {
       setChecks(payload?.checks || []);
       setSubmittedAt(payload?.application?.submittedAt || null);
 
-        if (applicationStatus === 'verified') {
-          setTimeout(() => navigate('/kyc/result'), 1000);
-        } else if (applicationStatus === 'rejected') {
-          setTimeout(() => navigate('/kyc/resubmission'), 1000);
-        }
+      if (applicationStatus === 'verified') {
+        setTimeout(() => navigate('/kyc/result'), 1000);
+      } else if (applicationStatus === 'rejected') {
+        setTimeout(() => navigate('/kyc/resubmission'), 1000);
+      }
     } catch (_err) {
       // silent
     } finally {
@@ -170,9 +170,9 @@ const KycReviewStatus = function KycReviewStatus() {
           </ul>
         </div>
 
-        <div className="mt-8 rounded-md border border-sky-200 bg-sky-50 p-4">
-          <p className="text-sm font-semibold text-sky-900">While you wait</p>
-          <p className="mt-1 text-xs text-sky-800">
+        <div className="mt-8 rounded-md border border-surface-border bg-surface-elevated p-4">
+          <p className="text-sm font-semibold text-text-primary">While you wait</p>
+          <p className="mt-1 text-xs text-text-secondary">
             You can continue exploring the platform. Automated trading and subscription features
             will be unlocked automatically once verification completes.
           </p>

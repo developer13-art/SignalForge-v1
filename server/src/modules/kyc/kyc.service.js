@@ -13,6 +13,7 @@ const { KycAuditService } = require('./audit/kyc-audit.service.js');
 const { ProviderWebhookService } = require('./provider/provider-webhook.service.js');
 const { ProviderFactory } = require('./provider/provider.factory.js');
 const { KycRepository } = require('./kyc.repository.js');
+
 class KycService {
   constructor(dependencies = {}) {
     this.repository = dependencies.repository || new KycRepository();
@@ -40,20 +41,6 @@ class KycService {
       application,
       status: application?.status || 'NOT_STARTED',
     };
-  }
-
-    async updateDocumentType(userId, applicationId, documentType) {
-    const application = await this.repository.findApplicationById(applicationId);
-    if (!application) {
-      throw new KycNotFoundError('KYC application was not found');
-    }
-    if (application.user_id !== userId) {
-      throw new KycForbiddenError('You do not own this KYC application');
-    }
-    const updated = await this.repository.updateApplication(applicationId, {
-      document_type: documentType,
-    });
-    return updated;
   }
 
   async getOrCreateApplication(userId) {
@@ -152,5 +139,6 @@ class KycService {
     return this.webhookService.handle(providerName, payload);
   }
 }
+
 module.exports = KycService;
 module.exports.KycService = KycService;

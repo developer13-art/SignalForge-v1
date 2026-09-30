@@ -9,6 +9,7 @@ const { DocumentController } = require('./documents/document.controller.js');
 const { VerificationController } = require('./verification/verification.controller.js');
 const { validateReviewDecisionPayload } = require('./kyc.validator.js');
 const { ValidationError } = require('../../lib/errors/validation-error.js');
+
 class KycController {
   constructor(service = null) {
     this.service = service || new KycService();
@@ -69,29 +70,6 @@ class KycController {
 
   updateDocumentType = async (req, res, next) => {
     return this.applicationController.updateDocumentType(req, res, next);
-  };
-
-    updateDocumentType = async (req, res, next) => {
-    try {
-      const { applicationId } = req.params;
-      const { documentType } = req.body;
-      if (!documentType) {
-        return res.status(400).json({
-          error: {
-            code: 'INVALID_REQUEST',
-            message: 'documentType is required',
-          },
-        });
-      }
-      const application = await this.service.updateDocumentType(
-        req.user.id,
-        applicationId,
-        documentType,
-      );
-      return res.status(200).json({ application });
-    } catch (error) {
-      return next(error);
-    }
   };
 
   submitApplication = async (req, res, next) => {
@@ -228,5 +206,6 @@ class KycController {
     }
   };
 }
+
 module.exports = KycController;
 module.exports.KycController = KycController;
