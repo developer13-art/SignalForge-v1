@@ -19,12 +19,17 @@ import KycStatusWidget from './KycStatusWidget';
 import SubscriptionStatusWidget from './SubscriptionStatusWidget';
 import ReferralSummaryWidget from './ReferralSummaryWidget';
 import { analyticsApi } from '../../api/analytics.api.js';
+import { useKyc } from '../../hooks/useKyc.js';
+import { useAuthContext } from '../../context/AuthContext.jsx';
 
 const DashboardOverview = function DashboardOverview() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+  const { status: kycStatus, isLoading: kycLoading } = useKyc();
+  const { user } = useAuthContext();
+  const currentKycStatus = kycStatus?.status || user?.kycStatus;
 
   const fetchDashboard = useCallback(async () => {
     setLoading(true);
@@ -103,7 +108,12 @@ const DashboardOverview = function DashboardOverview() {
 
       <div className="mt-6 space-y-6">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <KycStatusWidget kyc={data?.kyc} />
+          <KycStatusWidget
+            kyc={{
+              status: String(currentKycStatus || '').toLowerCase(),
+              isLoading: kycLoading && !currentKycStatus,
+            }}
+          />
           <SubscriptionStatusWidget subscription={data?.subscription} onManage={() => navigate('/subscriptions')} />
           <ReferralSummaryWidget referral={data?.referral} onViewMore={() => navigate('/referrals')} />
         </div>

@@ -53,7 +53,7 @@ function readStorageValue(key) {
   return null;
 }
 
-function readAccessToken() {
+export function readAccessToken() {
   const keys = new Set([
     appConfig?.storage?.accessTokenKey,
     'signalforge.access_token',

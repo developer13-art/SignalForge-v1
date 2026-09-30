@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { BarChart3, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -64,28 +65,28 @@ const SystemAnalytics = function SystemAnalytics() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="DAU"
-          value={data?.dau || 0}
+          value={data?.dau ?? '—'}
           icon={BarChart3}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="MAU"
-          value={data?.mau || 0}
+          value={data?.mau ?? '—'}
           icon={BarChart3}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="Signals Today"
-          value={data?.signalsToday || 0}
+          value={data?.signalsToday ?? '—'}
           icon={BarChart3}
           variant="info"
           loading={loading}
         />
         <StatCard
           label="Trades Today"
-          value={data?.tradesToday || 0}
+          value={data?.tradesToday ?? '—'}
           icon={BarChart3}
           variant="default"
           loading={loading}

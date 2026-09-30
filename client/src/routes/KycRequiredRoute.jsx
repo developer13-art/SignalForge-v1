@@ -10,21 +10,23 @@
  */
 
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { ShieldCheck, ArrowRight } from 'lucide-react';
 
-import { selectCurrentUser } from '../store/selectors/auth.selectors.js';
-
-const VERIFIED_STATUS = 'VERIFIED';
+import { useKyc } from '../hooks/useKyc.js';
+import { useAuthContext } from '../context/AuthContext.jsx';
 
 export default function KycRequiredRoute() {
   const navigate = useNavigate();
-  const user = useSelector(selectCurrentUser);
+  const { user } = useAuthContext();
+  const { isLoading, isVerified } = useKyc();
+  const verified = isVerified || String(user?.kycStatus || '').toUpperCase() === 'VERIFIED';
 
-  const kycStatus = user ? user.kycStatus : null;
-
-  if (kycStatus === VERIFIED_STATUS) {
+  if (verified) {
     return <Outlet />;
+  }
+
+  if (isLoading && !user?.kycStatus) {
+    return null;
   }
 
   return (

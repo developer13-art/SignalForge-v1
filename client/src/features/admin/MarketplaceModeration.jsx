@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Store, RefreshCw, Loader2, Check, X } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -19,13 +20,25 @@ const MarketplaceModeration = function MarketplaceModeration() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/marketplace/reviews', {
-        credentials: 'include',
-      });
+      const response = await fetch('/api/admin/marketplace/reviews?limit=100');
       const payload = await response.json();
       if (response.ok) {
-        setReviews(payload.data?.items || []);
-        setData(payload.data?.summary);
+        const items = payload.data?.items || [];
+        setReviews(
+          items.map((review) => ({
+            ...review,
+            id: review.reviewId,
+            authorName: review.userEmail,
+            targetName: review.listingTitle,
+            body: review.content,
+            status: review.status?.toLowerCase(),
+          })),
+        );
+        setData({
+          totalReviews: payload.data?.meta?.total,
+          pendingReviews: items.filter((review) => review.status === 'PENDING').length,
+          flagged: items.filter((review) => review.status === 'FLAGGED').length,
+        });
       }
     } catch (_err) {
       // silent
@@ -171,28 +184,28 @@ const MarketplaceModeration = function MarketplaceModeration() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Pending Reviews"
-          value={data?.pendingReviews || 0}
+          value={data?.pendingReviews ?? '—'}
           icon={Store}
           variant="warning"
           loading={loading}
         />
         <StatCard
           label="Approved Today"
-          value={data?.approvedToday || 0}
+          value="—"
           icon={Store}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="Flagged"
-          value={data?.flagged || 0}
+          value={data?.flagged ?? '—'}
           icon={Store}
           variant="danger"
           loading={loading}
         />
         <StatCard
           label="Total Reviews"
-          value={data?.totalReviews || 0}
+          value={data?.totalReviews ?? '—'}
           icon={Store}
           variant="primary"
           loading={loading}

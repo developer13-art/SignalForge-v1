@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { useNavigate } from 'react-router-dom';
 import { Award, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
@@ -20,11 +21,32 @@ const ProviderManagement = function ProviderManagement() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/providers', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setProviders(payload.data?.items || []);
-        setData(payload.data?.summary);
+      const [providersResponse, statusResponse] = await Promise.all([
+        fetch('/api/admin/providers?limit=100'),
+        fetch('/api/admin/providers/status-breakdown'),
+      ]);
+      const [providersPayload, statusPayload] = await Promise.all([
+        providersResponse.json(),
+        statusResponse.json(),
+      ]);
+      if (providersResponse.ok && statusResponse.ok) {
+        const statuses = statusPayload.data?.breakdown || {};
+        setProviders(
+          (providersPayload.data?.items || []).map((provider) => ({
+            ...provider,
+            id: provider.providerId,
+            name: provider.displayName,
+            email: provider.userEmail,
+            certification: provider.certificationStatus?.toLowerCase(),
+            subscribers: provider.subscriberCount,
+            status: provider.status?.toLowerCase(),
+          })),
+        );
+        setData({
+          total: providersPayload.data?.meta?.total,
+          active: statuses.ACTIVE ?? 0,
+          pending: statuses.PENDING ?? 0,
+        });
       }
     } catch (_err) {
       // silent
@@ -83,28 +105,28 @@ const ProviderManagement = function ProviderManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Total Providers"
-          value={data?.total || 0}
+          value={data?.total ?? '—'}
           icon={Award}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Active"
-          value={data?.active || 0}
+          value={data?.active ?? '—'}
           icon={Award}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="Pending"
-          value={data?.pending || 0}
+          value={data?.pending ?? '—'}
           icon={Award}
           variant="warning"
           loading={loading}
         />
         <StatCard
           label="Certified"
-          value={data?.certified || 0}
+          value={data?.certified ?? '—'}
           icon={Award}
           variant="info"
           loading={loading}

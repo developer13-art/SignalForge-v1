@@ -1,23 +1,66 @@
+'use strict';
+
 /**
  * Database Module Index
  *
- * Central export for all database utilities. Provides a single
- * import point for the connection pool, transaction helpers, query
- * builder, health checks, repositories, and helpers.
+ * Central CommonJS export for all database utilities. Provides a
+ * single import point for the connection pool, transaction helpers,
+ * query builder, health checks, repositories, and helpers.
  *
  * @module server/database
  */
 
-export { db, getPool, getClient, closePool } from './connection';
-export { withTransaction, withClient, withSavepoint } from './transaction';
-export { query } from './query-builder';
-export { attachQueryLogger, enableQueryLogging, disableQueryLogging } from './query-logger';
-export { checkDatabaseHealth, getConnectionStats } from './health-check';
-export { runMigrations, rollbackMigration, listAppliedMigrations } from './migrations/runner';
-export { baseRepository } from './repositories/base.repository';
-export { repositoryFactory } from './repositories/repository.factory';
-export * as repositoryHelpers from './repositories/repository.helpers';
-export * as paginationHelper from './helpers/pagination.helper';
-export * as filterHelper from './helpers/filter.helper';
-export * as sortHelper from './helpers/sort.helper';
-export * as includeHelper from './helpers/include.helper';
+const connection = require('./connection');
+const transactionModule = require('./transaction');
+const queryBuilderModule = require('./query-builder');
+const queryLoggerModule = require('./query-logger');
+const healthCheckModule = require('./health-check');
+const migrationsRunnerModule = require('./migrations/runner');
+const baseRepositoryModule = require('./repositories/base.repository');
+const repositoryFactoryModule = require('./repositories/repository.factory');
+const repositoryHelpers = require('./repositories/repository.helpers');
+const paginationHelper = require('./helpers/pagination.helper');
+const filterHelper = require('./helpers/filter.helper');
+const sortHelper = require('./helpers/sort.helper');
+const includeHelper = require('./helpers/include.helper');
+
+module.exports = {
+  // Connection
+  db: connection.db,
+  getPool: connection.getPool,
+  getClient: connection.getClient,
+  closePool: connection.closePool,
+
+  // Transactions
+  withTransaction: transactionModule.withTransaction,
+  withClient: transactionModule.withClient,
+  withSavepoint: transactionModule.withSavepoint,
+
+  // Query
+  query: queryBuilderModule.query,
+
+  // Query Logger
+  attachQueryLogger: queryLoggerModule.attachQueryLogger,
+  enableQueryLogging: queryLoggerModule.enableQueryLogging,
+  disableQueryLogging: queryLoggerModule.disableQueryLogging,
+
+  // Health
+  checkDatabaseHealth: healthCheckModule.checkDatabaseHealth,
+  getConnectionStats: healthCheckModule.getConnectionStats,
+
+  // Migrations
+  runMigrations: migrationsRunnerModule.runMigrations,
+  rollbackMigration: migrationsRunnerModule.rollbackMigration,
+  listAppliedMigrations: migrationsRunnerModule.listAppliedMigrations,
+
+  // Repositories
+  baseRepository: baseRepositoryModule.baseRepository,
+  repositoryFactory: repositoryFactoryModule.repositoryFactory,
+  repositoryHelpers,
+
+  // Helpers
+  paginationHelper,
+  filterHelper,
+  sortHelper,
+  includeHelper,
+};

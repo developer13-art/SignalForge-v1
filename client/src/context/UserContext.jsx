@@ -23,7 +23,7 @@ import { useAuth } from './AuthContext.jsx';
 const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user: authUser } = useAuth();
 
   const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey: ['user', 'profile'],
@@ -40,18 +40,20 @@ export function UserProvider({ children }) {
       ? data.profile
       : null;
 
+    const kycStatus = profile?.kycStatus || authUser?.kycStatus || null;
+
     return {
-      profile,
+      profile: profile ? { ...authUser, ...profile, kycStatus } : null,
       hasProfile: Boolean(profile),
       isLoading: Boolean(isAuthenticated) && (isLoading || isFetching),
       refresh: refetch,
-      kycStatus: profile ? profile.kycStatus : null,
-      isKycVerified: profile ? profile.kycStatus === 'VERIFIED' : false,
+      kycStatus,
+      isKycVerified: String(kycStatus || '').toUpperCase() === 'VERIFIED',
       preferences: profile && profile.preferences ? profile.preferences : {},
       subscription: profile ? profile.subscription || null : null,
       wallet: profile ? profile.wallet || null : null,
     };
-  }, [data, isLoading, isFetching, isAuthenticated, refetch]);
+  }, [data, isLoading, isFetching, isAuthenticated, authUser, refetch]);
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

@@ -17,6 +17,7 @@ const { riskFlagService } = require('./risk-flags/risk-flag.service');
 const { complianceAuditService } = require('./audit/compliance-audit.service');
 const { complianceReportService } = require('./reports/compliance-report.service');
 const repository = require('./compliance.repository');
+const { db } = require('../../database');
 async function getComplianceDashboard({ since }) {
   const [statusCounts, openRiskFlags] = await Promise.all([
     repository.countKycApplicationsByStatus(),
@@ -85,14 +86,12 @@ async function assertReviewerAccess({ userId }) {
     throw new AppError('Authentication required', ERROR_CODES.AUTHENTICATION_REQUIRED, 401);
   }
 
-  const { rows } = await import('../../database').then((m) =>
-    m.db.query(
-      `SELECT r.name AS role_name
-         FROM user_roles ur
-         JOIN roles r ON r.id = ur.role_id
-        WHERE ur.user_id = $1`,
-      [userId],
-    ),
+  const { rows } = await db.query(
+    `SELECT r.name AS role_name
+       FROM user_roles ur
+       JOIN roles r ON r.id = ur.role_id
+      WHERE ur.user_id = $1`,
+    [userId],
   );
 
   const roleNames = rows.map((r) => r.role_name);

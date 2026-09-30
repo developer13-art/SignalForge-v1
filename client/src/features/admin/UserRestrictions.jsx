@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Shield, ArrowLeft, Loader2, Save, RefreshCw } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';

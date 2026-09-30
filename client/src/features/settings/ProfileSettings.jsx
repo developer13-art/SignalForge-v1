@@ -10,6 +10,7 @@ import Separator from '../../components/common/Separator';
 import FormField from '../../components/forms/FormField';
 import Avatar from '../../components/common/Avatar';
 import Alert from '../../components/feedback/Alert';
+import { userApi } from '../../api/user.api.js';
 
 const ProfileSettings = function ProfileSettings() {
   const navigate = useNavigate();
@@ -31,10 +32,9 @@ const ProfileSettings = function ProfileSettings() {
   const fetchProfile = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/users/profile', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok && payload.data) {
-        setProfile((prev) => ({ ...prev, ...payload.data }));
+      const payload = await userApi.getProfile();
+      if (payload.profile) {
+        setProfile((prev) => ({ ...prev, ...payload.profile }));
       }
     } catch (_err) {
       // silent
@@ -52,22 +52,10 @@ const ProfileSettings = function ProfileSettings() {
     setError(null);
     setSuccess(false);
     try {
-      const response = await fetch('/api/users/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(profile),
-      });
-
-      if (!response.ok) {
-        const payload = await response.json();
-        setError(payload?.error?.message || 'Failed to save profile');
-        return;
-      }
-
+      await userApi.updateProfile(profile);
       setSuccess(true);
-    } catch (_err) {
-      setError('Unable to reach the server');
+    } catch (requestError) {
+      setError(requestError.message || 'Unable to save profile');
     } finally {
       setSaving(false);
     }

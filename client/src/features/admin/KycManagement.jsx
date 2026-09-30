@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { useNavigate } from 'react-router-dom';
 import { Shield, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
@@ -18,11 +19,32 @@ const KycManagement = function KycManagement() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/kyc', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setApplications(payload.data?.items || []);
-        setData(payload.data?.summary);
+      const [applicationsResponse, statusResponse] = await Promise.all([
+        fetch('/api/admin/kyc?limit=100'),
+        fetch('/api/admin/kyc/status-breakdown'),
+      ]);
+      const [applicationsPayload, statusPayload] = await Promise.all([
+        applicationsResponse.json(),
+        statusResponse.json(),
+      ]);
+      if (applicationsResponse.ok && statusResponse.ok) {
+        const statuses = statusPayload.data?.breakdown || {};
+        setApplications(
+          (applicationsPayload.data?.items || []).map((application) => ({
+            ...application,
+            id: application.applicationId,
+            applicantName: application.userEmail,
+            applicantEmail: application.userEmail,
+            documentType: application.documentType || '—',
+            status: application.status?.toLowerCase(),
+          })),
+        );
+        setData({
+          pending: statuses.PENDING || 0,
+          underReview: statuses.UNDER_REVIEW || 0,
+          verified: statuses.VERIFIED || 0,
+          rejected: statuses.REJECTED || 0,
+        });
       }
     } catch (_err) {
       // silent
@@ -65,28 +87,28 @@ const KycManagement = function KycManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Pending"
-          value={data?.pending || 0}
+          value={data?.pending ?? '—'}
           icon={Shield}
           variant="warning"
           loading={loading}
         />
         <StatCard
           label="Under Review"
-          value={data?.underReview || 0}
+          value={data?.underReview ?? '—'}
           icon={Shield}
           variant="info"
           loading={loading}
         />
         <StatCard
           label="Verified"
-          value={data?.verified || 0}
+          value={data?.verified ?? '—'}
           icon={Shield}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="Rejected"
-          value={data?.rejected || 0}
+          value={data?.rejected ?? '—'}
           icon={Shield}
           variant="danger"
           loading={loading}

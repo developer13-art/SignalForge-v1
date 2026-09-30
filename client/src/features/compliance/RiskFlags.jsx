@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Flag, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';

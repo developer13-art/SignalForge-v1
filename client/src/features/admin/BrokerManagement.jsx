@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Server, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -18,11 +19,31 @@ const BrokerManagement = function BrokerManagement() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/brokers', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setAccounts(payload.data?.items || []);
-        setData(payload.data?.summary);
+      const [accountsResponse, statusResponse] = await Promise.all([
+        fetch('/api/admin/brokers?limit=100'),
+        fetch('/api/admin/brokers/status-breakdown'),
+      ]);
+      const [accountsPayload, statusPayload] = await Promise.all([
+        accountsResponse.json(),
+        statusResponse.json(),
+      ]);
+      if (accountsResponse.ok && statusResponse.ok) {
+        const statuses = statusPayload.data?.breakdown || {};
+        setAccounts(
+          (accountsPayload.data?.items || []).map((account) => ({
+            ...account,
+            id: account.brokerAccountId,
+            broker: account.accountNickname || account.platform,
+            user: account.userEmail,
+            status: account.connectionStatus?.toLowerCase(),
+          })),
+        );
+        setData({
+          total: accountsPayload.data?.meta?.total,
+          connected: statuses.CONNECTED ?? 0,
+          disconnected: statuses.DISCONNECTED ?? 0,
+          errors: statuses.ERROR ?? 0,
+        });
       }
     } catch (_err) {
       // silent
@@ -104,28 +125,28 @@ const BrokerManagement = function BrokerManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Total Accounts"
-          value={data?.total || 0}
+          value={data?.total ?? '—'}
           icon={Server}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Connected"
-          value={data?.connected || 0}
+          value={data?.connected ?? '—'}
           icon={Server}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="Disconnected"
-          value={data?.disconnected || 0}
+          value={data?.disconnected ?? '—'}
           icon={Server}
           variant="warning"
           loading={loading}
         />
         <StatCard
           label="Errors"
-          value={data?.errors || 0}
+          value={data?.errors ?? '—'}
           icon={Server}
           variant="danger"
           loading={loading}

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { FileText, RefreshCw, Loader2, Search } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -19,23 +20,27 @@ const AuditLogs = function AuditLogs() {
   const fetchLogs = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (filters.category) {
-        params.append('category', filters.category);
-      }
-      if (filters.severity) {
-        params.append('severity', filters.severity);
-      }
-      if (filters.search) {
-        params.append('q', filters.search);
-      }
-
-      const response = await fetch(`/api/admin/audit-logs?${params.toString()}`, {
-        credentials: 'include',
-      });
+      const response = await fetch('/api/admin/actions?limit=100');
       const payload = await response.json();
       if (response.ok) {
-        setLogs(payload.data?.items || []);
+        const actions = (payload.data?.actions || []).map((item) => ({
+          id: item.actionId,
+          category: item.targetType?.toLowerCase() || 'admin',
+          action: item.action,
+          actor: item.adminEmail || item.adminId,
+          actorEmail: item.adminEmail,
+          resource: [item.targetType, item.targetId].filter(Boolean).join(':'),
+          severity: 'info',
+          timestamp: item.createdAt,
+        }));
+        const search = filters.search.trim().toLowerCase();
+        setLogs(
+          actions.filter((item) =>
+            (!filters.category || item.category.includes(filters.category)) &&
+            (!filters.severity || item.severity === filters.severity) &&
+            (!search || `${item.action} ${item.actor} ${item.resource}`.toLowerCase().includes(search)),
+          ),
+        );
       }
     } catch (_err) {
       // silent

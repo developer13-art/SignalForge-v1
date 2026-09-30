@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { ArrowDownToLine, RefreshCw, Loader2, Check, X } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -19,11 +20,30 @@ const WithdrawalManagement = function WithdrawalManagement() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/withdrawals', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setWithdrawals(payload.data?.items || []);
-        setData(payload.data?.summary);
+      const [withdrawalsResponse, statusResponse] = await Promise.all([
+        fetch('/api/admin/withdrawals?limit=100'),
+        fetch('/api/admin/withdrawals/status-breakdown'),
+      ]);
+      const [withdrawalsPayload, statusPayload] = await Promise.all([
+        withdrawalsResponse.json(),
+        statusResponse.json(),
+      ]);
+      if (withdrawalsResponse.ok && statusResponse.ok) {
+        const statuses = statusPayload.data?.breakdown || {};
+        setWithdrawals(
+          (withdrawalsPayload.data?.items || []).map((withdrawal) => ({
+            ...withdrawal,
+            id: withdrawal.withdrawalId,
+            destination: withdrawal.source,
+            status: withdrawal.status?.toLowerCase(),
+          })),
+        );
+        setData({
+          pending: statuses.PENDING?.count || 0,
+          processing: statuses.PROCESSING?.count || 0,
+          completedToday: statuses.COMPLETED?.count || 0,
+          pendingAmount: statuses.PENDING?.totalAmount,
+        });
       }
     } catch (_err) {
       // silent
@@ -172,21 +192,21 @@ const WithdrawalManagement = function WithdrawalManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Pending"
-          value={data?.pending || 0}
+          value={data?.pending ?? '—'}
           icon={ArrowDownToLine}
           variant="warning"
           loading={loading}
         />
         <StatCard
           label="Processing"
-          value={data?.processing || 0}
+          value={data?.processing ?? '—'}
           icon={ArrowDownToLine}
           variant="info"
           loading={loading}
         />
         <StatCard
-          label="Completed Today"
-          value={data?.completedToday || 0}
+          label="Completed"
+          value={data?.completedToday ?? '—'}
           icon={ArrowDownToLine}
           variant="success"
           loading={loading}

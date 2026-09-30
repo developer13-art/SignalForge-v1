@@ -82,7 +82,7 @@ const USER_NAV = [
   { label: 'Wallet', to: routes.user.wallet.overview, icon: Coins },
   { label: 'Referrals', to: routes.user.referrals.dashboard, icon: Gift },
   { label: 'Notifications', to: routes.user.notifications.center, icon: Bell, badgeKey: 'notifications' },
-  { label: 'Settings', to: routes.user.settings.profile, icon: Settings },
+  { label: 'Settings', to: routes.user.settings.root, icon: Settings },
 ];
 
 const PROVIDER_NAV = [

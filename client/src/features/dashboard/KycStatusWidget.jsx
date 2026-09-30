@@ -8,6 +8,7 @@ import Button from '../../components/common/Button';
 import KycStatusBadge from '../../components/domain/kyc/KycStatusBadge';
 
 const STATUS_MESSAGES = {
+  loading: 'Checking your verification status.',
   not_started: 'Complete KYC to unlock subscriptions and trading.',
   pending: 'You have an incomplete KYC application.',
   under_review: 'Your verification is being reviewed.',
@@ -19,7 +20,7 @@ const STATUS_MESSAGES = {
 };
 
 const KycStatusWidget = function KycStatusWidget({ kyc }) {
-  const status = kyc?.status || 'not_started';
+  const status = kyc?.isLoading ? 'loading' : kyc?.status || 'not_started';
   const isVerified = status === 'verified';
 
   const ctaLabel =
@@ -69,7 +70,7 @@ const KycStatusWidget = function KycStatusWidget({ kyc }) {
         {STATUS_MESSAGES[status]}
       </Text>
 
-      {!isVerified ? (
+      {!isVerified && status !== 'loading' ? (
         <div className="mt-4">
           <Button
             variant="primary"
@@ -90,6 +91,7 @@ const KycStatusWidget = function KycStatusWidget({ kyc }) {
 KycStatusWidget.propTypes = {
   kyc: PropTypes.shape({
     status: PropTypes.string,
+    isLoading: PropTypes.bool,
   }),
 };
 

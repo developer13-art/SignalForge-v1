@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { useNavigate } from 'react-router-dom';
 import { Dna, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
@@ -123,14 +124,14 @@ const ProviderDnaMonitoring = function ProviderDnaMonitoring() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Providers Profiled"
-          value={data?.providersProfiled || 0}
+          value={data?.providersProfiled ?? '—'}
           icon={Dna}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Total Rules"
-          value={data?.totalRules || 0}
+          value={data?.totalRules ?? '—'}
           icon={Dna}
           variant="success"
           loading={loading}

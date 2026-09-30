@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Activity, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -16,11 +17,37 @@ const LiveTradeMonitor = function LiveTradeMonitor() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/trades/live', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setTrades(payload.data?.items || []);
-        setData(payload.data?.summary);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const [tradesResponse, breakdownResponse, todayResponse] = await Promise.all([
+        fetch('/api/admin/trades?status=OPEN&limit=100'),
+        fetch('/api/admin/trades/status-breakdown'),
+        fetch(`/api/admin/trades/status-breakdown?since=${encodeURIComponent(today.toISOString())}`),
+      ]);
+      const [tradesPayload, breakdownPayload, todayPayload] = await Promise.all([
+        tradesResponse.json(),
+        breakdownResponse.json(),
+        todayResponse.json(),
+      ]);
+      if (tradesResponse.ok && breakdownResponse.ok && todayResponse.ok) {
+        const tradeItems = tradesPayload.data?.items || [];
+        const allStatuses = breakdownPayload.data?.breakdown || {};
+        const todayStatuses = todayPayload.data?.breakdown || {};
+        setTrades(
+          tradeItems.map((trade) => ({
+            ...trade,
+            id: trade.tradeId,
+            userName: trade.userEmail,
+            currentPrice: trade.exitPrice,
+            profit: trade.realizedProfit,
+          })),
+        );
+        setData({
+          openTrades: allStatuses.OPEN || 0,
+          executedToday: todayStatuses.CLOSED || 0,
+          failedToday: todayStatuses.FAILED || 0,
+          totalVolume: tradeItems.reduce((total, trade) => total + Number(trade.volume || 0), 0),
+        });
       }
     } catch (_err) {
       // silent
@@ -65,28 +92,28 @@ const LiveTradeMonitor = function LiveTradeMonitor() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Open Trades"
-          value={data?.openTrades || 0}
+          value={data?.openTrades ?? '—'}
           icon={Activity}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Executed Today"
-          value={data?.executedToday || 0}
+          value={data?.executedToday ?? '—'}
           icon={Activity}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="Failed Today"
-          value={data?.failedToday || 0}
+          value={data?.failedToday ?? '—'}
           icon={Activity}
           variant="danger"
           loading={loading}
         />
         <StatCard
           label="Total Volume"
-          value={data?.totalVolume || 0}
+          value={data?.totalVolume ?? '—'}
           icon={Activity}
           variant="info"
           loading={loading}

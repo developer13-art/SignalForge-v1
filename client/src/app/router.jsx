@@ -97,6 +97,20 @@ const WalletOverview = lazy(() => import('../features/wallet/WalletOverview'));
 // Settings
 const ProfileSettings = lazy(() => import('../features/settings/ProfileSettings'));
 const SecuritySettings = lazy(() => import('../features/settings/SecuritySettings'));
+const SettingsLayout = lazy(() => import('../features/settings/SettingsLayout'));
+const AccountSettings = lazy(() => import('../features/settings/AccountSettings'));
+const TwoFactorSettings = lazy(() => import('../features/settings/TwoFactorSettings'));
+const ConnectedDevices = lazy(() => import('../features/settings/ConnectedDevices'));
+const ConnectedAccounts = lazy(() => import('../features/settings/ConnectedAccounts'));
+const BrokerSettings = lazy(() => import('../features/settings/BrokerSettings'));
+const SignalSourceSettings = lazy(() => import('../features/settings/SignalSourceSettings'));
+const TradingPreferences = lazy(() => import('../features/settings/TradingPreferences'));
+const RiskPreferences = lazy(() => import('../features/settings/RiskPreferences'));
+const NotificationSettings = lazy(() => import('../features/settings/NotificationSettings'));
+const PrivacySettings = lazy(() => import('../features/settings/PrivacySettings'));
+const ApiKeys = lazy(() => import('../features/settings/ApiKeys'));
+const DataPrivacy = lazy(() => import('../features/settings/DataPrivacy'));
+const DeleteAccount = lazy(() => import('../features/settings/DeleteAccount'));
 
 // ---------------------------------------------------------------------
 // Feature A — Solana Actions & Blinks
@@ -138,10 +152,34 @@ const CryptoHistory = lazy(() => import('../features/crypto-trading/CryptoHistor
 const AdminOverview = lazy(() => import('../features/admin/AdminOverview'));
 const UserManagement = lazy(() => import('../features/admin/UserManagement'));
 const KycManagement = lazy(() => import('../features/admin/KycManagement'));
+const KycApplicationReview = lazy(() => import('../features/admin/KycApplicationReview'));
 const ProviderManagement = lazy(() => import('../features/admin/ProviderManagement'));
+const BrokerManagement = lazy(() => import('../features/admin/BrokerManagement'));
 const LiveTradeMonitor = lazy(() => import('../features/admin/LiveTradeMonitor'));
 const AuditLogs = lazy(() => import('../features/admin/AuditLogs'));
 const SystemSettings = lazy(() => import('../features/admin/SystemSettings'));
+const UserDetails = lazy(() => import('../features/admin/UserDetails'));
+const UserRestrictions = lazy(() => import('../features/admin/UserRestrictions'));
+const TraderManagement = lazy(() => import('../features/admin/TraderManagement'));
+const SignalSourceManagement = lazy(() => import('../features/admin/SignalSourceManagement'));
+const LiveSignalMonitor = lazy(() => import('../features/admin/LiveSignalMonitor'));
+const AiMonitoring = lazy(() => import('../features/admin/AiMonitoring'));
+const ProviderDnaMonitoring = lazy(() => import('../features/admin/ProviderDnaMonitoring'));
+const RiskMonitoring = lazy(() => import('../features/admin/RiskMonitoring'));
+const ReferralManagement = lazy(() => import('../features/admin/ReferralManagement'));
+const SubscriptionManagement = lazy(() => import('../features/admin/SubscriptionManagement'));
+const PaymentManagement = lazy(() => import('../features/admin/PaymentManagement'));
+const WithdrawalManagement = lazy(() => import('../features/admin/WithdrawalManagement'));
+const AffiliateManagement = lazy(() => import('../features/admin/AffiliateManagement'));
+const MarketplaceModeration = lazy(() => import('../features/admin/MarketplaceModeration'));
+const Reports = lazy(() => import('../features/admin/Reports'));
+const SystemAnalytics = lazy(() => import('../features/admin/SystemAnalytics'));
+const SecurityCenter = lazy(() => import('../features/admin/SecurityCenter'));
+const AutomationRules = lazy(() => import('../features/risk-automation/AutomationRules'));
+const BrowseTraders = lazy(() => import('../features/trader-marketplace/BrowseTraders'));
+const TraderProfile = lazy(() => import('../features/trader-marketplace/TraderProfile'));
+const TraderReviews = lazy(() => import('../features/trader-marketplace/TraderReviews'));
+const NotificationCenter = lazy(() => import('../features/notifications/NotificationCenter'));
 const ComplianceDashboard = lazy(
   () => import('../features/compliance/ComplianceDashboard'),
 );
@@ -218,10 +256,15 @@ export default function AppRouter() {
 
               {/* Signals */}
               <Route path="/signals" element={<LiveSignals />} />
+              <Route path="/signals/live" element={<LiveSignals />} />
               <Route path="/signals/history" element={<SignalHistory />} />
               <Route path="/signals/:signalId" element={<SignalDetails />} />
 
               {/* Signal sources */}
+              <Route path="/signal-sources" element={<SignalSourcesOverview />} />
+              <Route path="/signal-sources/add" element={<AddSignalSource />} />
+              <Route path="/signal-sources/telegram" element={<TelegramConnection />} />
+              <Route path="/signal-sources/telegram/channels" element={<TelegramChannels />} />
               <Route path="/sources" element={<SignalSourcesOverview />} />
               <Route path="/sources/add" element={<AddSignalSource />} />
               <Route path="/sources/telegram" element={<TelegramConnection />} />
@@ -244,8 +287,19 @@ export default function AppRouter() {
               <Route path="/analytics/performance" element={<PerformanceDashboard />} />
 
               {/* Providers marketplace */}
+              <Route path="/marketplace/providers" element={<BrowseProviders />} />
+              <Route path="/marketplace/providers/:providerId" element={<ProviderProfile />} />
               <Route path="/providers" element={<BrowseProviders />} />
               <Route path="/providers/:providerId" element={<ProviderProfile />} />
+
+              {/* Trader marketplace */}
+              <Route path="/marketplace/traders" element={<BrowseTraders />} />
+              <Route path="/marketplace/traders/:traderId" element={<TraderProfile />} />
+              <Route path="/marketplace/traders/:traderId/reviews" element={<TraderReviews />} />
+
+              {/* Notifications and automation */}
+              <Route path="/notifications" element={<NotificationCenter />} />
+              <Route path="/automation/rules" element={<AutomationRules />} />
 
               {/* Referrals */}
               <Route path="/referrals" element={<ReferralDashboard />} />
@@ -258,8 +312,24 @@ export default function AppRouter() {
               <Route path="/wallet" element={<WalletOverview />} />
 
               {/* Settings */}
-              <Route path="/settings/profile" element={<ProfileSettings />} />
-              <Route path="/settings/security" element={<SecuritySettings />} />
+              <Route path="/settings" element={<SettingsLayout />}>
+                <Route index element={<Navigate to="/settings/profile" replace />} />
+                <Route path="profile" element={<ProfileSettings />} />
+                <Route path="account" element={<AccountSettings />} />
+                <Route path="security" element={<SecuritySettings />} />
+                <Route path="2fa" element={<TwoFactorSettings />} />
+                <Route path="devices" element={<ConnectedDevices />} />
+                <Route path="accounts" element={<ConnectedAccounts />} />
+                <Route path="brokers" element={<BrokerSettings />} />
+                <Route path="signal-sources" element={<SignalSourceSettings />} />
+                <Route path="trading" element={<TradingPreferences />} />
+                <Route path="risk" element={<RiskPreferences />} />
+                <Route path="notifications" element={<NotificationSettings />} />
+                <Route path="privacy" element={<PrivacySettings />} />
+                <Route path="api-keys" element={<ApiKeys />} />
+                <Route path="data-privacy" element={<DataPrivacy />} />
+                <Route path="delete-account" element={<DeleteAccount />} />
+              </Route>
 
               {/* Feature A — Blinks */}
               <Route path="/solana/blinks" element={<BlinkHistory />} />
@@ -304,8 +374,29 @@ export default function AppRouter() {
               <Route element={<AdminLayout />}>
                 <Route path="/admin" element={<AdminOverview />} />
                 <Route path="/admin/users" element={<UserManagement />} />
+                <Route path="/admin/users/:userId" element={<UserDetails />} />
+                <Route path="/admin/users/:userId/restrictions" element={<UserRestrictions />} />
                 <Route path="/admin/kyc" element={<KycManagement />} />
+                <Route path="/admin/kyc/:applicationId" element={<KycApplicationReview />} />
                 <Route path="/admin/providers" element={<ProviderManagement />} />
+                <Route path="/admin/traders" element={<TraderManagement />} />
+                <Route path="/admin/signal-sources" element={<SignalSourceManagement />} />
+                <Route path="/admin/brokers" element={<BrokerManagement />} />
+                <Route path="/admin/signals/monitor" element={<LiveSignalMonitor />} />
+                <Route path="/admin/trades/monitor" element={<LiveTradeMonitor />} />
+                <Route path="/admin/ai" element={<AiMonitoring />} />
+                <Route path="/admin/provider-dna" element={<ProviderDnaMonitoring />} />
+                <Route path="/admin/risk" element={<RiskMonitoring />} />
+                <Route path="/admin/referrals" element={<ReferralManagement />} />
+                <Route path="/admin/subscriptions" element={<SubscriptionManagement />} />
+                <Route path="/admin/payments" element={<PaymentManagement />} />
+                <Route path="/admin/withdrawals" element={<WithdrawalManagement />} />
+                <Route path="/admin/affiliate" element={<AffiliateManagement />} />
+                <Route path="/admin/marketplace" element={<MarketplaceModeration />} />
+                <Route path="/admin/marketplace/reviews" element={<MarketplaceModeration />} />
+                <Route path="/admin/reports" element={<Reports />} />
+                <Route path="/admin/analytics" element={<SystemAnalytics />} />
+                <Route path="/admin/security" element={<SecurityCenter />} />
                 <Route path="/admin/trades" element={<LiveTradeMonitor />} />
                 <Route path="/admin/audit-logs" element={<AuditLogs />} />
                 <Route path="/admin/settings" element={<SystemSettings />} />

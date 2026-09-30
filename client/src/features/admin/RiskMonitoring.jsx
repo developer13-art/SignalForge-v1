@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { ShieldAlert, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -121,28 +122,28 @@ const RiskMonitoring = function RiskMonitoring() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Blocked Today"
-          value={data?.blockedToday || 0}
+          value={data?.blockedToday ?? '—'}
           icon={ShieldAlert}
           variant="danger"
           loading={loading}
         />
         <StatCard
           label="Warnings"
-          value={data?.warningsToday || 0}
+          value={data?.warningsToday ?? '—'}
           icon={ShieldAlert}
           variant="warning"
           loading={loading}
         />
         <StatCard
           label="Emergency Stops"
-          value={data?.emergencyStops || 0}
+          value={data?.emergencyStops ?? '—'}
           icon={ShieldAlert}
           variant="danger"
           loading={loading}
         />
         <StatCard
           label="Active Risk Profiles"
-          value={data?.activeProfiles || 0}
+          value={data?.activeProfiles ?? '—'}
           icon={ShieldAlert}
           variant="primary"
           loading={loading}

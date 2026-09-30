@@ -29,6 +29,9 @@ export function useKyc() {
     queryFn: () => kycApi.getStatus(),
     enabled: isAuthenticated,
   });
+  const isVerified =
+    isKycVerified ||
+    String(statusQuery.data?.status || '').toUpperCase() === 'VERIFIED';
 
   const applicationQuery = useQuery({
     queryKey: kycKeys.application(),
@@ -40,7 +43,7 @@ export function useKyc() {
   const documentsQuery = useQuery({
     queryKey: kycKeys.documents(),
     queryFn: () => kycApi.listDocuments(),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isVerified,
   });
 
   const documentTypesQuery = useQuery({
@@ -91,7 +94,7 @@ export function useKyc() {
     application: applicationQuery.data,
     documents: documentsQuery.data || [],
     documentTypes: documentTypesQuery.data || [],
-    isVerified: isKycVerified || (statusQuery.data && statusQuery.data.status === 'VERIFIED'),
+    isVerified,
     isLoading: statusQuery.isLoading,
     error: statusQuery.error,
     submitPersonalInfo: submitPersonalInfoMutation.mutateAsync,

@@ -9,15 +9,7 @@
  */
 
 import { useContext, useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import { AuthContext } from '../context/AuthContext.jsx';
-import {
-  selectAuthUser,
-  selectIsAuthenticated,
-  selectAuthStatus,
-  selectAuthError,
-  selectAccessToken,
-} from '../store/selectors/auth.selectors.js';
 
 export function useAuth() {
   const context = useContext(AuthContext);
@@ -26,34 +18,29 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
 
-  const user = useSelector(selectAuthUser);
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const status = useSelector(selectAuthStatus);
-  const error = useSelector(selectAuthError);
-  const accessToken = useSelector(selectAccessToken);
-
-  const isLoading = status === 'loading' || status === 'authenticating';
-
-  const isKycVerified = Boolean(user && user.kycStatus === 'VERIFIED');
+  const { user, roles = [], isAuthenticated, isLoading, accessToken } = context;
+  const status = isLoading ? 'loading' : isAuthenticated ? 'authenticated' : 'unauthenticated';
+  const isKycVerified = String(user?.kycStatus || '').toUpperCase() === 'VERIFIED';
 
   const hasRole = useCallback(
     (role) => {
-      if (!user || !Array.isArray(user.roles)) {
+      if (!user) {
         return false;
       }
-      return user.roles.includes(role);
+      return roles.includes(role) || user.roles?.includes(role) || user.role === role;
     },
-    [user],
+    [user, roles],
   );
 
   const hasAnyRole = useCallback(
     (roles) => {
-      if (!user || !Array.isArray(user.roles) || !Array.isArray(roles)) {
+      if (!user || !Array.isArray(roles)) {
         return false;
       }
-      return roles.some((role) => user.roles.includes(role));
+      const userRoles = context.roles || user.roles || [user.role].filter(Boolean);
+      return roles.some((role) => userRoles.includes(role));
     },
-    [user],
+    [user, context.roles],
   );
 
   return {
@@ -63,7 +50,7 @@ export function useAuth() {
     isLoading,
     isKycVerified,
     status,
-    error,
+    error: null,
     accessToken,
     hasRole,
     hasAnyRole,

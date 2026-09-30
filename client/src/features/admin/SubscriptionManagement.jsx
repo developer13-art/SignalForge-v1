@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { CreditCard, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -18,11 +19,32 @@ const SubscriptionManagement = function SubscriptionManagement() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/subscriptions', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setSubscriptions(payload.data?.items || []);
-        setData(payload.data?.summary);
+      const [subscriptionsResponse, statusResponse] = await Promise.all([
+        fetch('/api/admin/subscriptions?limit=100'),
+        fetch('/api/admin/subscriptions/status-breakdown'),
+      ]);
+      const [subscriptionsPayload, statusPayload] = await Promise.all([
+        subscriptionsResponse.json(),
+        statusResponse.json(),
+      ]);
+      if (subscriptionsResponse.ok && statusResponse.ok) {
+        const statuses = statusPayload.data?.breakdown || {};
+        setSubscriptions(
+          (subscriptionsPayload.data?.items || []).map((subscription) => ({
+            ...subscription,
+            id: subscription.subscriptionId,
+            planName: subscription.planCode,
+            cycle: '—',
+            amount: '—',
+            renewsAt: subscription.currentPeriodEnd,
+            status: subscription.status?.toLowerCase(),
+          })),
+        );
+        setData({
+          active: statuses.ACTIVE ?? 0,
+          trial: statuses.TRIAL ?? statuses.TRIALING ?? 0,
+          pastDue: statuses.PAST_DUE ?? 0,
+        });
       }
     } catch (_err) {
       // silent
@@ -117,21 +139,21 @@ const SubscriptionManagement = function SubscriptionManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Active Subscriptions"
-          value={data?.active || 0}
+          value={data?.active ?? '—'}
           icon={CreditCard}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="Trial"
-          value={data?.trial || 0}
+          value={data?.trial ?? '—'}
           icon={CreditCard}
           variant="info"
           loading={loading}
         />
         <StatCard
           label="Past Due"
-          value={data?.pastDue || 0}
+          value={data?.pastDue ?? '—'}
           icon={CreditCard}
           variant="warning"
           loading={loading}

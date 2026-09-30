@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { useNavigate } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -34,7 +35,16 @@ const ComplianceDashboard = function ComplianceDashboard() {
       });
       const payload = await response.json();
       if (response.ok) {
-        setData(payload.data);
+        const dashboard = payload.data?.dashboard;
+        const statuses = dashboard?.statusBreakdown || {};
+        setData({
+          pending: statuses.PENDING ?? 0,
+          underReview: statuses.UNDER_REVIEW ?? 0,
+          verified: statuses.VERIFIED ?? 0,
+          rejected: statuses.REJECTED ?? 0,
+          suspended: statuses.SUSPENDED ?? 0,
+          riskFlags: dashboard?.openRiskFlags ?? 0,
+        });
       }
     } catch (_err) {
       // silent
@@ -139,14 +149,14 @@ const ComplianceDashboard = function ComplianceDashboard() {
         />
         <StatCard
           label="Reviewed Today"
-          value={data?.reviewedToday || 0}
+          value={data?.reviewedToday ?? '—'}
           icon={ShieldCheck}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Avg Review Time"
-          value={data?.avgReviewTime || '—'}
+          value={data?.avgReviewTime ?? '—'}
           icon={Clock}
           variant="info"
           loading={loading}

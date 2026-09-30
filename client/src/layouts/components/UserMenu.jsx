@@ -9,7 +9,6 @@
 
 import { useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import {
   User as UserIcon,
   ShieldCheck,
@@ -20,15 +19,15 @@ import {
   KeyRound,
 } from 'lucide-react';
 
-import { selectCurrentUser } from '../../store/selectors/auth.selectors.js';
-import { logoutThunk } from '../../store/slices/auth.slice.js';
+import { useAuthContext } from '../../context/AuthContext.jsx';
+import { useKyc } from '../../hooks/useKyc.js';
 import { cn } from '../../lib/utils/cn.util.js';
 
 export default function UserMenu({ open, onClose }) {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const ref = useRef(null);
-  const currentUser = useSelector(selectCurrentUser);
+  const { user: currentUser, logout } = useAuthContext();
+  const { isVerified } = useKyc();
 
   useEffect(() => {
     if (!open) {
@@ -45,15 +44,13 @@ export default function UserMenu({ open, onClose }) {
 
   const handleLogout = async () => {
     onClose();
-    await dispatch(logoutThunk());
+    await logout();
     navigate('/login');
   };
 
   if (!open) {
     return null;
   }
-
-  const isVerified = currentUser?.kycStatus === 'VERIFIED';
 
   return (
     <div

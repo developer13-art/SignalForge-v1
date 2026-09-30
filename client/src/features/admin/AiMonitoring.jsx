@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Brain, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -117,7 +118,7 @@ const AiMonitoring = function AiMonitoring() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Requests Today"
-          value={data?.requestsToday || 0}
+          value={data?.requestsToday ?? '—'}
           icon={Brain}
           variant="primary"
           loading={loading}

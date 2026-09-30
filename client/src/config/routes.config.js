@@ -352,6 +352,7 @@ const _routes = {
       preferences: '/notifications/preferences',
     },
     settings: {
+      root: '/settings',
       profile: '/settings/profile',
       account: '/settings/account',
       security: '/settings/security',

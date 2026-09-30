@@ -8,15 +8,16 @@
  * @module client/src/layouts/components/KycBanner
  */
 
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, ArrowRight, X } from 'lucide-react';
 import { useState } from 'react';
 
+import { useKyc } from '../../hooks/useKyc.js';
 import { routes } from '@config/routes.config.js';
 import { appConfig } from '@config/app.config.js';
 
 export default function KycBanner() {
+  const { status, isLoading } = useKyc();
   const [dismissed, setDismissed] = useState(() => {
     try {
       return localStorage.getItem(appConfig.storage.dismissedBannersKey) === 'kyc';
@@ -25,9 +26,9 @@ export default function KycBanner() {
     }
   });
 
-  const kycStatus = useSelector((state) => state.kyc.status) || 'NOT_STARTED';
+  const kycStatus = String(status?.status || '').toUpperCase();
 
-  if (kycStatus === 'VERIFIED' || dismissed) {
+  if (kycStatus === 'VERIFIED' || dismissed || isLoading) {
     return null;
   }
 

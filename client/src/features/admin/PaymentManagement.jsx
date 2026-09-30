@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { DollarSign, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -18,11 +19,29 @@ const PaymentManagement = function PaymentManagement() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/payments', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setPayments(payload.data?.items || []);
-        setData(payload.data?.summary);
+      const [paymentsResponse, statusResponse] = await Promise.all([
+        fetch('/api/admin/payments?limit=100'),
+        fetch('/api/admin/payments/status-breakdown'),
+      ]);
+      const [paymentsPayload, statusPayload] = await Promise.all([
+        paymentsResponse.json(),
+        statusResponse.json(),
+      ]);
+      if (paymentsResponse.ok && statusResponse.ok) {
+        const statuses = statusPayload.data?.breakdown || {};
+        setPayments(
+          (paymentsPayload.data?.items || []).map((payment) => ({
+            ...payment,
+            id: payment.paymentId,
+            reference: payment.providerReference || payment.paymentId,
+            date: payment.createdAt,
+            status: payment.status?.toLowerCase(),
+          })),
+        );
+        setData({
+          total: paymentsPayload.data?.meta?.total,
+          failed: statuses.FAILED?.count ?? 0,
+        });
       }
     } catch (_err) {
       // silent
@@ -115,28 +134,28 @@ const PaymentManagement = function PaymentManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Total Payments"
-          value={data?.total || 0}
+          value={data?.total ?? '—'}
           icon={DollarSign}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Today"
-          value={data?.today !== undefined ? `$${data.today}` : '—'}
+          value="—"
           icon={DollarSign}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="This Month"
-          value={data?.thisMonth !== undefined ? `$${data.thisMonth}` : '—'}
+          value="—"
           icon={DollarSign}
           variant="info"
           loading={loading}
         />
         <StatCard
           label="Failed"
-          value={data?.failed || 0}
+          value={data?.failed ?? '—'}
           icon={DollarSign}
           variant="danger"
           loading={loading}

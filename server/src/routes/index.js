@@ -110,8 +110,8 @@ router.use(
 );
 
 // -------------------- Admin consoles --------------------
-router.use('/admin', require('./admin.routes'));
-router.use('/compliance', require('./compliance.routes'));
+router.use('/admin', require('../modules/admin/admin.routes'));
+router.use('/compliance', require('../modules/compliance/compliance.routes'));
 router.use('/executive', require('./executive.routes'));
 
 // -------------------- Webhooks --------------------

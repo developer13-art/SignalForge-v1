@@ -14,10 +14,13 @@ const { nowIso } = require('@signalforge/shared/utils/date.util');
 const { db } = require('../../../database');
 const { publishEvent } = require('../../../events/event-publisher');
 const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
-const { complianceService } = require('../compliance.service');
 const { approveKyc } = require('./approve.service');
 const { rejectKyc } = require('./reject.service');
-const { requestResubmission } = require('./resubmit.service');
+const { requestResubmission: requestKycResubmission } = require('./resubmit.service');
+
+function getComplianceService() {
+  return require('../compliance.service').complianceService;
+}
 
 async function loadApplication({ applicationId }) {
   const { rows } = await db.query(
@@ -42,7 +45,7 @@ async function getApplicationForReview({ applicationId, reviewerId }) {
     throw new AppError('applicationId and reviewerId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
-  await complianceService.assertReviewerAccess({ userId: reviewerId });
+  await getComplianceService().assertReviewerAccess({ userId: reviewerId });
 
   const application = await loadApplication({ applicationId });
 
@@ -74,7 +77,7 @@ async function getApplicationForReview({ applicationId, reviewerId }) {
 async function approveApplication({ applicationId, reviewerId, notes }) {
   const result = await approveKyc({ applicationId, reviewerId, notes });
 
-  await complianceService.recordComplianceAction({
+  await getComplianceService().recordComplianceAction({
     actorId: reviewerId,
     action: 'KYC_APPROVE',
     resourceType: 'KYC_APPLICATION',
@@ -105,7 +108,7 @@ async function rejectApplication({ applicationId, reviewerId, reason }) {
 
   const result = await rejectKyc({ applicationId, reviewerId, reason });
 
-  await complianceService.recordComplianceAction({
+  await getComplianceService().recordComplianceAction({
     actorId: reviewerId,
     action: 'KYC_REJECT',
     resourceType: 'KYC_APPLICATION',
@@ -135,9 +138,9 @@ async function requestResubmission({ applicationId, reviewerId, reason, specific
     throw new AppError('Resubmission reason is required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
-  const result = await requestResubmission({ applicationId, reviewerId, reason, specificIssues });
+  const result = await requestKycResubmission({ applicationId, reviewerId, reason, specificIssues });
 
-  await complianceService.recordComplianceAction({
+  await getComplianceService().recordComplianceAction({
     actorId: reviewerId,
     action: 'KYC_RESUBMIT_REQUEST',
     resourceType: 'KYC_APPLICATION',
@@ -167,7 +170,7 @@ async function suspendApplication({ applicationId, reviewerId, reason }) {
     throw new AppError('applicationId and reviewerId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
-  await complianceService.assertReviewerAccess({ userId: reviewerId });
+  await getComplianceService().assertReviewerAccess({ userId: reviewerId });
 
   const application = await loadApplication({ applicationId });
 
@@ -191,7 +194,7 @@ async function suspendApplication({ applicationId, reviewerId, reason }) {
     [nowIso(), application.user_id],
   );
 
-  await complianceService.recordComplianceAction({
+  await getComplianceService().recordComplianceAction({
     actorId: reviewerId,
     action: 'KYC_SUSPEND',
     resourceType: 'KYC_APPLICATION',
@@ -208,7 +211,7 @@ async function escalateApplication({ applicationId, reviewerId, reason }) {
     throw new AppError('applicationId and reviewerId are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
-  await complianceService.assertReviewerAccess({ userId: reviewerId });
+  await getComplianceService().assertReviewerAccess({ userId: reviewerId });
 
   await db.query(
     `UPDATE kyc_applications
@@ -219,7 +222,7 @@ async function escalateApplication({ applicationId, reviewerId, reason }) {
     [nowIso(), reason || null, applicationId],
   );
 
-  await complianceService.recordComplianceAction({
+  await getComplianceService().recordComplianceAction({
     actorId: reviewerId,
     action: 'KYC_ESCALATE',
     resourceType: 'KYC_APPLICATION',

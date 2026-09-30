@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Users, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -17,11 +18,30 @@ const AffiliateManagement = function AffiliateManagement() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/affiliates', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setAffiliates(payload.data?.items || []);
-        setData(payload.data?.summary);
+      const [partnersResponse, statusResponse] = await Promise.all([
+        fetch('/api/admin/affiliate/partners?limit=100'),
+        fetch('/api/admin/affiliate/partners/status-breakdown'),
+      ]);
+      const [partnersPayload, statusPayload] = await Promise.all([
+        partnersResponse.json(),
+        statusResponse.json(),
+      ]);
+      if (partnersResponse.ok && statusResponse.ok) {
+        const partners = partnersPayload.data?.items || [];
+        setAffiliates(
+          partners.map((partner) => ({
+            ...partner,
+            id: partner.partnerId,
+            name: partner.userEmail,
+            email: partner.userEmail,
+            referrals: partner.referralCount,
+            status: partner.status?.toLowerCase(),
+          })),
+        );
+        setData({
+          total: partnersPayload.data?.meta?.total,
+          active: statusPayload.data?.breakdown?.ACTIVE,
+        });
       }
     } catch (_err) {
       // silent
@@ -64,7 +84,9 @@ const AffiliateManagement = function AffiliateManagement() {
       accessor: 'commissions',
       align: 'right',
       render: (value) => (
-        <span className="text-sm font-semibold text-emerald-600">${value || 0}</span>
+        <span className="text-sm font-semibold text-emerald-600">
+          {value === undefined ? '—' : `$${value}`}
+        </span>
       ),
     },
     {
@@ -119,14 +141,14 @@ const AffiliateManagement = function AffiliateManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Total Affiliates"
-          value={data?.total || 0}
+          value={data?.total ?? '—'}
           icon={Users}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Active"
-          value={data?.active || 0}
+          value={data?.active ?? '—'}
           icon={Users}
           variant="success"
           loading={loading}

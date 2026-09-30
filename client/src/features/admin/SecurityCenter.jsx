@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Shield, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -120,28 +121,28 @@ const SecurityCenter = function SecurityCenter() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Active Sessions"
-          value={data?.activeSessions || 0}
+          value={data?.activeSessions ?? '—'}
           icon={Shield}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Failed Logins (24h)"
-          value={data?.failedLogins24h || 0}
+          value={data?.failedLogins24h ?? '—'}
           icon={Shield}
           variant="warning"
           loading={loading}
         />
         <StatCard
           label="Suspicious Events"
-          value={data?.suspiciousEvents || 0}
+          value={data?.suspiciousEvents ?? '—'}
           icon={Shield}
           variant="danger"
           loading={loading}
         />
         <StatCard
           label="2FA Enabled Users"
-          value={data?.twoFactorUsers || 0}
+          value={data?.twoFactorUsers ?? '—'}
           icon={Shield}
           variant="success"
           loading={loading}

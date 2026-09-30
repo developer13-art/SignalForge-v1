@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { useNavigate } from 'react-router-dom';
 import { Users, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
@@ -20,11 +21,33 @@ const UserManagement = function UserManagement() {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/users', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setUsers(payload.data?.items || []);
-        setData(payload.data?.summary);
+      const [usersResponse, statusResponse] = await Promise.all([
+        fetch('/api/admin/users?limit=100'),
+        fetch('/api/admin/users/status-breakdown'),
+      ]);
+      const [usersPayload, statusPayload] = await Promise.all([
+        usersResponse.json(),
+        statusResponse.json(),
+      ]);
+      if (usersResponse.ok && statusResponse.ok) {
+        const items = usersPayload.data?.items || [];
+        const statuses = statusPayload.data?.breakdown || {};
+        setUsers(
+          items.map((user) => ({
+            ...user,
+            id: user.userId,
+            name: [user.firstName, user.lastName].filter(Boolean).join(' ') || user.username || user.email,
+            role: user.accountType,
+            suspended: user.status === 'SUSPENDED',
+            joinedAt: user.createdAt,
+            lastActive: user.lastLoginAt,
+          })),
+        );
+        setData({
+          total: usersPayload.data?.meta?.total,
+          active: statuses.ACTIVE ?? 0,
+          suspended: statuses.SUSPENDED ?? 0,
+        });
       }
     } catch (_err) {
       // silent
@@ -98,28 +121,28 @@ const UserManagement = function UserManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Total Users"
-          value={data?.total || 0}
+          value={data?.total ?? '—'}
           icon={Users}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Active"
-          value={data?.active || 0}
+          value={data?.active ?? '—'}
           icon={Users}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="Suspended"
-          value={data?.suspended || 0}
+          value={data?.suspended ?? '—'}
           icon={Users}
           variant="warning"
           loading={loading}
         />
         <StatCard
           label="New This Month"
-          value={data?.newThisMonth || 0}
+          value={data?.newThisMonth ?? '—'}
           icon={Users}
           variant="info"
           loading={loading}

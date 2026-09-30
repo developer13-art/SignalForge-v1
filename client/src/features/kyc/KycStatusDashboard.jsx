@@ -18,6 +18,7 @@ import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import KycStatusBadge from '../../components/domain/kyc/KycStatusBadge';
 import { kycApi } from '../../api/kyc.api.js';
+import { useAuthContext } from '../../context/AuthContext.jsx';
 
 const STATUS_ACTIONS = {
   not_started: {
@@ -72,6 +73,7 @@ const STATUS_ACTIONS = {
 
 const KycStatusDashboard = function KycStatusDashboard() {
   const navigate = useNavigate();
+  const { setUser } = useAuthContext();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -79,6 +81,11 @@ const KycStatusDashboard = function KycStatusDashboard() {
     setLoading(true);
     try {
       const status = await kycApi.getStatus();
+      if (status?.status) {
+        setUser((currentUser) =>
+          currentUser ? { ...currentUser, kycStatus: status.status } : currentUser,
+        );
+      }
       const documents = await kycApi.listDocuments().catch(() => []);
       const savedDocuments = Array.isArray(documents)
         ? documents

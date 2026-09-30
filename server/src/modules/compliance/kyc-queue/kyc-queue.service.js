@@ -11,7 +11,10 @@ const { ERROR_CODES } = require('../../../lib/errors/error-codes');
 const { logger } = require('../../../lib/logger');
 const { normalizePagination, buildPaginationMeta } = require('@signalforge/shared/utils/pagination.util');
 const repository = require('./kyc-queue.repository');
-const { complianceService } = require('../compliance.service');
+
+function getComplianceService() {
+  return require('../compliance.service').complianceService;
+}
 async function listQueue({ filters = {}, pagination = {} }) {
   const { page, limit, offset } = normalizePagination(pagination);
 
@@ -52,7 +55,7 @@ async function assignToReviewer({ applicationId, reviewerId, actorId }) {
     throw new AppError('KYC application not found', ERROR_CODES.NOT_FOUND, 404);
   }
 
-  await complianceService.recordComplianceAction({
+  await getComplianceService().recordComplianceAction({
     actorId,
     action: 'KYC_ASSIGN_REVIEWER',
     resourceType: 'KYC_APPLICATION',
@@ -75,7 +78,7 @@ async function releaseFromReviewer({ applicationId, actorId }) {
     throw new AppError('KYC application not found', ERROR_CODES.NOT_FOUND, 404);
   }
 
-  await complianceService.recordComplianceAction({
+  await getComplianceService().recordComplianceAction({
     actorId,
     action: 'KYC_RELEASE_REVIEWER',
     resourceType: 'KYC_APPLICATION',

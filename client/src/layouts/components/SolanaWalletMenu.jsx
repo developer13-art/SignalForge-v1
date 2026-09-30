@@ -10,8 +10,10 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
-import { Wallet, ChevronDown, Copy, ExternalLink, LogOut, Settings2, BadgeCheck } from 'lucide-react';
+import { Wallet, ChevronDown, Copy, ExternalLink, LogOut, Settings2, BadgeCheck, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 import { routes } from '@config/routes.config.js';
 import { useSolanaWallet } from '@hooks/useSolanaWallet.js';
@@ -25,8 +27,9 @@ function shorten(address) {
 
 export default function SolanaWalletMenu() {
   const [open, setOpen] = useState(false);
+  const [walletPickerOpen, setWalletPickerOpen] = useState(false);
   const ref = useRef(null);
-  const { connected, publicKey, connect, disconnect, connecting } = useSolanaWallet();
+  const { connected, publicKey, wallet, wallets, select, connect, disconnect, connecting } = useSolanaWallet();
 
   useEffect(() => {
     function onDocClick(event) {
@@ -41,10 +44,19 @@ export default function SolanaWalletMenu() {
   const address = publicKey ? String(publicKey) : null;
 
   async function handleConnect() {
+    if (!wallet) {
+      setWalletPickerOpen(true);
+      return;
+    }
+
     try {
       await connect();
-    } catch (err) {
-      // Surface via toast provider in real flows
+    } catch (error) {
+      if (error?.name === 'WalletNotSelectedError') {
+        setWalletPickerOpen(true);
+        return;
+      }
+      toast.error(error?.message || 'Failed to connect wallet');
     }
   }
 
@@ -139,6 +151,74 @@ export default function SolanaWalletMenu() {
           </div>
         </div>
       ) : null}
+
+      {walletPickerOpen && typeof document !== 'undefined'
+        ? createPortal(
+            <div
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4"
+              onClick={() => setWalletPickerOpen(false)}
+            >
+              <section
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="solana-wallet-picker-title"
+                className="w-full max-w-sm rounded-xl border border-surface-border bg-surface p-5 shadow-modal"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <h2 id="solana-wallet-picker-title" className="text-base font-semibold text-text-primary">
+                    Choose a Solana wallet
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setWalletPickerOpen(false)}
+                    aria-label="Close wallet selection"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-md text-text-secondary hover:bg-surface-elevated"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="mt-4 space-y-2">
+                  {wallets.length === 0 ? (
+                    <p className="rounded-lg border border-surface-border px-3 py-4 text-sm text-text-secondary">
+                      No Solana wallet adapters are available.
+                    </p>
+                  ) : null}
+                  {wallets.map(({ adapter, readyState }) => {
+                    const ready = readyState === 'Installed' || readyState === 'Loadable';
+                    return (
+                      <button
+                        key={adapter.name}
+                        type="button"
+                        disabled={!ready}
+                        onClick={() => {
+                          select(adapter.name);
+                          setWalletPickerOpen(false);
+                        }}
+                        className="flex w-full items-center gap-3 rounded-lg border border-surface-border px-3 py-3 text-left transition hover:border-primary-500 hover:bg-surface-elevated disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {adapter.icon ? (
+                          <img src={adapter.icon} alt="" className="h-8 w-8 rounded-full" />
+                        ) : (
+                          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary-500/15 text-primary-500">
+                            <Wallet className="h-4 w-4" />
+                          </span>
+                        )}
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-sm font-medium text-text-primary">{adapter.name}</span>
+                          <span className="block text-xs text-text-tertiary">
+                            {ready ? 'Select wallet' : 'Wallet extension not detected'}
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }

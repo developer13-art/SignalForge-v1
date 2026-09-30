@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { MessageSquare, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -135,21 +136,21 @@ const Support = function Support() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Open"
-          value={data?.open || 0}
+          value={data?.open ?? '—'}
           icon={MessageSquare}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="In Progress"
-          value={data?.inProgress || 0}
+          value={data?.inProgress ?? '—'}
           icon={MessageSquare}
           variant="warning"
           loading={loading}
         />
         <StatCard
           label="Resolved Today"
-          value={data?.resolvedToday || 0}
+          value={data?.resolvedToday ?? '—'}
           icon={MessageSquare}
           variant="success"
           loading={loading}

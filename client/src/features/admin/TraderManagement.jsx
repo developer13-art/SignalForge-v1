@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { useNavigate } from 'react-router-dom';
 import { Users, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
@@ -121,28 +122,28 @@ const TraderManagement = function TraderManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Total Traders"
-          value={data?.total || 0}
+          value={data?.total ?? '—'}
           icon={Users}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Active"
-          value={data?.active || 0}
+          value={data?.active ?? '—'}
           icon={Users}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="With Followers"
-          value={data?.withFollowers || 0}
+          value={data?.withFollowers ?? '—'}
           icon={Users}
           variant="info"
           loading={loading}
         />
         <StatCard
           label="Flagged"
-          value={data?.flagged || 0}
+          value={data?.flagged ?? '—'}
           icon={Users}
           variant="warning"
           loading={loading}

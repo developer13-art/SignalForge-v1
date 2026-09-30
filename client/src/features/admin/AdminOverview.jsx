@@ -18,32 +18,59 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import StatCard from '../../components/data-display/StatCard';
 import SystemHealthPanel from '../../components/domain/admin/SystemHealthPanel';
+import { get } from '../../api/client.js';
+
+const HEALTH_COMPONENT_LABELS = {
+  database: 'Database',
+  jobs: 'Background jobs',
+  telegram: 'Telegram',
+  brokers: 'Broker connections',
+  withdrawals: 'Withdrawals',
+  solana: 'Solana indexer',
+};
+
+function normalizeSystemHealth(health) {
+  const entries = Array.isArray(health?.components)
+    ? health.components.map((component) => [component.key, component])
+    : Object.entries(health?.components || {});
+
+  return {
+    overallStatus: health?.status?.toLowerCase() === 'degraded' ? 'degraded' : 'healthy',
+    components: entries.map(([key, details]) => {
+      const metrics = Object.entries(details || {})
+        .filter(([, value]) => typeof value === 'number')
+        .map(([name, value]) => `${name}: ${value}`);
+
+      return {
+        key,
+        label: HEALTH_COMPONENT_LABELS[key] || key,
+        status: details?.healthy === false ? 'degraded' : 'healthy',
+        description: details?.error || metrics.join(' · '),
+      };
+    }),
+  };
+}
 
 const AdminOverview = function AdminOverview() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const [statsRes, healthRes] = await Promise.all([
-        fetch('/api/admin/overview', { credentials: 'include' }),
-        fetch('/api/admin/system-health', { credentials: 'include' }),
+        get('/admin/overview'),
+        get('/admin/system/health'),
       ]);
 
-      const statsPayload = await statsRes.json();
-      const healthPayload = await healthRes.json();
-
-      if (statsRes.ok) {
-        setData(statsPayload.data);
-      }
-      if (healthRes.ok) {
-        setHealth(healthPayload.data);
-      }
-    } catch (_err) {
-      // silent
+      setData(statsRes.data?.overview);
+      setHealth(normalizeSystemHealth(healthRes.data?.health));
+    } catch (requestError) {
+      setError(requestError.message || 'Unable to load admin overview.');
     } finally {
       setLoading(false);
     }
@@ -83,31 +110,37 @@ const AdminOverview = function AdminOverview() {
         </Button>
       </div>
 
+      {error ? (
+        <div role="alert" className="mt-4 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+          {error}
+        </div>
+      ) : null}
+
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Total Users"
-          value={data?.totalUsers || 0}
+          value={data?.users?.total_users ?? '—'}
           icon={Users}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Active Providers"
-          value={data?.activeProviders || 0}
+          value={data?.providers?.active_providers ?? '—'}
           icon={Users}
           variant="info"
           loading={loading}
         />
         <StatCard
-          label="Signals Today"
-          value={data?.signalsToday || 0}
+          label="Signals (30d)"
+          value={data?.signals?.recent_signals ?? '—'}
           icon={Radio}
           variant="success"
           loading={loading}
         />
         <StatCard
-          label="Trades Today"
-          value={data?.tradesToday || 0}
+          label="Open Trades"
+          value={data?.trades?.open ?? '—'}
           icon={TrendingUp}
           variant="default"
           loading={loading}
@@ -116,31 +149,39 @@ const AdminOverview = function AdminOverview() {
 
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
-          label="Pending KYC"
-          value={data?.pendingKyc || 0}
+          label="New Users (30d)"
+          value={data?.users?.new_users ?? '—'}
           icon={Shield}
           variant="warning"
           loading={loading}
         />
         <StatCard
-          label="Active Broker Accounts"
-          value={data?.activeBrokerAccounts || 0}
+          label="Verified KYC"
+          value={data?.users?.kyc_verified ?? '—'}
           icon={Server}
           variant="primary"
           loading={loading}
         />
         <StatCard
-          label="Monthly Revenue"
-          value={data?.monthlyRevenue !== undefined ? `$${data.monthlyRevenue}` : '—'}
+          label="Realized Profit"
+          value={
+            data?.trades?.totalRealizedProfit !== undefined
+              ? `$${Number(data.trades.totalRealizedProfit).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              : '—'
+          }
           icon={TrendingUp}
           variant="success"
           loading={loading}
         />
         <StatCard
-          label="Open Incidents"
-          value={data?.openIncidents || 0}
+          label="Revenue (30d)"
+          value={
+            data?.revenue?.total !== undefined
+              ? `$${Number(data.revenue.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              : '—'
+          }
           icon={Activity}
-          variant={data?.openIncidents > 0 ? 'danger' : 'success'}
+          variant="success"
           loading={loading}
         />
       </div>

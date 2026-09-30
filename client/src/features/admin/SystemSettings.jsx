@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Settings2, Loader2, Save, RefreshCw } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -30,10 +31,13 @@ const SystemSettings = function SystemSettings() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/settings', { credentials: 'include' });
+      const response = await fetch('/api/admin/system/settings');
       const payload = await response.json();
       if (response.ok && payload.data) {
-        setSettings((prev) => ({ ...prev, ...payload.data }));
+        const settingsByKey = Object.fromEntries(
+          (payload.data.settings || []).map(({ key, value }) => [key, value]),
+        );
+        setSettings((prev) => ({ ...prev, ...settingsByKey }));
       }
     } catch (_err) {
       // silent
@@ -51,17 +55,18 @@ const SystemSettings = function SystemSettings() {
     setError(null);
     setSuccess(false);
     try {
-      const response = await fetch('/api/admin/settings', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(settings),
-      });
+      for (const [key, value] of Object.entries(settings)) {
+        const response = await fetch(`/api/admin/system/settings/${encodeURIComponent(key)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ value }),
+        });
 
-      if (!response.ok) {
-        const payload = await response.json();
-        setError(payload?.error?.message || 'Failed to save settings');
-        return;
+        if (!response.ok) {
+          const payload = await response.json();
+          setError(payload?.error?.message || 'Failed to save settings');
+          return;
+        }
       }
 
       setSuccess(true);

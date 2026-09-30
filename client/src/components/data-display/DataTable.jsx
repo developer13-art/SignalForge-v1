@@ -94,6 +94,7 @@ const DataTable = forwardRef(function DataTable(
     headerClassName = '',
     rowClassName = '',
     cellClassName = '',
+    onRowClick,
     testId,
     ...rest
   },
@@ -424,10 +425,34 @@ const DataTable = forwardRef(function DataTable(
                 hoverable ? 'hover:bg-slate-50' : '',
                 striped && rowIndex % 2 === 1 ? 'bg-slate-50/50' : '',
                 isSelected ? 'bg-indigo-50' : '',
+                onRowClick ? 'cursor-pointer' : '',
                 rowClassName,
               ]
                 .filter(Boolean)
                 .join(' ')}
+              tabIndex={onRowClick ? 0 : undefined}
+              onClick={
+                onRowClick
+                  ? (event) => {
+                      if (!event.target.closest('button, input, a, select, textarea')) {
+                        onRowClick(row, event);
+                      }
+                    }
+                  : undefined
+              }
+              onKeyDown={
+                onRowClick
+                  ? (event) => {
+                      if (
+                        (event.key === 'Enter' || event.key === ' ') &&
+                        !event.target.closest('button, input, a, select, textarea')
+                      ) {
+                        event.preventDefault();
+                        onRowClick(row, event);
+                      }
+                    }
+                  : undefined
+              }
             >
               {selectable ? (
                 <td className={[densityClass, ALIGNMENTS.left].join(' ')}>
@@ -613,6 +638,7 @@ DataTable.propTypes = {
   headerClassName: PropTypes.string,
   rowClassName: PropTypes.string,
   cellClassName: PropTypes.string,
+  onRowClick: PropTypes.func,
   testId: PropTypes.string,
 };
 

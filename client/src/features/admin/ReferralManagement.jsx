@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Users, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -18,11 +19,26 @@ const ReferralManagement = function ReferralManagement() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/referrals', { credentials: 'include' });
+      const response = await fetch('/api/admin/referrals/rewards?limit=100');
       const payload = await response.json();
       if (response.ok) {
-        setRewards(payload.data?.items || []);
-        setData(payload.data?.summary);
+        const items = payload.data?.items || [];
+        setRewards(
+          items.map((reward) => ({
+            ...reward,
+            id: reward.rewardId,
+            referrerName: reward.referrerEmail,
+            referredName: reward.referredEmail,
+            period: reward.settlementPeriod,
+            amount: reward.rewardAmount,
+            status: reward.status?.toLowerCase(),
+          })),
+        );
+        setData({
+          totalReferrals: payload.data?.meta?.total,
+          totalRewards: items.reduce((total, reward) => total + Number(reward.rewardAmount || 0), 0),
+          underReview: items.filter((reward) => reward.status === 'UNDER_REVIEW').length,
+        });
       }
     } catch (_err) {
       // silent
@@ -118,28 +134,28 @@ const ReferralManagement = function ReferralManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Total Referrals"
-          value={data?.totalReferrals || 0}
+          value={data?.totalReferrals ?? '—'}
           icon={Users}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Active Referrers"
-          value={data?.activeReferrers || 0}
+          value={data?.activeReferrers ?? '—'}
           icon={Users}
           variant="success"
           loading={loading}
         />
         <StatCard
-          label="Total Rewards"
+          label="Rewards (loaded)"
           value={data?.totalRewards !== undefined ? `$${data.totalRewards}` : '—'}
           icon={Users}
           variant="success"
           loading={loading}
         />
         <StatCard
-          label="Under Review"
-          value={data?.underReview !== undefined ? `$${data.underReview}` : '—'}
+          label="Under Review (loaded)"
+          value={data?.underReview ?? '—'}
           icon={Users}
           variant="warning"
           loading={loading}

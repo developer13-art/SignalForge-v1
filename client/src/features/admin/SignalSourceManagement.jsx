@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Radio, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -121,28 +122,28 @@ const SignalSourceManagement = function SignalSourceManagement() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Total Sources"
-          value={data?.total || 0}
+          value={data?.total ?? '—'}
           icon={Radio}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Connected"
-          value={data?.connected || 0}
+          value={data?.connected ?? '—'}
           icon={Radio}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="Errors"
-          value={data?.errors || 0}
+          value={data?.errors ?? '—'}
           icon={Radio}
           variant="danger"
           loading={loading}
         />
         <StatCard
           label="Messages Today"
-          value={data?.messagesToday || 0}
+          value={data?.messagesToday ?? '—'}
           icon={Radio}
           variant="info"
           loading={loading}

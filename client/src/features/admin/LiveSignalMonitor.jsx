@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 import { Radio, RefreshCw, Loader2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
@@ -16,11 +17,26 @@ const LiveSignalMonitor = function LiveSignalMonitor() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/signals/live', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok) {
-        setSignals(payload.data?.items || []);
-        setData(payload.data?.summary);
+      const since = new Date();
+      since.setHours(0, 0, 0, 0);
+      const [signalsResponse, breakdownResponse] = await Promise.all([
+        fetch('/api/admin/signals?limit=100'),
+        fetch(`/api/admin/signals/status-breakdown?since=${encodeURIComponent(since.toISOString())}`),
+      ]);
+      const [signalsPayload, breakdownPayload] = await Promise.all([
+        signalsResponse.json(),
+        breakdownResponse.json(),
+      ]);
+      if (signalsResponse.ok && breakdownResponse.ok) {
+        const breakdown = breakdownPayload.data?.breakdown || {};
+        const signalItems = signalsPayload.data?.items || [];
+        setSignals(signalItems.map((signal) => ({ ...signal, id: signal.signalId })));
+        setData({
+          signalsToday: Object.values(breakdown).reduce((total, count) => total + count, 0),
+          executed: breakdown.EXECUTED || 0,
+          rejected: (breakdown.VALIDATION_FAILED || 0) + (breakdown.RISK_REJECTED || 0),
+          failedParse: breakdown.PARSE_FAILED || breakdown.FAILED_PARSE || 0,
+        });
       }
     } catch (_err) {
       // silent
@@ -65,28 +81,28 @@ const LiveSignalMonitor = function LiveSignalMonitor() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           label="Signals Today"
-          value={data?.signalsToday || 0}
+          value={data?.signalsToday ?? '—'}
           icon={Radio}
           variant="primary"
           loading={loading}
         />
         <StatCard
           label="Executed"
-          value={data?.executed || 0}
+          value={data?.executed ?? '—'}
           icon={Radio}
           variant="success"
           loading={loading}
         />
         <StatCard
           label="Rejected"
-          value={data?.rejected || 0}
+          value={data?.rejected ?? '—'}
           icon={Radio}
           variant="warning"
           loading={loading}
         />
         <StatCard
           label="Failed Parse"
-          value={data?.failedParse || 0}
+          value={data?.failedParse ?? '—'}
           icon={Radio}
           variant="danger"
           loading={loading}
