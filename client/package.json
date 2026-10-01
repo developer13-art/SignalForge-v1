@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.3.0",
-    "@signalforge/shared": "file:../shared",
+    "@signalforge/shared": "workspace:*",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-react-ui": "^0.9.35",
