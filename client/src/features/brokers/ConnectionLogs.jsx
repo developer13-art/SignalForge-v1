@@ -8,6 +8,7 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import DataTable from '../../components/data-display/DataTable';
 import EmptyState from '../../components/common/EmptyState';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 
 const ConnectionLogs = function ConnectionLogs() {
   const { accountId } = useParams();

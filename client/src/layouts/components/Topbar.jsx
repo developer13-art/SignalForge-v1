@@ -10,6 +10,7 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Menu,
   Search,
@@ -29,7 +30,12 @@ import clsx from 'clsx';
 
 import logo from '@assets/icons/svg/logo.svg';
 import { routes } from '@config/routes.config.js';
-import { useSidebar } from '../../hooks/useSidebar';
+import {
+  selectMobileNavOpen,
+  setMobileNavOpen,
+  setSidebarCollapsed,
+  selectSidebarCollapsed,
+} from '../../store/slices/ui.slice.js';
 import { useTheme } from '@context/ThemeContext.jsx';
 import EnvironmentBadge from './EnvironmentBadge.jsx';
 import NotificationsMenu from './NotificationsMenu.jsx';
@@ -37,7 +43,11 @@ import UserMenu from './UserMenu.jsx';
 import SolanaWalletMenu from './SolanaWalletMenu.jsx';
 
 export default function Topbar({ variant = 'user' }) {
-  const { toggleCollapsed, openMobile } = useSidebar();
+  const dispatch = useDispatch();
+  const mobileNavOpen = useSelector(selectMobileNavOpen);
+  const sidebarCollapsed = useSelector(selectSidebarCollapsed);
+  const openMobile = () => dispatch(setMobileNavOpen(true));
+  const toggleCollapsed = () => dispatch(setSidebarCollapsed(!sidebarCollapsed));
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -58,6 +68,8 @@ export default function Topbar({ variant = 'user' }) {
           onClick={openMobile}
           className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-surface-border text-text-secondary transition hover:text-text-primary lg:hidden"
           aria-label="Open navigation"
+          aria-controls="mobile-navigation"
+          aria-expanded={mobileNavOpen}
         >
           <Menu className="h-4 w-4" />
         </button>
@@ -80,21 +92,21 @@ export default function Topbar({ variant = 'user' }) {
           </div>
         </div>
 
-        <div className="flex-1 flex items-center justify-end lg:justify-center gap-3">
+        <div className="min-w-0 flex-1 flex items-center justify-end lg:justify-center gap-3">
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="flex w-full max-w-md items-center gap-2 rounded-xl border border-surface-border bg-surface px-3 py-2 text-small text-text-tertiary transition hover:border-primary-500 hover:text-text-secondary"
+            className="flex min-w-0 w-full max-w-md items-center gap-2 rounded-xl border border-surface-border bg-surface px-3 py-2 text-small text-text-tertiary transition hover:border-primary-500 hover:text-text-secondary"
           >
-            <Search className="h-4 w-4" />
-            <span className="flex-1 text-left">Search anything...</span>
+            <Search className="h-4 w-4 shrink-0" />
+            <span className="min-w-0 flex-1 truncate text-left">Search anything...</span>
             <span className="hidden sm:inline-flex items-center gap-0.5 rounded-md border border-surface-border bg-background px-1.5 py-0.5 text-caption">
               <Command className="h-3 w-3" /> K
             </span>
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <NotificationsMenu />
           <a
             href="https://docs.signalforge.ai"

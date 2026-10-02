@@ -37,7 +37,7 @@ const metaApiConfig = Object.freeze({
     'https://mt-client-api-v1.new-york.agiliumtrade.ai',
   provisioningUrl:
     process.env.METAAPI_PROVISIONING_URL ||
-    'https://mt-provisioning-api-v1.agiliumtrade.ai',
+    'https://mt-provisioning-api-v1.agiliumtrade.agiliumtrade.ai',
   wsUrl:
     process.env.METAAPI_WS_URL ||
     'wss://mt-client-api-v1.new-york.agiliumtrade.ai',

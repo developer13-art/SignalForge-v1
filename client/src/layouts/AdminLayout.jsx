@@ -41,13 +41,13 @@ export default function AdminLayout() {
       <Sidebar variant="admin" collapsed={collapsed} />
 
       <div
-        className={`flex min-h-screen flex-col transition-[padding] duration-200 ${
+        className={`flex min-h-screen min-w-0 flex-col transition-[padding] duration-200 ${
           collapsed ? 'lg:pl-[76px]' : 'lg:pl-[260px]'
         }`}
       >
         <Topbar variant="admin" />
 
-        <main className={`flex-1 px-4 pb-12 pt-4 sm:px-6 lg:px-8 ${mounted ? 'animate-fade-in' : ''}`}>
+        <main className={`min-w-0 flex-1 px-4 pb-12 pt-4 sm:px-6 lg:px-8 ${mounted ? 'animate-fade-in' : ''}`}>
           <Outlet />
         </main>
       </div>

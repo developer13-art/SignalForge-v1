@@ -62,7 +62,7 @@ function createApp() {
   registerRoutes(app);
 
   app.use(notFoundMiddleware);
-  app.use(errorHandlerMiddleware);
+  app.use(errorHandlerMiddleware());
 
   logger.debug('Express application composed');
 

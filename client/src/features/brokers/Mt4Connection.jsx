@@ -7,17 +7,25 @@ import Heading from '../../components/ui/primitives/Heading';
 import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import BrokerConnectForm from '../../components/domain/broker/BrokerConnectForm';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 
 const Mt4Connection = function Mt4Connection() {
   const navigate = useNavigate();
 
   const handleSubmit = useCallback(
     async (values) => {
-      const response = await fetch('/api/brokers/connect', {
+      const response = await fetch('/api/brokers/accounts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ ...values, platform: 'mt4' }),
+        body: JSON.stringify({
+          platform: 'MT4',
+          brokerName: values.broker,
+          accountType: values.accountType?.toUpperCase(),
+          server: values.server,
+          accountNumber: values.login,
+          password: values.password,
+          accountNickname: values.nickname,
+        }),
       });
 
       const payload = await response.json();
@@ -26,7 +34,7 @@ const Mt4Connection = function Mt4Connection() {
         throw new Error(payload?.error?.message || 'Failed to connect broker account');
       }
 
-      navigate(`/brokers/accounts/${payload.data.id}`);
+      navigate(`/brokers/accounts/${payload.account?.id || payload.data?.account?.id}`);
     },
     [navigate],
   );
@@ -55,7 +63,7 @@ const Mt4Connection = function Mt4Connection() {
         </div>
 
         <div className="mt-6">
-          <BrokerConnectForm onSubmit={handleSubmit} onCancel={handleBack} />
+          <BrokerConnectForm platform="MT4" onSubmit={handleSubmit} onCancel={handleBack} />
         </div>
       </Card>
     </Container>

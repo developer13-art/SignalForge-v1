@@ -5,11 +5,11 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/channel
  */
-const { TelegramRepository } = require('./telegram.repository.js');
-const { TelegramSessionStoreService } = require('./telegram-session-store.service.js');
-const { TelegramClientFactory } = require('./telegram-client.factory.js');
-const { CHANNEL_OPT_IN_STATUSES } = require('../source.constants.js');
-const { ChannelAlreadyOptedInError, ChannelNotOptedInError, SourceNotFoundError } = require('../source.errors.js');
+const { TelegramRepository } = require('../telegram.repository.js');
+const { TelegramSessionStoreService } = require('../telegram-session-store.service.js');
+const { TelegramClientFactory } = require('../telegram-client.factory.js');
+const { CHANNEL_OPT_IN_STATUSES } = require('../../source.constants.js');
+const { ChannelAlreadyOptedInError, ChannelNotOptedInError, SourceNotFoundError } = require('../../source.errors.js');
 class TelegramChannelService {
   constructor(repository = null, sessionStore = null) {
     this.repository = repository || new TelegramRepository();

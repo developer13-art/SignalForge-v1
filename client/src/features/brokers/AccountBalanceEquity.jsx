@@ -8,6 +8,7 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import AccountBalanceWidget from '../../components/domain/broker/AccountBalanceWidget';
 import EquityCurveChart from '../../components/charts/EquityCurveChart';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 
 const AccountBalanceEquity = function AccountBalanceEquity() {
   const { accountId } = useParams();

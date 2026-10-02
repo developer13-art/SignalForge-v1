@@ -10,7 +10,7 @@ const { notFoundMiddleware } = require('../middleware/not-found.middleware.js');
 const { errorHandlerMiddleware } = require('../middleware/error-handler.middleware.js');
 function registerErrorHandlers(app) {
   app.use(notFoundMiddleware);
-  app.use(errorHandlerMiddleware);
+  app.use(errorHandlerMiddleware());
   return app;
 }
 module.exports = registerErrorHandlers;

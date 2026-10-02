@@ -52,6 +52,8 @@ const MIGRATION_FILES = [
   '033_finalize_session_token_rename.js',
   '034_add_kyc_application_personal_info.js',
   '035_align_kyc_workflow_schema.js',
+  '036_create_wallets_domain.js',
+  '037_align_broker_accounts.js',
 ];
 
 async function ensureMigrationsTable(client) {

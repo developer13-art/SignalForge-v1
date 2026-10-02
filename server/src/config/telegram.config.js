@@ -29,6 +29,7 @@ const telegramConfig = Object.freeze({
 
   apiId: process.env.TELEGRAM_API_ID ? Number(process.env.TELEGRAM_API_ID) : null,
   apiHash: process.env.TELEGRAM_API_HASH || null,
+  sessionEncryptionKey: process.env.TELEGRAM_SESSION_ENCRYPTION_KEY || null,
 
   session: {
     encryptionKey: process.env.TELEGRAM_SESSION_ENCRYPTION_KEY || null,

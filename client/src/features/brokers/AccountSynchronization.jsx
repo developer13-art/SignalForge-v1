@@ -8,6 +8,7 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import Separator from '../../components/common/Separator';
 import Timeline from '../../components/data-display/Timeline';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 
 const AccountSynchronization = function AccountSynchronization() {
   const { accountId } = useParams();

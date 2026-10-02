@@ -30,7 +30,12 @@ import {
   Settings,
 } from 'lucide-react';
 
-import { selectSidebarCollapsed, toggleSidebar } from '../../store/slices/ui.slice.js';
+import {
+  selectSidebarCollapsed,
+  selectMobileNavOpen,
+  setMobileNavOpen,
+  toggleSidebar,
+} from '../../store/slices/ui.slice.js';
 import { selectCurrentUser } from '../../store/selectors/auth.selectors.js';
 
 const USER_NAV = [
@@ -78,6 +83,7 @@ export default function useSidebar() {
   const dispatch = useDispatch();
   const location = useLocation();
   const collapsed = useSelector(selectSidebarCollapsed);
+  const mobileNavOpen = useSelector(selectMobileNavOpen);
   const currentUser = useSelector(selectCurrentUser);
 
   const roles = currentUser?.roles || [];
@@ -94,10 +100,16 @@ export default function useSidebar() {
     return sorted.find((item) => location.pathname === item.to || location.pathname.startsWith(`${item.to}/`)) || null;
   }, [items, location.pathname]);
 
+  const toggleCollapsed = () => dispatch(toggleSidebar());
+  const openMobile = () => dispatch(setMobileNavOpen(true));
+
   return {
     collapsed,
+    mobileNavOpen,
     items,
     activeItem,
-    toggle: () => dispatch(toggleSidebar()),
+    toggle: toggleCollapsed,
+    toggleCollapsed,
+    openMobile,
   };
 }

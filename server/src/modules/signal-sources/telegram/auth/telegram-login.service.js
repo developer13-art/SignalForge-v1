@@ -12,7 +12,6 @@ const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
 const { logger } = require('../../../../lib/logger');
 const { getTelegramClient } = require('../client/telegram-client.factory');
 const { telegramSessionService } = require('../session/telegram-session.service');
-const { telegramOtpService } = require('./telegram-otp.service');
 const { emitTelegramSessionInitiated } = require('../telegram.events');
 async function sendCode({ userId, phoneNumber, countryCode }) {
   if (!userId || !phoneNumber) {
@@ -22,8 +21,6 @@ async function sendCode({ userId, phoneNumber, countryCode }) {
       400,
     );
   }
-
-  await telegramOtpService.recordOtpRequest({ userId, phoneNumber });
 
   const client = getTelegramClient({ userId });
 
@@ -62,6 +59,15 @@ async function sendCode({ userId, phoneNumber, countryCode }) {
 
   return { sessionId, phoneCodeHash: result.phoneCodeHash };
 }
+
+function hasTelegramError(err, errorName) {
+  return (
+    err?.errorMessage === errorName ||
+    err?.code === errorName ||
+    err?.message?.includes(errorName)
+  );
+}
+
 async function signIn({ userId, sessionId, code, password }) {
   if (!userId || !sessionId || !code) {
     throw new AppError(
@@ -92,28 +98,28 @@ async function signIn({ userId, sessionId, code, password }) {
       password,
     });
   } catch (err) {
-    if (err && err.code === 'SESSION_PASSWORD_NEEDED') {
+    if (hasTelegramError(err, 'SESSION_PASSWORD_NEEDED')) {
       throw new AppError(
         'Two-factor authentication password required',
         ERROR_CODES.TELEGRAM_2FA_REQUIRED,
         401,
       );
     }
-    if (err && err.code === 'PHONE_CODE_INVALID') {
+    if (hasTelegramError(err, 'PHONE_CODE_INVALID')) {
       throw new AppError(
         'Invalid Telegram login code',
         ERROR_CODES.TELEGRAM_CODE_INVALID,
         400,
       );
     }
-    if (err && err.code === 'PHONE_CODE_EXPIRED') {
+    if (hasTelegramError(err, 'PHONE_CODE_EXPIRED')) {
       throw new AppError(
         'Telegram login code has expired',
         ERROR_CODES.TELEGRAM_CODE_EXPIRED,
         400,
       );
     }
-    if (err && err.code === 'PASSWORD_HASH_INVALID') {
+    if (hasTelegramError(err, 'PASSWORD_HASH_INVALID')) {
       throw new AppError(
         'Invalid Telegram two-factor password',
         ERROR_CODES.TELEGRAM_2FA_INVALID,
@@ -129,12 +135,8 @@ async function signIn({ userId, sessionId, code, password }) {
     );
   }
 
-  if (result.requiresPassword && !password) {
-    throw new AppError(
-      'Two-factor authentication password required',
-      ERROR_CODES.TELEGRAM_2FA_REQUIRED,
-      401,
-    );
+  if (result?.requiresPassword && !password) {
+    return { requiresPassword: true, sessionId };
   }
 
   const persistedId = await telegramSessionService.persistSession({

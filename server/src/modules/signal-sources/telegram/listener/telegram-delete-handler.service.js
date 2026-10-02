@@ -15,7 +15,7 @@ const { SOURCE_TYPES } = require('@signalforge/shared/constants/source-types');
 const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
 const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
 const { publishEvent } = require('../../../../events/event-publisher');
-const { messageRawStoreService } = require('../messages/message-raw-store.service');
+const { messageRawStoreService } = require('../../messages/message-raw-store.service');
 async function handleMessageDeleted({ userId, message, onDelete }) {
   if (!userId || !message) {
     throw new AppError('userId and message are required', ERROR_CODES.VALIDATION_FAILED, 400);

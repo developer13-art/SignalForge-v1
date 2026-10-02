@@ -73,7 +73,12 @@ const FormField = forwardRef(function FormField(
 
   const handleChange = (value) => {
     if (context && name) {
-      context.setFieldValue(name, value);
+      const fieldValue = value?.target
+        ? value.target.type === 'checkbox'
+          ? value.target.checked
+          : value.target.value
+        : value;
+      context.setFieldValue(name, fieldValue);
     }
   };
 

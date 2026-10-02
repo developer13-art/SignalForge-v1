@@ -37,7 +37,6 @@ class MetaApiAccountService {
       magic: 0,
       type: 'cloud-g2',
       provisioningProfileId: null,
-      manualTrading: false,
       metastatsApiEnabled: false,
       reliability: 'high',
     };
@@ -50,7 +49,7 @@ class MetaApiAccountService {
     }
 
     await this.accountRepository.update(account.id, {
-      metaapiAccountId,
+      metaApiAccountId,
       metaapiRegion: response.region || null,
       status: 'CONNECTED',
       connectedAt: new Date(),

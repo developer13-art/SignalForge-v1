@@ -6,13 +6,21 @@
 const { getDatabase } = require('../../bootstrap/initDatabase.js');
 class BrokerRepository {
   constructor(db = null) {
-    this.db = db || getDatabase();
+    this.db = db || null;
+  }
+
+  getDb() {
+    if (!this.db) {
+      this.db = getDatabase();
+    }
+    return this.db;
   }
 
   async findBrokerById(brokerId) {
-    const result = await this.db.query(
-      `SELECT id, name, platform, server, country, website, description,
-              is_active, metadata, created_at, updated_at
+    const result = await this.getDb().query(
+      `SELECT id, name, platform, server, NULL::varchar AS country,
+              NULL::text AS website, NULL::text AS description,
+              active AS is_active, metadata, created_at, updated_at
          FROM brokers
         WHERE id = $1
         LIMIT 1`,
@@ -22,11 +30,13 @@ class BrokerRepository {
   }
 
   async findBrokerByNameAndServer(name, server) {
-    const result = await this.db.query(
-      `SELECT id, name, platform, server, country, website, description,
-              is_active, metadata, created_at, updated_at
+    const result = await this.getDb().query(
+      `SELECT id, name, platform, server, NULL::varchar AS country,
+              NULL::text AS website, NULL::text AS description,
+              active AS is_active, metadata, created_at, updated_at
          FROM brokers
-        WHERE name = $1 AND server = $2
+        WHERE name = $1 AND (server = $2 OR server IS NULL)
+        ORDER BY CASE WHEN server = $2 THEN 0 ELSE 1 END
         LIMIT 1`,
       [name, server],
     );
@@ -44,15 +54,16 @@ class BrokerRepository {
     }
 
     if (filters.active !== undefined) {
-      conditions.push(`is_active = $${index++}`);
+      conditions.push(`active = $${index++}`);
       values.push(filters.active);
     }
 
     const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    const result = await this.db.query(
-      `SELECT id, name, platform, server, country, website, description,
-              is_active, metadata, created_at, updated_at
+    const result = await this.getDb().query(
+            `SELECT id, name, platform, server, NULL::varchar AS country,
+              NULL::text AS website, NULL::text AS description,
+              active AS is_active, metadata, created_at, updated_at
          FROM brokers
          ${where}
         ORDER BY name ASC`,
@@ -62,19 +73,15 @@ class BrokerRepository {
   }
 
   async createBroker(data) {
-    const result = await this.db.query(
+    const result = await this.getDb().query(
       `INSERT INTO brokers (
-         name, platform, server, country, website, description, is_active,
-         metadata, created_at, updated_at
-       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
-       RETURNING id, name, platform, server, is_active, created_at`,
+         name, platform, server, active, metadata, created_at, updated_at
+       ) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+       RETURNING id, name, platform, server, active AS is_active, metadata, created_at`,
       [
         data.name,
         data.platform,
         data.server || null,
-        data.country || null,
-        data.website || null,
-        data.description || null,
         data.isActive !== false,
         data.metadata ? JSON.stringify(data.metadata) : null,
       ],
@@ -91,10 +98,7 @@ class BrokerRepository {
       name: 'name',
       platform: 'platform',
       server: 'server',
-      country: 'country',
-      website: 'website',
-      description: 'description',
-      isActive: 'is_active',
+      isActive: 'active',
     };
 
     for (const [key, column] of Object.entries(mapping)) {
@@ -115,7 +119,7 @@ class BrokerRepository {
 
     fields.push('updated_at = NOW()');
 
-    await this.db.query(
+    await this.getDb().query(
       `UPDATE brokers SET ${fields.join(', ')} WHERE id = $1`,
       values,
     );
@@ -124,16 +128,18 @@ class BrokerRepository {
   }
 
   async deleteBroker(brokerId) {
-    await this.db.query('DELETE FROM brokers WHERE id = $1', [brokerId]);
+    await this.getDb().query('DELETE FROM brokers WHERE id = $1', [brokerId]);
   }
 
   async findAccountById(accountId) {
-    const result = await this.db.query(
-      `SELECT id, user_id, broker_id, broker_name, platform, account_number,
-              account_nickname, server, account_type, account_currency, leverage,
-              status, metaapi_account_id, metaapi_region, balance, equity, margin,
-              free_margin, margin_level, last_sync_at, last_error, last_error_at,
-              credentials_encrypted, connected_at, disconnected_at,
+    const result = await this.getDb().query(
+          `SELECT id, user_id, broker_id, broker_name, platform,
+            account_number_masked AS account_number, account_nickname, server,
+            account_type, currency AS account_currency, leverage,
+            connection_status AS status, metaapi_account_id, metaapi_region,
+            balance, equity, margin, free_margin, margin_level,
+            last_synced_at AS last_sync_at, last_error, last_error_at,
+            credentials_encrypted, connected_at, disconnected_at,
               created_at, updated_at
          FROM broker_accounts
         WHERE id = $1
@@ -144,11 +150,13 @@ class BrokerRepository {
   }
 
   async findAccountByIdForUser(accountId, userId) {
-    const result = await this.db.query(
-      `SELECT id, user_id, broker_id, broker_name, platform, account_number,
-              account_nickname, server, account_type, account_currency, leverage,
-              status, metaapi_account_id, metaapi_region, balance, equity, margin,
-              free_margin, margin_level, last_sync_at, last_error, last_error_at,
+    const result = await this.getDb().query(
+      `SELECT id, user_id, broker_id, broker_name, platform,
+              account_number_masked AS account_number, account_nickname, server,
+              account_type, currency AS account_currency, leverage,
+              connection_status AS status, metaapi_account_id, metaapi_region,
+              balance, equity, margin, free_margin, margin_level,
+              last_synced_at AS last_sync_at, last_error, last_error_at,
               credentials_encrypted, connected_at, disconnected_at,
               created_at, updated_at
          FROM broker_accounts
@@ -160,9 +168,10 @@ class BrokerRepository {
   }
 
   async findAccountByMetaApiId(metaApiAccountId) {
-    const result = await this.db.query(
-      `SELECT id, user_id, broker_id, platform, account_number, server,
-              status, metaapi_account_id, metaapi_region, created_at
+    const result = await this.getDb().query(
+      `SELECT id, user_id, broker_id, platform,
+              account_number_masked AS account_number, server,
+              connection_status AS status, metaapi_account_id, metaapi_region, created_at
          FROM broker_accounts
         WHERE metaapi_account_id = $1
         LIMIT 1`,
@@ -171,14 +180,15 @@ class BrokerRepository {
     return result.rows[0] || null;
   }
 
-  async findAccountByUserAndNumber(userId, accountNumber, server) {
-    const result = await this.db.query(
-      `SELECT id, user_id, broker_id, platform, account_number, server,
-              status, created_at
+  async findAccountByUserAndNumber(userId, accountNumberHash, server) {
+    const result = await this.getDb().query(
+      `SELECT id, user_id, broker_id, platform,
+              account_number_masked AS account_number, server,
+              connection_status AS status, metaapi_account_id, created_at
          FROM broker_accounts
-        WHERE user_id = $1 AND account_number = $2 AND server = $3
+        WHERE user_id = $1 AND account_number_hash = $2 AND server = $3
         LIMIT 1`,
-      [userId, accountNumber, server],
+      [userId, accountNumberHash, server],
     );
     return result.rows[0] || null;
   }
@@ -194,7 +204,7 @@ class BrokerRepository {
     }
 
     if (filters.status) {
-      conditions.push(`status = $${index++}`);
+      conditions.push(`connection_status = $${index++}`);
       values.push(filters.status);
     }
 
@@ -205,11 +215,13 @@ class BrokerRepository {
 
     const where = `WHERE ${conditions.join(' AND ')}`;
 
-    const result = await this.db.query(
-      `SELECT id, user_id, broker_id, broker_name, platform, account_number,
-              account_nickname, server, account_type, account_currency, leverage,
-              status, metaapi_account_id, balance, equity, margin, free_margin,
-              margin_level, last_sync_at, last_error, connected_at, created_at
+    const result = await this.getDb().query(
+          `SELECT id, user_id, broker_id, broker_name, platform,
+            account_number_masked AS account_number, account_nickname, server,
+            account_type, currency AS account_currency, leverage,
+            connection_status AS status, metaapi_account_id, balance, equity,
+            margin, free_margin, margin_level, last_synced_at AS last_sync_at,
+            last_error, connected_at, created_at
          FROM broker_accounts
          ${where}
         ORDER BY created_at DESC`,
@@ -219,36 +231,41 @@ class BrokerRepository {
   }
 
   async listConnectedAccounts() {
-    const result = await this.db.query(
-      `SELECT id, user_id, broker_id, platform, account_number, server,
-              account_type, metaapi_account_id, metaapi_region, status,
-              last_sync_at
+    const result = await this.getDb().query(
+    `SELECT id, user_id, broker_id, platform,
+        account_number_masked AS account_number, server, account_type,
+        metaapi_account_id, metaapi_region, connection_status AS status,
+        last_synced_at AS last_sync_at
          FROM broker_accounts
-        WHERE status IN ('CONNECTED', 'SYNCHRONIZING', 'DEPLOYED')
-        ORDER BY last_sync_at ASC NULLS FIRST`,
+      WHERE connection_status IN ('CONNECTED', 'SYNCHRONIZING', 'DEPLOYED')
+      ORDER BY last_synced_at ASC NULLS FIRST`,
     );
     return result.rows;
   }
 
   async createAccount(data) {
-    const result = await this.db.query(
+    const result = await this.getDb().query(
       `INSERT INTO broker_accounts (
-         user_id, broker_id, broker_name, platform, account_number, account_nickname,
-         server, account_type, account_currency, leverage, status, metaapi_account_id,
+         user_id, broker_id, broker_name, platform, account_number_encrypted,
+         account_number_hash, account_number_masked, account_nickname, server,
+         account_type, currency, leverage, connection_status, metaapi_account_id,
          metaapi_region, credentials_encrypted, balance, equity, margin, free_margin,
          margin_level, connected_at, created_at, updated_at
        ) VALUES (
          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16,
-         $17, $18, $19, $20, NOW(), NOW()
+         $17, $18, $19, $20, $21, $22, NOW(), NOW()
        )
-       RETURNING id, user_id, broker_id, platform, account_number, server,
-                 account_type, status, metaapi_account_id, created_at`,
+       RETURNING id, user_id, broker_id, broker_name, platform,
+                 account_number_masked AS account_number, server, account_type,
+                 connection_status AS status, metaapi_account_id, created_at`,
       [
         data.userId,
         data.brokerId || null,
         data.brokerName || null,
         data.platform,
-        data.accountNumber,
+        data.accountNumberEncrypted,
+        data.accountNumberHash,
+        data.accountNumberMasked,
         data.accountNickname || null,
         data.server || null,
         data.accountType || 'DEMO',
@@ -275,8 +292,17 @@ class BrokerRepository {
     let index = 2;
 
     const mapping = {
-      status: 'status',
-      metaapiAccountId: 'metaapi_account_id',
+      status: 'connection_status',
+      brokerId: 'broker_id',
+      brokerName: 'broker_name',
+      platform: 'platform',
+      accountNumberEncrypted: 'account_number_encrypted',
+      accountNumberHash: 'account_number_hash',
+      accountNumberMasked: 'account_number_masked',
+      accountNickname: 'account_nickname',
+      server: 'server',
+      accountType: 'account_type',
+      metaApiAccountId: 'metaapi_account_id',
       metaapiRegion: 'metaapi_region',
       balance: 'balance',
       equity: 'equity',
@@ -284,8 +310,8 @@ class BrokerRepository {
       freeMargin: 'free_margin',
       marginLevel: 'margin_level',
       leverage: 'leverage',
-      accountCurrency: 'account_currency',
-      lastSyncAt: 'last_sync_at',
+      accountCurrency: 'currency',
+      lastSyncAt: 'last_synced_at',
       lastError: 'last_error',
       lastErrorAt: 'last_error_at',
       connectedAt: 'connected_at',
@@ -315,7 +341,7 @@ class BrokerRepository {
 
     fields.push('updated_at = NOW()');
 
-    await this.db.query(
+    await this.getDb().query(
       `UPDATE broker_accounts SET ${fields.join(', ')} WHERE id = $1`,
       values,
     );
@@ -324,11 +350,11 @@ class BrokerRepository {
   }
 
   async deleteAccount(accountId) {
-    await this.db.query('DELETE FROM broker_accounts WHERE id = $1', [accountId]);
+    await this.getDb().query('DELETE FROM broker_accounts WHERE id = $1', [accountId]);
   }
 
   async countAccountsForUser(userId) {
-    const result = await this.db.query(
+    const result = await this.getDb().query(
       'SELECT COUNT(*)::int AS count FROM broker_accounts WHERE user_id = $1',
       [userId],
     );
@@ -336,7 +362,7 @@ class BrokerRepository {
   }
 
   async createSnapshot(data) {
-    const result = await this.db.query(
+    const result = await this.getDb().query(
       `INSERT INTO account_snapshots (
          broker_account_id, user_id, balance, equity, margin, free_margin,
          margin_level, open_positions, open_orders, metadata, captured_at, created_at
@@ -377,7 +403,7 @@ class BrokerRepository {
     const limit = Math.min(Math.max(Number(pagination.limit) || 100, 1), 1000);
     const offset = Math.max(Number(pagination.offset) || 0, 0);
 
-    const result = await this.db.query(
+    const result = await this.getDb().query(
       `SELECT id, broker_account_id, balance, equity, margin, free_margin,
               margin_level, open_positions, open_orders, captured_at
          FROM account_snapshots
@@ -391,7 +417,7 @@ class BrokerRepository {
   }
 
   async createConnectionLog(data) {
-    const result = await this.db.query(
+    const result = await this.getDb().query(
       `INSERT INTO broker_connection_logs (
          broker_account_id, user_id, event_type, status, message, details, created_at
        ) VALUES ($1, $2, $3, $4, $5, $6, NOW())
@@ -412,7 +438,7 @@ class BrokerRepository {
     const limit = Math.min(Math.max(Number(pagination.limit) || 50, 1), 500);
     const offset = Math.max(Number(pagination.offset) || 0, 0);
 
-    const result = await this.db.query(
+    const result = await this.getDb().query(
       `SELECT id, broker_account_id, event_type, status, message, details, created_at
          FROM broker_connection_logs
         WHERE broker_account_id = $1

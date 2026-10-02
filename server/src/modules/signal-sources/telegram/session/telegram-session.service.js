@@ -20,7 +20,7 @@ const { emitTelegramSessionConnected, emitTelegramSessionRevoked } = require('..
 const PENDING_SESSION_TTL_MS = 10 * 60 * 1000;
 
 function getEncryptionKey() {
-  const key = config.telegram?.sessionEncryptionKey;
+  const key = config.telegram?.sessionEncryptionKey ?? config.telegram?.session?.encryptionKey;
   if (!key) {
     throw new AppError(
       'Telegram session encryption key is not configured',

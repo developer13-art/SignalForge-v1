@@ -7,11 +7,11 @@
  * @module signalforge/server/modules/signal-sources/telegram/listener
  */
 const { getLogger } = require('../../../bootstrap/initLogger.js');
-const { TelegramRepository } = require('./telegram.repository.js');
-const { TelegramSessionStoreService } = require('./telegram-session-store.service.js');
-const { TelegramClientFactory } = require('./telegram-client.factory.js');
-const { MessageService } = require('../messages/message.service.js');
-const { MessageNormalizerService } = require('../messages/message-normalizer.service.js');
+const { TelegramRepository } = require('../telegram.repository.js');
+const { TelegramSessionStoreService } = require('../telegram-session-store.service.js');
+const { TelegramClientFactory } = require('../telegram-client.factory.js');
+const { MessageService } = require('../../messages/message.service.js');
+const { MessageNormalizerService } = require('../../messages/message-normalizer.service.js');
 const { TelegramAdapter } = require('../adapters/telegram.adapter.js');
 const { SESSION_HEALTH_CHECK_INTERVAL_MS, RECONNECT_BASE_DELAY_MS, MAX_RECONNECT_ATTEMPTS } = require('./telegram.constants.js');
 const { emitMessageReceived, emitMessageEdited, emitMessageDeleted } = require('../source.events.js');

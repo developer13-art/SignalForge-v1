@@ -5,8 +5,8 @@
  *
  * @module signalforge/server/modules/signal-sources/telegram/session-store
  */
-const { TelegramRepository } = require('./telegram.repository.js');
-const { TelegramSessionEncryptionService } = require('./telegram-session-encryption.service.js');
+const { TelegramRepository } = require('../telegram.repository.js');
+const { TelegramSessionEncryptionService } = require('../telegram-session-encryption.service.js');
 const { TELEGRAM_SESSION_STATUSES } = require('./telegram.constants.js');
 class TelegramSessionStoreService {
   constructor(repository = null, encryption = null) {

@@ -14,6 +14,10 @@ const { ERROR_CODES } = require('../../../../lib/errors/error-codes');
 const { logger } = require('../../../../lib/logger');
 const { config } = require('../../../../config');
 const { createTelegramClientAdapter } = require('./telegram-client.interface');
+const { registerTelegramClientFactory } = require('./telegram-client.interface');
+const { createGramJsTelegramAdapter } = require('./gramjs.adapter');
+
+registerTelegramClientFactory(createGramJsTelegramAdapter);
 
 const CLIENT_CACHE = new Map();
 
@@ -44,7 +48,8 @@ function getTelegramClient({ userId }) {
   const adapter = createTelegramClientAdapter({
     apiId: config.telegram.apiId,
     apiHash: config.telegram.apiHash,
-    sessionEncryptionKey: config.telegram.sessionEncryptionKey,
+    sessionEncryptionKey:
+      config.telegram.sessionEncryptionKey ?? config.telegram.session?.encryptionKey ?? null,
     userId,
     logger,
   });

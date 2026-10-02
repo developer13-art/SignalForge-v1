@@ -9,7 +9,7 @@
  */
 const { getLogger } = require('../../../bootstrap/initLogger.js');
 const telegramConfig = require('../../../config/telegram.config.js');
-const { SourceNotConfiguredError } = require('../source.errors.js');
+const { SourceNotConfiguredError } = require('../../source.errors.js');
 
 let clientConstructor = null;
 class TelegramClientFactory {

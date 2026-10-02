@@ -1,45 +1,78 @@
 /**
  * Telegram Routes
  *
+ * Compatibility endpoints for the Telegram connection UI, backed by the
+ * session-based Telegram login service.
+ *
  * @module signalforge/server/routes/telegram
  */
 const { Router } = require('express');
+const { authenticationMiddleware } = require('../middleware/authentication.middleware');
+const { asyncHandler } = require('../lib/async-handler');
+const { successResponse } = require('../lib/response/success.response');
+const { telegramLoginService } = require('../modules/signal-sources/telegram/auth/telegram-login.service');
+const { telegramSessionService } = require('../modules/signal-sources/telegram/session/telegram-session.service');
+const { telegramService } = require('../modules/signal-sources/telegram/telegram.service');
 
 const router = Router();
+router.use(authenticationMiddleware());
 
-router.post('/login/start', (req, res) => {
-  res.status(202).json({ message: 'Start Telegram login endpoint placeholder' });
-});
+router.get(
+  '/status',
+  asyncHandler(async (req, res) => {
+    const session = await telegramSessionService.getActiveSession({ userId: req.user.id });
+    return successResponse(res, {
+      connected: Boolean(session),
+      connectionId: session?.id || null,
+      telegramUserId: session?.telegramUserId || null,
+      telegramUsername: session?.telegramUsername || null,
+    });
+  }),
+);
 
-router.post('/login/verify-otp', (req, res) => {
-  res.status(202).json({ message: 'Verify OTP endpoint placeholder' });
-});
+router.post(
+  '/send-code',
+  asyncHandler(async (req, res) => {
+    const result = await telegramLoginService.sendCode({
+      userId: req.user.id,
+      phoneNumber: req.body?.phoneNumber || req.body?.phone,
+      countryCode: req.body?.countryCode,
+    });
+    return successResponse(res, result);
+  }),
+);
 
-router.post('/login/verify-2fa', (req, res) => {
-  res.status(202).json({ message: 'Verify 2FA endpoint placeholder' });
-});
+router.post(
+  '/verify-otp',
+  asyncHandler(async (req, res) => {
+    const result = await telegramLoginService.signIn({
+      userId: req.user.id,
+      sessionId: req.body?.sessionId,
+      code: req.body?.code,
+    });
+    return successResponse(res, result);
+  }),
+);
 
-router.post('/logout', (req, res) => {
-  res.status(202).json({ message: 'Logout Telegram session endpoint placeholder' });
-});
+router.post(
+  '/verify-password',
+  asyncHandler(async (req, res) => {
+    const result = await telegramLoginService.signIn({
+      userId: req.user.id,
+      sessionId: req.body?.sessionId,
+      code: req.body?.code,
+      password: req.body?.password,
+    });
+    return successResponse(res, result);
+  }),
+);
 
-router.get('/channels', (req, res) => {
-  res.status(200).json({ channels: [] });
-});
+router.post(
+  '/disconnect',
+  asyncHandler(async (req, res) => {
+    const result = await telegramService.disconnect({ userId: req.user.id });
+    return successResponse(res, result);
+  }),
+);
 
-router.post('/channels/opt-in', (req, res) => {
-  res.status(202).json({ message: 'Opt-in channels endpoint placeholder' });
-});
-
-router.post('/channels/opt-out', (req, res) => {
-  res.status(202).json({ message: 'Opt-out channels endpoint placeholder' });
-});
-
-router.get('/connections', (req, res) => {
-  res.status(200).json({ connections: [] });
-});
-
-router.delete('/connections/:connectionId', (req, res) => {
-  res.status(202).json({ message: 'Delete connection endpoint placeholder' });
-});
 module.exports = router;

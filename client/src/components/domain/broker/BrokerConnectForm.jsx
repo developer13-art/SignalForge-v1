@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Server, KeyRound, User, Shield, Globe, Info } from 'lucide-react';
 import Form from '../../forms/Form';
@@ -7,6 +7,7 @@ import FormActions from '../../forms/FormActions';
 import PasswordInput from '../../forms/PasswordInput';
 import Button from '../../common/Button';
 import Alert from '../../feedback/Alert';
+import { authenticatedFetch as fetch } from '../../../api/authenticated-fetch.js';
 
 const PLATFORMS = [
   { value: 'mt4', label: 'MetaTrader 4' },
@@ -17,10 +18,12 @@ const ACCOUNT_TYPES = [
   { value: 'live', label: 'Live' },
   { value: 'demo', label: 'Demo' },
 ];
+const EMPTY_BROKERS = [];
 
 const BrokerConnectForm = forwardRef(function BrokerConnectForm(
   {
-    brokers = [],
+    brokers = EMPTY_BROKERS,
+    platform = 'MT5',
     defaultValues,
     onSubmit,
     onCancel,
@@ -34,6 +37,39 @@ const BrokerConnectForm = forwardRef(function BrokerConnectForm(
   ref
 ) {
   const [serverInfo, setServerInfo] = useState(null);
+  const [brokerOptions, setBrokerOptions] = useState(brokers);
+  const [brokersLoading, setBrokersLoading] = useState(brokers.length === 0);
+  const [brokersError, setBrokersError] = useState(null);
+
+  useEffect(() => {
+    if (brokers.length > 0) {
+      setBrokerOptions(brokers);
+      setBrokersLoading(false);
+      return undefined;
+    }
+
+    let active = true;
+    setBrokersLoading(true);
+    setBrokersError(null);
+    fetch(`/api/brokers?platform=${encodeURIComponent(platform.toUpperCase())}&active=true`)
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload?.error?.message || 'Unable to load broker list');
+        }
+        if (active) setBrokerOptions(payload.data?.brokers || payload.brokers || []);
+      })
+      .catch((error) => {
+        if (active) setBrokersError(error.message || 'Unable to load broker list');
+      })
+      .finally(() => {
+        if (active) setBrokersLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [brokers, platform]);
 
   const validate = (values) => {
     const errors = {};
@@ -69,7 +105,7 @@ const BrokerConnectForm = forwardRef(function BrokerConnectForm(
   };
 
   const handleBrokerChange = (brokerId) => {
-    const broker = brokers.find((b) => b.id === brokerId || b.name === brokerId);
+    const broker = brokerOptions.find((b) => b.id === brokerId || b.name === brokerId);
     setServerInfo(broker);
   };
 
@@ -99,29 +135,45 @@ const BrokerConnectForm = forwardRef(function BrokerConnectForm(
         </Alert>
       ) : null}
 
+      {brokersError ? (
+        <Alert variant="danger" title="Broker list unavailable">
+          {brokersError}
+        </Alert>
+      ) : null}
+
       <FormField name="broker" label="Broker" required>
-        <select
-          name="broker"
-          onChange={(event) => handleBrokerChange(event.target.value)}
-          className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-        >
-          <option value="">Select a broker</option>
-          {brokers.map((broker) => (
-            <option key={broker.id || broker.name} value={broker.id || broker.name}>
-              {broker.name}
+        {({ value, onChange, name, id }) => (
+          <select
+            id={id}
+            name={name}
+            value={value || ''}
+            disabled={brokersLoading || brokerOptions.length === 0}
+            onChange={(event) => {
+              onChange(event.target.value);
+              handleBrokerChange(event.target.value);
+            }}
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          >
+            <option value="">
+              {brokersLoading ? 'Loading brokers...' : brokerOptions.length ? 'Select a broker' : 'No brokers available'}
             </option>
-          ))}
-        </select>
+            {brokerOptions.map((broker) => (
+              <option key={broker.id || `${broker.name}-${broker.platform}`} value={broker.name}>
+                {broker.name}
+              </option>
+            ))}
+          </select>
+        )}
       </FormField>
 
-      {serverInfo && serverInfo.servers && serverInfo.servers.length > 0 ? (
+      {serverInfo?.server ? (
         <div className="rounded-md border border-sky-200 bg-sky-50 p-3">
           <p className="flex items-center gap-1.5 text-xs font-semibold text-sky-900">
             <Info size={12} aria-hidden="true" />
             Available servers for this broker
           </p>
           <p className="mt-1 text-xs text-sky-800">
-            {serverInfo.servers.join(', ')}
+            {serverInfo.server}
           </p>
         </div>
       ) : null}
@@ -278,6 +330,7 @@ BrokerConnectForm.propTypes = {
       servers: PropTypes.arrayOf(PropTypes.string),
     })
   ),
+  platform: PropTypes.oneOf(['MT4', 'MT5']),
   defaultValues: PropTypes.object,
   onSubmit: PropTypes.func,
   onCancel: PropTypes.func,

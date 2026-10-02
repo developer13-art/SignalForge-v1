@@ -19,6 +19,7 @@ import KycStatusWidget from './KycStatusWidget';
 import SubscriptionStatusWidget from './SubscriptionStatusWidget';
 import ReferralSummaryWidget from './ReferralSummaryWidget';
 import { analyticsApi } from '../../api/analytics.api.js';
+import { brokerApi } from '../../api/broker.api.js';
 import { useKyc } from '../../hooks/useKyc.js';
 import { useAuthContext } from '../../context/AuthContext.jsx';
 
@@ -36,8 +37,23 @@ const DashboardOverview = function DashboardOverview() {
     setError(null);
 
     try {
-      const response = await analyticsApi.getOverview({ dateRange: 'LAST_30_DAYS' });
+      const [response, brokerResponse] = await Promise.all([
+        analyticsApi.getOverview({ dateRange: 'LAST_30_DAYS' }),
+        brokerApi.listAccounts().catch(() => null),
+      ]);
       const overview = response?.overview;
+      const accountList =
+        brokerResponse?.accounts ||
+        brokerResponse?.data?.accounts ||
+        brokerResponse?.data ||
+        [];
+      const connectedAccount = Array.isArray(accountList)
+        ? accountList.find((account) =>
+            ['CONNECTED', 'SYNCHRONIZING', 'DEPLOYED'].includes(
+              String(account.status || '').toUpperCase(),
+            ),
+          )
+        : null;
 
       setData({
         performance: overview
@@ -48,6 +64,17 @@ const DashboardOverview = function DashboardOverview() {
               averageRr: overview.averageRr?.averageRr,
             }
           : null,
+            account: connectedAccount
+              ? {
+                  ...connectedAccount,
+                  broker: connectedAccount.broker || connectedAccount.brokerName,
+                  nickname: connectedAccount.nickname || connectedAccount.accountNickname,
+                  login: connectedAccount.login || connectedAccount.accountNumber,
+                  currency: connectedAccount.currency || connectedAccount.accountCurrency,
+                  accountType: connectedAccount.accountType?.toLowerCase(),
+                  floatingProfit: connectedAccount.floatingProfit ?? 0,
+                }
+              : null,
       });
     } catch (requestError) {
       setError(requestError?.message || 'Unable to load dashboard data. Please try again.');

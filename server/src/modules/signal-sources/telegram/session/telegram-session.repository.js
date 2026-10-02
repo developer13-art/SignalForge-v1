@@ -32,7 +32,20 @@ async function findPendingSession({ userId, sessionId }) {
       LIMIT 1`,
     [sessionId, userId],
   );
-  return rows[0] || null;
+  const row = rows[0];
+  if (!row) {
+    return null;
+  }
+
+  return {
+    ...row,
+    userId: row.user_id,
+    phoneNumber: row.phone_number,
+    countryCode: row.country_code,
+    phoneCodeHash: row.phone_code_hash,
+    expiresAt: row.expires_at,
+    createdAt: row.created_at,
+  };
 }
 async function deletePendingSession(sessionId) {
   await db.query(`DELETE FROM telegram_pending_sessions WHERE id = $1`, [sessionId]);

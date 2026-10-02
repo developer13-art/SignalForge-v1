@@ -13,6 +13,24 @@ const STATUS_MAP = {
   pending: { label: 'Pending', color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', icon: Clock },
 };
 
+const API_STATUS_MAP = {
+  CONNECTED: 'connected',
+  DEPLOYED: 'connected',
+  DISCONNECTED: 'disconnected',
+  CONNECTING: 'connecting',
+  DEPLOYING: 'connecting',
+  SYNCHRONIZING: 'syncing',
+  ERROR: 'error',
+  WARNING: 'warning',
+  PAUSED: 'paused',
+  PENDING: 'pending',
+};
+
+function normalizeStatus(status) {
+  const normalized = String(status || 'disconnected').toLowerCase();
+  return STATUS_MAP[normalized] ? normalized : API_STATUS_MAP[String(status).toUpperCase()] || 'disconnected';
+}
+
 const SIZES = {
   xs: { container: 'gap-1 px-1.5 py-0.5 text-[10px]', icon: 10, dot: 'h-1.5 w-1.5' },
   sm: { container: 'gap-1.5 px-2 py-0.5 text-xs', icon: 12, dot: 'h-2 w-2' },
@@ -46,11 +64,12 @@ const BrokerConnectionStatus = forwardRef(function BrokerConnectionStatus(
   },
   ref
 ) {
-  const config = STATUS_MAP[status] || STATUS_MAP.disconnected;
+  const normalizedStatus = normalizeStatus(status);
+  const config = STATUS_MAP[normalizedStatus];
   const sizeConfig = SIZES[size] || SIZES.sm;
   const Icon = config.icon;
 
-  const isAnimated = config.spin || (pulse && status === 'connected');
+  const isAnimated = config.spin || (pulse && normalizedStatus === 'connected');
 
   return (
     <span
@@ -74,7 +93,7 @@ const BrokerConnectionStatus = forwardRef(function BrokerConnectionStatus(
         <span
           className={[
             'rounded-full',
-            DOT_COLORS[status] || DOT_COLORS.disconnected,
+            DOT_COLORS[normalizedStatus],
             sizeConfig.dot,
             isAnimated ? 'animate-pulse' : '',
           ]
@@ -107,6 +126,16 @@ BrokerConnectionStatus.propTypes = {
     'warning',
     'paused',
     'pending',
+    'CONNECTED',
+    'DEPLOYED',
+    'DISCONNECTED',
+    'CONNECTING',
+    'DEPLOYING',
+    'SYNCHRONIZING',
+    'ERROR',
+    'WARNING',
+    'PAUSED',
+    'PENDING',
   ]),
   size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
   showIcon: PropTypes.bool,

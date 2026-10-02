@@ -8,6 +8,7 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import Separator from '../../components/common/Separator';
 import BrokerConnectionStatus from '../../components/domain/broker/BrokerConnectionStatus';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 
 const ConnectionStatus = function ConnectionStatus() {
   const { accountId } = useParams();

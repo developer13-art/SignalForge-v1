@@ -7,8 +7,8 @@
  * @module signalforge/server/modules/signal-sources/telegram/reconnect
  */
 const { getLogger } = require('../../../bootstrap/initLogger.js');
-const { TelegramRepository } = require('./telegram.repository.js');
-const { TelegramSessionStoreService } = require('./telegram-session-store.service.js');
+const { TelegramRepository } = require('../telegram.repository.js');
+const { TelegramSessionStoreService } = require('../telegram-session-store.service.js');
 const { TelegramListenerService } = require('./telegram-listener.service.js');
 const { SESSION_HEALTH_CHECK_INTERVAL_MS } = require('./telegram.constants.js');
 class TelegramReconnectService {

@@ -10,8 +10,9 @@
 const { getLogger } = require('../../../bootstrap/initLogger.js');
 const telegramConfig = require('../../../config/telegram.config.js');
 const { SourceNotConfiguredError } = require('../source.errors.js');
+const { createGramJsTelegramAdapter } = require('./client/gramjs.adapter.js');
 
-let clientConstructor = null;
+let clientConstructor = createGramJsTelegramAdapter;
 class TelegramClientFactory {
   static register(factory) {
     if (typeof factory !== 'function') {

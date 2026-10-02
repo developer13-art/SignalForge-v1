@@ -15,7 +15,7 @@ const { EVENT_TYPES } = require('@signalforge/shared/constants/event-types');
 const { buildSourceMessageKey } = require('@signalforge/shared/utils/idempotency.util');
 const { buildMessageFingerprint } = require('@signalforge/shared/utils/fingerprint.util');
 const { publishEvent } = require('../../../../events/event-publisher');
-const { messageRawStoreService } = require('../messages/message-raw-store.service');
+const { messageRawStoreService } = require('../../messages/message-raw-store.service');
 
 function normalizeMedia(media) {
   if (!media) {

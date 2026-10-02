@@ -58,6 +58,17 @@ class AccountCredentialService {
     return Buffer.concat([iv, authTag, ciphertext]).toString('base64');
   }
 
+  fingerprintAccountNumber(accountNumber) {
+    if (!accountNumber || typeof accountNumber !== 'string') {
+      throw new BrokerCredentialError('Account number is required');
+    }
+
+    return crypto
+      .createHmac('sha256', this.parseKey())
+      .update(accountNumber)
+      .digest('hex');
+  }
+
   decrypt(encrypted) {
     if (!encrypted || typeof encrypted !== 'string') {
       throw new BrokerCredentialError('Encrypted credentials are required');

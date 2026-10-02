@@ -50,7 +50,7 @@ router.use('/execution', require('./execution.routes'));
 router.use('/trade-state', require('./trade-state.routes'));
 router.use('/trade-shadow', require('./trade-shadow.routes'));
 router.use('/copy-trading', require('./copy-trading.routes'));
-router.use('/brokers', require('./broker.routes'));
+router.use('/brokers', require('../modules/brokers/broker.routes')());
 router.use('/trades', require('./trade.routes'));
 router.use('/analytics', require('./analytics.routes'));
 router.use('/performance', require('./performance.routes'));
@@ -89,7 +89,7 @@ router.use(
 );
 
 // -------------------- Solana core (existing) --------------------
-router.use('/solana', require('./solana.routes'));
+router.use('/solana', require('../modules/solana/solana.routes'));
 
 // -------------------- Hybrid Execution (Feature C) --------------------
 router.use(

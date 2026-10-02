@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, ArrowLeft, Loader2, CheckCircle2, Shield, ExternalLink, Copy, Check } from 'lucide-react';
+import bs58 from 'bs58';
+import { Wallet, ArrowLeft, Loader2, Shield, ExternalLink, Copy, Check } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
 import Heading from '../../components/ui/primitives/Heading';
@@ -8,9 +9,23 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import Separator from '../../components/common/Separator';
 import Alert from '../../components/feedback/Alert';
-import WalletConnectButton from '../../components/domain/solana/WalletConnectButton';
 import SolanaWalletCard from '../../components/domain/solana/SolanaWalletCard';
 import SiwsLoginButton from '../../components/domain/solana/SiwsLoginButton';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
+
+function toDisplayWallet(wallet) {
+  if (!wallet) {
+    return null;
+  }
+
+  return {
+    ...wallet,
+    address: wallet.walletAddress || wallet.address,
+    name: wallet.label || wallet.name || 'Solana Wallet',
+    verified: Boolean(wallet.verifiedAt || wallet.verified),
+    connectedAt: wallet.createdAt || wallet.connectedAt,
+  };
+}
 
 const SolanaWalletConnect = function SolanaWalletConnect() {
   const navigate = useNavigate();
@@ -24,13 +39,14 @@ const SolanaWalletConnect = function SolanaWalletConnect() {
   const fetchWallet = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/solana/wallet', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok && payload.data?.connected) {
-        setWallet(payload.data);
+      const response = await fetch('/api/solana/wallets/primary');
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || 'Failed to load Solana wallet');
       }
-    } catch (_err) {
-      // silent
+      setWallet(toDisplayWallet(payload?.data?.wallet || payload?.wallet));
+    } catch (requestError) {
+      setError(requestError.message || 'Failed to load Solana wallet');
     } finally {
       setLoading(false);
     }
@@ -40,76 +56,99 @@ const SolanaWalletConnect = function SolanaWalletConnect() {
     fetchWallet();
   }, [fetchWallet]);
 
+  const signAndLinkWallet = useCallback(async (walletAddress, isPrimary = false) => {
+    const provider = typeof window !== 'undefined' ? window.solana : null;
+    if (!provider?.signMessage) {
+      throw new Error('A Solana wallet with message-signing support is required');
+    }
+
+    const challengeResponse = await fetch('/api/solana/wallets/siws/begin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ walletAddress }),
+    });
+    const challengePayload = await challengeResponse.json().catch(() => null);
+    if (!challengeResponse.ok) {
+      throw new Error(challengePayload?.error?.message || 'Failed to begin wallet verification');
+    }
+
+    const challenge = challengePayload?.data || challengePayload;
+    const signedMessage = await provider.signMessage(
+      new TextEncoder().encode(challenge.message),
+      'utf8',
+    );
+    const signature = signedMessage?.signature || signedMessage;
+    const signatureBase58 = bs58.encode(signature);
+
+    const completeResponse = await fetch('/api/solana/wallets/siws/complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        walletAddress,
+        message: challenge.message,
+        signatureBase58,
+        isPrimary,
+      }),
+    });
+    const completePayload = await completeResponse.json().catch(() => null);
+    if (!completeResponse.ok) {
+      throw new Error(completePayload?.error?.message || 'Failed to link wallet');
+    }
+
+    setWallet(toDisplayWallet(completePayload?.data?.wallet || completePayload?.wallet));
+  }, []);
+
   const handleConnect = useCallback(async () => {
     setConnecting(true);
     setError(null);
     try {
-      if (typeof window !== 'undefined' && window.solana) {
-        const response = await window.solana.connect();
-        const publicKey = response.publicKey.toString();
-
-        const apiResponse = await fetch('/api/solana/wallet/connect', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ publicKey }),
-        });
-
-        const payload = await apiResponse.json();
-
-        if (!apiResponse.ok) {
-          setError(payload?.error?.message || 'Failed to connect wallet');
-          return;
-        }
-
-        fetchWallet();
-      } else {
-        setError('Solana wallet extension not detected. Please install Phantom, Solflare, or Backpack.');
+      const provider = typeof window !== 'undefined' ? window.solana : null;
+      if (!provider?.connect) {
+        throw new Error('Solana wallet extension not detected. Please install Phantom or a compatible wallet.');
       }
-    } catch (_err) {
-      setError('Unable to connect to wallet. Please try again.');
+      const response = await provider.connect();
+      const walletAddress = response?.publicKey?.toString() || provider.publicKey?.toString();
+      if (!walletAddress) {
+        throw new Error('The wallet did not provide a public address');
+      }
+      await signAndLinkWallet(walletAddress, true);
+    } catch (connectError) {
+      setError(connectError.message || 'Unable to connect wallet. Please try again.');
     } finally {
       setConnecting(false);
     }
-  }, [fetchWallet]);
+  }, [signAndLinkWallet]);
 
   const handleDisconnect = useCallback(async () => {
     try {
       if (typeof window !== 'undefined' && window.solana) {
         await window.solana.disconnect();
       }
-      await fetch('/api/solana/wallet', {
+      if (wallet?.walletId) {
+        await fetch(`/api/solana/wallets/${wallet.walletId}`, {
         method: 'DELETE',
-        credentials: 'include',
-      });
+        });
+      }
       setWallet(null);
-    } catch (_err) {
-      // silent
+    } catch (disconnectError) {
+      setError(disconnectError.message || 'Failed to disconnect wallet');
     }
-  }, []);
+  }, [wallet]);
 
   const handleVerify = useCallback(async () => {
     setVerifying(true);
     setError(null);
     try {
-      const response = await fetch('/api/solana/wallet/verify', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const payload = await response.json();
-        setError(payload?.error?.message || 'Verification failed');
-        return;
+      if (!wallet?.address) {
+        throw new Error('No wallet is available to verify');
       }
-
-      fetchWallet();
-    } catch (_err) {
-      setError('Unable to reach the server');
+      await signAndLinkWallet(wallet.address, wallet.isPrimary);
+    } catch (verifyError) {
+      setError(verifyError.message || 'Verification failed');
     } finally {
       setVerifying(false);
     }
-  }, [fetchWallet]);
+  }, [wallet, signAndLinkWallet]);
 
   const handleCopy = useCallback(async () => {
     if (!wallet?.address) {

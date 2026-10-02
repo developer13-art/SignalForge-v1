@@ -39,7 +39,10 @@ class MetaApiClient {
       }
       throw new BrokerConnectionError('MetaApi request failed', {
         url,
-        cause: error.message,
+        cause: error.cause?.code
+          ? `${error.message} (${error.cause.code})`
+          : error.message,
+        networkCode: error.cause?.code || null,
       });
     } finally {
       clearTimeout(timer);
@@ -50,24 +53,40 @@ class MetaApiClient {
     if (response.status === 429) {
       throw new BrokerRateLimitError('MetaApi rate limit exceeded');
     }
-    if (response.status === 401 || response.status === 403) {
-      throw new BrokerConnectionError('MetaApi authentication failed', {
-        status: response.status,
-      });
-    }
-    if (!response.ok) {
-      const text = await response.text();
-      throw new (errorClass || BrokerConnectionError)(
-        `MetaApi responded with status ${response.status}`,
-        {
-          status: response.status,
-          body: text,
-        },
-      );
-    }
     if (response.status === 204) {
       return null;
     }
+
+    if (!response.ok) {
+      const responseText = await response.text();
+      let responseBody = null;
+      try {
+        responseBody = JSON.parse(responseText);
+      } catch (_error) {
+        responseBody = null;
+      }
+      const upstreamMessage =
+        (typeof responseBody?.message === 'string' && responseBody.message) ||
+        (typeof responseBody?.error === 'string' && responseBody.error) ||
+        null;
+      const details = {
+        status: response.status,
+        ...(upstreamMessage ? { cause: upstreamMessage } : {}),
+        ...(typeof responseBody?.error === 'string' ? { upstreamCode: responseBody.error } : {}),
+      };
+
+      if (response.status === 401 || response.status === 403) {
+        throw new BrokerConnectionError(
+          upstreamMessage || 'MetaApi authentication failed',
+          details,
+        );
+      }
+      throw new (errorClass || BrokerConnectionError)(
+        upstreamMessage || `MetaApi responded with status ${response.status}`,
+        details,
+      );
+    }
+
     return response.json();
   }
 

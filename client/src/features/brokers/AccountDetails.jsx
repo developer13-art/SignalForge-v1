@@ -10,6 +10,7 @@ import Separator from '../../components/common/Separator';
 import Badge from '../../components/common/Badge';
 import EnvironmentBadge from '../../components/domain/broker/EnvironmentBadge';
 import BrokerConnectionStatus from '../../components/domain/broker/BrokerConnectionStatus';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 
 const AccountDetails = function AccountDetails() {
   const { accountId } = useParams();

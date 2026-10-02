@@ -29,12 +29,9 @@ class AccountConnectionService {
       throw new UnsupportedBrokerPlatformError(undefined, { platform: payload.platform });
     }
 
-    const existing = await this.repository.findByUserAndNumber(
-      userId,
-      payload.accountNumber,
-      payload.server,
-    );
-    if (existing) {
+    const accountNumberHash = this.credentials.fingerprintAccountNumber(payload.accountNumber);
+    const existing = await this.repository.findByUserAndNumber(userId, accountNumberHash, payload.server);
+    if (existing && existing.status !== 'ERROR') {
       throw new BrokerAccountAlreadyExistsError();
     }
 
@@ -52,15 +49,24 @@ class AccountConnectionService {
       server: payload.server,
       platform: payload.platform,
     });
+    const encryptedAccountNumber = this.credentials.encrypt({
+      accountNumber: payload.accountNumber,
+    });
+    const maskedAccountNumber = this.credentials.maskCredentials({
+      accountNumber: payload.accountNumber,
+    }).accountNumber;
 
     const defaultSpec = this.spec.getSpec(payload.server);
 
-    const created = await this.repository.create({
+    const accountData = {
       userId,
       brokerId: broker?.id || null,
       brokerName: payload.brokerName || broker?.name || null,
       platform: payload.platform,
       accountNumber: payload.accountNumber,
+      accountNumberEncrypted: encryptedAccountNumber,
+      accountNumberHash,
+      accountNumberMasked: maskedAccountNumber,
       accountNickname: payload.accountNickname || null,
       server: payload.server,
       accountType: payload.accountType || 'DEMO',
@@ -68,21 +74,45 @@ class AccountConnectionService {
       leverage: payload.leverage ?? defaultSpec.leverage,
       status: 'PENDING',
       credentialsEncrypted: encrypted,
-    });
+    };
 
-    await emitAccountCreated(created.id, userId, {
-      platform: created.platform,
-      accountNumber: created.account_number,
-    });
+    let created;
+    if (existing) {
+      if (!existing.metaapi_account_id) {
+        await this.repository.update(existing.id, {
+          ...accountData,
+          lastError: null,
+          lastErrorAt: null,
+        });
+      } else {
+        await this.repository.update(existing.id, {
+          status: 'PENDING',
+          lastError: null,
+          lastErrorAt: null,
+        });
+      }
+      created = await this.repository.findById(existing.id);
+    } else {
+      created = await this.repository.create(accountData);
+    }
+
+    if (!existing) {
+      await emitAccountCreated(created.id, userId, {
+        platform: created.platform,
+        accountNumber: created.account_number,
+      });
+    }
     await emitAccountConnecting(created.id, userId);
 
     try {
-      const metaApiResult = await this.metaApiAccount.registerAccount({
-        id: created.id,
-        platform: created.platform,
-        account_nickname: created.account_nickname,
-        credentials_encrypted: encrypted,
-      });
+      const metaApiResult = created.metaapi_account_id
+        ? { metaApiAccountId: created.metaapi_account_id }
+        : await this.metaApiAccount.registerAccount({
+            id: created.id,
+            platform: created.platform,
+            account_nickname: created.account_nickname,
+            credentials_encrypted: encrypted,
+          });
 
       await this.metaApiDeployment.deploy(created.id);
 
@@ -93,16 +123,18 @@ class AccountConnectionService {
 
       return this.serialize(account);
     } catch (error) {
+      const failureDetails = {
+        cause: error.details?.cause || error.message,
+        ...(error.details?.networkCode ? { networkCode: error.details.networkCode } : {}),
+      };
       await this.repository.update(created.id, {
         status: 'ERROR',
-        lastError: error.message,
+        lastError: failureDetails.cause,
         lastErrorAt: new Date(),
       });
       await emitAccountError(created.id, userId, error);
       this.logger.error({ err: error, accountId: created.id }, 'Account connection failed');
-      throw new BrokerDeploymentError('Account connection failed', {
-        cause: error.message,
-      });
+      throw new BrokerDeploymentError('Account connection failed', failureDetails);
     }
   }
 

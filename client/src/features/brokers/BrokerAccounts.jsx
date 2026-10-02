@@ -8,6 +8,7 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import EmptyState from '../../components/common/EmptyState';
 import BrokerAccountCard from '../../components/domain/broker/BrokerAccountCard';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 
 const BrokerAccounts = function BrokerAccounts() {
   const navigate = useNavigate();
@@ -20,7 +21,20 @@ const BrokerAccounts = function BrokerAccounts() {
       const response = await fetch('/api/brokers/accounts', { credentials: 'include' });
       const payload = await response.json();
       if (response.ok) {
-        setAccounts(payload.data || []);
+        const accountList = payload.accounts || payload.data?.accounts || payload.data || [];
+        setAccounts(
+          Array.isArray(accountList)
+            ? accountList.map((account) => ({
+                ...account,
+                broker: account.broker || account.brokerName,
+                login: account.login || account.accountNumber,
+                nickname: account.nickname || account.accountNickname,
+                currency: account.currency || account.accountCurrency,
+                lastSync: account.lastSync || account.lastSyncAt,
+                accountType: account.accountType?.toLowerCase(),
+              }))
+            : [],
+        );
       }
     } catch (_err) {
       // silent

@@ -199,7 +199,7 @@ const SUPPORT_NAV = [
   { label: 'Technical Support', to: routes.support.technicalSupport, icon: Settings },
 ];
 
-function getNavForVariant(variant) {
+export function getNavForVariant(variant) {
   switch (variant) {
     case 'user':
       return { kind: 'flat', items: USER_NAV };

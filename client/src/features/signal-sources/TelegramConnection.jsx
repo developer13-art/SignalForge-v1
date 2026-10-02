@@ -20,6 +20,7 @@ import PhoneInput from '../../components/forms/PhoneInput';
 import OtpInput from '../../components/forms/OtpInput';
 import Alert from '../../components/feedback/Alert';
 import Badge from '../../components/common/Badge';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 
 const TelegramConnection = function TelegramConnection() {
   const navigate = useNavigate();
@@ -30,16 +31,16 @@ const TelegramConnection = function TelegramConnection() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [session, setSession] = useState(null);
+  const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const fetchStatus = useCallback(async () => {
     try {
-      const response = await fetch('/api/sources/telegram/status', {
-        credentials: 'include',
-      });
+      const response = await fetch('/api/sources/telegram/status');
       const payload = await response.json();
-      if (response.ok && payload.data?.connected) {
-        setSession(payload.data);
+      const data = payload.data || payload;
+      if (response.ok && data.connected) {
+        setSession(data);
         setState('connected');
       }
     } catch (_err) {
@@ -66,8 +67,7 @@ const TelegramConnection = function TelegramConnection() {
       const response = await fetch('/api/sources/telegram/send-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ phone, countryCode }),
+        body: JSON.stringify({ phoneNumber: phone, countryCode }),
       });
 
       const payload = await response.json();
@@ -77,6 +77,8 @@ const TelegramConnection = function TelegramConnection() {
         return;
       }
 
+      const data = payload.data || payload;
+      setSessionId(data.sessionId);
       setState('otp');
     } catch (_err) {
       setError('Unable to reach the server');
@@ -94,8 +96,7 @@ const TelegramConnection = function TelegramConnection() {
         const response = await fetch('/api/sources/telegram/verify-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ phone, code }),
+          body: JSON.stringify({ sessionId, code }),
         });
 
         const payload = await response.json();
@@ -106,12 +107,13 @@ const TelegramConnection = function TelegramConnection() {
           return;
         }
 
-        if (payload.data?.requiresPassword) {
+        const data = payload.data || payload;
+        if (data.requiresPassword) {
           setState('password');
           return;
         }
 
-        setSession(payload.data);
+        setSession(data);
         setState('connected');
       } catch (_err) {
         setError('Unable to reach the server');
@@ -119,7 +121,7 @@ const TelegramConnection = function TelegramConnection() {
         setLoading(false);
       }
     },
-    [phone],
+    [sessionId],
   );
 
   const handleVerifyPassword = useCallback(async () => {
@@ -130,8 +132,7 @@ const TelegramConnection = function TelegramConnection() {
       const response = await fetch('/api/sources/telegram/verify-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ phone, password }),
+        body: JSON.stringify({ sessionId, code: otp, password }),
       });
 
       const payload = await response.json();
@@ -141,22 +142,22 @@ const TelegramConnection = function TelegramConnection() {
         return;
       }
 
-      setSession(payload.data);
+      setSession(payload.data || payload);
       setState('connected');
     } catch (_err) {
       setError('Unable to reach the server');
     } finally {
       setLoading(false);
     }
-  }, [phone, password]);
+  }, [sessionId, otp, password]);
 
   const handleDisconnect = useCallback(async () => {
     try {
       await fetch('/api/sources/telegram/disconnect', {
         method: 'POST',
-        credentials: 'include',
       });
       setSession(null);
+      setSessionId(null);
       setState('initial');
       setPhone('');
       setOtp('');

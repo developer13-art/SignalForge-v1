@@ -8,6 +8,7 @@ import Text from '../../components/ui/primitives/Text';
 import Button from '../../components/common/Button';
 import Separator from '../../components/common/Separator';
 import BrokerLogoutDialog from '../../components/domain/broker/BrokerLogoutDialog';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 
 const DisconnectBroker = function DisconnectBroker() {
   const { accountId } = useParams();

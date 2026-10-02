@@ -63,6 +63,40 @@ const SignalSourcesOverview = lazy(() => import('../features/signal-sources/Sign
 const AddSignalSource = lazy(() => import('../features/signal-sources/AddSignalSource'));
 const TelegramConnection = lazy(() => import('../features/signal-sources/TelegramConnection'));
 const TelegramChannels = lazy(() => import('../features/signal-sources/TelegramChannels'));
+const DiscordConnection = lazy(() => import('../features/signal-sources/DiscordConnection'));
+const DiscordChannels = lazy(() => import('../features/signal-sources/DiscordChannels'));
+const WhatsAppConnection = lazy(() => import('../features/signal-sources/WhatsAppConnection'));
+const WhatsAppSources = lazy(() => import('../features/signal-sources/WhatsAppSources'));
+const TradingViewWebhooks = lazy(() => import('../features/signal-sources/TradingViewWebhooks'));
+const RestApiSources = lazy(() => import('../features/signal-sources/RestApiSources'));
+const EmailSources = lazy(() => import('../features/signal-sources/EmailSources'));
+
+const AiIntelligenceOverview = lazy(() => import('../features/ai-intelligence/AiIntelligenceOverview'));
+const AiSignalParser = lazy(() => import('../features/ai-intelligence/AiSignalParser'));
+const SignalInterpretation = lazy(() => import('../features/ai-intelligence/SignalInterpretation'));
+const AiProviderDna = lazy(() => import('../features/ai-intelligence/ProviderDna'));
+const AiProviderDnaRules = lazy(() => import('../features/ai-intelligence/ProviderDnaRules'));
+const AiLearningActivity = lazy(() => import('../features/ai-intelligence/AiLearningActivity'));
+const ConfidenceEngine = lazy(() => import('../features/ai-intelligence/ConfidenceEngine'));
+const RiskIntelligence = lazy(() => import('../features/ai-intelligence/RiskIntelligence'));
+const MultilingualProcessing = lazy(() => import('../features/ai-intelligence/MultilingualProcessing'));
+const ConsensusEngine = lazy(() => import('../features/ai-intelligence/ConsensusEngine'));
+const DuplicateDetection = lazy(() => import('../features/ai-intelligence/DuplicateDetection'));
+const AiProcessingLogs = lazy(() => import('../features/ai-intelligence/AiProcessingLogs'));
+const AiModelPerformance = lazy(() => import('../features/ai-intelligence/AiModelPerformance'));
+const AiLearningHistory = lazy(() => import('../features/ai-intelligence/AiLearningHistory'));
+
+const DnaOverview = lazy(() => import('../features/provider-dna/DnaOverview'));
+const ProviderLanguageProfile = lazy(() => import('../features/provider-dna/ProviderLanguageProfile'));
+const SymbolMapping = lazy(() => import('../features/provider-dna/SymbolMapping'));
+const AbbreviationMapping = lazy(() => import('../features/provider-dna/AbbreviationMapping'));
+const TradeManagementRules = lazy(() => import('../features/provider-dna/TradeManagementRules'));
+const RiskBehavior = lazy(() => import('../features/provider-dna/RiskBehavior'));
+const LearnedPatterns = lazy(() => import('../features/provider-dna/LearnedPatterns'));
+const DnaConfidence = lazy(() => import('../features/provider-dna/DnaConfidence'));
+const DnaVersionHistory = lazy(() => import('../features/provider-dna/DnaVersionHistory'));
+const TrainingMessages = lazy(() => import('../features/provider-dna/TrainingMessages'));
+const ProviderDnaTest = lazy(() => import('../features/provider-dna/ProviderDnaTest'));
 
 // Trading
 const TradingOverview = lazy(() => import('../features/trading/TradingOverview'));
@@ -118,6 +152,8 @@ const DeleteAccount = lazy(() => import('../features/settings/DeleteAccount'));
 const BlinkBuilder = lazy(() => import('../features/solana/blinks/BlinkBuilder'));
 const BlinkHistory = lazy(() => import('../features/solana/blinks/BlinkHistory'));
 const BlinkDetails = lazy(() => import('../features/solana/blinks/BlinkDetails'));
+const SolanaWalletSettings = lazy(() => import('../features/solana/SolanaWalletSettings'));
+const SolanaWalletConnect = lazy(() => import('../features/solana/SolanaWalletConnect'));
 
 // ---------------------------------------------------------------------
 // Feature B — Proof of Alpha
@@ -176,6 +212,23 @@ const Reports = lazy(() => import('../features/admin/Reports'));
 const SystemAnalytics = lazy(() => import('../features/admin/SystemAnalytics'));
 const SecurityCenter = lazy(() => import('../features/admin/SecurityCenter'));
 const AutomationRules = lazy(() => import('../features/risk-automation/AutomationRules'));
+const RiskManagementOverview = lazy(() => import('../features/risk-automation/RiskManagementOverview'));
+const RiskProfile = lazy(() => import('../features/risk-automation/RiskProfile'));
+const RiskRules = lazy(() => import('../features/risk-automation/RiskRules'));
+const DailyLossLimits = lazy(() => import('../features/risk-automation/DailyLossLimits'));
+const DrawdownProtection = lazy(() => import('../features/risk-automation/DrawdownProtection'));
+const MaximumOpenTrades = lazy(() => import('../features/risk-automation/MaximumOpenTrades'));
+const TradingSessions = lazy(() => import('../features/risk-automation/TradingSessions'));
+const TrailingStop = lazy(() => import('../features/risk-automation/TrailingStop'));
+const BreakEven = lazy(() => import('../features/risk-automation/BreakEven'));
+const ProfitLock = lazy(() => import('../features/risk-automation/ProfitLock'));
+const PartialClose = lazy(() => import('../features/risk-automation/PartialClose'));
+const CorrelationProtection = lazy(() => import('../features/risk-automation/CorrelationProtection'));
+const NewsFilter = lazy(() => import('../features/risk-automation/NewsFilter'));
+const EmergencyStop = lazy(() => import('../features/risk-automation/EmergencyStop'));
+const CreateRule = lazy(() => import('../features/risk-automation/CreateRule'));
+const ProviderSpecificRules = lazy(() => import('../features/risk-automation/ProviderSpecificRules'));
+const RiskEvents = lazy(() => import('../features/risk-automation/RiskEvents'));
 const BrowseTraders = lazy(() => import('../features/trader-marketplace/BrowseTraders'));
 const TraderProfile = lazy(() => import('../features/trader-marketplace/TraderProfile'));
 const TraderReviews = lazy(() => import('../features/trader-marketplace/TraderReviews'));
@@ -265,10 +318,80 @@ export default function AppRouter() {
               <Route path="/signal-sources/add" element={<AddSignalSource />} />
               <Route path="/signal-sources/telegram" element={<TelegramConnection />} />
               <Route path="/signal-sources/telegram/channels" element={<TelegramChannels />} />
+              <Route path="/signal-sources/discord" element={<DiscordConnection />} />
+              <Route path="/signal-sources/discord/channels" element={<DiscordChannels />} />
+              <Route path="/signal-sources/whatsapp" element={<WhatsAppConnection />} />
+              <Route path="/signal-sources/whatsapp/sources" element={<WhatsAppSources />} />
+              <Route path="/signal-sources/tradingview" element={<TradingViewWebhooks />} />
+              <Route path="/signal-sources/rest-api" element={<RestApiSources />} />
+              <Route path="/signal-sources/email" element={<EmailSources />} />
               <Route path="/sources" element={<SignalSourcesOverview />} />
               <Route path="/sources/add" element={<AddSignalSource />} />
               <Route path="/sources/telegram" element={<TelegramConnection />} />
               <Route path="/sources/telegram/channels" element={<TelegramChannels />} />
+              <Route path="/sources/discord" element={<DiscordConnection />} />
+              <Route path="/sources/discord/channels" element={<DiscordChannels />} />
+              <Route path="/sources/whatsapp" element={<WhatsAppConnection />} />
+              <Route path="/sources/whatsapp/sources" element={<WhatsAppSources />} />
+              <Route path="/sources/tradingview" element={<TradingViewWebhooks />} />
+              <Route path="/sources/rest-api" element={<RestApiSources />} />
+              <Route path="/sources/email" element={<EmailSources />} />
+
+              {/* AI Intelligence */}
+              <Route path="/ai-intelligence" element={<AiIntelligenceOverview />} />
+              <Route path="/ai-intelligence/parser" element={<AiSignalParser />} />
+              <Route path="/ai-intelligence/interpretation" element={<SignalInterpretation />} />
+              <Route path="/ai-intelligence/provider-dna" element={<AiProviderDna />} />
+              <Route path="/ai-intelligence/provider-dna/rules" element={<AiProviderDnaRules />} />
+              <Route path="/ai-intelligence/learning" element={<AiLearningActivity />} />
+              <Route path="/ai-intelligence/confidence" element={<ConfidenceEngine />} />
+              <Route path="/ai-intelligence/risk" element={<RiskIntelligence />} />
+              <Route path="/ai-intelligence/multilingual" element={<MultilingualProcessing />} />
+              <Route path="/ai-intelligence/consensus" element={<ConsensusEngine />} />
+              <Route path="/ai-intelligence/duplicates" element={<DuplicateDetection />} />
+              <Route path="/ai-intelligence/logs" element={<AiProcessingLogs />} />
+              <Route path="/ai-intelligence/models" element={<AiModelPerformance />} />
+              <Route path="/ai-intelligence/performance" element={<AiModelPerformance />} />
+              <Route path="/ai-intelligence/history" element={<AiLearningHistory />} />
+
+              {/* Provider DNA */}
+              <Route path="/provider-dna" element={<DnaOverview />} />
+              <Route path="/provider-dna/overview" element={<DnaOverview />} />
+              <Route path="/provider-dna/language" element={<ProviderLanguageProfile />} />
+              <Route path="/provider-dna/symbols" element={<SymbolMapping />} />
+              <Route path="/provider-dna/abbreviations" element={<AbbreviationMapping />} />
+              <Route path="/provider-dna/management-rules" element={<TradeManagementRules />} />
+              <Route path="/provider-dna/risk-behavior" element={<RiskBehavior />} />
+              <Route path="/provider-dna/patterns" element={<LearnedPatterns />} />
+              <Route path="/provider-dna/confidence" element={<DnaConfidence />} />
+              <Route path="/provider-dna/versions" element={<DnaVersionHistory />} />
+              <Route path="/provider-dna/training" element={<TrainingMessages />} />
+              <Route path="/provider-dna/test" element={<ProviderDnaTest />} />
+
+              {/* Risk and automation */}
+              <Route path="/risk" element={<RiskManagementOverview />} />
+              <Route path="/risk/profile" element={<RiskProfile />} />
+              <Route path="/risk/rules" element={<RiskRules />} />
+              <Route path="/risk/daily-loss" element={<DailyLossLimits />} />
+              <Route path="/risk/daily-loss-limits" element={<DailyLossLimits />} />
+              <Route path="/risk/drawdown" element={<DrawdownProtection />} />
+              <Route path="/risk/drawdown-protection" element={<DrawdownProtection />} />
+              <Route path="/risk/max-open-trades" element={<MaximumOpenTrades />} />
+              <Route path="/risk/trading-sessions" element={<TradingSessions />} />
+              <Route path="/risk/sessions" element={<TradingSessions />} />
+              <Route path="/risk/trailing-stop" element={<TrailingStop />} />
+              <Route path="/risk/break-even" element={<BreakEven />} />
+              <Route path="/risk/profit-lock" element={<ProfitLock />} />
+              <Route path="/risk/partial-close" element={<PartialClose />} />
+              <Route path="/risk/correlation-protection" element={<CorrelationProtection />} />
+              <Route path="/risk/news-filter" element={<NewsFilter />} />
+              <Route path="/risk/emergency-stop" element={<EmergencyStop />} />
+              <Route path="/risk/events" element={<RiskEvents />} />
+              <Route path="/risk/automation" element={<AutomationRules />} />
+              <Route path="/risk/automation/create" element={<CreateRule />} />
+              <Route path="/risk/automation/:ruleId" element={<CreateRule />} />
+              <Route path="/automation/rules/create" element={<CreateRule />} />
+              <Route path="/automation/rules/provider" element={<ProviderSpecificRules />} />
 
               {/* Trading */}
               <Route path="/trading" element={<TradingOverview />} />
@@ -335,6 +458,9 @@ export default function AppRouter() {
               <Route path="/solana/blinks" element={<BlinkHistory />} />
               <Route path="/solana/blinks/create" element={<BlinkBuilder />} />
               <Route path="/solana/blinks/:blinkId" element={<BlinkDetails />} />
+              <Route path="/solana/wallet/connect" element={<SolanaWalletConnect />} />
+              <Route path="/solana/wallet-connect" element={<SolanaWalletConnect />} />
+              <Route path="/solana/wallet/settings" element={<SolanaWalletSettings />} />
 
               {/* Feature B — Proof of Alpha */}
               <Route

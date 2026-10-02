@@ -12,11 +12,8 @@ function buildBrokerRouter(controller = null) {
   const router = Router();
   const brokerController = controller || new BrokerController();
 
-  router.get('/brokers', authenticationMiddleware(), brokerController.listBrokers);
-  router.get('/brokers/:brokerId', authenticationMiddleware(), brokerController.getBroker);
-  router.post('/brokers', authenticationMiddleware(), requireAdminMiddleware(), brokerController.createBroker);
-  router.patch('/brokers/:brokerId', authenticationMiddleware(), requireAdminMiddleware(), brokerController.updateBroker);
-  router.delete('/brokers/:brokerId', authenticationMiddleware(), requireAdminMiddleware(), brokerController.deleteBroker);
+  router.get('/', authenticationMiddleware(), brokerController.listBrokers);
+  router.post('/', authenticationMiddleware(), requireAdminMiddleware(), brokerController.createBroker);
 
   router.get('/broker-specs/:server', authenticationMiddleware(), brokerController.getBrokerSpec);
   router.get('/symbols/:platform/candidates/:symbol', authenticationMiddleware(), brokerController.getSymbolCandidates);
@@ -29,6 +26,10 @@ function buildBrokerRouter(controller = null) {
   );
 
   router.use(buildAccountRouter(brokerController.accountController));
+
+  router.get('/:brokerId', authenticationMiddleware(), brokerController.getBroker);
+  router.patch('/:brokerId', authenticationMiddleware(), requireAdminMiddleware(), brokerController.updateBroker);
+  router.delete('/:brokerId', authenticationMiddleware(), requireAdminMiddleware(), brokerController.deleteBroker);
 
   return router;
 }
