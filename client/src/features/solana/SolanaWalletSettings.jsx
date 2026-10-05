@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, ArrowLeft, Loader2, Save, RefreshCw, Trash2 } from 'lucide-react';
+import { Wallet, ArrowLeft, Loader2, RefreshCw, Trash2 } from 'lucide-react';
 import Container from '../../components/ui/primitives/Container';
 import Card from '../../components/common/Card';
 import Heading from '../../components/ui/primitives/Heading';
@@ -10,26 +10,41 @@ import Separator from '../../components/common/Separator';
 import Alert from '../../components/feedback/Alert';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import SolanaWalletCard from '../../components/domain/solana/SolanaWalletCard';
+import { authenticatedFetch as fetch } from '../../api/authenticated-fetch.js';
 
 const SolanaWalletSettings = function SolanaWalletSettings() {
   const navigate = useNavigate();
   const [wallet, setWallet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
 
   const fetchWallet = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
-      const response = await fetch('/api/solana/wallet', { credentials: 'include' });
-      const payload = await response.json();
-      if (response.ok && payload.data?.connected) {
-        setWallet(payload.data);
+      const response = await fetch('/api/solana/wallets');
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || 'Failed to load Solana wallets');
       }
-    } catch (_err) {
-      // silent
+
+      const wallets = payload?.data?.wallets || payload?.wallets || [];
+      const selectedWallet = wallets.find((entry) => entry.isPrimary) || wallets[0] || null;
+      setWallet(
+        selectedWallet
+          ? {
+              ...selectedWallet,
+              address: selectedWallet.walletAddress || selectedWallet.address,
+              name: selectedWallet.label || selectedWallet.name || 'Solana Wallet',
+              verified: Boolean(selectedWallet.verifiedAt || selectedWallet.verified),
+              connectedAt: selectedWallet.createdAt || selectedWallet.connectedAt,
+            }
+          : null,
+      );
+    } catch (requestError) {
+      setError(requestError.message || 'Failed to load Solana wallets');
     } finally {
       setLoading(false);
     }
@@ -39,49 +54,53 @@ const SolanaWalletSettings = function SolanaWalletSettings() {
     fetchWallet();
   }, [fetchWallet]);
 
-  const handleSave = useCallback(async () => {
+  const handleSetPrimary = useCallback(async () => {
+    if (!wallet?.walletId) {
+      setError('No wallet is available to update');
+      return;
+    }
+
     setSaving(true);
     setError(null);
-    setSuccess(false);
     try {
-      const response = await fetch('/api/solana/wallet/settings', {
-        method: 'PUT',
+      const response = await fetch(`/api/solana/wallets/${wallet.walletId}/set-primary`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          isPrimary: wallet?.isPrimary,
-          allowAttestations: wallet?.allowAttestations,
-          publicReputation: wallet?.publicReputation,
-        }),
+        body: JSON.stringify({ walletId: wallet.walletId }),
       });
-
+      const payload = await response.json().catch(() => null);
       if (!response.ok) {
-        const payload = await response.json();
-        setError(payload?.error?.message || 'Failed to save settings');
-        return;
+        throw new Error(payload?.error?.message || 'Failed to set primary wallet');
       }
 
-      setSuccess(true);
-    } catch (_err) {
-      setError('Unable to reach the server');
+      await fetchWallet();
+    } catch (requestError) {
+      setError(requestError.message || 'Failed to set primary wallet');
     } finally {
       setSaving(false);
     }
-  }, [wallet]);
+  }, [wallet, fetchWallet]);
 
   const handleDisconnect = useCallback(async () => {
     try {
-      await fetch('/api/solana/wallet', {
+      const response = await fetch(`/api/solana/wallets/${wallet.walletId}`, {
         method: 'DELETE',
-        credentials: 'include',
       });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || 'Failed to disconnect wallet');
+      }
+
+      if (typeof window !== 'undefined' && window.solana) {
+        await window.solana.disconnect();
+      }
       setConfirmDisconnect(false);
       setWallet(null);
       navigate('/solana/wallet-connect');
-    } catch (_err) {
-      // silent
+    } catch (requestError) {
+      setError(requestError.message || 'Failed to disconnect wallet');
     }
-  }, [navigate]);
+  }, [navigate, wallet]);
 
   const handleBack = useCallback(() => navigate('/settings'), [navigate]);
 
@@ -125,14 +144,6 @@ const SolanaWalletSettings = function SolanaWalletSettings() {
           </div>
         ) : null}
 
-        {success ? (
-          <div className="mt-4">
-            <Alert variant="success" size="sm">
-              Settings saved.
-            </Alert>
-          </div>
-        ) : null}
-
         <Separator spacing="md" />
 
         {loading ? (
@@ -152,83 +163,25 @@ const SolanaWalletSettings = function SolanaWalletSettings() {
           <div className="space-y-6">
             <SolanaWalletCard
               wallet={wallet}
-              onViewExplorer={(address) =>
-                window.open(`https://explorer.solana.com/address/${address}`, '_blank')
-              }
+              onViewExplorer={(address) => window.open(`https://explorer.solana.com/address/${address}`, '_blank')}
             />
 
             <Separator spacing="sm" />
 
-            <div className="space-y-3">
-              <label className="flex items-start gap-3 rounded-md border border-slate-200 bg-white p-3">
-                <input
-                  type="checkbox"
-                  checked={wallet.isPrimary}
-                  onChange={(event) =>
-                    setWallet((prev) => ({ ...prev, isPrimary: event.target.checked }))
-                  }
-                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
-                />
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">Primary wallet</p>
-                  <p className="mt-0.5 text-xs text-slate-500">
-                    Mark this wallet as the primary identity for on-chain features.
-                  </p>
-                </div>
-              </label>
-
-              <label className="flex items-start gap-3 rounded-md border border-slate-200 bg-white p-3">
-                <input
-                  type="checkbox"
-                  checked={wallet.allowAttestations}
-                  onChange={(event) =>
-                    setWallet((prev) => ({ ...prev, allowAttestations: event.target.checked }))
-                  }
-                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
-                />
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">
-                    Allow on-chain attestations
-                  </p>
-                  <p className="mt-0.5 text-xs text-slate-500">
-                    Enable SignalForge to write certifications and reputation records on-chain
-                    using this wallet.
-                  </p>
-                </div>
-              </label>
-
-              <label className="flex items-start gap-3 rounded-md border border-slate-200 bg-white p-3">
-                <input
-                  type="checkbox"
-                  checked={wallet.publicReputation}
-                  onChange={(event) =>
-                    setWallet((prev) => ({ ...prev, publicReputation: event.target.checked }))
-                  }
-                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
-                />
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">
-                    Publicly display reputation
-                  </p>
-                  <p className="mt-0.5 text-xs text-slate-500">
-                    Show your on-chain reputation on your public provider profile.
-                  </p>
-                </div>
-              </label>
-            </div>
-
             <div className="flex items-center justify-between border-t border-slate-200 pt-4">
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={() => setConfirmDisconnect(true)}
-                leadingIcon={Trash2}
-              >
+              <Button variant="danger" size="sm" onClick={() => setConfirmDisconnect(true)} leadingIcon={Trash2}>
                 Disconnect Wallet
               </Button>
-              <Button variant="primary" onClick={handleSave} disabled={saving} leadingIcon={Save}>
-                {saving ? 'Saving...' : 'Save Settings'}
-              </Button>
+              {!wallet.isPrimary ? (
+                <Button
+                  variant="primary"
+                  onClick={handleSetPrimary}
+                  disabled={saving}
+                  leadingIcon={saving ? Loader2 : Wallet}
+                >
+                  {saving ? 'Updating...' : 'Set as Primary'}
+                </Button>
+              ) : null}
             </div>
           </div>
         )}
