@@ -16,9 +16,9 @@ const { walletNonceService } = require('./wallet-nonce.service');
 const { signatureVerificationService } = require('./signature-verification.service');
 
 function getAppDomain() {
-  if (config.app && config.app.url) {
+  if (config.app && config.app.appUrl) {
     try {
-      return new URL(config.app.url).host;
+      return new URL(config.app.appUrl).host;
     } catch (err) {
       return 'signalforge.ai';
     }
@@ -35,7 +35,7 @@ function buildSiwsMessage({ walletAddress, nonce, issuedAt }) {
   const chainId =
     network === 'mainnet-beta' ? 'solana:mainnet' : network === 'localnet' ? 'localnet' : `solana:${network}`;
   const statement = 'Sign in to SignalForge';
-  const uri = (config.app && config.app.url) || `https://${domain}`;
+  const uri = (config.app && config.app.appUrl) || `https://${domain}`;
   const issuedAtText = issuedAt || new Date().toISOString();
 
   return [
