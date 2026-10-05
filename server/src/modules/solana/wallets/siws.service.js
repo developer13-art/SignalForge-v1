@@ -31,6 +31,9 @@ function buildSiwsMessage({ walletAddress, nonce, issuedAt }) {
   }
 
   const domain = getAppDomain();
+  const network = (config.solana && config.solana.network) || 'devnet';
+  const chainId =
+    network === 'mainnet-beta' ? 'solana:mainnet' : network === 'localnet' ? 'localnet' : `solana:${network}`;
   const statement = 'Sign in to SignalForge';
   const uri = (config.app && config.app.url) || `https://${domain}`;
   const issuedAtText = issuedAt || new Date().toISOString();
@@ -43,6 +46,7 @@ function buildSiwsMessage({ walletAddress, nonce, issuedAt }) {
     '',
     `URI: ${uri}`,
     `Version: 1`,
+    `Chain ID: ${chainId}`,
     `Nonce: ${nonce}`,
     `Issued At: ${issuedAtText}`,
   ].join('\n');
@@ -58,11 +62,7 @@ async function createNonceAndMessage({ walletAddress }) {
 }
 async function verifySiwsSignature({ walletAddress, message, signatureBase58 }) {
   if (!walletAddress || !message || !signatureBase58) {
-    throw new AppError(
-      'walletAddress, message, and signatureBase58 are required',
-      ERROR_CODES.VALIDATION_FAILED,
-      400,
-    );
+    throw new AppError('walletAddress, message, and signatureBase58 are required', ERROR_CODES.VALIDATION_FAILED, 400);
   }
 
   const nonceMatch = message.match(/Nonce: ([A-Za-z0-9_-]+)/);
