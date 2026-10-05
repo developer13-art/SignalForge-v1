@@ -326,11 +326,15 @@ async function createBlink({
     ? actionsValidator.validateTokenMint(tokenMint)
     : actionsValidator.resolveMintForSymbol(validatedToken, config.network);
 
-  const validatedAmount = actionsValidator.validateAmount(amount, {
-    min: 0.000001,
-    max: 1000000,
-    fieldName: 'amount',
-  });
+  const validatedAmount =
+    templateType === ACTIONS_BLINK_TEMPLATE_TYPES.REFERRAL &&
+    (amount === undefined || amount === null || amount === '' || Number(amount) === 0)
+      ? 0
+      : actionsValidator.validateAmount(amount, {
+          min: 0.000001,
+          max: 1000000,
+          fieldName: 'amount',
+        });
 
   const decimals =
     Number.isInteger(amountDecimals) && amountDecimals >= 0 ? amountDecimals : config.token.decimalsOverride

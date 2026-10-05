@@ -19,6 +19,7 @@ const VARIANTS = {
   outlined: 'bg-surface border-2 border-surface-border',
   ghost: 'bg-transparent border-0',
   filled: 'bg-surface-elevated border border-surface-border',
+  subtle: 'bg-surface-elevated border border-surface-border/60',
   dark: 'bg-surface-elevated border border-surface-border text-text-primary',
   light: 'bg-white border border-slate-200 text-slate-900',
 };
@@ -151,7 +152,7 @@ const Card = forwardRef(function Card(
 
 Card.propTypes = {
   children: PropTypes.node,
-  variant: PropTypes.oneOf(['default', 'elevated', 'outlined', 'ghost', 'filled', 'dark', 'light']),
+  variant: PropTypes.oneOf(['default', 'elevated', 'outlined', 'ghost', 'filled', 'subtle', 'dark', 'light']),
   padding: PropTypes.oneOf(['none', 'sm', 'md', 'lg', 'xl']),
   radius: PropTypes.oneOf(['none', 'sm', 'md', 'lg', 'xl', '2xl']),
   hoverable: PropTypes.bool,
