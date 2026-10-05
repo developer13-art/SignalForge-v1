@@ -14,20 +14,11 @@ const express = require('express');
 
 const controller = require('../modules/crypto-trading/crypto-trading.controller');
 const executionRouterController = require('../modules/execution/routers/execution-router.controller');
+const { authenticationMiddleware } = require('../middleware/authentication.middleware');
 
 const router = express.Router();
 
-function requireAuthentication(req, res, next) {
-  if (!req.user || !req.user.id) {
-    return res.status(401).json({
-      message: 'Authentication is required',
-      error: { code: 'UNAUTHENTICATED' },
-    });
-  }
-  return next();
-}
-
-router.use(requireAuthentication);
+router.use(authenticationMiddleware());
 
 router.get('/positions', controller.listPositions);
 router.get('/positions/:positionId', controller.getPosition);
